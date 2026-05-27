@@ -1,0 +1,38 @@
+cmake_minimum_required(VERSION 3.20)
+
+project(SimVascular
+  VERSION 1.0.0
+  LANGUAGES CXX C
+)
+
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+endif()
+
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+#-----------------------------------------------------------------------------
+# Superbuild
+#-----------------------------------------------------------------------------
+option(SimVascular_SUPERBUILD "Build SimVascular and its external dependencies via CMake superbuild." ON)
+mark_as_advanced(SimVascular_SUPERBUILD)
+
+if(SimVascular_SUPERBUILD)
+  add_subdirectory(SuperBuild)
+  return()
+endif()
+
+#-----------------------------------------------------------------------------
+# The following is only executed when NOT building via the superbuild
+#-----------------------------------------------------------------------------
+find_package(ITK REQUIRED)
+include(${ITK_USE_FILE})
+
+find_package(VTK REQUIRED)
+
+add_subdirectory(Source)
