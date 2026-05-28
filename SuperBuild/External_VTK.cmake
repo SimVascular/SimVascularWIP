@@ -2,7 +2,7 @@ set(VTK_VERSION "9.3.1")
 set(VTK_DIR ${CMAKE_CURRENT_BINARY_DIR}/VTK-build)
 
 ExternalProject_Add(VTK
-  GIT_REPOSITORY "https://github.com/VTK/VTK.git"
+  GIT_REPOSITORY "https://gitlab.kitware.com/vtk/vtk.git"
   GIT_TAG        "v${VTK_VERSION}"
   GIT_SHALLOW    TRUE
   GIT_PROGRESS   TRUE
