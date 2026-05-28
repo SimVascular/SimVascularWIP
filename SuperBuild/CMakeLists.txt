@@ -24,6 +24,9 @@ set(SimVascular_DEPENDENCIES "")
 include(${CMAKE_CURRENT_SOURCE_DIR}/External_VTK.cmake)
 list(APPEND SimVascular_DEPENDENCIES VTK)
 
+include(${CMAKE_CURRENT_SOURCE_DIR}/External_GDCM.cmake)
+list(APPEND SimVascular_DEPENDENCIES GDCM)
+
 include(${CMAKE_CURRENT_SOURCE_DIR}/External_ITK.cmake)
 list(APPEND SimVascular_DEPENDENCIES ITK)
 
@@ -37,6 +40,7 @@ set(SimVascular_superbuild_ep_args
   -DSimVascular_SUPERBUILD:BOOL=OFF
   -DQt6_DIR:PATH=${Qt6_DIR}
   -DVTK_DIR:PATH=${VTK_DIR}
+  -DGDCM_DIR:PATH=${GDCM_DIR}
   -DITK_DIR:PATH=${ITK_DIR}
   -DMITK_DIR:PATH=${MITK_DIR}
 )
