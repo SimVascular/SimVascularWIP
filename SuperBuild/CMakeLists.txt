@@ -27,13 +27,18 @@ list(APPEND SimVascular_DEPENDENCIES VTK)
 include(${CMAKE_CURRENT_SOURCE_DIR}/External_ITK.cmake)
 list(APPEND SimVascular_DEPENDENCIES ITK)
 
+include(${CMAKE_CURRENT_SOURCE_DIR}/External_MITK.cmake)
+list(APPEND SimVascular_DEPENDENCIES MITK)
+
 #-----------------------------------------------------------------------------
 # Arguments forwarded to the inner (non-superbuild) SimVascular configure
 #-----------------------------------------------------------------------------
 set(SimVascular_superbuild_ep_args
   -DSimVascular_SUPERBUILD:BOOL=OFF
+  -DQt6_DIR:PATH=${Qt6_DIR}
   -DVTK_DIR:PATH=${VTK_DIR}
   -DITK_DIR:PATH=${ITK_DIR}
+  -DMITK_DIR:PATH=${MITK_DIR}
 )
 
 ExternalProject_Add(SimVascular

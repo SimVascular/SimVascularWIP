@@ -16,6 +16,9 @@ endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Find Qt
+find_package(Qt6 COMPONENTS Core CoreTools Gui Widgets REQUIRED)
+
 #-----------------------------------------------------------------------------
 # Superbuild
 #-----------------------------------------------------------------------------
@@ -34,5 +37,7 @@ find_package(ITK REQUIRED)
 include(${ITK_USE_FILE})
 
 find_package(VTK REQUIRED)
+
+find_package(MITK REQUIRED)
 
 add_subdirectory(Source)
