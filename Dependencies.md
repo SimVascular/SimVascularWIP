@@ -53,17 +53,32 @@ and MITK. VTK and GDCM have no mutual dependency and build in parallel.
 
 ---
 
+### HDF5 1.14.3
+| | |
+|---|---|
+| **Source** | https://github.com/HDFGroup/hdf5.git `hdf5-1_14_3` |
+| **Superbuild deps** | none |
+| **Key flags** | `BUILD_SHARED_LIBS=ON`, `HDF5_BUILD_CPP_LIB=ON`, `HDF5_BUILD_HL_LIB=ON`, `HDF5_ENABLE_Z_LIB_SUPPORT=ON` |
+
+HDF5 provides the file format backing for scientific data storage used by both
+ITK and MITK. The C++ wrapper (`HDF5_BUILD_CPP_LIB`) and High Level API
+(`HDF5_BUILD_HL_LIB`) are required by ITK's HDF5-based IO modules. HDF5 has
+no dependency on any other superbuild package and builds in parallel with VTK
+and GDCM.
+
+---
+
 ### ITK 5.4.0
 | | |
 |---|---|
 | **Source** | https://github.com/InsightSoftwareConsortium/ITK.git `v5.4.0` |
-| **Superbuild deps** | VTK, GDCM |
-| **Key flags** | `ITK_USE_SYSTEM_GDCM=ON`, `Module_ITKReview=ON`, `Module_ITKVtkGlue=ON` |
+| **Superbuild deps** | VTK, GDCM, HDF5 |
+| **Key flags** | `ITK_USE_SYSTEM_GDCM=ON`, `ITK_USE_SYSTEM_HDF5=ON`, `Module_ITKReview=ON`, `Module_ITKVtkGlue=ON` |
 
-`ITK_USE_SYSTEM_GDCM` disables ITK's bundled GDCM in favour of the version
-built above. `Module_ITKVtkGlue` enables the VTK↔ITK bridge and requires
-`VTK_DIR` at configure time, which is why ITK depends on VTK in the
-superbuild.
+`ITK_USE_SYSTEM_GDCM` and `ITK_USE_SYSTEM_HDF5` disable ITK's bundled copies
+in favour of the versions built above. `Module_ITKVtkGlue` enables the
+VTK↔ITK bridge and requires `VTK_DIR` at configure time, which is why ITK
+depends on VTK in the superbuild.
 
 ---
 
@@ -71,20 +86,20 @@ superbuild.
 | | |
 |---|---|
 | **Source** | https://github.com/MITK/MITK.git `v2024.06` |
-| **Superbuild deps** | VTK, ITK, GDCM |
+| **Superbuild deps** | VTK, ITK, GDCM, HDF5 |
 | **Key flags** | `MITK_BUILD_EXAMPLES=OFF`, `MITK_BUILD_TESTING=OFF` |
 
-MITK receives `VTK_DIR`, `ITK_DIR`, `GDCM_DIR`, and `Qt6_DIR` so that it
-links against the same library versions built by the superbuild rather than
-any copies found on the host system.
+MITK receives `VTK_DIR`, `ITK_DIR`, `GDCM_DIR`, `HDF5_DIR`, and `Qt6_DIR` so
+that it links against the same library versions built by the superbuild rather
+than any copies found on the host system.
 
 ---
 
 ## Build Order
 
-VTK and GDCM have no inter-dependency and build in parallel. ITK requires both
-before it can configure. MITK requires all three. SimVascular is the final
-step.
+VTK, GDCM, and HDF5 have no inter-dependency and build in parallel. ITK
+requires all three before it can configure. MITK requires VTK, ITK, GDCM, and
+HDF5. SimVascular is the final step.
 
 ```mermaid
 graph TD
@@ -92,6 +107,7 @@ graph TD
 
     VTK["VTK 9.3.1"]:::built
     GDCM["GDCM 3.0.10"]:::built
+    HDF5["HDF5 1.14.3"]:::built
     ITK["ITK 5.4.0"]:::built
     MITK["MITK 2024.06"]:::built
     SV["SimVascular"]:::project
@@ -107,6 +123,10 @@ graph TD
     GDCM -->|GDCM_DIR| MITK
     GDCM -->|GDCM_DIR| SV
 
+    HDF5 -->|HDF5_DIR| ITK
+    HDF5 -->|HDF5_DIR| MITK
+    HDF5 -->|HDF5_DIR| SV
+
     ITK -->|ITK_DIR| MITK
     ITK -->|ITK_DIR| SV
 
@@ -121,7 +141,7 @@ graph TD
 
 | Wave | Projects | Prerequisite |
 |------|----------|-------------|
-| 1 | VTK, GDCM | — |
-| 2 | ITK | VTK + GDCM |
-| 3 | MITK | VTK + ITK + GDCM |
+| 1 | VTK, GDCM, HDF5 | — |
+| 2 | ITK | VTK + GDCM + HDF5 |
+| 3 | MITK | VTK + ITK + GDCM + HDF5 |
 | 4 | SimVascular | all |
