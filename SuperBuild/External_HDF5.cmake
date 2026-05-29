@@ -1,5 +1,5 @@
 set(HDF5_VERSION "1.14.3")
-set(HDF5_DIR -DHDF5_DIR:PATH=${CMAKE_BINARY_DIR}/HDF5-install/share/cmake/hdf5)
+set(HDF5_DIR ${CMAKE_BINARY_DIR}/HDF5-install/share/cmake/hdf5)
 
 ExternalProject_Add(HDF5
   GIT_REPOSITORY "https://github.com/HDFGroup/hdf5.git"
