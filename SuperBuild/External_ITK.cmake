@@ -23,7 +23,9 @@ ExternalProject_Add(ITK
     -DHDF5_DIR:PATH=${HDF5_DIR}
     -DModule_ITKReview=1
     -DModule_ITKVtkGlue=1
+    -DModule_GrowCut:BOOL=ON
     -DVTK_DIR:PATH=${VTK_DIR}
+    -DQt6_DIR:PATH=${Qt6_DIR}
   INSTALL_DIR ${ITK_INSTALL_DIR}
   USES_TERMINAL_DOWNLOAD 1
   USES_TERMINAL_UPDATE   1

@@ -1,0 +1,6 @@
+set(file "${SOURCE_DIR}/Plugins/org.blueberry.ui.qt/src/internal/berryHandlerAuthority.cpp")
+file(READ "${file}" content)
+if(NOT content MATCHES "QElapsedTimer.h")
+  string(REPLACE "#include <QTime>" "#include <QTime>\n#include <QElapsedTimer>" content "${content}")
+  file(WRITE "${file}" "${content}")
+endif()
