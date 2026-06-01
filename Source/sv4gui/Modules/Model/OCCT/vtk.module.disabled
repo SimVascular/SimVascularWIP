@@ -1,0 +1,15 @@
+NAME
+    VTK::SV4ModelOCCT
+LIBRARY_NAME
+    vtkSV4ModelOCCT
+GROUPS
+    SV
+    SV4GUI
+DEPENDS
+    VTK::SV1Geometry
+    VTK::SV1ModelOCCTSolidModel
+    VTK::SV1ModelPolyDataSolidModel
+    VTK::SV4ModelCommon
+    VTK::SV4Segmentation
+    VTK::SVCommon
+    VTK::SVInclude

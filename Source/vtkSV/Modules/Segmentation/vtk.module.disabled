@@ -1,7 +1,7 @@
 NAME
-    VTK::SVParameterization
+    VTK::SVSegmentation
 LIBRARY_NAME
-    vtkSVParameterization
+    vtkSVSegmentation
 GROUPS
     SV
     VTKSV
@@ -15,11 +15,20 @@ DEPENDS
     VTK::FiltersCore
     VTK::FiltersGeneral
     VTK::FiltersGeometry
-    VTK::FiltersModeling
-    VTK::IOXML
+    VTK::FiltersSources
 
+    VTK::SV1Utils
     VTK::SVCommon
-    VTK::SVGeometry
+    VTK::SVCommon
+    VTK::SVCommon
     VTK::SVIO
     VTK::SVMisc
-    VTK::SVNURBS
+    VTK::SVMisc
+    VTK::SVMisc
+    VTK::SVMisc
+    VTK::SVMisc
+    VTK::SVMisc
+    VTK::SVMisc
+    VTK::SVParameterization
+    VTK::SVParameterization
+    VTK::SVParameterization

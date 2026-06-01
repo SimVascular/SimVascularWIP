@@ -19,6 +19,6 @@ vtk_module_add_module(VTK::SV1Geometry
     SOURCES ${vtkSV1Geometry_SOURCES}
 )
 generate_export_header(VTK::SV1Geometry
-    EXPORT_MACRO_NAME "SV_EXPORT_GEOMETRY"
+    EXPORT_MACRO_NAME "SV_EXPORT_SYSGEOM"
     EXPORT_FILE_NAME ${vtkSV1Geometry_EXPORT_HEADER}
 )

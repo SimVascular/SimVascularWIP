@@ -1075,7 +1075,7 @@ int vtkSVLoopBooleanPolyDataFilter::RequestData(
   vtkDebugMacro(<<"SURFACE 2 FREE EDGE MIN: "<<freeedge2[0]<<" MAX: "<<
     freeedge2[1]);
 
-  PolyDataSolidCheckResults check_results;
+  PolyDataCheckResults check_results;
 
   double fullbadtri[2], fullfreeedge[2], dummy[2];
   vtkSVLoopIntersectionPolyDataFilter::CleanAndCheckSurface( outputSurface, dummy, this->Tolerance, check_results);

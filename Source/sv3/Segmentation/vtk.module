@@ -6,5 +6,15 @@ GROUPS
     SV
     SV3
 DEPENDS
-    VTK::SVInclude
     VTK::CommonCore
+    VTK::CommonDataModel
+    VTK::FiltersCore
+    VTK::FiltersGeneral
+    VTK::ImagingCore
+
+    VTK::SVInclude
+    VTK::SV1Geometry
+    VTK::SV1Repository
+    VTK::SV1Utils
+    VTK::SV3ITKSegmentation
+    VTK::SV3Path

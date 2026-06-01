@@ -1,4 +1,4 @@
-set(vtkSV4ProjectManagement_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/svProjectManagementExports.h)
+set(vtkSV4ProjectManagement_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/sv4guiModuleProjectManagementExports.h)
 set(vtkSV4ProjectManagement_HEADERS
     sv4gui_DataNodeOperation.h
     sv4gui_ModelFolder.h
@@ -39,6 +39,6 @@ vtk_module_add_module(VTK::SV4ProjectManagement
     SOURCES ${vtkSV4ProjectManagement_SOURCES}
 )
 generate_export_header(VTK::SV4ProjectManagement
-    EXPORT_MACRO_NAME "SV_EXPORT_PROJECTMANAGEMENT"
+    BASE_NAME "SV4GUIMODULEPROJECTMANAGEMENT"
     EXPORT_FILE_NAME ${vtkSV4ProjectManagement_EXPORT_HEADER}
 )

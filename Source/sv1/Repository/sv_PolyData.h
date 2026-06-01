@@ -37,6 +37,40 @@
 #include "sv_misc_utils.h"
 #include "sv_VTK.h"
 
+class SV_EXPORT_REPOSITORY PolyDataCheckResults {
+public:
+  std::vector<int> invalid_cells;
+};
+
+
+//--------------------
+// PolyDataException
+//--------------------
+// This is a custom exception for returning data
+// that can be used to identify geometry problems.
+//
+class PolyDataException : public std::runtime_error {
+
+    public:
+        PolyDataException(const std::string& message, const std::vector<std::array<double,3>>& points,
+          vtkPolyData *geometry = nullptr) : std::runtime_error(message)
+        {
+            m_points = points;
+
+            if (geometry != nullptr) {
+                m_geometry = vtkSmartPointer<vtkPolyData>::New();
+                m_geometry->DeepCopy(geometry);
+            }
+         }
+
+         std::vector<std::array<double,3>> getPoints() const { return m_points; }
+         vtkSmartPointer<vtkPolyData> getGeometry() const { return m_geometry; }
+
+    private:
+        std::vector<std::array<double,3>> m_points;
+        vtkSmartPointer<vtkPolyData> m_geometry = nullptr;
+};
+
 
 typedef enum {
   PD_DIST_VTK, PD_DIST_INVALID

@@ -8,3 +8,5 @@ GROUPS
 DEPENDS
     VTK::SVInclude
     VTK::CommonCore
+    VTK::SV1Utils
+    VTK::SV1Repository

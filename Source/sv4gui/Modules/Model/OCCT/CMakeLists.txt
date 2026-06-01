@@ -1,4 +1,4 @@
-set(vtkSV4ModelOCCT_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/svOCCTExports.h)
+set(vtkSV4ModelOCCT_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/sv4guiModuleModelOCCTExports.h)
 set(vtkSV4ModelOCCT_HEADERS
     sv4gui_ModelUtilsOCCT.h
     sv4gui_RegisterOCCTFunction.h
@@ -17,6 +17,6 @@ vtk_module_add_module(VTK::SV4ModelOCCT
     SOURCES ${vtkSV4ModelOCCT_SOURCES}
 )
 generate_export_header(VTK::SV4ModelOCCT
-    EXPORT_MACRO_NAME "SV_EXPORT_OCCT"
+    BASE_NAME "SV4GUIMODULEMODELOCCT"
     EXPORT_FILE_NAME ${vtkSV4ModelOCCT_EXPORT_HEADER}
 )

@@ -15,6 +15,6 @@ vtk_module_add_module(VTK::SV1MeshMeshObject
     SOURCES ${vtkSV1MeshMeshObject_SOURCES}
 )
 generate_export_header(VTK::SV1MeshMeshObject
-    EXPORT_MACRO_NAME "SV_EXPORT_MESHOBJECT"
+    EXPORT_MACRO_NAME "SV_EXPORT_MESH"
     EXPORT_FILE_NAME ${vtkSV1MeshMeshObject_EXPORT_HEADER}
 )

@@ -5,6 +5,8 @@ LIBRARY_NAME
 GROUPS
     SV
     SV4GUI
+EXCLUDE_WRAP
 DEPENDS
     VTK::SVInclude
-    VTK::CommonCore
+    VTK::SV4Path
+    VTK::SV4Segmentation

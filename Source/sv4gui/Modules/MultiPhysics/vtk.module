@@ -5,6 +5,3 @@ LIBRARY_NAME
 GROUPS
     SV
     SV4GUI
-DEPENDS
-    VTK::SVInclude
-    VTK::CommonCore

@@ -13,6 +13,6 @@ vtk_module_add_module(VTK::SV1ModelSolidModel
     SOURCES ${vtkSV1ModelSolidModel_SOURCES}
 )
 generate_export_header(VTK::SV1ModelSolidModel
-    EXPORT_MACRO_NAME "SV_EXPORT_SOLIDMODEL"
+    EXPORT_MACRO_NAME "SV_EXPORT_SOLID"
     EXPORT_FILE_NAME ${vtkSV1ModelSolidModel_EXPORT_HEADER}
 )

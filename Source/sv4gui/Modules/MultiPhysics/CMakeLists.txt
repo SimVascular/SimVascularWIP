@@ -1,4 +1,4 @@
-set(vtkSV4MultiPhysics_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/svMultiPhysicsExports.h)
+set(vtkSV4MultiPhysics_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/sv4guiModuleMultiPhysicsExports.h)
 set(vtkSV4MultiPhysics_HEADERS
     sv4gui_MultiPhysicsJob.h
     sv4gui_MitkMultiPhysicsJob.h
@@ -27,6 +27,11 @@ vtk_module_add_module(VTK::SV4MultiPhysics
     SOURCES ${vtkSV4MultiPhysics_SOURCES}
 )
 generate_export_header(VTK::SV4MultiPhysics
-    EXPORT_MACRO_NAME "SV_EXPORT_MULTIPHYSICS"
+    BASE_NAME "SV4GUIMODULEMULTIPHYSICS"
     EXPORT_FILE_NAME ${vtkSV4MultiPhysics_EXPORT_HEADER}
 )
+
+vtk_module_link(VTK::SV4MultiPhysics PUBLIC MitkCore Qt6::Core)
+
+# TODO this is a hack. I'm not sure how this is actually supposed to be initialized.
+vtk_module_definitions(VTK::SV4MultiPhysics PUBLIC US_MODULE_NAME='SV4MultiPhysics')

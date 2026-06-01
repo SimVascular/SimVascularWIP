@@ -16,6 +16,9 @@ endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Find Python
+find_package(Python 3.12 COMPONENTS Development.Module REQUIRED)
+
 # Find Qt
 find_package(Qt6 6.10 COMPONENTS Core CoreTools Gui Widgets REQUIRED)
 
@@ -39,5 +42,7 @@ include(${ITK_USE_FILE})
 find_package(VTK REQUIRED)
 
 find_package(MITK REQUIRED)
+
+find_package(tinyxml2 REQUIRED)
 
 add_subdirectory(Source)

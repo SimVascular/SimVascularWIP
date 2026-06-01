@@ -1,4 +1,4 @@
-set(vtkSV2ImageProcessing_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/svImageProcessingExports.h)
+set(vtkSV2ImageProcessing_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/svImageExports.h)
 set(vtkSV2ImageProcessing_HEADERS
     sv2_DistanceMap.h
     sv2_image.h
@@ -26,6 +26,6 @@ vtk_module_add_module(VTK::SV2ImageProcessing
     SOURCES ${vtkSV2ImageProcessing_SOURCES}
 )
 generate_export_header(VTK::SV2ImageProcessing
-    EXPORT_MACRO_NAME "SV_EXPORT_IMAGEPROCESSING"
+    EXPORT_MACRO_NAME "SV_EXPORT_IMAGE"
     EXPORT_FILE_NAME ${vtkSV2ImageProcessing_EXPORT_HEADER}
 )

@@ -58,6 +58,7 @@ void itkGenerateEdgeProxImage(TImageType* itkInputImage,
 		typename TImageType::Pointer outputImage,
 		double sigma,double kappa, double exponent)
 {
+#ifndef __VTK_WRAP__
 	typedef itk::GradientMagnitudeRecursiveGaussianImageFilter<TImageType,TImageType>
 	GradientFilterType;
 	typedef itk::RescaleIntensityImageFilter<TImageType,TImageType>
@@ -112,12 +113,14 @@ void itkGenerateEdgeProxImage(TImageType* itkInputImage,
 	{
 		std::cerr << "Unknown Error!" << std::endl;
 	}
+#endif
 }
 
 template <typename TImageType>
 void itkGenerateFeatureImage(TImageType* itkInputImage,
 		typename TImageType::Pointer gradientImage, double sigma)
 {
+#ifndef __VTK_WRAP__
 	try
 	{
 		// do gradient outside of the filter
@@ -156,12 +159,14 @@ void itkGenerateFeatureImage(TImageType* itkInputImage,
 	{
 		std::cerr << "Unknown Error!" << std::endl;
 	}
+#endif
 }
 
 template <typename TImageType>
 void itkGenerateFeatureImageNoGrad(TImageType* itkInputImage,
 		typename TImageType::Pointer outImage, double sigma)
 {
+#ifndef __VTK_WRAP__
 	typedef itk::RescaleIntensityImageFilter<TImageType,TImageType>
 	RescaleInputFilterType;
 	try
@@ -208,6 +213,7 @@ void itkGenerateFeatureImageNoGrad(TImageType* itkInputImage,
 	{
 		std::cerr << "Unknown Error!" << std::endl;
 	}
+#endif
 }
 
 template <typename TImageType>
@@ -688,6 +694,7 @@ void WriteImage2(const TImage* input,string FilenameBase)
 template <typename TImage>
 static void WritePNGImage(const TImage* input,string FilenameBase)
 {
+	#ifndef __VTK_WRAP__
 	try{
 		typedef typename itk::ImageFileWriter<TImage> WriterType;
 		typename WriterType::Pointer writer = WriterType::New();
@@ -703,6 +710,7 @@ static void WritePNGImage(const TImage* input,string FilenameBase)
 		std::cerr << "ExceptionObject caught !" << std::endl;
 		std::cerr << "Write Error! :"<<err << std::endl;
 	}
+	#endif
 }
 
 

@@ -1,4 +1,4 @@
-set(vtkSV4MeshCommon_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/svCommonExports.h)
+set(vtkSV4MeshCommon_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/sv4guiModuleMeshExports.h)
 set(vtkSV4MeshCommon_HEADERS
     sv4gui_MeshTetGenAdaptor.h
     sv4gui_MitkMeshIO.h
@@ -37,6 +37,6 @@ vtk_module_add_module(VTK::SV4MeshCommon
     SOURCES ${vtkSV4MeshCommon_SOURCES}
 )
 generate_export_header(VTK::SV4MeshCommon
-    EXPORT_MACRO_NAME "SV_EXPORT_COMMON"
+    BASE_NAME "SV4GUIMODULEMESH"
     EXPORT_FILE_NAME ${vtkSV4MeshCommon_EXPORT_HEADER}
 )

@@ -1,4 +1,4 @@
-set(vtkSV1MeshAdaptObject_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/svAdaptObjectExports.h)
+set(vtkSV1MeshAdaptObject_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/svAdaptorExports.h)
 set(vtkSV1MeshAdaptObject_HEADERS
     sv_AdaptObject.h
     sv_adapt_utils.h
@@ -17,6 +17,6 @@ vtk_module_add_module(VTK::SV1MeshAdaptObject
     SOURCES ${vtkSV1MeshAdaptObject_SOURCES}
 )
 generate_export_header(VTK::SV1MeshAdaptObject
-    EXPORT_MACRO_NAME "SV_EXPORT_ADAPTOBJECT"
+    EXPORT_MACRO_NAME "SV_EXPORT_ADAPT"
     EXPORT_FILE_NAME ${vtkSV1MeshAdaptObject_EXPORT_HEADER}
 )

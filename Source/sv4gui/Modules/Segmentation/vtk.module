@@ -6,5 +6,30 @@ GROUPS
     SV
     SV4GUI
 DEPENDS
-    VTK::SVInclude
-    VTK::CommonCore
+  VTK::CommonCore
+  VTK::CommonDataModel
+  VTK::CommonMisc
+  VTK::CommonTransforms
+  VTK::FiltersCore
+  VTK::FiltersGeneral
+  VTK::FiltersHybrid
+  VTK::FiltersModeling
+  VTK::FiltersSources
+  VTK::FiltersTexture
+  VTK::IOImage
+  VTK::IOLegacy
+  VTK::IOXML
+  VTK::ImagingCore
+  VTK::RenderingCore
+  VTK::RenderingOpenGL2
+
+  VTK::SV1Geometry
+  VTK::SV1Repository
+  VTK::SV1Utils
+  VTK::SV3ITKSegmentation
+  VTK::SV3Path
+  VTK::SV3Segmentation
+  VTK::SV4Common
+  VTK::SV4ImageProcessing
+  VTK::SV4Path
+  VTK::SVInclude

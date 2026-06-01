@@ -1,4 +1,4 @@
-set(vtkSV4Path_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/svPathExports.h)
+set(vtkSV4Path_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/sv4guiModulePathExports.h)
 set(vtkSV4Path_HEADERS
     sv4gui_PathElement.h
     sv4gui_Path.h
@@ -29,6 +29,12 @@ vtk_module_add_module(VTK::SV4Path
     SOURCES ${vtkSV4Path_SOURCES}
 )
 generate_export_header(VTK::SV4Path
-    EXPORT_MACRO_NAME "SV_EXPORT_PATH"
+    BASE_NAME "SV4GUIMODULEPATH"
     EXPORT_FILE_NAME ${vtkSV4Path_EXPORT_HEADER}
 )
+vtk_module_link(VTK::SV4Path PUBLIC Qt6::Core ${MITK_LIBRARIES})
+
+# TODO this is a hack. I'm not sure how this is actually supposed to be initialized.
+vtk_module_definitions(VTK::SV4Path PUBLIC US_MODULE_NAME='SV4Path')
+
+# TODO declare qt resources

@@ -7,4 +7,3 @@ GROUPS
     SV3
 DEPENDS
     VTK::SVInclude
-    VTK::CommonCore

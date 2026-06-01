@@ -36,7 +36,6 @@
 #include "svGeometryExports.h" // For exports
 
 #include "sv_PolyData.h"
-#include "sv_PolyDataSolid.h"
 #include "vtkSVNURBSSurface.h"
 
 SV_EXPORT_SYSGEOM void sys_geom_write_vtp(std::string& file_name, cvPolyData* src);
@@ -58,7 +57,7 @@ SV_EXPORT_SYSGEOM int sys_geom_intersect( cvPolyData *srcA, cvPolyData *srcB,dou
 
 SV_EXPORT_SYSGEOM int sys_geom_subtract( cvPolyData *srcA, cvPolyData *srcB,double tolerance, cvPolyData **dst );
 
-SV_EXPORT_SYSGEOM int sys_geom_checksurface( cvPolyData *src, int stats[],double tolerance, PolyDataSolidCheckResults& check_results);
+SV_EXPORT_SYSGEOM int sys_geom_checksurface( cvPolyData *src, int stats[],double tolerance, PolyDataCheckResults& check_results);
 
 SV_EXPORT_SYSGEOM cvPolyData *sys_geom_Clean( cvPolyData *src);
 

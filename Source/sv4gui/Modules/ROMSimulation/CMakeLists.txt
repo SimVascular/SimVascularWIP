@@ -1,4 +1,4 @@
-set(vtkSV4ROMSimulation_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/svROMSimulationExports.h)
+set(vtkSV4ROMSimulation_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/sv4guiModuleROMSimulationExports.h)
 set(vtkSV4ROMSimulation_HEADERS
     sv4gui_ROMSimulationUtils.h
     sv4gui_MitkROMSimJobIO.h
@@ -21,6 +21,6 @@ vtk_module_add_module(VTK::SV4ROMSimulation
     SOURCES ${vtkSV4ROMSimulation_SOURCES}
 )
 generate_export_header(VTK::SV4ROMSimulation
-    EXPORT_MACRO_NAME "SV_EXPORT_ROMSIMULATION"
+    BASE_NAME "SV4GUIMODULEROMSIMULATION"
     EXPORT_FILE_NAME ${vtkSV4ROMSimulation_EXPORT_HEADER}
 )

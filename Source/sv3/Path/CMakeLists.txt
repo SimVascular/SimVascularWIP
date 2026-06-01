@@ -1,4 +1,4 @@
-set(vtkSV3Path_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/svPathExports.h)
+set(vtkSV3Path_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/sv3PathExports.h)
 set(vtkSV3Path_HEADERS
     sv3_VtkParametricSpline.h
     sv3_PathGroup.h
@@ -26,3 +26,5 @@ generate_export_header(VTK::SV3Path
     EXPORT_MACRO_NAME "SV_EXPORT_PATH"
     EXPORT_FILE_NAME ${vtkSV3Path_EXPORT_HEADER}
 )
+
+vtk_module_link(VTK::SV3Path PUBLIC tinyxml2)  # todo superbuild

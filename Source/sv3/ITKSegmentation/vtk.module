@@ -5,6 +5,21 @@ LIBRARY_NAME
 GROUPS
     SV
     SV3
+EXCLUDE_WRAP
 DEPENDS
-    VTK::SVInclude
+    VTK::CommonComputationalGeometry
     VTK::CommonCore
+    VTK::CommonDataModel
+    VTK::CommonMath
+    VTK::FiltersCore
+    VTK::FiltersGeneral
+    VTK::FiltersSources
+    VTK::IOImage
+    VTK::ImagingCore
+    VTK::ImagingStencil
+    VTK::InteractionImage
+    VTK::RenderingCore
+
+    VTK::SVInclude
+    VTK::SV1ModelSolidModel
+    VTK::SV1Repository

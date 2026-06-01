@@ -6,4 +6,15 @@ GROUPS
     SV
     INCLUDE
 DEPENDS
+    VTK::CommonComputationalGeometry
     VTK::CommonCore
+    VTK::CommonDataModel
+    VTK::CommonExecutionModel
+    VTK::CommonMath
+    VTK::CommonMisc
+    VTK::CommonSystem
+    VTK::CommonTransforms
+    VTK::FiltersCore
+    VTK::FiltersFlowPaths
+    VTK::IOLegacy
+    VTK::RenderingCore

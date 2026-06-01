@@ -7,4 +7,6 @@ GROUPS
     SV1
 DEPENDS
     VTK::SVInclude
-    VTK::CommonCore
+    VTK::SV1ModelSolidModel
+    VTK::SV1Repository
+    VTK::SV1Utils

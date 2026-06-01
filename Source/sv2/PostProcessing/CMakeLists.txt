@@ -1,4 +1,4 @@
-set(vtkSV2PostProcessing_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/svPostProcessingExports.h)
+set(vtkSV2PostProcessing_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/svPostExports.h)
 set(vtkSV2PostProcessing_HEADERS
     sv2_ConvertVisFiles.h
     sv2_CalculateWallShearStress.h
@@ -17,6 +17,6 @@ vtk_module_add_module(VTK::SV2PostProcessing
     SOURCES ${vtkSV2PostProcessing_SOURCES}
 )
 generate_export_header(VTK::SV2PostProcessing
-    EXPORT_MACRO_NAME "SV_EXPORT_POSTPROCESSING"
+    EXPORT_MACRO_NAME "SV_EXPORT_POST"
     EXPORT_FILE_NAME ${vtkSV2PostProcessing_EXPORT_HEADER}
 )

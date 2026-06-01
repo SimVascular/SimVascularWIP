@@ -8,3 +8,9 @@ GROUPS
 DEPENDS
     VTK::SVInclude
     VTK::CommonCore
+    VTK::RenderingCore
+    VTK::InteractionStyle
+    VTK::FiltersSources
+    VTK::FiltersExtraction
+PRIVATE_DEPENDS
+    VTK::SV1Utils

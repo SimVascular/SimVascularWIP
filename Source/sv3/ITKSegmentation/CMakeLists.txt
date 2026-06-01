@@ -1,4 +1,4 @@
-set(vtkSV3ITKSegmentation_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/svITKSegmentationExports.h)
+set(vtkSV3ITKSegmentation_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/svSegITKExports.h)
 set(vtkSV3ITKSegmentation_HEADERS
     sv3_ITKLevelSet.h
     sv3_VascularPhaseTwoLevelSetFunction.h
@@ -39,6 +39,8 @@ vtk_module_add_module(VTK::SV3ITKSegmentation
     SOURCES ${vtkSV3ITKSegmentation_SOURCES}
 )
 generate_export_header(VTK::SV3ITKSegmentation
-    EXPORT_MACRO_NAME "SV_EXPORT_ITKSEGMENTATION"
+    EXPORT_MACRO_NAME "SV_EXPORT_SEGITK"
     EXPORT_FILE_NAME ${vtkSV3ITKSegmentation_EXPORT_HEADER}
 )
+
+vtk_module_link(VTK::SV3ITKSegmentation PUBLIC ITKCommon ITKVTK)

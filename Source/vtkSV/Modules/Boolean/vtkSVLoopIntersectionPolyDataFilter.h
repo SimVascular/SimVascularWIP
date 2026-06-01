@@ -83,7 +83,7 @@
 
 #include "vtkPolyDataAlgorithm.h"
 #include "vtkSVBooleanModule.h" // For export macro
-#include "sv_PolyDataSolid.h" 
+#include "sv_PolyData.h"
 
 class VTKSVBOOLEAN_EXPORT vtkSVLoopIntersectionPolyDataFilter :
         public vtkPolyDataAlgorithm
@@ -170,7 +170,7 @@ public:
   /// \brief  Function to clean and check the output surfaces for bad triangles and
   /// free edges
   static void CleanAndCheckSurface(vtkPolyData *pd, double stats[2],
-                  double tolerance, PolyDataSolidCheckResults& check_results);
+                  double tolerance, PolyDataCheckResults& check_results);
 
   /// \brief Function to clean and check the inputs
   static void CleanAndCheckInput(vtkPolyData *pd, double tolerance);

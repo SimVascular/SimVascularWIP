@@ -8,3 +8,11 @@ GROUPS
 DEPENDS
     VTK::SVInclude
     VTK::CommonCore
+    VTK::ParallelCore
+PRIVATE_DEPENDS
+    VTK::SVCommon
+    VTK::SVGeometry
+    VTK::FiltersModeling
+    VTK::RenderingLabel
+    VTK::FiltersTexture
+    VTK::SVIO

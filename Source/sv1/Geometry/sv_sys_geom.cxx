@@ -69,8 +69,6 @@
 #include "vtkSVMultiplePolyDataIntersectionFilter.h"
 #include "vtkSVNURBSSurface.h"
 
-#include "sv_polydatasolid_utils.h"
-
 #include "vtkXMLPolyDataWriter.h"
 
 #define vtkNew(type,name) \
@@ -599,7 +597,7 @@ int sys_geom_subtract( cvPolyData *srcA, cvPolyData *srcB, double tolerance,cvPo
 //-----------------------
 // Check that a surface is watertight.
 //
-int sys_geom_checksurface( cvPolyData *src, int stats[] ,double tolerance, PolyDataSolidCheckResults& check_results)
+int sys_geom_checksurface( cvPolyData *src, int stats[] ,double tolerance, PolyDataCheckResults& check_results)
 {
   #define n_debug_sys_geom_checksurface 
   #ifdef debug_sys_geom_checksurface

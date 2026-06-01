@@ -6,5 +6,7 @@ GROUPS
     SV
     SV1
 DEPENDS
+    VTK::CommonDataModel
+
     VTK::SVInclude
-    VTK::CommonCore
+    VTK::SV1Utils

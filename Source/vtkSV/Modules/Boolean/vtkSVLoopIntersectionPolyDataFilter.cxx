@@ -33,8 +33,8 @@
 #define TRIANGLE 1
 #define CURRENT 2
 #include "vtkSVLoopIntersectionPolyDataFilter.h"
+#include "sv_PolyData.h"
 #include "delaunay_options.h"
-#include "sv_polydatasolid_utils.h"
 
 #include "vtkCellArray.h"
 #include "vtkCellData.h"
@@ -2394,7 +2394,7 @@ int vtkSVLoopIntersectionPolyDataFilter::TriangleTriangleIntersection(
 // and/or degenerate cells from a surface. Then check that the surface is watertight.
 //
 void vtkSVLoopIntersectionPolyDataFilter::CleanAndCheckSurface(vtkPolyData *pd,
-    double stats[2], double tolerance, PolyDataSolidCheckResults& check_results)
+    double stats[2], double tolerance, PolyDataCheckResults& check_results)
 {
   #define n_debug_CleanAndCheckSurface
   #ifdef debug_CleanAndCheckSurface
@@ -2755,7 +2755,7 @@ int vtkSVLoopIntersectionPolyDataFilter::RequestData(
     if (this->CheckMesh)
       {
       double dummy[2];
-      PolyDataSolidCheckResults check_results;
+      PolyDataCheckResults check_results;
       CleanAndCheckSurface(outputPolyData0, dummy, this->Tolerance, check_results);
       }
 
@@ -2796,7 +2796,7 @@ int vtkSVLoopIntersectionPolyDataFilter::RequestData(
     if (this->CheckMesh)
       {
       double dummy[2];
-      PolyDataSolidCheckResults check_results;
+      PolyDataCheckResults check_results;
       CleanAndCheckSurface(outputPolyData1, dummy, this->Tolerance, check_results);
       }
 

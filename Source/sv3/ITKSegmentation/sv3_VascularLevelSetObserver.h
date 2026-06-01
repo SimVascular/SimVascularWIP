@@ -166,6 +166,7 @@ public:
 
 	void Execute(itk::Object *caller, const itk::EventObject & event)
 	{
+#ifndef __VTK_WRAP__
 		TFilter * filter =
 				dynamic_cast<  TFilter * >( caller );
 		if( typeid( event ) != typeid( itk::IterationEvent ) )
@@ -201,6 +202,7 @@ public:
 
 		// std::cout << filter->GetCurrentParameters() << std::endl;
 		//		Execute( (const itk::Object *) caller, event);
+#endif
 	}
 	void Execute(const itk::Object * object, const itk::EventObject & event)
 	{

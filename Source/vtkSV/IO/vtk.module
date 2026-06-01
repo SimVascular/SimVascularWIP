@@ -8,3 +8,7 @@ GROUPS
 DEPENDS
     VTK::SVInclude
     VTK::CommonCore
+    VTK::IOImage
+    VTK::IOGeometry
+PRIVATE_DEPENDS
+    VTK::SVCommon

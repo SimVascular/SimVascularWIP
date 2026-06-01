@@ -1,4 +1,4 @@
-set(vtkSV3Segmentation_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/svSegmentationExports.h)
+set(vtkSV3Segmentation_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/sv3SegmentationExports.h)
 set(vtkSV3Segmentation_HEADERS
     sv3_CircleContour.h
     sv3_SegmentationUtils.h

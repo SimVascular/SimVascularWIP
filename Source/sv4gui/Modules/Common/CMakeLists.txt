@@ -1,4 +1,4 @@
-set(vtkSV4Common_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/svCommonExports.h)
+set(vtkSV4Common_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/sv4guiModuleCommonExports.h)
 set(vtkSV4Common_HEADERS
     sv4gui_StringUtils.h
     sv4gui_XmlIOUtil.h
@@ -23,6 +23,7 @@ vtk_module_add_module(VTK::SV4Common
     SOURCES ${vtkSV4Common_SOURCES}
 )
 generate_export_header(VTK::SV4Common
-    EXPORT_MACRO_NAME "SV_EXPORT_COMMON"
+    BASE_NAME "SV4GUIMODULECOMMON"
     EXPORT_FILE_NAME ${vtkSV4Common_EXPORT_HEADER}
 )
+vtk_module_link(VTK::SV4Common PUBLIC MitkCore)

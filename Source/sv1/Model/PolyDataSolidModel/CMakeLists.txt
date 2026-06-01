@@ -1,4 +1,4 @@
-set(vtkSV1ModelPolyDataSolidModel_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/svPolyDataSolidModelExports.h)
+set(vtkSV1ModelPolyDataSolidModel_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/svPolyDataSolidExports.h)
 set(vtkSV1ModelPolyDataSolidModel_HEADERS
     sv_vtkGetBoundaryFaces.h
     sv_polydatasolid_utils.h
@@ -17,6 +17,6 @@ vtk_module_add_module(VTK::SV1ModelPolyDataSolidModel
     SOURCES ${vtkSV1ModelPolyDataSolidModel_SOURCES}
 )
 generate_export_header(VTK::SV1ModelPolyDataSolidModel
-    EXPORT_MACRO_NAME "SV_EXPORT_POLYDATASOLIDMODEL"
+    EXPORT_MACRO_NAME "SV_EXPORT_POLYDATASOLID"
     EXPORT_FILE_NAME ${vtkSV1ModelPolyDataSolidModel_EXPORT_HEADER}
 )

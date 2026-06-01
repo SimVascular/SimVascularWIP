@@ -32,22 +32,12 @@
 #ifndef __CVPOLYDATA_SOLID_H
 #define __CVPOLYDATA_SOLID_H
 
-#include "SimVascular.h"
 #include "svPolyDataSolidExports.h" // For exports
-#include "sv_RepositoryData.h"
 #include "sv_SolidModel.h"
 #include "sv_PolyData.h"
-#include "sv_FactoryRegistrar.h"
 #include "sv_VTK.h"
-#include "sv_misc_utils.h"
 
-class SV_EXPORT_POLYDATASOLID PolyDataSolidCheckResults { 
-  public: 
-    std::vector<int> invalid_cells;
-    
-};
-
-//-----------------
+//----------------
 // cvPolyDataSolid
 //-----------------
 //
