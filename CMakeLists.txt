@@ -17,7 +17,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Find Qt
-find_package(Qt6 COMPONENTS Core CoreTools Gui Widgets REQUIRED)
+find_package(Qt6 6.10 COMPONENTS Core CoreTools Gui Widgets REQUIRED)
 
 #-----------------------------------------------------------------------------
 # Superbuild
