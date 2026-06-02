@@ -1,0 +1,10 @@
+NAME
+    VTK::SV4ImageProcessing
+LIBRARY_NAME
+    vtkSV4ImageProcessing
+GROUPS
+    SV
+    SV4GUI
+DEPENDS
+    VTK::SVInclude
+    VTK::CommonCore

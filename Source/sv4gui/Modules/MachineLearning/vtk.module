@@ -1,0 +1,10 @@
+NAME
+    VTK::SV4MachineLearning
+LIBRARY_NAME
+    vtkSV4MachineLearning
+GROUPS
+    SV
+    SV4GUI
+DEPENDS
+    VTK::SVInclude
+    VTK::CommonCore

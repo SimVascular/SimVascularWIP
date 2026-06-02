@@ -1,0 +1,10 @@
+NAME
+    VTK::SVGeometry
+LIBRARY_NAME
+    vtkSVGeometry
+GROUPS
+    SV
+    VTKSV
+DEPENDS
+    VTK::SVInclude
+    VTK::CommonCore

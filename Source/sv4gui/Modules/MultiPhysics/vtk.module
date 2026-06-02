@@ -1,0 +1,10 @@
+NAME
+    VTK::SV4MultiPhysics
+LIBRARY_NAME
+    vtkSV4MultiPhysics
+GROUPS
+    SV
+    SV4GUI
+DEPENDS
+    VTK::SVInclude
+    VTK::CommonCore

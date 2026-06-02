@@ -1,0 +1,10 @@
+NAME
+    VTK::SV1Repository
+LIBRARY_NAME
+    vtkSV1Repository
+GROUPS
+    SV
+    SV1
+DEPENDS
+    VTK::SVInclude
+    VTK::CommonCore

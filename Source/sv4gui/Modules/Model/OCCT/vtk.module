@@ -1,0 +1,10 @@
+NAME
+    VTK::SV4ModelOCCT
+LIBRARY_NAME
+    vtkSV4ModelOCCT
+GROUPS
+    SV
+    SV4GUI
+DEPENDS
+    VTK::SVInclude
+    VTK::CommonCore

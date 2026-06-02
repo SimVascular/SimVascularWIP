@@ -1,0 +1,10 @@
+NAME
+    VTK::SVMisc
+LIBRARY_NAME
+    vtkSVMisc
+GROUPS
+    SV
+    VTKSV
+DEPENDS
+    VTK::SVInclude
+    VTK::CommonCore

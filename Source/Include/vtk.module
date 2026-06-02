@@ -1,0 +1,9 @@
+NAME
+    VTK::SVInclude
+LIBRARY_NAME
+    vtkSVInclude
+GROUPS
+    SV
+    INCLUDE
+DEPENDS
+    VTK::CommonCore

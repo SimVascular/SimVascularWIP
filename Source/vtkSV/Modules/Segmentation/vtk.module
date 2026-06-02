@@ -1,0 +1,10 @@
+NAME
+    VTK::SVSegmentation
+LIBRARY_NAME
+    vtkSVSegmentation
+GROUPS
+    SV
+    VTKSV
+DEPENDS
+    VTK::SVInclude
+    VTK::CommonCore

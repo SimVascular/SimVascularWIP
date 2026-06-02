@@ -1,0 +1,10 @@
+NAME
+    VTK::SV4ROMSimulation
+LIBRARY_NAME
+    vtkSV4ROMSimulation
+GROUPS
+    SV
+    SV4GUI
+DEPENDS
+    VTK::SVInclude
+    VTK::CommonCore

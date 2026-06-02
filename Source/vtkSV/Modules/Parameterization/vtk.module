@@ -1,0 +1,10 @@
+NAME
+    VTK::SVParameterization
+LIBRARY_NAME
+    vtkSVParameterization
+GROUPS
+    SV
+    VTKSV
+DEPENDS
+    VTK::SVInclude
+    VTK::CommonCore

@@ -1,0 +1,10 @@
+NAME
+    VTK::SV1MeshMMGMeshUtils
+LIBRARY_NAME
+    vtkSV1MeshMMGMeshUtils
+GROUPS
+    SV
+    SV1
+DEPENDS
+    VTK::SVInclude
+    VTK::CommonCore

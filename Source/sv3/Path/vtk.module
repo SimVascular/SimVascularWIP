@@ -1,0 +1,10 @@
+NAME
+    VTK::SV3Path
+LIBRARY_NAME
+    vtkSV3Path
+GROUPS
+    SV
+    SV3
+DEPENDS
+    VTK::SVInclude
+    VTK::CommonCore

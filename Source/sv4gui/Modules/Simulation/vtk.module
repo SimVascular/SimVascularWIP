@@ -1,0 +1,10 @@
+NAME
+    VTK::SV4Simulation
+LIBRARY_NAME
+    vtkSV4Simulation
+GROUPS
+    SV
+    SV4GUI
+DEPENDS
+    VTK::SVInclude
+    VTK::CommonCore

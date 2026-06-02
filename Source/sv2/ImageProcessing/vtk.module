@@ -1,0 +1,10 @@
+NAME
+    VTK::SV2ImageProcessing
+LIBRARY_NAME
+    vtkSV2ImageProcessing
+GROUPS
+    SV
+    SV2
+DEPENDS
+    VTK::SVInclude
+    VTK::CommonCore

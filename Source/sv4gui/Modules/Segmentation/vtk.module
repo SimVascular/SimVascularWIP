@@ -1,0 +1,10 @@
+NAME
+    VTK::SV4Segmentation
+LIBRARY_NAME
+    vtkSV4Segmentation
+GROUPS
+    SV
+    SV4GUI
+DEPENDS
+    VTK::SVInclude
+    VTK::CommonCore
