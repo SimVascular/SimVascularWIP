@@ -1226,10 +1226,9 @@ int cvConvertVisFiles::readStressFromFile() {
   return SV_OK;
 }
 
-cvUnstructuredGrid *cvConvertVisFiles::GetGridObj() {
+vtkUnstructuredGrid *cvConvertVisFiles::GetGridObj() {
   meshExported_ = 1;
-  cvUnstructuredGrid *reposobj = new cvUnstructuredGrid(grid_);
-  return reposobj;
+  return grid_;
 }
 
 cvPolyData *cvConvertVisFiles::GetPressureObj() {

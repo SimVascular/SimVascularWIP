@@ -41,7 +41,7 @@
 #define MAXPATHLEN 1024
 
 #include "sv_SolidModel.h"
-#include "sv_UnstructuredGrid.h"
+
 
 #ifdef SV_USE_ZLIB
 #ifdef SV_USE_SYSTEM_ZLIB
@@ -141,7 +141,7 @@ public:
   virtual cvPolyData *GetPolyData() = 0;
   virtual cvPolyData *GetSolid() = 0;
   virtual bool HasSolid() = 0;
-  virtual cvUnstructuredGrid *GetUnstructuredGrid() = 0;
+  virtual vtkUnstructuredGrid *GetUnstructuredGrid() = 0;
   virtual int GetModelFaceInfo(
       std::map<std::string, std::vector<std::string>> &faceInfo) = 0;
   virtual int GetModelFaceIDs(std::vector<int> &faceIDs) = 0;

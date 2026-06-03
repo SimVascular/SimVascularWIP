@@ -41,7 +41,7 @@
 #include "svPostExports.h" // For exports
 
 #include "sv_PolyData.h"
-#include "sv_UnstructuredGrid.h"
+
 
 #ifdef SV_USE_ZLIB
 #ifdef SV_USE_SYSTEM_ZLIB
@@ -77,8 +77,8 @@ public:
 
   // mesh
   int ReadVisMesh(char *infilename);
-  cvUnstructuredGrid *GetGridObj();
-  void SetGrid(cvUnstructuredGrid *obj) {
+  vtkUnstructuredGrid *GetGridObj();
+  void SetGrid(vtkUnstructuredGrid *obj) {
     grid_ = obj;
   }
   void SetTractionNodes(int numnodes, int *nodes);
