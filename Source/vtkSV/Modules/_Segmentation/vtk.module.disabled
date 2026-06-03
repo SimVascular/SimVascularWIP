@@ -16,19 +16,8 @@ DEPENDS
     VTK::FiltersGeneral
     VTK::FiltersGeometry
     VTK::FiltersSources
-
-    VTK::SV1Utils
     VTK::SVCommon
-    VTK::SVCommon
-    VTK::SVCommon
+    VTK::SVCore
     VTK::SVIO
     VTK::SVMisc
-    VTK::SVMisc
-    VTK::SVMisc
-    VTK::SVMisc
-    VTK::SVMisc
-    VTK::SVMisc
-    VTK::SVMisc
-    VTK::SVParameterization
-    VTK::SVParameterization
     VTK::SVParameterization

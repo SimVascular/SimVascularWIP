@@ -22,14 +22,11 @@ DEPENDS
   VTK::ImagingCore
   VTK::RenderingCore
   VTK::RenderingOpenGL2
-
   VTK::SV1Geometry
-  VTK::SV1Repository
-  VTK::SV1Utils
   VTK::SV3ITKSegmentation
   VTK::SV3Path
   VTK::SV3Segmentation
   VTK::SV4Common
   VTK::SV4ImageProcessing
   VTK::SV4Path
-  VTK::SVInclude
+  VTK::SVCore

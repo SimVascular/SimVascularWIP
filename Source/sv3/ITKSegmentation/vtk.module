@@ -19,7 +19,5 @@ DEPENDS
     VTK::ImagingStencil
     VTK::InteractionImage
     VTK::RenderingCore
-
-    VTK::SVInclude
     VTK::SV1ModelSolidModel
-    VTK::SV1Repository
+    VTK::SVCore

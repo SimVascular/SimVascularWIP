@@ -9,8 +9,5 @@ DEPENDS
     VTK::CommonCore
     VTK::FiltersCore
     VTK::IOXML
-
-    VTK::SVInclude
     VTK::SV1Geometry
-    VTK::SV1Repository
-    VTK::SV1Utils
+    VTK::SVCore

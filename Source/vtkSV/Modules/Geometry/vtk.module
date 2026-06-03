@@ -6,7 +6,6 @@ GROUPS
     SV
     VTKSV
 DEPENDS
-    VTK::SVInclude
     VTK::CommonCore
-PRIVATE_DEPENDS
     VTK::SVCommon
+    VTK::SVCore

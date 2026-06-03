@@ -1,10 +1,9 @@
 NAME
-    VTK::SVInclude
+    VTK::SVCore
 LIBRARY_NAME
-    vtkSVInclude
+    vtkSVCore
 GROUPS
     SV
-    INCLUDE
 DEPENDS
     VTK::CommonComputationalGeometry
     VTK::CommonCore

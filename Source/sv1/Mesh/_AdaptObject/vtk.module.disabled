@@ -6,7 +6,5 @@ GROUPS
     SV
     SV1
 DEPENDS
-    VTK::SVInclude
     VTK::CommonCore
-    VTK::SV1Utils
-    VTK::SV1Repository
+    VTK::SVCore

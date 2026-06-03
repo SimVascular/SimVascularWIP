@@ -9,7 +9,6 @@ DEPENDS
   VTK::CommonCore
   VTK::CommonDataModel
   VTK::IOXML
-
   VTK::SV1Geometry
   VTK::SV4Common
   VTK::SV4Segmentation

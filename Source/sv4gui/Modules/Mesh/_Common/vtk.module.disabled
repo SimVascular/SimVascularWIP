@@ -16,12 +16,11 @@ DEPENDS
     VTK::IOXML
     VTK::RenderingCore
     VTK::RenderingOpenGL2
-
     VTK::SV1MeshTetGenAdapt
     VTK::SV1MeshTetGenMeshObject
     VTK::SV1ModelPolyDataSolidModel
-    VTK::SV1Utils
     VTK::SV4Common
     VTK::SV4ModelCommon
     VTK::SV4Path
     VTK::SV4Segmentation
+    VTK::SVCore

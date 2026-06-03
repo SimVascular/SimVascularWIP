@@ -7,6 +7,6 @@ GROUPS
     SV4GUI
 EXCLUDE_WRAP
 DEPENDS
-    VTK::SVInclude
+    VTK::SVCore
     VTK::SV4Path
     VTK::SV4Segmentation

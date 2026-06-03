@@ -8,7 +8,6 @@ GROUPS
 DEPENDS
   VTK::CommonDataModel
   VTK::IOXML
-
   VTK::SV4Common
   VTK::SV4ImageProcessing
   VTK::SV4Mesh
@@ -18,4 +17,4 @@ DEPENDS
   VTK::SV4ROMSimulation
   VTK::SV4Segmentation
   VTK::SV4Simulation
-  VTK::SVInclude
+  VTK::SVCore

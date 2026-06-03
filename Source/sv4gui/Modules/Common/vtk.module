@@ -10,7 +10,5 @@ DEPENDS
     VTK::CommonCore
     VTK::CommonDataModel
     VTK::FiltersCore
-
-    VTK::SVInclude
-    VTK::SV1Utils
     VTK::SV3Path
+    VTK::SVCore

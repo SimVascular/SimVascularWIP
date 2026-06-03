@@ -6,4 +6,4 @@ GROUPS
     SV
     SV3
 DEPENDS
-    VTK::SVInclude
+    VTK::SVCore

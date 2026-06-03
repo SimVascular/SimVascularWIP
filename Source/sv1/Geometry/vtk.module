@@ -6,22 +6,15 @@ GROUPS
     SV
     SV1
 DEPENDS
-    VTK::SVInclude
-    VTK::CommonCore
-    VTK::SVNURBS
-PRIVATE_DEPENDS
     VTK::CommonCore
     VTK::CommonDataModel
     VTK::FiltersCore
     VTK::FiltersGeneral
     VTK::FiltersGeometry
     VTK::IOXML
-
     VTK::SV1ModelSolidModel
-    VTK::SV1Repository
-    VTK::SV1Utils
     VTK::SVBoolean
+    VTK::SVCore
     VTK::SVGeometry
-    VTK::SVInclude
     VTK::SVMisc
     VTK::SVNURBS

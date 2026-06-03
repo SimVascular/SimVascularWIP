@@ -12,5 +12,4 @@ DEPENDS
     VTK::FiltersCore
     VTK::IOImage
     VTK::ImagingCore
-
-    VTK::SVInclude
+    VTK::SVCore

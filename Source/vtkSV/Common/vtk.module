@@ -6,11 +6,9 @@ GROUPS
     SV
     VTKSV
 DEPENDS
-    VTK::SVInclude
     VTK::CommonCore
-    VTK::RenderingCore
-    VTK::InteractionStyle
-    VTK::FiltersSources
     VTK::FiltersExtraction
-PRIVATE_DEPENDS
-    VTK::SV1Utils
+    VTK::FiltersSources
+    VTK::InteractionStyle
+    VTK::RenderingCore
+    VTK::SVCore

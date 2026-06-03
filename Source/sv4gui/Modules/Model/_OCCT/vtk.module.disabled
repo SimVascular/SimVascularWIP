@@ -12,4 +12,4 @@ DEPENDS
     VTK::SV4ModelCommon
     VTK::SV4Segmentation
     VTK::SVCommon
-    VTK::SVInclude
+    VTK::SVCore

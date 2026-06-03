@@ -18,10 +18,7 @@ DEPENDS
   VTK::IOLegacy
   VTK::IOPLY
   VTK::IOXML
-
   VTK::SV1Geometry
   VTK::SV1ModelSolidModel
-  VTK::SV1Repository
-  VTK::SV1Utils
   VTK::SVBoolean
-  VTK::SVInclude
+  VTK::SVCore

@@ -6,9 +6,7 @@ GROUPS
     SV
     VTKSV
 DEPENDS
-    VTK::SVInclude
+    VTK::SVCore
     VTK::CommonCore
-    VTK::SV1Utils
     VTK::SVCommon
     VTK::SVIO
-    VTK::SV1Repository

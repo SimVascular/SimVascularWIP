@@ -18,17 +18,14 @@ DEPENDS
     VTK::IOXML
     VTK::RenderingCore
     VTK::RenderingOpenGL2
-
     VTK::SV1Geometry
     VTK::SV1MeshVMTKUtils
     VTK::SV1ModelPolyDataSolidModel
     VTK::SV1ModelSolidModel
-    VTK::SV1Repository
-    VTK::SV1Utils
     VTK::SV3Path
     VTK::SV4Common
     VTK::SV4Path
     VTK::SV4Segmentation
     VTK::SVCommon
-    VTK::SVInclude
+    VTK::SVCore
     VTK::SVNURBS

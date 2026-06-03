@@ -11,8 +11,5 @@ DEPENDS
     VTK::CommonDataModel
     VTK::FiltersCore
     VTK::FiltersGeometry
-
-    VTK::SVInclude
-    VTK::SV1Repository
-    VTK::SV1Utils
     VTK::SV3Common
+    VTK::SVCore

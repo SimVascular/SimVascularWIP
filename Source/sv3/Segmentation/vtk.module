@@ -11,10 +11,7 @@ DEPENDS
     VTK::FiltersCore
     VTK::FiltersGeneral
     VTK::ImagingCore
-
-    VTK::SVInclude
     VTK::SV1Geometry
-    VTK::SV1Repository
-    VTK::SV1Utils
     VTK::SV3ITKSegmentation
     VTK::SV3Path
+    VTK::SVCore

@@ -6,13 +6,12 @@ GROUPS
     SV
     VTKSV
 DEPENDS
-    VTK::SVInclude
     VTK::CommonCore
-    VTK::ParallelCore
-PRIVATE_DEPENDS
-    VTK::SVCommon
-    VTK::SVGeometry
     VTK::FiltersModeling
-    VTK::RenderingLabel
     VTK::FiltersTexture
+    VTK::ParallelCore
+    VTK::RenderingLabel
+    VTK::SVCommon
+    VTK::SVCore
+    VTK::SVGeometry
     VTK::SVIO

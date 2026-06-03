@@ -17,7 +17,6 @@ DEPENDS
     VTK::FiltersGeometry
     VTK::FiltersModeling
     VTK::IOXML
-
     VTK::SVCommon
     VTK::SVGeometry
     VTK::SVIO
