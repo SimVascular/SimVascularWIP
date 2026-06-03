@@ -52,7 +52,7 @@ using sv3::SegmentationUtils;
 cKernelType Contour::gCurrentKernel;
 
 Contour::Contour()
-    : cvRepositoryData(CONTOUR_T), m_Type("Contour"), m_Method(""),
+    : m_Type("Contour"), m_Method(""),
       // m_Placed( false ),
       m_Closed(true), m_Finished(true), m_ControlPointSelectedIndex(-2),
       m_vtkPlaneGeometry(nullptr),
@@ -74,8 +74,7 @@ Contour::Contour()
 }
 
 Contour::Contour(const Contour &other)
-    : cvRepositoryData(CONTOUR_T), m_Type(other.m_Type),
-      m_Method(other.m_Method)
+    : m_Type(other.m_Type), m_Method(other.m_Method)
       //, m_Placed(other.m_Placed)
       ,
       m_Closed(other.m_Closed), m_Finished(other.m_Finished),

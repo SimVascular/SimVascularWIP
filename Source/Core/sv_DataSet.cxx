@@ -33,7 +33,7 @@
 
 #include "sv_DataSet.h"
 
-cvDataSet::cvDataSet(RepositoryDataT type) : cvDataObject(type) {}
+cvDataSet::cvDataSet() {}
 
 // --------
 // ~cvDataObject

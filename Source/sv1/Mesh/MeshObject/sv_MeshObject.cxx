@@ -44,13 +44,13 @@ const std::string cvMeshObject::ModelFaceInfo::MODEL_ID = "modelID";
 // cvMeshObject
 // -------------
 
-cvMeshObject::cvMeshObject() : cvRepositoryData(MESH_T) {}
+cvMeshObject::cvMeshObject()   {}
 
 // --------------
 // ~cvMeshObject
 // --------------
 
-cvMeshObject::~cvMeshObject() { ; }
+cvMeshObject::~cvMeshObject() {}
 
 // Caller should deallocate the returned string.
 

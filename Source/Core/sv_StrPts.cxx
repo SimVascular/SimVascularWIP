@@ -40,7 +40,7 @@
 // cvStrPts
 // ------
 
-cvStrPts::cvStrPts(vtkStructuredPoints *sp) : cvDataSet(STRUCTURED_PTS_T) {
+cvStrPts::cvStrPts(vtkStructuredPoints *sp) : cvDataSet() {
   data_ = vtkStructuredPoints::New();
   ShallowCopy(sp);
 }

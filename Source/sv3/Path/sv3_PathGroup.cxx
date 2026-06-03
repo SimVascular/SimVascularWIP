@@ -33,19 +33,18 @@
 #include "sv3_PathElement.h"
 #include "sv3_PathGroup.h"
 #include "sv_Math.h"
-#include "sv_RepositoryData.h"
 
 using sv3::PathElement;
 using sv3::PathGroup;
 PathGroup::PathGroup()
-    : cvRepositoryData(PATHGROUP_T), m_CalculateBoundingBox(true), m_PathID(-1),
+    :  m_CalculateBoundingBox(true), m_PathID(-1),
       m_Method(sv3::PathElement::CONSTANT_TOTAL_NUMBER),
       m_CalculationNumber(100), m_Spacing(0) {
   this->InitializeEmpty();
 }
 
 PathGroup::PathGroup(const PathGroup &other)
-    : cvRepositoryData(PATHGROUP_T), m_PathID(other.m_PathID),
+    :  m_PathID(other.m_PathID),
       m_Method(other.m_Method), m_CalculationNumber(other.m_CalculationNumber),
       m_Spacing(other.m_Spacing), m_PathElementSet(other.GetTimeSize()),
       m_CalculateBoundingBox(true)

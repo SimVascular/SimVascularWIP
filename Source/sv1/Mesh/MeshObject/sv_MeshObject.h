@@ -40,7 +40,6 @@
 // #include "sys/param.h"
 #define MAXPATHLEN 1024
 
-#include "sv_RepositoryData.h"
 #include "sv_SolidModel.h"
 #include "sv_UnstructuredGrid.h"
 
@@ -63,7 +62,7 @@
 //--------------
 // The cvMeshObject provides an abstract interface for mesh generators.
 //
-class SV_EXPORT_MESH cvMeshObject : public cvRepositoryData {
+class SV_EXPORT_MESH cvMeshObject {
 
 public:
   enum KernelType {

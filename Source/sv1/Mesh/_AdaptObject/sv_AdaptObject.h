@@ -39,7 +39,6 @@
 #define MAXPATHLEN 1024
 
 #include "sv_FactoryRegistrar.h"
-#include "sv_RepositoryData.h"
 #include "sv_PolyData.h"
 #include "sv_MeshSystem.h"
 #include "sv_MeshObject.h"

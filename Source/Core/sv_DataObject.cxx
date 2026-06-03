@@ -42,9 +42,7 @@
 // does not ensure TYPE COMPATIBILITY between ShallowCopy's input and
 // the member data_.  This is why ShallowCopy must be protected.)
 
-cvDataObject::cvDataObject(RepositoryDataT type) : cvRepositoryData(type) {
-  data_ = nullptr;
-}
+cvDataObject::cvDataObject() { data_ = nullptr; }
 
 // --------
 // ~cvDataObject

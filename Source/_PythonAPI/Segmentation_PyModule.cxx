@@ -86,7 +86,6 @@
 #include <map>
 #include <functional>
 #include <iostream>
-#include "sv_RepositoryData.h"
 #include "sv_PolyData.h"
 #include "vtkSmartPointer.h"
 

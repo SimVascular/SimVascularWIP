@@ -38,12 +38,11 @@
 #include "sv_VTK.h"
 
 #include "sv_DataObject.h"
-#include "sv_RepositoryData.h"
 
 class SV_EXPORT_REPOSITORY cvDataSet : public cvDataObject {
 
 public:
-  cvDataSet(RepositoryDataT type);
+  cvDataSet();
   ~cvDataSet();
 
 protected:

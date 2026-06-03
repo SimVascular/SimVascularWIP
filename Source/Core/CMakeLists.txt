@@ -14,7 +14,6 @@ set(vtkSVInclude_HEADERS
         sv_LispList.hxx
         sv_Math.h
         sv_PolyData.h
-        sv_RepositoryData.h
         sv_StrPts.h
         sv_UnstructuredGrid.h
         sv_VTK.h
@@ -33,7 +32,6 @@ set(vtkSVInclude_SOURCES
         sv_FactoryRegistrar.cxx
         sv_Math.cxx
         sv_PolyData.cxx
-        sv_RepositoryData.cxx
         sv_StrPts.cxx
         sv_UnstructuredGrid.cxx
         sv_cgeom.cxx

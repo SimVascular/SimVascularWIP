@@ -38,7 +38,6 @@
 #include "sv_VTK.h"
 
 #include "sv_DataSet.h"
-#include "sv_RepositoryData.h"
 
 class SV_EXPORT_REPOSITORY cvUnstructuredGrid : public cvDataSet {
 

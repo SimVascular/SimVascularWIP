@@ -48,7 +48,6 @@
 
 #include "SimVascular.h"
 #include "svOpenCASCADEExports.h" // For exports
-#include "sv_RepositoryData.h"
 #include "sv_SolidModel.h"
 #include "sv_PolyData.h"
 #include "sv_FactoryRegistrar.h"

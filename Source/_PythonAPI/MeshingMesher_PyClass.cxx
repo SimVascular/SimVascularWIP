@@ -805,7 +805,7 @@ Mesher_set_vtk_polydata(PyMeshingMesher* self, PyObject* args)
   }
 
   auto type = gRepository->GetType(objName);
-  if (type != POLY_DATA_T) {
+  if (type != ) {
       api.error("The mesh object '" + std::string(objName)+"' is not of type cvPolyData.");
       return nullptr;
   }

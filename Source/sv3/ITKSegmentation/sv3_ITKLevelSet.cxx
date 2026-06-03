@@ -112,7 +112,6 @@ int cvITKLevelSet::SetInputImage(cvStrPts *s) {
   // InternalImgInfo.Print(std::cout);
 
   m_cvInputImage = new cvStrPts(s->GetVtkStructuredPoints());
-  m_cvInputImage->SetName(s->GetName());
 
   return SV_OK;
 }

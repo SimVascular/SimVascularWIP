@@ -41,7 +41,7 @@
 // cvPolyData
 // --------
 
-cvPolyData::cvPolyData() : cvDataSet(POLY_DATA_T) {
+cvPolyData::cvPolyData() : cvDataSet() {
   data_ = vtkPolyData::New();
 
   locator_ = nullptr;
@@ -53,7 +53,7 @@ cvPolyData::cvPolyData() : cvDataSet(POLY_DATA_T) {
 // cvPolyData
 // --------
 
-cvPolyData::cvPolyData(vtkPolyData *pd) : cvDataSet(POLY_DATA_T) {
+cvPolyData::cvPolyData(vtkPolyData *pd) : cvDataSet() {
   data_ = vtkPolyData::New();
   ShallowCopy(pd);
 
@@ -66,7 +66,7 @@ cvPolyData::cvPolyData(vtkPolyData *pd) : cvDataSet(POLY_DATA_T) {
 // cvPolyData
 // --------
 
-cvPolyData::cvPolyData(cvPolyData *src) : cvDataSet(POLY_DATA_T) {
+cvPolyData::cvPolyData(cvPolyData *src) : cvDataSet() {
   data_ = vtkPolyData::New();
   ShallowCopy(static_cast<vtkDataSet *>(src->data_));
 

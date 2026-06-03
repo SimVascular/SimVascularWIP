@@ -36,12 +36,11 @@
 #include "svRepositoryExports.h" // For exports
 #include "sv_VTK.h"
 
-#include "sv_RepositoryData.h"
 
-class SV_EXPORT_REPOSITORY cvDataObject : public cvRepositoryData {
+class SV_EXPORT_REPOSITORY cvDataObject  {
 
 public:
-  cvDataObject(RepositoryDataT type);
+  cvDataObject();
   virtual ~cvDataObject();
 
   vtkDataObject *GetVtkPtr() { return data_; };

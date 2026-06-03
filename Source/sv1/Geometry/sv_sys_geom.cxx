@@ -1783,7 +1783,8 @@ cvPolyData *sys_geom_Align(cvPolyData *ref, cvPolyData *src) {
 
   // No re-alignment:
   if (posId == 0) {
-    printf("NOTE: no adjustment to alignment [%s]\n", src->GetName());
+    printf("NOTE: no adjustment to alignment [%s]\n",
+           src->GetVtkPolyData()->GetObjectName().c_str());
     dst = new cvPolyData(src);
     return dst;
   }

@@ -51,7 +51,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <functional>
-#include "sv_RepositoryData.h"
 #include "sv_PolyData.h"
 #include "sv_VTK.h"
 #include "sv_misc_utils.h"

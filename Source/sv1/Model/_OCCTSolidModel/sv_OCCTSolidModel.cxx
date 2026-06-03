@@ -2086,14 +2086,14 @@ int cvOCCTSolidModel::GetOnlyPD(vtkPolyData *pd,double &max_dist) const
   if (pd == NULL)
     return SV_ERROR;
 
-  if (VtkUtils_PDCheckArrayName(pd,1,"MESH_TYPES"))
+  if (VtkUtils_PDCheckArrayName(pd,1,"YPES"))
   {
     vtkSmartPointer<vtkCleanPolyData> cleaner = vtkSmartPointer<vtkCleanPolyData>::New();
     cleaner->SetInputData(pd);
     cleaner->PointMergingOn();
     cleaner->Update();
 
-    auto threshold_surface = VtkUtils_ThresholdSurface(7.0, 7.0, "MESH_TYPES", cleaner->GetOutput());
+    auto threshold_surface = VtkUtils_ThresholdSurface(7.0, 7.0, "YPES", cleaner->GetOutput());
 
     if (threshold_surface->GetNumberOfPoints() != 0)
     {
@@ -2104,9 +2104,9 @@ int cvOCCTSolidModel::GetOnlyPD(vtkPolyData *pd,double &max_dist) const
     #if 0 
     vtkSmartPointer<vtkThreshold> thresholder = vtkSmartPointer<vtkThreshold>::New();
     thresholder->SetInputData(cleaner->GetOutput());
-    //Set Input Array to 0 port,0 connection,1 for Cell Data, and MESh_TYPES is the type name
-    thresholder->SetInputArrayToProcess(0,0,0,1,"MESH_TYPES");
-    //Source polydata is on MESH_TYPE 7
+    //Set Input Array to 0 port,0 connection,1 for Cell Data, and YPES is the type name
+    thresholder->SetInputArrayToProcess(0,0,0,1,"YPES");
+    //Source polydata is on YPE 7
     thresholder->ThresholdBetween(7,7);
     thresholder->Update();
     //Extract surface
@@ -2114,7 +2114,7 @@ int cvOCCTSolidModel::GetOnlyPD(vtkPolyData *pd,double &max_dist) const
     surfacer->SetInputData(thresholder->GetOutput());
     surfacer->Update();
 
-    //For polydata of just edges, MESH_TYPE is not 7
+    //For polydata of just edges, YPE is not 7
     //Only want if not edges
     //fprintf(stderr,"Num Points bef! %d\n",surfacer->GetOutput()->GetNumberOfPoints());
     //  vtkSmartPointer<vtkQuadricDecimation> decimator =

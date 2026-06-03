@@ -37,7 +37,6 @@
 #include <sv3PathExports.h>
 
 #include "sv3_PathElement.h"
-#include "sv_RepositoryData.h"
 
 #include <iostream>
 #include <map>
@@ -45,7 +44,7 @@
 #include <string>
 
 namespace sv3 {
-class SV_EXPORT_PATH PathGroup : public cvRepositoryData {
+class SV_EXPORT_PATH PathGroup  {
 public:
   PathGroup();
 

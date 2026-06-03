@@ -32,20 +32,19 @@
 
 #include "sv3_PathElement.h"
 #include "sv_Math.h"
-#include "sv_RepositoryData.h"
 #include <array>
 #include <vector>
 
 using sv3::PathElement;
 using sv3::Spline;
 
-PathElement::PathElement() : cvRepositoryData(PATH_T) {
+PathElement::PathElement()  {
   m_Method = CONSTANT_TOTAL_NUMBER;
   m_CalculationNumber = 100;
   m_Spacing = 0;
 }
 
-PathElement::PathElement(const PathElement &other) : cvRepositoryData(PATH_T) {
+PathElement::PathElement(const PathElement &other)   {
   m_Method = other.m_Method;
   m_CalculationNumber = other.m_CalculationNumber;
   m_Spacing = other.m_Spacing;

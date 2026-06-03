@@ -61,7 +61,7 @@ enum cKernelType {
 };
 
 namespace sv3 {
-class SV_EXPORT_SEGMENTATION Contour : public cvRepositoryData {
+class SV_EXPORT_SEGMENTATION Contour {
 
 public:
   struct svLSParam {

@@ -43,7 +43,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "sv_RepositoryData.h"
 #include "sv_PolyData.h"
 #include "sv_vmtk_utils.h"
 #include "sv_SolidModel.h"
@@ -508,13 +507,13 @@ Geom_centerlines(PyObject* self, PyObject* args)
   char *usage;
   cvRepositoryData *linesDst = nullptr;
   cvRepositoryData *voronoiDst = nullptr;
-  RepositoryDataT type;
+  ;
 
   if (!PyArg_ParseTuple(args, api.format, &geomName,&sourceList,&targetList, &linesName, &voronoiName)) {
       return api.argsError();
   }
 
-  auto geomSrc = GetRepositoryData(api, geomName, POLY_DATA_T);
+  auto geomSrc = GetRepositoryData(api, geomName, );
   if (geomSrc == nullptr) {
     return nullptr;
   }
@@ -609,12 +608,12 @@ Geom_group_polydata(PyObject* self, PyObject* args)
 
   // Get repository data.
   //
-  auto geomSrc = GetRepositoryData(api, geomName, POLY_DATA_T);
+  auto geomSrc = GetRepositoryData(api, geomName, );
   if (geomSrc == nullptr) {
       return nullptr;
   }
 
-  auto linesSrc = GetRepositoryData(api, linesName, POLY_DATA_T);
+  auto linesSrc = GetRepositoryData(api, linesName, );
   if (linesSrc == nullptr) {
       return nullptr;
   }
@@ -661,7 +660,7 @@ Geom_separate_centerlines(PyObject* self, PyObject* args)
       return api.argsError();
   }
 
-  auto linesSrc = GetRepositoryData(api, linesName, POLY_DATA_T);
+  auto linesSrc = GetRepositoryData(api, linesName, );
   if (linesSrc == nullptr) {
       return nullptr;
   }
@@ -709,7 +708,7 @@ Geom_merge_centerlines(PyObject* self, PyObject* args)
   }
 
   // Get repository data.
-  auto linesSrc = GetRepositoryData(api, linesName, POLY_DATA_T);
+  auto linesSrc = GetRepositoryData(api, linesName, );
   if (linesSrc == nullptr) {
       return nullptr;
   }
@@ -757,7 +756,7 @@ Geom_cap(PyObject* self, PyObject* args)
   }
 
   // Get repository data.
-  auto geomSrc = GetRepositoryData(api, geomName, POLY_DATA_T);
+  auto geomSrc = GetRepositoryData(api, geomName, );
   if (geomSrc == nullptr) {
       return nullptr;
   }
@@ -831,11 +830,11 @@ Geom_map_and_correct_ids(PyObject* self, PyObject* args)
 
   // Get repository data.
   //
-  auto geomSrc = GetRepositoryData(api, originalName, POLY_DATA_T);
+  auto geomSrc = GetRepositoryData(api, originalName, );
   if (geomSrc == nullptr) {
       return nullptr;
   }
-  auto geomNew = GetRepositoryData(api, newName, POLY_DATA_T);
+  auto geomNew = GetRepositoryData(api, newName, );
   if (geomNew == nullptr) {
       return nullptr;
   }

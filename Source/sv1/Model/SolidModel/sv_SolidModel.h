@@ -36,7 +36,6 @@
 #include "svSolidModelExports.h"
 #include "sv_FactoryRegistrar.h"
 #include "sv_PolyData.h"
-#include "sv_RepositoryData.h"
 
 enum SolidModel_KernelT {
   SM_KT_RESERVED,
@@ -75,7 +74,7 @@ SV_EXPORT_SOLID char *SolidModel_SimplifyT_EnumToStr(SolidModel_SimplifyT val);
 //--------------
 // The cvSolidModel class is used as an abstract interface for solid modelers.
 //
-class SV_EXPORT_SOLID cvSolidModel : public cvRepositoryData {
+class SV_EXPORT_SOLID cvSolidModel  {
 
 public:
   cvSolidModel(SolidModel_KernelT t); // can never be called directly;

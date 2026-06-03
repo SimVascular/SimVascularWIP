@@ -74,7 +74,6 @@ private:
 typedef enum { PD_DIST_VTK, PD_DIST_INVALID } PolyData_DistanceT;
 
 #include "sv_DataSet.h"
-#include "sv_RepositoryData.h"
 
 class SV_EXPORT_REPOSITORY cvPolyData : public cvDataSet {
 

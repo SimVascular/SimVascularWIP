@@ -45,8 +45,7 @@ SolidModel_KernelT cvSolidModel::gCurrentKernel = SM_KT_PARASOLID;
 // cvSolidModel
 // ----------
 
-cvSolidModel::cvSolidModel(SolidModel_KernelT t)
-    : cvRepositoryData(SOLID_MODEL_T) {
+cvSolidModel::cvSolidModel(SolidModel_KernelT t) {
   kernel_ = t;
   tol_ = 1e6 * FindMachineEpsilon();
 }

@@ -49,7 +49,6 @@
       m_cv##name = NULL;                                                       \
     }                                                                          \
     m_cv##name = new cvtype((baseType *)value->GetVtkPtr());                   \
-    m_cv##name->SetName(value->GetName());                                     \
     return SV_OK;                                                              \
   }
 

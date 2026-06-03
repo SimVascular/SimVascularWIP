@@ -49,8 +49,7 @@
 #include "svTetGenAdaptorExports.h"
 
 #include "sv_AdaptObject.h"
-//#include "sv_RepositoryData.h"
-
+//
 #ifdef SV_USE_ZLIB
   #ifdef SV_USE_SYSTEM_ZLIB
     #include <zlib.h>
