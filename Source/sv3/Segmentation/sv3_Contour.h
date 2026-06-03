@@ -37,7 +37,6 @@
 #include <sv3SegmentationExports.h>
 
 #include "sv3_PathElement.h"
-#include "sv_FactoryRegistrar.h"
 
 #include "vtkImageData.h"
 #include "vtkPlane.h"

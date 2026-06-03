@@ -78,7 +78,6 @@ public:
 
   KernelType GetKernel() const {return adapt_kernel_;}
   static KernelType gCurrentKernel;
-  static cvFactoryRegistrar gRegistrar;
 
   //Copy Operation
   virtual cvAdaptObject *Copy() const = 0;

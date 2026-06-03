@@ -34,7 +34,6 @@
 
 #include "SimVascular.h"
 #include "svSolidModelExports.h"
-#include "sv_FactoryRegistrar.h"
 #include "sv_PolyData.h"
 
 enum SolidModel_KernelT {
