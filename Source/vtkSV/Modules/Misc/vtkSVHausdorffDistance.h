@@ -51,14 +51,14 @@
 
 #include "vtkPolyDataAlgorithm.h"
 
-class VTKSVMISC_EXPORT vtkSVHausdorffDistance : public vtkPolyDataAlgorithm
-{
+class VTKSVMISC_EXPORT vtkSVHausdorffDistance : public vtkPolyDataAlgorithm {
 public:
-  static vtkSVHausdorffDistance* New();
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  static vtkSVHausdorffDistance *New();
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
-  /// \brief Set/Get name for data array to be used to determine the in between sections
+  /// \brief Set/Get name for data array to be used to determine the in between
+  /// sections
   vtkSetStringMacro(DistanceArrayName);
   vtkGetStringMacro(DistanceArrayName);
   //@}
@@ -76,26 +76,25 @@ protected:
 
   // Usual data generation method
   int RequestData(vtkInformation *vtkNotUsed(request),
-		  vtkInformationVector **inputVector,
-		  vtkInformationVector *outputVector) override;
+                  vtkInformationVector **inputVector,
+                  vtkInformationVector *outputVector) override;
 
   int PrepFilter(); // Prep work
-  int RunFilter(); // Run filter operations
+  int RunFilter();  // Run filter operations
 
-  char* DistanceArrayName; // Name of distance data array
+  char *DistanceArrayName; // Name of distance data array
 
   vtkPolyData *SourcePd; // First input to the filter
   vtkPolyData *TargetPd; // Second input to the filter
 
-  double AverageDistance; // The average calculated distance from target to source
+  double
+      AverageDistance; // The average calculated distance from target to source
   double HausdorffDistance; // The largest distance from all point distances
-  double MinimumDistance; // The smallest distance from all point distances
+  double MinimumDistance;   // The smallest distance from all point distances
 
 private:
-  vtkSVHausdorffDistance(const vtkSVHausdorffDistance&);  // Not implemented.
-  void operator=(const vtkSVHausdorffDistance&);  // Not implemented.
+  vtkSVHausdorffDistance(const vtkSVHausdorffDistance &); // Not implemented.
+  void operator=(const vtkSVHausdorffDistance &);         // Not implemented.
 };
 
 #endif
-
-

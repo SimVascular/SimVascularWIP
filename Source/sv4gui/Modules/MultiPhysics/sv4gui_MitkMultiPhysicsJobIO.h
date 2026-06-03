@@ -36,21 +36,20 @@
 
 #include <mitkAbstractFileIO.h>
 
-class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMitkMultiPhysicsJobIO : public mitk::AbstractFileIO
-{
+class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMitkMultiPhysicsJobIO
+    : public mitk::AbstractFileIO {
 public:
+  sv4guiMitkMultiPhysicsJobIO();
 
-    sv4guiMitkMultiPhysicsJobIO();
+  using mitk::AbstractFileReader::DoRead;
+  std::vector<mitk::BaseData::Pointer> DoRead() override;
+  mitk::IFileIO::ConfidenceLevel GetReaderConfidenceLevel() const override;
 
-    using mitk::AbstractFileReader::DoRead;
-    std::vector<mitk::BaseData::Pointer> DoRead() override;
-    mitk::IFileIO::ConfidenceLevel GetReaderConfidenceLevel() const override;
-
-    void Write() override;
-    mitk::IFileIO::ConfidenceLevel GetWriterConfidenceLevel() const override;
+  void Write() override;
+  mitk::IFileIO::ConfidenceLevel GetWriterConfidenceLevel() const override;
 
 private:
-    sv4guiMitkMultiPhysicsJobIO* IOClone() const override;
+  sv4guiMitkMultiPhysicsJobIO *IOClone() const override;
 };
 
 #endif // sv4guiMitkMultiPhysicsJOBIO_H

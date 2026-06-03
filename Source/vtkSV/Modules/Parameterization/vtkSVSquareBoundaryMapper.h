@@ -50,25 +50,26 @@
 
 #include "vtkSVBoundaryMapper.h"
 
-class VTKSVPARAMETERIZATION_EXPORT vtkSVSquareBoundaryMapper : public vtkSVBoundaryMapper
-{
+class VTKSVPARAMETERIZATION_EXPORT vtkSVSquareBoundaryMapper
+    : public vtkSVBoundaryMapper {
 public:
-  static vtkSVSquareBoundaryMapper* New();
-  vtkTypeMacro(vtkSVSquareBoundaryMapper,vtkSVBoundaryMapper);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  static vtkSVSquareBoundaryMapper *New();
+  vtkTypeMacro(vtkSVSquareBoundaryMapper, vtkSVBoundaryMapper);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
 protected:
   vtkSVSquareBoundaryMapper() {}
 
   int SetBoundaries() override; // Must be implemented
-  int CalculateSquareEdgeLengths(vtkIntArray *actualIds); // Calculate square edge lengths
+  int CalculateSquareEdgeLengths(
+      vtkIntArray *actualIds); // Calculate square edge lengths
   int SetSquareBoundary(vtkIntArray *actualIds); // Set the square boundary
 
   double BoundaryLengths[4];
 
 private:
-  vtkSVSquareBoundaryMapper(const vtkSVSquareBoundaryMapper&);
-  void operator=(const vtkSVSquareBoundaryMapper&);
+  vtkSVSquareBoundaryMapper(const vtkSVSquareBoundaryMapper &);
+  void operator=(const vtkSVSquareBoundaryMapper &);
 };
 
 #endif

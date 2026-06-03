@@ -47,12 +47,11 @@
 #include "vtkPolyDataAlgorithm.h"
 #include <set>
 
-class VTKSVGEOMETRY_EXPORT vtkSVConstrainedBlend : public vtkPolyDataAlgorithm
-{
+class VTKSVGEOMETRY_EXPORT vtkSVConstrainedBlend : public vtkPolyDataAlgorithm {
 public:
-  static vtkSVConstrainedBlend* New();
+  static vtkSVConstrainedBlend *New();
   vtkTypeMacro(vtkSVConstrainedBlend, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
   /// \brief Set name for cell array or point array to use for blending
@@ -64,69 +63,69 @@ public:
 
   //@{
   /// \brief Get/Set weight for constrained smoothing. Default 0.2.
-  vtkGetMacro(Weight,double);
-  vtkSetMacro(Weight,double);
+  vtkGetMacro(Weight, double);
+  vtkSetMacro(Weight, double);
   //@}
 
   //@{
   /// \brief Indicate whether point or cell arrays should be used.
-  vtkGetMacro(UsePointArray,int);
-  vtkSetMacro(UsePointArray,int);
-  vtkBooleanMacro(UsePointArray,int);
-  vtkGetMacro(UseCellArray,int);
-  vtkSetMacro(UseCellArray,int);
-  vtkBooleanMacro(UseCellArray,int);
+  vtkGetMacro(UsePointArray, int);
+  vtkSetMacro(UsePointArray, int);
+  vtkBooleanMacro(UsePointArray, int);
+  vtkGetMacro(UseCellArray, int);
+  vtkSetMacro(UseCellArray, int);
+  vtkBooleanMacro(UseCellArray, int);
   //@}
 
   //@{
   /// \brief Get/Set Number of blending operations. This is essentially
   /// the same as running the filter multiple times.
-  vtkGetMacro(NumBlendOperations,int);
-  vtkSetMacro(NumBlendOperations,int);
+  vtkGetMacro(NumBlendOperations, int);
+  vtkSetMacro(NumBlendOperations, int);
   //@}
 
   //@{
   /// \brief Get/Set Number of sub blending operations. A sub blend consists of
   /// constrained smoothing, laplacain smoothing, decimation, and subdivision,
   /// in that order and all with their own respective iterations.
-  vtkGetMacro(NumSubBlendOperations,int);
-  vtkSetMacro(NumSubBlendOperations,int);
+  vtkGetMacro(NumSubBlendOperations, int);
+  vtkSetMacro(NumSubBlendOperations, int);
   //@}
 
   //@{
   /// \brief Get/Set the number of constrained smoothings to perform within
   /// each sub blend
-  vtkGetMacro(NumConstrainedSmoothOperations,int);
-  vtkSetMacro(NumConstrainedSmoothOperations,int);
+  vtkGetMacro(NumConstrainedSmoothOperations, int);
+  vtkSetMacro(NumConstrainedSmoothOperations, int);
   //@}
 
   //@{
   /// \brief Get/Set the number of laplacian smoothings to perform within
   /// each sub blend
-  vtkGetMacro(NumLapSmoothOperations,int);
-  vtkSetMacro(NumLapSmoothOperations,int);
+  vtkGetMacro(NumLapSmoothOperations, int);
+  vtkSetMacro(NumLapSmoothOperations, int);
   //@}
 
   //@{
   /// \brief Get/Set the number of maximum conjugate gradient iterations used
   /// for the constrained smoothing.
   /// each sub blend
-  vtkGetMacro(NumGradientSolves,int);
-  vtkSetMacro(NumGradientSolves,int);
+  vtkGetMacro(NumGradientSolves, int);
+  vtkSetMacro(NumGradientSolves, int);
   //@}
 
   //@{
   /// \brief Get/Set the number of subdivision iterations to perform within
   /// each sub blend
-  vtkGetMacro(NumSubdivisionIterations,int);
-  vtkSetMacro(NumSubdivisionIterations,int);
+  vtkGetMacro(NumSubdivisionIterations, int);
+  vtkSetMacro(NumSubdivisionIterations, int);
   //@}
 
   //@{
   /// \brief Get/Set the target reduction in the decimation filter
   /// each sub blend
-  vtkGetMacro(DecimationTargetReduction,double);
-  vtkSetMacro(DecimationTargetReduction,double);
+  vtkGetMacro(DecimationTargetReduction, double);
+  vtkSetMacro(DecimationTargetReduction, double);
   //@}
 
 protected:
@@ -135,17 +134,17 @@ protected:
 
   // Usual data generation method
   int RequestData(vtkInformation *vtkNotUsed(request),
-		  vtkInformationVector **inputVector,
-		  vtkInformationVector *outputVector) override;
+                  vtkInformationVector **inputVector,
+                  vtkInformationVector *outputVector) override;
 
   vtkIntArray *CellArray;
   vtkIntArray *PointArray;
 
-  char* CellArrayName;
-  char* PointArrayName;
+  char *CellArrayName;
+  char *PointArrayName;
 
   /// \brief Set the PointArray and CellArray
-  int GetArrays(vtkPolyData *object,int type);
+  int GetArrays(vtkPolyData *object, int type);
 
   /// \brief Run decimation filter
   int Decimate(vtkPolyData *pd);
@@ -173,10 +172,8 @@ protected:
   double DecimationTargetReduction;
 
 private:
-  vtkSVConstrainedBlend(const vtkSVConstrainedBlend&);  // Not implemented.
-  void operator=(const vtkSVConstrainedBlend&);  // Not implemented.
+  vtkSVConstrainedBlend(const vtkSVConstrainedBlend &); // Not implemented.
+  void operator=(const vtkSVConstrainedBlend &);        // Not implemented.
 };
 
 #endif
-
-

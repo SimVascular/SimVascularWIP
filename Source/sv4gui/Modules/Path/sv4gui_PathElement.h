@@ -41,59 +41,60 @@
 
 #include "mitkPoint.h"
 
-class SV4GUIMODULEPATH_EXPORT sv4guiPathElement : public sv3::PathElement
-{
+class SV4GUIMODULEPATH_EXPORT sv4guiPathElement : public sv3::PathElement {
 public:
+  struct svControlPoint {
+    int id = -1;
+    bool selected = false;
+    mitk::Point3D point;
+  };
 
-    struct svControlPoint
-    {
-        int id=-1;
-        bool selected=false;
-        mitk::Point3D point;
-    };
+  typedef sv4guiSpline::sv4guiSplinePoint sv4guiPathPoint;
 
-    typedef sv4guiSpline::sv4guiSplinePoint sv4guiPathPoint;
+  sv4guiPathElement();
 
-    sv4guiPathElement();
+  sv4guiPathElement(const sv4guiPathElement &other);
 
-    sv4guiPathElement(const sv4guiPathElement &other);
+  virtual ~sv4guiPathElement();
 
-    virtual ~sv4guiPathElement();
+  sv4guiPathElement *Clone();
 
-    sv4guiPathElement* Clone();
+  std::vector<mitk::Point3D> GetControlPoints();
 
-    std::vector<mitk::Point3D> GetControlPoints();
+  svControlPoint GetsvControlPoint(int index);
 
-    svControlPoint GetsvControlPoint(int index) ;
+  mitk::Point3D GetControlPoint(int index);
 
-    mitk::Point3D GetControlPoint(int index);
+  void InsertControlPoint(int index, mitk::Point3D point);
 
-    void InsertControlPoint(int index, mitk::Point3D point);
+  int GetInsertintIndexByDistance(mitk::Point3D point);
 
-    int GetInsertintIndexByDistance( mitk::Point3D point);
+  void SetControlPoint(int index, mitk::Point3D point);
 
-    void SetControlPoint(int index, mitk::Point3D point);
+  void SetControlPoints(std::vector<mitk::Point3D> points, bool update = true);
 
-    void SetControlPoints(std::vector<mitk::Point3D> points, bool update = true);
+  int SearchControlPoint(mitk::Point3D point, mitk::ScalarType distance);
 
-    int SearchControlPoint( mitk::Point3D point, mitk::ScalarType distance);
+  sv4guiPathElement *CreateSmoothedPathElement(
+      int sampleRate, int numModes,
+      bool controlPointsBased = true); // otherwise pathPointsBased
 
-    sv4guiPathElement* CreateSmoothedPathElement(int sampleRate, int numModes, bool controlPointsBased = true ); //otherwise pathPointsBased
+  std::vector<sv4guiPathPoint> GetPathPoints();
 
-    std::vector<sv4guiPathPoint>  GetPathPoints();
+  std::vector<mitk::Point3D> GetPathPosPoints();
 
-    std::vector<mitk::Point3D> GetPathPosPoints();
+  sv4guiPathPoint GetPathPoint(int index);
 
-    sv4guiPathPoint GetPathPoint(int index) ;
+  mitk::Point3D GetPathPosPoint(int index);
 
-    mitk::Point3D GetPathPosPoint(int index) ;
+  void
+  SetPathPoints(std::vector<sv4guiPathElement::sv4guiPathPoint> pathPoints);
 
-    void SetPathPoints(std::vector<sv4guiPathElement::sv4guiPathPoint> pathPoints);
-    
-    std::vector<sv4guiPathPoint> GetExtendedPathPoints(double realBounds[6], double minSpacing, int& startingIndex);
+  std::vector<sv4guiPathPoint> GetExtendedPathPoints(double realBounds[6],
+                                                     double minSpacing,
+                                                     int &startingIndex);
 
 protected:
-
 };
 
 #endif // SV4GUI_PATHELEMENT_H

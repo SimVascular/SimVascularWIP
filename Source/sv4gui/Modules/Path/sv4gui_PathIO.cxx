@@ -30,163 +30,157 @@
  */
 
 #include "sv4gui_PathIO.h"
+#include "sv3_PathIO.h"
 #include "sv4gui_Path.h"
 #include "sv4gui_XmlIOUtil.h"
-#include "sv3_PathIO.h"
 #include <mitkCustomMimeType.h>
 #include <mitkIOMimeTypes.h>
 
-static mitk::CustomMimeType Createsv4guiPathMimeType()
-{
-    mitk::CustomMimeType mimeType(mitk::IOMimeTypes::DEFAULT_BASE_NAME() + ".svpath");
-    mimeType.SetCategory("SimVascular Files");
-    mimeType.AddExtension("pth");
-    mimeType.SetComment("SimVascular Path");
+static mitk::CustomMimeType Createsv4guiPathMimeType() {
+  mitk::CustomMimeType mimeType(mitk::IOMimeTypes::DEFAULT_BASE_NAME() +
+                                ".svpath");
+  mimeType.SetCategory("SimVascular Files");
+  mimeType.AddExtension("pth");
+  mimeType.SetComment("SimVascular Path");
 
-    return mimeType;
+  return mimeType;
 }
 
 sv4guiPathIO::sv4guiPathIO()
-    : mitk::AbstractFileIO(sv4guiPath::GetStaticNameOfClass(), Createsv4guiPathMimeType(), "SimVascular Path")
-{
-    this->RegisterService();
+    : mitk::AbstractFileIO(sv4guiPath::GetStaticNameOfClass(),
+                           Createsv4guiPathMimeType(), "SimVascular Path") {
+  this->RegisterService();
 }
 
-std::vector<mitk::BaseData::Pointer> sv4guiPathIO::Read()
-{
-    std::string fileName=GetInputLocation();
+std::vector<mitk::BaseData::Pointer> sv4guiPathIO::Read() {
+  std::string fileName = GetInputLocation();
 
-    return ReadFile(fileName);
+  return ReadFile(fileName);
 }
 
 //----------
 // ReadFile
 //----------
 //
-std::vector<mitk::BaseData::Pointer> 
-sv4guiPathIO::ReadFile(std::string fileName)
-{
-    //std::string msg("sv4guiPathIO::ReadFile");
-    //std::cout << msg << "=================== sv4guiPathIO::ReadFile =========" << std::endl;
-    //std::cout << msg << "fileName: " << fileName << std::endl;
+std::vector<mitk::BaseData::Pointer>
+sv4guiPathIO::ReadFile(std::string fileName) {
+  // std::string msg("sv4guiPathIO::ReadFile");
+  // std::cout << msg << "=================== sv4guiPathIO::ReadFile ========="
+  // << std::endl; std::cout << msg << "fileName: " << fileName << std::endl;
 
-    tinyxml2::XMLDocument document;
+  tinyxml2::XMLDocument document;
 
-    if (document.LoadFile(fileName.c_str()) != tinyxml2::XML_SUCCESS) {
-        mitkThrow() << "Could not open/read/parse " << fileName;
-        std::vector<mitk::BaseData::Pointer> empty;
-        return empty;
-    }
+  if (document.LoadFile(fileName.c_str()) != tinyxml2::XML_SUCCESS) {
+    mitkThrow() << "Could not open/read/parse " << fileName;
+    std::vector<mitk::BaseData::Pointer> empty;
+    return empty;
+  }
 
-    auto pathElement = document.FirstChildElement("path");
+  auto pathElement = document.FirstChildElement("path");
 
-    if(!pathElement){
-        mitkThrow() << "No path data in "<< fileName;
-    }
+  if (!pathElement) {
+    mitkThrow() << "No path data in " << fileName;
+  }
 
-    sv4guiPath::Pointer path = sv4guiPath::New();
-    sv3::PathIO* reader = new sv3::PathIO();
-    sv3::PathGroup* svPathGrp = reader->ReadFile(fileName);
-    delete reader;
-    
-    path->SetPathID(svPathGrp->GetPathID());
-    path->SetMethod(svPathGrp->GetMethod());
-    path->SetCalculationNumber(svPathGrp->GetCalculationNumber());
-    path->SetSpacing(svPathGrp->GetSpacing());
-    
-    for (int i=0; i<svPathGrp->GetTimeSize(); i++)
-        path->SetPathElement(static_cast<sv4guiPathElement*>(svPathGrp->GetPathElement(i)),i);
-        
-    //only for GUI
-    double resliceSize=5.0;
-    pathElement->QueryDoubleAttribute("reslice_size", &resliceSize);
-    path->SetResliceSize(resliceSize);
+  sv4guiPath::Pointer path = sv4guiPath::New();
+  sv3::PathIO *reader = new sv3::PathIO();
+  sv3::PathGroup *svPathGrp = reader->ReadFile(fileName);
+  delete reader;
 
-    //std::string point2dsize="",point3dsize="";
+  path->SetPathID(svPathGrp->GetPathID());
+  path->SetMethod(svPathGrp->GetMethod());
+  path->SetCalculationNumber(svPathGrp->GetCalculationNumber());
+  path->SetSpacing(svPathGrp->GetSpacing());
 
-    const char* point2dsize = "";
-    const char* point3dsize = "";
+  for (int i = 0; i < svPathGrp->GetTimeSize(); i++)
+    path->SetPathElement(
+        static_cast<sv4guiPathElement *>(svPathGrp->GetPathElement(i)), i);
 
-    pathElement->QueryStringAttribute("point_2D_display_size", &point2dsize);
-    pathElement->QueryStringAttribute("point_size", &point3dsize);
-    path->SetProp("point 2D display size",point2dsize);
-    path->SetProp("point size",point3dsize);
+  // only for GUI
+  double resliceSize = 5.0;
+  pathElement->QueryDoubleAttribute("reslice_size", &resliceSize);
+  path->SetResliceSize(resliceSize);
 
-    std::vector<mitk::BaseData::Pointer> result;
-    result.push_back(path.GetPointer());
-    delete svPathGrp;
-    return result;
+  // std::string point2dsize="",point3dsize="";
+
+  const char *point2dsize = "";
+  const char *point3dsize = "";
+
+  pathElement->QueryStringAttribute("point_2D_display_size", &point2dsize);
+  pathElement->QueryStringAttribute("point_size", &point3dsize);
+  path->SetProp("point 2D display size", point2dsize);
+  path->SetProp("point size", point3dsize);
+
+  std::vector<mitk::BaseData::Pointer> result;
+  result.push_back(path.GetPointer());
+  delete svPathGrp;
+  return result;
 }
 
-mitk::IFileIO::ConfidenceLevel sv4guiPathIO::GetReaderConfidenceLevel() const
-{
-    if (mitk::AbstractFileIO::GetReaderConfidenceLevel() == mitk::IFileIO::Unsupported)
-    {
-        return mitk::IFileIO::Unsupported;
-    }
+mitk::IFileIO::ConfidenceLevel sv4guiPathIO::GetReaderConfidenceLevel() const {
+  if (mitk::AbstractFileIO::GetReaderConfidenceLevel() ==
+      mitk::IFileIO::Unsupported) {
+    return mitk::IFileIO::Unsupported;
+  }
+  return Supported;
+}
+
+void sv4guiPathIO::Write() {
+  ValidateOutputLocation();
+
+  const sv4guiPath *path = dynamic_cast<const sv4guiPath *>(this->GetInput());
+  if (!path)
+    return;
+
+  tinyxml2::XMLDocument document;
+  auto decl = document.NewDeclaration();
+  document.LinkEndChild(decl);
+
+  auto pathElement = document.NewElement("path");
+  pathElement->SetAttribute("id", path->GetPathID());
+  pathElement->SetAttribute("method", path->GetMethod());
+  pathElement->SetAttribute("calculation_number", path->GetCalculationNumber());
+  pathElement->SetAttribute("spacing", path->GetSpacing());
+  pathElement->SetAttribute("version", "1.0");
+
+  // only for GUI
+  pathElement->SetAttribute("reslice_size", path->GetResliceSize());
+  pathElement->SetAttribute("point_2D_display_size",
+                            path->GetProp("point 2D display size").c_str());
+  pathElement->SetAttribute("point_size", path->GetProp("point size").c_str());
+  document.LinkEndChild(pathElement);
+
+  for (int t = 0; t < path->GetTimeSize(); t++) {
+    auto timestepElement = document.NewElement("timestep");
+    timestepElement->SetAttribute("id", t);
+    pathElement->LinkEndChild(timestepElement);
+
+    sv4guiPathElement *pe = path->GetPathElement(t);
+    if (!pe)
+      continue;
+
+    sv3::PathElement *svPe = static_cast<sv3::PathElement *>(pe);
+
+    this->sv3::PathIO::WritePath(document, svPe, timestepElement);
+  }
+
+  std::string fileName = GetOutputLocation();
+
+  if (document.SaveFile(fileName.c_str()) != tinyxml2::XML_SUCCESS) {
+    mitkThrow() << "Could not write Path parameters to the file " << fileName;
+  }
+}
+
+mitk::IFileIO::ConfidenceLevel sv4guiPathIO::GetWriterConfidenceLevel() const {
+  if (mitk::AbstractFileIO::GetWriterConfidenceLevel() ==
+      mitk::IFileIO::Unsupported)
+    return mitk::IFileIO::Unsupported;
+  const sv4guiPath *input = dynamic_cast<const sv4guiPath *>(this->GetInput());
+  if (input) {
     return Supported;
+  } else {
+    return Unsupported;
+  }
 }
 
-void sv4guiPathIO::Write()
-{
-    ValidateOutputLocation();
-
-    const sv4guiPath* path = dynamic_cast<const sv4guiPath*>(this->GetInput());
-    if(!path) return;
-    
-    tinyxml2::XMLDocument document;
-    auto  decl = document.NewDeclaration(); 
-    document.LinkEndChild( decl );
-
-    auto pathElement = document.NewElement("path");
-    pathElement->SetAttribute("id", path->GetPathID());
-    pathElement->SetAttribute("method", path->GetMethod());
-    pathElement->SetAttribute("calculation_number", path->GetCalculationNumber());
-    pathElement->SetAttribute("spacing", path->GetSpacing());
-    pathElement->SetAttribute("version",  "1.0" );
-    
-    //only for GUI
-    pathElement->SetAttribute("reslice_size", path->GetResliceSize());
-    pathElement->SetAttribute("point_2D_display_size", path->GetProp("point 2D display size").c_str());
-    pathElement->SetAttribute("point_size",path->GetProp("point size").c_str());
-    document.LinkEndChild(pathElement);
-
-    for(int t=0;t<path->GetTimeSize();t++)
-    {
-        auto timestepElement = document.NewElement("timestep");
-        timestepElement->SetAttribute("id",t);
-        pathElement->LinkEndChild(timestepElement);
-
-        sv4guiPathElement* pe=path->GetPathElement(t);
-        if(!pe) continue;
-
-        sv3::PathElement* svPe=static_cast<sv3::PathElement*>(pe);
-
-        this->sv3::PathIO::WritePath(document, svPe,timestepElement); 
-    }
-
-    std::string fileName=GetOutputLocation();
-
-    if (document.SaveFile(fileName.c_str()) != tinyxml2::XML_SUCCESS)
-    {
-        mitkThrow() << "Could not write Path parameters to the file " << fileName;
-
-    }
-}
-
-mitk::IFileIO::ConfidenceLevel sv4guiPathIO::GetWriterConfidenceLevel() const
-{
-    if (mitk::AbstractFileIO::GetWriterConfidenceLevel() == mitk::IFileIO::Unsupported) return mitk::IFileIO::Unsupported;
-    const sv4guiPath* input = dynamic_cast<const sv4guiPath*>(this->GetInput());
-    if (input)
-    {
-        return Supported;
-    }else{
-        return Unsupported;
-    }
-}
-
-sv4guiPathIO* sv4guiPathIO::IOClone() const
-{
-    return new sv4guiPathIO(*this);
-}
+sv4guiPathIO *sv4guiPathIO::IOClone() const { return new sv4guiPathIO(*this); }

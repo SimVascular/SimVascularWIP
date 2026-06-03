@@ -33,63 +33,51 @@
 #include "sv4gui_MitkSeg3DOperation.h"
 
 sv4guiMitkSeg3D::sv4guiMitkSeg3D()
-    : mitk::sv4guiSurface()
-    , m_Seg3D(nullptr)
-    , m_DataModified(false)
-{
-}
+    : mitk::sv4guiSurface(), m_Seg3D(nullptr), m_DataModified(false) {}
 
 sv4guiMitkSeg3D::sv4guiMitkSeg3D(const sv4guiMitkSeg3D &other)
-    : mitk::sv4guiSurface(other)
-    , m_DataModified(true)
-{
-    m_Seg3D=new sv4guiSeg3D(*(other.m_Seg3D),false);
-    m_Seg3D->SetVtkPolyData(GetVtkPolyData());
+    : mitk::sv4guiSurface(other), m_DataModified(true) {
+  m_Seg3D = new sv4guiSeg3D(*(other.m_Seg3D), false);
+  m_Seg3D->SetVtkPolyData(GetVtkPolyData());
 }
 
-sv4guiMitkSeg3D::~sv4guiMitkSeg3D()
-{
-    if(m_Seg3D)
-        delete m_Seg3D;
+sv4guiMitkSeg3D::~sv4guiMitkSeg3D() {
+  if (m_Seg3D)
+    delete m_Seg3D;
 }
 
-bool sv4guiMitkSeg3D::IsEmptyTimeStep(unsigned int t) const
-{
-    return !IsInitialized();
+bool sv4guiMitkSeg3D::IsEmptyTimeStep(unsigned int t) const {
+  return !IsInitialized();
 }
 
-void sv4guiMitkSeg3D::SetSeg3D(sv4guiSeg3D* seg3D)
-{
-    m_Seg3D=seg3D;
+void sv4guiMitkSeg3D::SetSeg3D(sv4guiSeg3D *seg3D) {
+  m_Seg3D = seg3D;
 
-    SetVtkPolyData(seg3D->GetVtkPolyData());
-    CalculateBoundingBox();
-    Modified();
+  SetVtkPolyData(seg3D->GetVtkPolyData());
+  CalculateBoundingBox();
+  Modified();
 
-    this->InvokeEvent( sv4guiMitkSeg3DSetEvent() );
+  this->InvokeEvent(sv4guiMitkSeg3DSetEvent());
 }
 
-void sv4guiMitkSeg3D::ExecuteOperation( mitk::Operation* operation )
-{
+void sv4guiMitkSeg3D::ExecuteOperation(mitk::Operation *operation) {
 
-    sv4guiMitkSeg3DOperation* seg3DOperation = dynamic_cast<sv4guiMitkSeg3DOperation*>(operation);
+  sv4guiMitkSeg3DOperation *seg3DOperation =
+      dynamic_cast<sv4guiMitkSeg3DOperation *>(operation);
 
-    if(seg3DOperation==nullptr)
-    {
-        MITK_ERROR << "No valid Operation for sv4guiMitkSeg3D" << std::endl;
-        return;
-    }
+  if (seg3DOperation == nullptr) {
+    MITK_ERROR << "No valid Operation for sv4guiMitkSeg3D" << std::endl;
+    return;
+  }
 
-    sv4guiSeg3D* seg3D=seg3DOperation->GetSeg3D();
+  sv4guiSeg3D *seg3D = seg3DOperation->GetSeg3D();
 
-    if(seg3DOperation->GetOperationType()==sv4guiMitkSeg3DOperation::OpSETSEG3D)
-    {
-        m_DataModified=true;
-        SetSeg3D(seg3D);
-    }
+  if (seg3DOperation->GetOperationType() ==
+      sv4guiMitkSeg3DOperation::OpSETSEG3D) {
+    m_DataModified = true;
+    SetSeg3D(seg3D);
+  }
 
-    // mitk::OperationEndEvent endevent(operation);
-    // ((const itk::Object*)this)->InvokeEvent(endevent);
-
+  // mitk::OperationEndEvent endevent(operation);
+  // ((const itk::Object*)this)->InvokeEvent(endevent);
 }
-

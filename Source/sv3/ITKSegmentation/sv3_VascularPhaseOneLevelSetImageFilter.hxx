@@ -34,53 +34,49 @@
 
 #include "sv3_VascularPhaseOneLevelSetImageFilter.h"
 
-namespace itk
-{
-template< typename TInputImage, typename TFeatureImage, typename TOutputType >
-VascularPhaseOneLevelSetImageFilter< TInputImage, TFeatureImage, TOutputType >
-::VascularPhaseOneLevelSetImageFilter()
- {
-	/* Instantiate a geodesic active contour function and set it as the
-    segmentation function. */
-	m_VascularPhaseOneLevelSetFunction = VascularPhaseOneLevelSetFunctionType::New();
+namespace itk {
+template <typename TInputImage, typename TFeatureImage, typename TOutputType>
+VascularPhaseOneLevelSetImageFilter<TInputImage, TFeatureImage, TOutputType>::
+    VascularPhaseOneLevelSetImageFilter() {
+  /* Instantiate a geodesic active contour function and set it as the
+segmentation function. */
+  m_VascularPhaseOneLevelSetFunction =
+      VascularPhaseOneLevelSetFunctionType::New();
 
-	this->SetVascularSegmentationFunction(m_VascularPhaseOneLevelSetFunction);
-	/* Turn off interpolation. */
-	this->InterpolateSurfaceLocationOff();
-	this->SetDebug(0);
- }
+  this->SetVascularSegmentationFunction(m_VascularPhaseOneLevelSetFunction);
+  /* Turn off interpolation. */
+  this->InterpolateSurfaceLocationOff();
+  this->SetDebug(0);
+}
 
-template< typename TInputImage, typename TFeatureImage, typename TOutputType >
-void
-VascularPhaseOneLevelSetImageFilter< TInputImage, TFeatureImage, TOutputType >
-::PrintSelf(std::ostream & os, Indent indent) const
- {
-	Superclass::PrintSelf(os, indent);
-	os << "VascularPhaseOneLevelSetFunction: " << m_VascularPhaseOneLevelSetFunction.GetPointer();
- }
+template <typename TInputImage, typename TFeatureImage, typename TOutputType>
+void VascularPhaseOneLevelSetImageFilter<
+    TInputImage, TFeatureImage, TOutputType>::PrintSelf(std::ostream &os,
+                                                        Indent indent) const {
+  Superclass::PrintSelf(os, indent);
+  os << "VascularPhaseOneLevelSetFunction: "
+     << m_VascularPhaseOneLevelSetFunction.GetPointer();
+}
 
-template< typename TInputImage, typename TFeatureImage, typename TOutputType >
-void
-VascularPhaseOneLevelSetImageFilter< TInputImage, TFeatureImage, TOutputType >
-::GenerateData()
- {
-	// Make sure the SpeedImage is setup for the case when PropagationScaling
-	// is zero
+template <typename TInputImage, typename TFeatureImage, typename TOutputType>
+void VascularPhaseOneLevelSetImageFilter<TInputImage, TFeatureImage,
+                                         TOutputType>::GenerateData() {
+  // Make sure the SpeedImage is setup for the case when PropagationScaling
+  // is zero
 
-	if ( this->GetVascularSegmentationFunction()
-			&& this->GetVascularSegmentationFunction()->GetPropagationWeight() == 0 )
-	{
-		this->GetVascularSegmentationFunction()->AllocateSpeedImage();
-		this->GetVascularSegmentationFunction()->CalculateSpeedImage();
-		this->GetVascularSegmentationFunction()->AllocateAdvectionImage();
-		this->GetVascularSegmentationFunction()->CalculateAdvectionImage();
-		m_VascularPhaseOneLevelSetFunction->AllocateGradientImage();
-		m_VascularPhaseOneLevelSetFunction->CalculateGradientImage();
-	}
+  if (this->GetVascularSegmentationFunction() &&
+      this->GetVascularSegmentationFunction()->GetPropagationWeight() == 0) {
+    this->GetVascularSegmentationFunction()->AllocateSpeedImage();
+    this->GetVascularSegmentationFunction()->CalculateSpeedImage();
+    this->GetVascularSegmentationFunction()->AllocateAdvectionImage();
+    this->GetVascularSegmentationFunction()->CalculateAdvectionImage();
+    m_VascularPhaseOneLevelSetFunction->AllocateGradientImage();
+    m_VascularPhaseOneLevelSetFunction->CalculateGradientImage();
+  }
 
-	// Continue with Superclass implementation
-	Superclass::GenerateData();
- }
+  // Continue with Superclass implementation
+  Superclass::GenerateData();
+}
 } // end namespace itk
 
 #endif

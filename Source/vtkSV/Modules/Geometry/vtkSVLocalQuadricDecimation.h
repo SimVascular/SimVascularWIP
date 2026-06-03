@@ -43,31 +43,31 @@
 
 #include "vtkSVGeometryModule.h" // for export
 
-#include "vtkEdgeTable.h"
 #include "vtkDoubleArray.h"
+#include "vtkEdgeTable.h"
 #include "vtkIdList.h"
 #include "vtkPolyDataAlgorithm.h"
 #include "vtkPriorityQueue.h"
 
-class VTKSVGEOMETRY_EXPORT vtkSVLocalQuadricDecimation : public vtkPolyDataAlgorithm
-{
+class VTKSVGEOMETRY_EXPORT vtkSVLocalQuadricDecimation
+    : public vtkPolyDataAlgorithm {
 public:
   vtkTypeMacro(vtkSVLocalQuadricDecimation, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(ostream &os, vtkIndent indent) override;
   static vtkSVLocalQuadricDecimation *New();
 
   //@{
-  /// \brief Set/Get the desired reduction (expressed as a fraction of the original
-  /// number of triangles). The actual reduction may be less depending on
-  /// triangulation and topological constraints.
+  /// \brief Set/Get the desired reduction (expressed as a fraction of the
+  /// original number of triangles). The actual reduction may be less depending
+  /// on triangulation and topological constraints.
   vtkSetClampMacro(TargetReduction, double, 0.0, 1.0);
   vtkGetMacro(TargetReduction, double);
   //@}
 
   //@{
-  /// \brief Decide whether to include data attributes in the error metric. If off,
-  /// then only geometric error is used to control the decimation. By default
-  /// the attribute errors are off.
+  /// \brief Decide whether to include data attributes in the error metric. If
+  /// off, then only geometric error is used to control the decimation. By
+  /// default the attribute errors are off.
   vtkSetMacro(AttributeErrorMetric, int);
   vtkGetMacro(AttributeErrorMetric, int);
   vtkBooleanMacro(AttributeErrorMetric, int);
@@ -119,17 +119,17 @@ public:
   //@{
   //\brief Turn on/off the use of point array for constraint local operation.
   /// If value in array equals 1, nodes will be decimated
-  vtkSetMacro(UsePointArray,int);
-  vtkGetMacro(UsePointArray,int);
-  vtkBooleanMacro(UsePointArray,int);
+  vtkSetMacro(UsePointArray, int);
+  vtkGetMacro(UsePointArray, int);
+  vtkBooleanMacro(UsePointArray, int);
   //@}
 
   //@{
-  /// \brief Turn on/off the use of cell array for constraint on local operation.
-  /// If value in array equals 1, nodes of cell will be decimated
-  vtkSetMacro(UseCellArray,int);
-  vtkGetMacro(UseCellArray,int);
-  vtkBooleanMacro(UseCellArray,int);
+  /// \brief Turn on/off the use of cell array for constraint on local
+  /// operation. If value in array equals 1, nodes of cell will be decimated
+  vtkSetMacro(UseCellArray, int);
+  vtkGetMacro(UseCellArray, int);
+  vtkBooleanMacro(UseCellArray, int);
   //@}
 
   //@{
@@ -142,7 +142,8 @@ protected:
   vtkSVLocalQuadricDecimation();
   ~vtkSVLocalQuadricDecimation();
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation *, vtkInformationVector **,
+                  vtkInformationVector *) override;
 
   // Description:
   // Do the dirty work of eliminating the edge; return the number of
@@ -184,7 +185,7 @@ protected:
 
   int IsGoodPlacement(vtkIdType pt0Id, vtkIdType pt1Id, const double *x);
   int TrianglePlaneCheck(const double t0[3], const double t1[3],
-                         const double t2[3],  const double *x);
+                         const double t2[3], const double *x);
   void ComputeNumberOfComponents(void);
   void UpdateEdgeData(vtkIdType ptoId, vtkIdType pt1Id);
 
@@ -198,13 +199,13 @@ protected:
   // poly data.
   void GetAttributeComponents();
 
-  int GetDecimateArrays(vtkPolyData *object,int type);
-  int SetFixedPoints(vtkPolyData *object,int numTris);
+  int GetDecimateArrays(vtkPolyData *object, int type);
+  int SetFixedPoints(vtkPolyData *object, int numTris);
   void CorrectPointData(vtkPolyData *object);
 
   double TargetReduction;
   double ActualReduction;
-  int   AttributeErrorMetric;
+  int AttributeErrorMetric;
 
   int ScalarsAttribute;
   int VectorsAttribute;
@@ -218,32 +219,31 @@ protected:
   double TCoordsWeight;
   double TensorsWeight;
 
-  char* DecimateCellArrayName;
-  char* DecimatePointArrayName;
+  char *DecimateCellArrayName;
+  char *DecimatePointArrayName;
 
-  int               NumberOfEdgeCollapses;
-  vtkEdgeTable     *Edges;
-  vtkIdList        *EndPoint1List;
-  vtkIdList        *EndPoint2List;
+  int NumberOfEdgeCollapses;
+  vtkEdgeTable *Edges;
+  vtkIdList *EndPoint1List;
+  vtkIdList *EndPoint2List;
   vtkPriorityQueue *EdgeCosts;
-  vtkDoubleArray   *TargetPoints;
-  int               NumberOfComponents;
-  vtkPolyData      *Mesh;
-  vtkIntArray 	   *DecimateCellArray;
-  vtkIntArray 	   *DecimatePointArray;
+  vtkDoubleArray *TargetPoints;
+  int NumberOfComponents;
+  vtkPolyData *Mesh;
+  vtkIntArray *DecimateCellArray;
+  vtkIntArray *DecimatePointArray;
   int UseCellArray;
   int UsePointArray;
 
-  //BTX
-  struct ErrorQuadric
-  {
+  // BTX
+  struct ErrorQuadric {
     double *Quadric;
   };
-  //ETX
+  // ETX
 
   ErrorQuadric *ErrorQuadrics;
-  int           AttributeComponents[6];
-  double        AttributeScale[6];
+  int AttributeComponents[6];
+  double AttributeScale[6];
 
   // Temporary variables for performance
   vtkIdList *CollapseCellIds;
@@ -257,8 +257,9 @@ protected:
   int *fixedPoint;
 
 private:
-  vtkSVLocalQuadricDecimation(const vtkSVLocalQuadricDecimation&);  // Not implemented.
-  void operator=(const vtkSVLocalQuadricDecimation&);  // Not implemented.
+  vtkSVLocalQuadricDecimation(
+      const vtkSVLocalQuadricDecimation &);            // Not implemented.
+  void operator=(const vtkSVLocalQuadricDecimation &); // Not implemented.
 };
 
 #endif

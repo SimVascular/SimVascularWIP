@@ -34,20 +34,16 @@
 #include <fstream>
 #include <type_traits>
 
-#include <QString>
 #include <QRegularExpression>
+#include <QString>
 
 //-----------------
 // Sv4GuiXmlWriter
 //-----------------
 //
-Sv4GuiXmlWriter::Sv4GuiXmlWriter()
-{
-}
+Sv4GuiXmlWriter::Sv4GuiXmlWriter() {}
 
-Sv4GuiXmlWriter::~Sv4GuiXmlWriter()
-{
-}
+Sv4GuiXmlWriter::~Sv4GuiXmlWriter() {}
 
 //-----------
 // add_child
@@ -55,9 +51,9 @@ Sv4GuiXmlWriter::~Sv4GuiXmlWriter()
 // Define a template function for adding a child element to a parent element.
 //
 template <typename T>
-tinyxml2::XMLElement*
-Sv4GuiXmlWriter::add_child(tinyxml2::XMLElement* parent, const std::string& name, T value)
-{
+tinyxml2::XMLElement *Sv4GuiXmlWriter::add_child(tinyxml2::XMLElement *parent,
+                                                 const std::string &name,
+                                                 T value) {
   auto child = doc_.NewElement(name.c_str());
   child->SetText(value);
   parent->InsertEndChild(child);
@@ -65,18 +61,17 @@ Sv4GuiXmlWriter::add_child(tinyxml2::XMLElement* parent, const std::string& name
 }
 
 // Handle QString that must be converted to std::string.
-template<> 
-tinyxml2::XMLElement*
-Sv4GuiXmlWriter::add_child<QString>(tinyxml2::XMLElement* parent, const std::string& name, QString value)
-{
+template <>
+tinyxml2::XMLElement *
+Sv4GuiXmlWriter::add_child<QString>(tinyxml2::XMLElement *parent,
+                                    const std::string &name, QString value) {
   return add_child(parent, name, value.toStdString().c_str());
 }
 
 // Handle std::string that must be converted to char*.
-template<> 
-tinyxml2::XMLElement* 
-Sv4GuiXmlWriter::add_child<std::string>(tinyxml2::XMLElement* parent, const std::string& name, std::string value)
-{
+template <>
+tinyxml2::XMLElement *Sv4GuiXmlWriter::add_child<std::string>(
+    tinyxml2::XMLElement *parent, const std::string &name, std::string value) {
   return add_child(parent, name, value.c_str());
 }
 
@@ -85,9 +80,9 @@ Sv4GuiXmlWriter::add_child<std::string>(tinyxml2::XMLElement* parent, const std:
 //---------------
 // Create a sub-section child element.
 //
-tinyxml2::XMLElement*
-Sv4GuiXmlWriter::add_sub_child(tinyxml2::XMLElement* parent, const std::string& name)
-{
+tinyxml2::XMLElement *
+Sv4GuiXmlWriter::add_sub_child(tinyxml2::XMLElement *parent,
+                               const std::string &name) {
   auto child = doc_.NewElement(name.c_str());
   parent->InsertEndChild(child);
   return child;
@@ -97,16 +92,17 @@ Sv4GuiXmlWriter::add_sub_child(tinyxml2::XMLElement* parent, const std::string& 
 // add_equation_bcs
 //------------------
 //
-void Sv4GuiXmlWriter::add_equation_bcs(const sv4guiMultiPhysicseqClass& eq, tinyxml2::XMLElement* xml_equation)
-{
-  for (auto& fbc : eq.faceBCs) {
-    auto& iBc = fbc.second;
+void Sv4GuiXmlWriter::add_equation_bcs(const sv4guiMultiPhysicseqClass &eq,
+                                       tinyxml2::XMLElement *xml_equation) {
+  for (auto &fbc : eq.faceBCs) {
+    auto &iBc = fbc.second;
     if (iBc.bcType == "Projection") {
       continue;
     }
 
     auto boundary_condition = add_sub_child(xml_equation, "Add_BC");
-    boundary_condition->SetAttribute("name", iBc.faceName.toStdString().c_str());
+    boundary_condition->SetAttribute("name",
+                                     iBc.faceName.toStdString().c_str());
 
     add_child(boundary_condition, "Type", iBc.bcGrp);
     add_child(boundary_condition, "Time_dependence", iBc.bcType);
@@ -121,8 +117,8 @@ void Sv4GuiXmlWriter::add_equation_bcs(const sv4guiMultiPhysicseqClass& eq, tiny
       add_child(boundary_condition, "Value", iBc.r);
 
     } else if (iBc.bcType == "General") {
-      add_child(boundary_condition, "Temporal_and_spatialvalues_file_path", iBc.gmFile);
-
+      add_child(boundary_condition, "Temporal_and_spatialvalues_file_path",
+                iBc.gmFile);
     }
 
     add_child(boundary_condition, "Profile", iBc.profile);
@@ -140,18 +136,20 @@ void Sv4GuiXmlWriter::add_equation_bcs(const sv4guiMultiPhysicseqClass& eq, tiny
     }
 
     if (iBc.imposeIntegral) {
-      add_child(boundary_condition, "Impose_on_state_variable_integral", iBc.imposeIntegral);
+      add_child(boundary_condition, "Impose_on_state_variable_integral",
+                iBc.imposeIntegral);
     }
 
     if (iBc.effectiveDirection.trimmed() != "") {
-      QStringList list = iBc.effectiveDirection.trimmed().split(QRegularExpression("[(),{}-\\s+]"),Qt::SkipEmptyParts);
-      // [DaveP] auto list = iBc.effectiveDirection.trimmed().split(QRegExp("[(),{}-\\s+]"),QString::SkipEmptyParts);
-      auto dir = "(" + list[0].toStdString() + ", " + list[1].toStdString() + ", " + list[2].toStdString() + ")";
+      QStringList list = iBc.effectiveDirection.trimmed().split(
+          QRegularExpression("[(),{}-\\s+]"), Qt::SkipEmptyParts);
+      // [DaveP] auto list =
+      // iBc.effectiveDirection.trimmed().split(QRegExp("[(),{}-\\s+]"),QString::SkipEmptyParts);
+      auto dir = "(" + list[0].toStdString() + ", " + list[1].toStdString() +
+                 ", " + list[2].toStdString() + ")";
       add_child(boundary_condition, "Effective_direction", dir);
     }
-
   }
-
 }
 
 //---------------
@@ -159,9 +157,8 @@ void Sv4GuiXmlWriter::add_equation_bcs(const sv4guiMultiPhysicseqClass& eq, tiny
 //---------------
 // Add equations.
 //
-void Sv4GuiXmlWriter::add_equations(const sv4guiMultiPhysicsJob* job)
-{
-  for (auto& eq : job->m_Eqs) {
+void Sv4GuiXmlWriter::add_equations(const sv4guiMultiPhysicsJob *job) {
+  for (auto &eq : job->m_Eqs) {
     auto xml_equation = add_sub_child(root_, "Add_equation");
     xml_equation->SetAttribute("type", eq.physName.toStdString().c_str());
 
@@ -171,7 +168,8 @@ void Sv4GuiXmlWriter::add_equations(const sv4guiMultiPhysicsJob* job)
     add_child(xml_equation, "Tolerance", eq.tol);
 
     if (eq.physName == "fluid") {
-      add_child(xml_equation, "Backflow_stabilization_coefficient", eq.backflowStab);
+      add_child(xml_equation, "Backflow_stabilization_coefficient",
+                eq.backflowStab);
     }
 
     if (eq.getPhysName() == "FSI") {
@@ -180,7 +178,7 @@ void Sv4GuiXmlWriter::add_equations(const sv4guiMultiPhysicsJob* job)
     } else {
       add_single_physics_equation(eq, xml_equation);
 
-      if (eq.getPhysName() == "struct"){
+      if (eq.getPhysName() == "struct") {
         add_child(xml_equation, "Constitutive_model", eq.constitutiveModel);
       }
     }
@@ -199,15 +197,14 @@ void Sv4GuiXmlWriter::add_equations(const sv4guiMultiPhysicsJob* job)
 // add_equation_output
 //---------------------
 //
-void Sv4GuiXmlWriter::add_equation_output(const sv4guiMultiPhysicseqClass& eq, tinyxml2::XMLElement* xml_equation)
-{
+void Sv4GuiXmlWriter::add_equation_output(const sv4guiMultiPhysicseqClass &eq,
+                                          tinyxml2::XMLElement *xml_equation) {
   auto output = add_sub_child(xml_equation, "Output");
   output->SetAttribute("type", "Spatial");
 
-  foreach ( auto& outName , eq.getOutputNames() ) {
-    add_child(output, outName.toStdString(), true); 
+  foreach (auto &outName, eq.getOutputNames()) {
+    add_child(output, outName.toStdString(), true);
   }
- 
 }
 
 //---------------------
@@ -215,12 +212,12 @@ void Sv4GuiXmlWriter::add_equation_output(const sv4guiMultiPhysicseqClass& eq, t
 //---------------------
 // Add the linear solver section to an equation section.
 //
-void Sv4GuiXmlWriter::add_equation_solver(const sv4guiMultiPhysicseqClass& eq, tinyxml2::XMLElement* xml_equation)
-{
+void Sv4GuiXmlWriter::add_equation_solver(const sv4guiMultiPhysicseqClass &eq,
+                                          tinyxml2::XMLElement *xml_equation) {
   auto linear_solver = add_sub_child(xml_equation, "LS");
   linear_solver->SetAttribute("type", eq.lsType.toStdString().c_str());
 
-  add_child(linear_solver, "Max_iterations", eq.lsMaxItr); 
+  add_child(linear_solver, "Max_iterations", eq.lsMaxItr);
   add_child(linear_solver, "Tolerance", eq.tol);
   add_child(linear_solver, "Krylov_space_dimension", eq.lsKrylovDim);
 
@@ -229,7 +226,7 @@ void Sv4GuiXmlWriter::add_equation_solver(const sv4guiMultiPhysicseqClass& eq, t
     add_child(linear_solver, "NS_GM_tolerance", eq.lsNSGMTol);
 
     add_child(linear_solver, "NS_CG_max_iterations", eq.lsNSCGMaxItr);
-    add_child(linear_solver, "NS_CG_tolerance", eq.lsNSCGTol); 
+    add_child(linear_solver, "NS_CG_tolerance", eq.lsNSCGTol);
   }
 
   auto linear_algebra = add_sub_child(linear_solver, "Linear_algebra");
@@ -242,9 +239,9 @@ void Sv4GuiXmlWriter::add_equation_solver(const sv4guiMultiPhysicseqClass& eq, t
 //------------------
 // Add an FSI equation.
 //
-void Sv4GuiXmlWriter::add_fsi_equation(const sv4guiMultiPhysicsJob* job, const sv4guiMultiPhysicseqClass& eq, 
-    tinyxml2::XMLElement* xml_equation)
-{
+void Sv4GuiXmlWriter::add_fsi_equation(const sv4guiMultiPhysicsJob *job,
+                                       const sv4guiMultiPhysicseqClass &eq,
+                                       tinyxml2::XMLElement *xml_equation) {
   // Add fluid domain 1.
   //
   // This seems to have ID 1 ?
@@ -272,7 +269,8 @@ void Sv4GuiXmlWriter::add_fsi_equation(const sv4guiMultiPhysicsJob* job, const s
   // 'add_child()' with an empty value.
   //
   auto Constitutive_model = add_child(domain_2, "Constitutive_model", "");
-  Constitutive_model->SetAttribute("type", eq.constitutiveModel.toStdString().c_str());
+  Constitutive_model->SetAttribute("type",
+                                   eq.constitutiveModel.toStdString().c_str());
 
   add_child(domain_2, "Density", eq.getPropValue(2));
   add_child(domain_2, "Elasticity_modulus", eq.getPropValue(3));
@@ -281,7 +279,6 @@ void Sv4GuiXmlWriter::add_fsi_equation(const sv4guiMultiPhysicsJob* job, const s
   if (eq.remesher != "None") {
     add_remeshing(job, eq, xml_equation);
   }
- 
 }
 
 //-------------
@@ -289,8 +286,7 @@ void Sv4GuiXmlWriter::add_fsi_equation(const sv4guiMultiPhysicsJob* job, const s
 //-------------
 // Add data for the 'GeneralSimulationParameters' section.
 //
-void Sv4GuiXmlWriter::add_general(const sv4guiMultiPhysicsJob* job)
-{
+void Sv4GuiXmlWriter::add_general(const sv4guiMultiPhysicsJob *job) {
   auto general = add_sub_child(root_, "GeneralSimulationParameters");
 
   // Time stepping
@@ -313,7 +309,7 @@ void Sv4GuiXmlWriter::add_general(const sv4guiMultiPhysicsJob* job)
   add_child(general, "Name_prefix_of_saved_VTK_files", job->vtkFileName);
   add_child(general, "Increment_in_saving_VTK_files", job->vtkInc);
 
-  // Misc 
+  // Misc
   //
   add_child(general, "Spectral_radius_of_infinite_time_step", job->rhoInf);
   add_child(general, "Searched_file_name_to_trigger_stop", job->stopFileName);
@@ -328,22 +324,24 @@ void Sv4GuiXmlWriter::add_general(const sv4guiMultiPhysicsJob* job)
 // add_mesh
 //----------
 //
-void Sv4GuiXmlWriter::add_mesh(const sv4guiMultiPhysicsJob* job, sv4guiMultiPhysicsDomain& domain, const int domain_id)
-{
+void Sv4GuiXmlWriter::add_mesh(const sv4guiMultiPhysicsJob *job,
+                               sv4guiMultiPhysicsDomain &domain,
+                               const int domain_id) {
   auto mesh = add_sub_child(root_, "Add_mesh");
   mesh->SetAttribute("name", domain.name.c_str());
 
   auto mesh_file = domain.folderName + path_sep_ + domain.fileName;
   add_child(mesh, "Mesh_file_path", mesh_file);
 
-  for ( auto& face_name : domain.faceNames ) {
-    auto face = add_sub_child( mesh, "Add_face");
+  for (auto &face_name : domain.faceNames) {
+    auto face = add_sub_child(mesh, "Add_face");
     face->SetAttribute("name", face_name.c_str());
-    auto face_file = domain.folderName + path_sep_ + domain.faceFolderName + path_sep_ + face_name+".vtp";
+    auto face_file = domain.folderName + path_sep_ + domain.faceFolderName +
+                     path_sep_ + face_name + ".vtp";
     add_child(face, "Face_file_path", face_file);
   }
 
-  add_child( mesh, "Domain", domain_id);
+  add_child(mesh, "Domain", domain_id);
 }
 
 //----------------
@@ -351,15 +349,14 @@ void Sv4GuiXmlWriter::add_mesh(const sv4guiMultiPhysicsJob* job, sv4guiMultiPhys
 //----------------
 // Add projection between fluid-solid surfaces.
 //
-void Sv4GuiXmlWriter::add_projection(const sv4guiMultiPhysicsJob* job)
-{
-  for (auto& eq: job->m_Eqs) {
+void Sv4GuiXmlWriter::add_projection(const sv4guiMultiPhysicsJob *job) {
+  for (auto &eq : job->m_Eqs) {
     if (eq.physName != "FSI") {
       break;
     }
 
-    for (auto& fbc : eq.faceBCs ) {
-      auto& iBc = fbc.second;
+    for (auto &fbc : eq.faceBCs) {
+      auto &iBc = fbc.second;
 
       if (iBc.bcType == "Projection") {
         auto projection = add_sub_child(root_, "Add_projection");
@@ -374,24 +371,24 @@ void Sv4GuiXmlWriter::add_projection(const sv4guiMultiPhysicsJob* job)
 // add_remeshing
 //---------------
 //
-void Sv4GuiXmlWriter::add_remeshing(const sv4guiMultiPhysicsJob* job, const sv4guiMultiPhysicseqClass& eq, 
-    tinyxml2::XMLElement* xml_equation)
-{
-  auto remesher  = add_sub_child(xml_equation, "Remsher");
+void Sv4GuiXmlWriter::add_remeshing(const sv4guiMultiPhysicsJob *job,
+                                    const sv4guiMultiPhysicseqClass &eq,
+                                    tinyxml2::XMLElement *xml_equation) {
+  auto remesher = add_sub_child(xml_equation, "Remsher");
   remesher->SetAttribute("type", eq.remesher.toStdString().c_str());
 
-  for (auto& pair : job->m_Domains) {
+  for (auto &pair : job->m_Domains) {
     auto domainName = pair.first;
-    auto& domain = pair.second;
+    auto &domain = pair.second;
     auto Max_edge_size = add_sub_child(xml_equation, "Max_edge_size");
-    Max_edge_size->SetAttribute("name", domainName.c_str()); 
+    Max_edge_size->SetAttribute("name", domainName.c_str());
     Max_edge_size->SetAttribute("value", domain.edgeSize);
   }
 
-  add_child(remesher, "Min_dihedral_angle", eq.rmMinAngle); 
-  add_child(remesher, "Max_radius_ratio", eq.rmMaxRadiusRatio); 
-  add_child(remesher, "Remesh_frequency", eq.rmFrequency); 
-  add_child(remesher, "Frequency_for_copying_data", eq.rmCopyFrequency); 
+  add_child(remesher, "Min_dihedral_angle", eq.rmMinAngle);
+  add_child(remesher, "Max_radius_ratio", eq.rmMaxRadiusRatio);
+  add_child(remesher, "Remesh_frequency", eq.rmFrequency);
+  add_child(remesher, "Frequency_for_copying_data", eq.rmCopyFrequency);
 }
 
 //-----------------------------
@@ -399,8 +396,8 @@ void Sv4GuiXmlWriter::add_remeshing(const sv4guiMultiPhysicsJob* job, const sv4g
 //-----------------------------
 // Add an equation for a single physics simulation.
 //
-void Sv4GuiXmlWriter::add_single_physics_equation(const sv4guiMultiPhysicseqClass& eq, tinyxml2::XMLElement* xml_equation)
-{
+void Sv4GuiXmlWriter::add_single_physics_equation(
+    const sv4guiMultiPhysicseqClass &eq, tinyxml2::XMLElement *xml_equation) {
   for (int i = 0; i < eq.getPropCount(); i++) {
     auto name = eq.getPropName(i).toStdString();
     if (name == "Viscosity") {
@@ -419,8 +416,8 @@ void Sv4GuiXmlWriter::add_single_physics_equation(const sv4guiMultiPhysicseqClas
 //-----------------
 // Create an XML document from the sv4guiMultiPhysicsJob object.
 //
-void Sv4GuiXmlWriter::create_document(const sv4guiMultiPhysicsJob* job, const std::string& file_name)
-{
+void Sv4GuiXmlWriter::create_document(const sv4guiMultiPhysicsJob *job,
+                                      const std::string &file_name) {
   root_ = doc_.NewElement("svMultiPhysicsFile");
   root_->SetAttribute("version", "1.0");
   doc_.InsertFirstChild(root_);
@@ -433,7 +430,7 @@ void Sv4GuiXmlWriter::create_document(const sv4guiMultiPhysicsJob* job, const st
 
   // Add mesh data for the Add_mesh sections.
   int domain_id = 0;
-  for (auto& domain : domains) {
+  for (auto &domain : domains) {
     add_mesh(job, domain, domain_id);
     domain_id += 1;
   }
@@ -453,20 +450,19 @@ void Sv4GuiXmlWriter::create_document(const sv4guiMultiPhysicsJob* job, const st
 //
 // If there are two domains set the first domain to the fluid domain.
 //
-std::vector<sv4guiMultiPhysicsDomain> 
-Sv4GuiXmlWriter::sort_domains(const sv4guiMultiPhysicsJob* job)
-{
+std::vector<sv4guiMultiPhysicsDomain>
+Sv4GuiXmlWriter::sort_domains(const sv4guiMultiPhysicsJob *job) {
   std::vector<sv4guiMultiPhysicsDomain> domains;
 
-  if (job->m_Domains.size() ==1 ){
-    for (auto& pair : job->m_Domains) {
+  if (job->m_Domains.size() == 1) {
+    for (auto &pair : job->m_Domains) {
       domains.push_back(pair.second);
     }
 
-  } else if (job->m_Domains.size() == 2){
+  } else if (job->m_Domains.size() == 2) {
     domains.resize(2);
 
-    for (auto& pair : job->m_Domains) {
+    for (auto &pair : job->m_Domains) {
       if (pair.second.type == "fluid") {
         domains[0] = pair.second;
       } else {
@@ -477,4 +473,3 @@ Sv4GuiXmlWriter::sort_domains(const sv4guiMultiPhysicsJob* job)
 
   return domains;
 }
-

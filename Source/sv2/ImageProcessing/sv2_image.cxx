@@ -31,17 +31,15 @@
 
 #include "SimVascular.h"
 
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include <stdlib.h>
-#include <assert.h>
 #include "sv2_image.h"
 #include "sv_misc_utils.h"
-
+#include <assert.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 static double gMachineEpsilon;
-
 
 // =============
 //   ReadImage
@@ -55,9 +53,8 @@ static double gMachineEpsilon;
 // store images as arrays of short's (size = 2), so that's why
 // Image_T::data is a short *.
 
-Image_T *ReadImage( char *filebase, int fileNumRange[], char *imgTypeFlag,
-		    int imgDims[], double pixelDims[] )
-{
+Image_T *ReadImage(char *filebase, int fileNumRange[], char *imgTypeFlag,
+                   int imgDims[], double pixelDims[]) {
   FILE *fp;
   Image_T *image;
   char filename[1000];
@@ -77,23 +74,23 @@ Image_T *ReadImage( char *filebase, int fileNumRange[], char *imgTypeFlag,
   // epsilon, I'm hoping to eliminate this noise.
   gMachineEpsilon = 100.0 * FindMachineEpsilon();
 
-  if ( !strcmp( imgTypeFlag, "-short" ) ) {
+  if (!strcmp(imgTypeFlag, "-short")) {
     convertShort = 1;
-  } else if ( !strcmp( imgTypeFlag, "-double" ) ) {
+  } else if (!strcmp(imgTypeFlag, "-double")) {
     convertShort = 0;
   } else {
     fprintf(stderr, "ERR: Invalid image data type flag.\n");
     return nullptr;
   }
 
-  if ( fileNumRange[1] < fileNumRange[0] ) {
+  if (fileNumRange[1] < fileNumRange[0]) {
     fprintf(stderr, "ERR: Invalid file num range.\n");
     return nullptr;
   }
 
   image = new Image_T;
   image->gradValid = 0;
-  if ( fileNumRange[0] == fileNumRange[1] ) {
+  if (fileNumRange[0] == fileNumRange[1]) {
     image->dim = 2;
   } else {
     image->dim = 3;
@@ -101,7 +98,7 @@ Image_T *ReadImage( char *filebase, int fileNumRange[], char *imgTypeFlag,
 
   image->imgDims[0] = imgDims[0];
   image->imgDims[1] = imgDims[1];
-  if ( image->dim == 3 ) {
+  if (image->dim == 3) {
     image->imgDims[2] = imgDims[2];
   } else {
     image->imgDims[2] = 1;
@@ -109,7 +106,7 @@ Image_T *ReadImage( char *filebase, int fileNumRange[], char *imgTypeFlag,
 
   image->pixelDims[0] = pixelDims[0];
   image->pixelDims[1] = pixelDims[1];
-  if ( image->dim == 3 ) {
+  if (image->dim == 3) {
     image->pixelDims[2] = pixelDims[2];
   } else {
     image->pixelDims[2] = 1.0;
@@ -118,21 +115,19 @@ Image_T *ReadImage( char *filebase, int fileNumRange[], char *imgTypeFlag,
   dataLen = imgDims[0] * imgDims[1] * imgDims[2];
   fileLen = imgDims[0] * imgDims[1];
 
-  image->pixels = new Pixel_T [dataLen];
+  image->pixels = new Pixel_T[dataLen];
   if (convertShort) {
-    tmpDataShort = new short [dataLen];
+    tmpDataShort = new short[dataLen];
   } else {
-    tmpDataDouble = new double [dataLen];
+    tmpDataDouble = new double[dataLen];
   }
 
-  for ( filecount = fileNumRange[0];
-	filecount <= fileNumRange[1];
-	filecount++ ) {
+  for (filecount = fileNumRange[0]; filecount <= fileNumRange[1]; filecount++) {
 
     filenum = filecount - fileNumRange[0];
 
-    sprintf( filename, "%s.%03d", filebase, filecount );
-    fp = fopen( filename, "r" );
+    sprintf(filename, "%s.%03d", filebase, filecount);
+    fp = fopen(filename, "r");
     if (fp == nullptr) {
       fprintf(stderr, "ERR: Couldn't open image file %s.\n", filename);
       delete image->pixels;
@@ -141,11 +136,11 @@ Image_T *ReadImage( char *filebase, int fileNumRange[], char *imgTypeFlag,
     }
 
     if (convertShort) {
-      num = fread( (tmpDataShort + (filenum * fileLen)), sizeof(short),
-		   fileLen, fp );
+      num = fread((tmpDataShort + (filenum * fileLen)), sizeof(short), fileLen,
+                  fp);
     } else {
-      num = fread( (tmpDataDouble + (filenum * fileLen)), sizeof(double),
-		   fileLen, fp );
+      num = fread((tmpDataDouble + (filenum * fileLen)), sizeof(double),
+                  fileLen, fp);
     }
 
     fclose(fp);
@@ -172,10 +167,12 @@ Image_T *ReadImage( char *filebase, int fileNumRange[], char *imgTypeFlag,
     image->pixels[i].col = colIx;
   }
 
-  if (convertShort) delete tmpDataShort;
-  else delete tmpDataDouble;
+  if (convertShort)
+    delete tmpDataShort;
+  else
+    delete tmpDataDouble;
 
-  strcpy( image->filebase, filebase );
+  strcpy(image->filebase, filebase);
   image->fileNumRange[0] = fileNumRange[0];
   image->fileNumRange[1] = fileNumRange[1];
 
@@ -188,23 +185,20 @@ Image_T *ReadImage( char *filebase, int fileNumRange[], char *imgTypeFlag,
   return image;
 }
 
-
 // ================
 //   Image_Delete
 // ================
 // A good reason why this should have been OO from the beginning!
 
-void Image_Delete( Image_T *img )
-{
-  if ( img != nullptr ) {
-    if ( img->pixels != nullptr ) {
-      delete [] img->pixels;
+void Image_Delete(Image_T *img) {
+  if (img != nullptr) {
+    if (img->pixels != nullptr) {
+      delete[] img->pixels;
     }
     delete img;
   }
   return;
 }
-
 
 // =====================
 //   ComputePointSlope
@@ -222,9 +216,8 @@ void Image_Delete( Image_T *img )
 // double's.  And just to be safe, I assign operations btw short's to
 // int's to avoid potential overflow problems.
 
-double ComputePointSlope( Pixel_T *prev, Pixel_T *curr, Pixel_T *next,
-                          Image_T *image, int dimFlag )
-{
+double ComputePointSlope(Pixel_T *prev, Pixel_T *curr, Pixel_T *next,
+                         Image_T *image, int dimFlag) {
   double rngPrev, rngCurr, rngNext;
   double drng;
   double ddom, domCoord;
@@ -258,9 +251,9 @@ double ComputePointSlope( Pixel_T *prev, Pixel_T *curr, Pixel_T *next,
   }
 
   drng = rngCurr - rngPrev;
-  lenPrev = sqrt( svSqr(ddom) + svSqr(drng) );
+  lenPrev = sqrt(svSqr(ddom) + svSqr(drng));
   drng = rngCurr - rngNext;
-  lenNext = sqrt( svSqr(ddom) + svSqr(drng) );
+  lenNext = sqrt(svSqr(ddom) + svSqr(drng));
 
   // Interpolate along next edge.
   if (lenPrev < lenNext) {
@@ -285,7 +278,6 @@ double ComputePointSlope( Pixel_T *prev, Pixel_T *curr, Pixel_T *next,
   return slope;
 }
 
-
 // ====================
 //   ComputeImageGrad
 // ====================
@@ -309,22 +301,21 @@ double ComputePointSlope( Pixel_T *prev, Pixel_T *curr, Pixel_T *next,
 // is probably not important, as the propagating front should probably
 // not get too close to the image boundary.
 
-void ComputeImageGrad( Image_T *image )
-{
+void ComputeImageGrad(Image_T *image) {
   int xdim, ydim, zdim;
   int i, j, k, pixIx, prevIx, nextIx;
   Pixel_T *prev, *curr, *next;
   int tri;
 
-  if ( image->gradValid ) {
+  if (image->gradValid) {
     return;
   }
 
-  xdim = image->imgDims[0];   // xdim == # cols
-  ydim = image->imgDims[1];   // ydim == # rows
-  zdim = image->imgDims[2];   // zdim == # planes
+  xdim = image->imgDims[0]; // xdim == # cols
+  ydim = image->imgDims[1]; // ydim == # rows
+  zdim = image->imgDims[2]; // zdim == # planes
 
-  if ( image->dim == 3 ) {
+  if (image->dim == 3) {
     tri = 1;
   } else {
     tri = 0;
@@ -333,76 +324,75 @@ void ComputeImageGrad( Image_T *image )
   for (k = 0; k < zdim; k++) {
     for (j = 0; j < ydim; j++) {
       for (i = 0; i < xdim; i++) {
-	pixIx = (k * xdim * ydim) + (j * xdim) + i;
+        pixIx = (k * xdim * ydim) + (j * xdim) + i;
 
-	// Boundary pixels:
-	if ( ( i == 0 ) || ( i == (xdim-1) ) ||
-	     ( j == 0 ) || ( j == (ydim-1) ) ||
-	     ( (tri) && ( k == 0 ) ) || ( (tri) && ( k == (zdim-1) ) ) ) {
+        // Boundary pixels:
+        if ((i == 0) || (i == (xdim - 1)) || (j == 0) || (j == (ydim - 1)) ||
+            ((tri) && (k == 0)) || ((tri) && (k == (zdim - 1)))) {
 
-	  curr = &( image->pixels[pixIx] );
+          curr = &(image->pixels[pixIx]);
 
-	  // x:
-	  prevIx = ( i == 0 ) ? 0 : pixIx-1;
-	  nextIx = ( i == (xdim-1) ) ? (xdim-1) : pixIx+1;
-	  prev = &( image->pixels[prevIx] );
-	  next = &( image->pixels[nextIx] );
-	  image->pixels[pixIx].gradX = ComputePointSlope( prev, curr, next,
-							  image, 0 );
+          // x:
+          prevIx = (i == 0) ? 0 : pixIx - 1;
+          nextIx = (i == (xdim - 1)) ? (xdim - 1) : pixIx + 1;
+          prev = &(image->pixels[prevIx]);
+          next = &(image->pixels[nextIx]);
+          image->pixels[pixIx].gradX =
+              ComputePointSlope(prev, curr, next, image, 0);
 
-	  // y:
-	  prevIx = ( j == 0 ) ? 0 : pixIx-xdim;
-	  nextIx = ( j == (ydim-1) ) ? (ydim-1) : pixIx+xdim;
-	  prev = &( image->pixels[prevIx] );
-	  next = &( image->pixels[nextIx] );
-	  image->pixels[pixIx].gradY = ComputePointSlope( prev, curr, next,
-							  image, 1 );
+          // y:
+          prevIx = (j == 0) ? 0 : pixIx - xdim;
+          nextIx = (j == (ydim - 1)) ? (ydim - 1) : pixIx + xdim;
+          prev = &(image->pixels[prevIx]);
+          next = &(image->pixels[nextIx]);
+          image->pixels[pixIx].gradY =
+              ComputePointSlope(prev, curr, next, image, 1);
 
-	  // z:
-	  if ( tri ) {
-	    prevIx = ( k == 0 ) ? 0 : pixIx - (xdim*ydim);
-	    nextIx = ( k == (zdim-1) ) ? (zdim-1) : pixIx + (xdim*ydim);
-	    prev = &( image->pixels[prevIx] );
-	    next = &( image->pixels[nextIx] );
-	    image->pixels[pixIx].gradZ = ComputePointSlope( prev, curr, next,
-							    image, 2 );
-	  } else {
-	    image->pixels[pixIx].gradZ = 0.0;
-	  }
+          // z:
+          if (tri) {
+            prevIx = (k == 0) ? 0 : pixIx - (xdim * ydim);
+            nextIx = (k == (zdim - 1)) ? (zdim - 1) : pixIx + (xdim * ydim);
+            prev = &(image->pixels[prevIx]);
+            next = &(image->pixels[nextIx]);
+            image->pixels[pixIx].gradZ =
+                ComputePointSlope(prev, curr, next, image, 2);
+          } else {
+            image->pixels[pixIx].gradZ = 0.0;
+          }
 
-	  // Before 2/16/00:
-	  //	  image->pixels[pixIx].gradX = 0.0;
-	  //	  image->pixels[pixIx].gradY = 0.0;
-	  //	  image->pixels[pixIx].gradZ = 0.0;
+          // Before 2/16/00:
+          //	  image->pixels[pixIx].gradX = 0.0;
+          //	  image->pixels[pixIx].gradY = 0.0;
+          //	  image->pixels[pixIx].gradZ = 0.0;
 
-	  continue;
-	}
+          continue;
+        }
 
-	// Differentiation w.r.t. x:
-	// (adjacent elements in x are also physically adjacent)
-	prev = &( image->pixels[pixIx-1] );
-	curr = &( image->pixels[pixIx] );
-	next = &( image->pixels[pixIx+1] );
-	image->pixels[pixIx].gradX = ComputePointSlope( prev, curr, next,
-							image, 0 );
+        // Differentiation w.r.t. x:
+        // (adjacent elements in x are also physically adjacent)
+        prev = &(image->pixels[pixIx - 1]);
+        curr = &(image->pixels[pixIx]);
+        next = &(image->pixels[pixIx + 1]);
+        image->pixels[pixIx].gradX =
+            ComputePointSlope(prev, curr, next, image, 0);
 
-	// Differentiation w.r.t. y:
-	prev = &( image->pixels[pixIx-xdim] );
-	curr = &( image->pixels[pixIx] );
-	next = &( image->pixels[pixIx+xdim] );
-	image->pixels[pixIx].gradY = ComputePointSlope( prev, curr, next,
-							image, 1 );
+        // Differentiation w.r.t. y:
+        prev = &(image->pixels[pixIx - xdim]);
+        curr = &(image->pixels[pixIx]);
+        next = &(image->pixels[pixIx + xdim]);
+        image->pixels[pixIx].gradY =
+            ComputePointSlope(prev, curr, next, image, 1);
 
-	// Differentiation w.r.t. z:
-	if ( tri ) {
-	  prev = &( image->pixels[pixIx - (xdim*ydim)] );
-	  curr = &( image->pixels[pixIx] );
-	  next = &( image->pixels[pixIx + (xdim*ydim)] );
-	  image->pixels[pixIx].gradZ = ComputePointSlope( prev, curr, next,
-							  image, 2 );
-	} else {
-	  image->pixels[pixIx].gradZ = 0.0;
-	}
+        // Differentiation w.r.t. z:
+        if (tri) {
+          prev = &(image->pixels[pixIx - (xdim * ydim)]);
+          curr = &(image->pixels[pixIx]);
+          next = &(image->pixels[pixIx + (xdim * ydim)]);
+          image->pixels[pixIx].gradZ =
+              ComputePointSlope(prev, curr, next, image, 2);
+        } else {
+          image->pixels[pixIx].gradZ = 0.0;
+        }
       }
     }
   }
@@ -411,193 +401,171 @@ void ComputeImageGrad( Image_T *image )
   return;
 }
 
-
 // ----------
 // GetMaxGrad
 // ----------
 
-double GetMaxGrad( Image_T *image )
-{
+double GetMaxGrad(Image_T *image) {
   double rng[2];
-  Img_GetMagGradRange( image, rng );
+  Img_GetMagGradRange(image, rng);
   return rng[1];
 }
-
 
 // -------------------
 // Img_GetMagGradRange
 // -------------------
 
-void Img_GetMagGradRange( Image_T *image, double rng[] )
-{
+void Img_GetMagGradRange(Image_T *image, double rng[]) {
   int numPix;
   int i;
   double gx, gy, gz;
   double mag, currMin, currMax;
 
-  ComputeImageGrad( image );
+  ComputeImageGrad(image);
   numPix = (image->imgDims[0]) * (image->imgDims[1]) * (image->imgDims[2]);
-  for ( i = 0; i < numPix; i++ ) {
+  for (i = 0; i < numPix; i++) {
     gx = image->pixels[i].gradX;
     gy = image->pixels[i].gradY;
     gz = image->pixels[i].gradZ;
-    mag = Magnitude( gx, gy, gz );
-    if ( i == 0 ) {
+    mag = Magnitude(gx, gy, gz);
+    if (i == 0) {
       currMin = currMax = mag;
     } else {
-      currMax = svmaximum( mag, currMax );
-      currMin = svminimum( mag, currMin );
+      currMax = svmaximum(mag, currMax);
+      currMin = svminimum(mag, currMin);
     }
   }
   rng[0] = currMin;
   rng[1] = currMax;
 }
-
 
 // ---------------------
 // Img_GetXYMagGradRange
 // ---------------------
 
-void Img_GetXYMagGradRange( Image_T *image, double rng[] )
-{
+void Img_GetXYMagGradRange(Image_T *image, double rng[]) {
   int numPix;
   int i;
   double gx, gy;
   double mag, currMin, currMax;
 
-  ComputeImageGrad( image );
+  ComputeImageGrad(image);
   numPix = (image->imgDims[0]) * (image->imgDims[1]) * (image->imgDims[2]);
-  for ( i = 0; i < numPix; i++ ) {
+  for (i = 0; i < numPix; i++) {
     gx = image->pixels[i].gradX;
     gy = image->pixels[i].gradY;
-    mag = Magnitude( gx, gy, 0.0 );
-    if ( i == 0 ) {
+    mag = Magnitude(gx, gy, 0.0);
+    if (i == 0) {
       currMin = currMax = mag;
     } else {
-      currMax = svmaximum( mag, currMax );
-      currMin = svminimum( mag, currMin );
+      currMax = svmaximum(mag, currMax);
+      currMin = svminimum(mag, currMin);
     }
   }
   rng[0] = currMin;
   rng[1] = currMax;
 }
-
 
 // --------------------
 // Img_GetZMagGradRange
 // --------------------
 
-void Img_GetZMagGradRange( Image_T *image, double rng[] )
-{
+void Img_GetZMagGradRange(Image_T *image, double rng[]) {
   int numPix;
   int i;
   double gz;
   double mag, currMin, currMax;
 
-  ComputeImageGrad( image );
+  ComputeImageGrad(image);
   numPix = (image->imgDims[0]) * (image->imgDims[1]) * (image->imgDims[2]);
-  for ( i = 0; i < numPix; i++ ) {
+  for (i = 0; i < numPix; i++) {
     gz = image->pixels[i].gradZ;
     mag = fabs(gz);
-    if ( i == 0 ) {
+    if (i == 0) {
       currMin = currMax = mag;
     } else {
-      currMax = svmaximum( mag, currMax );
-      currMin = svminimum( mag, currMin );
+      currMax = svmaximum(mag, currMax);
+      currMin = svminimum(mag, currMin);
     }
   }
   rng[0] = currMin;
   rng[1] = currMax;
 }
 
-
 // ---------------------
 // Img_GetIntensityRange
 // ---------------------
 
-void Img_GetIntensityRange( Image_T *image, double rng[] )
-{
+void Img_GetIntensityRange(Image_T *image, double rng[]) {
   int numPix;
   int i;
   double datum;
   double currMin, currMax;
 
   numPix = (image->imgDims[0]) * (image->imgDims[1]) * (image->imgDims[2]);
-  for ( i = 0; i < numPix; i++ ) {
+  for (i = 0; i < numPix; i++) {
     datum = image->pixels[i].intensity;
-    if ( i == 0 ) {
+    if (i == 0) {
       currMin = currMax = datum;
     } else {
-      currMax = svmaximum( datum, currMax );
-      currMin = svminimum( datum, currMin );
+      currMax = svmaximum(datum, currMax);
+      currMin = svminimum(datum, currMin);
     }
   }
   rng[0] = currMin;
   rng[1] = currMax;
 }
 
-
 // --------------
 // SetImageClosed
 // --------------
 
-void SetImageClosed( Image_T *image, int flag )
-{
-  if ( flag ) {
+void SetImageClosed(Image_T *image, int flag) {
+  if (flag) {
     image->closed = 1;
   } else {
     image->closed = 0;
   }
 }
 
-
 // --------------
 // GetImageClosed
 // --------------
 
-int GetImageClosed( Image_T *image )
-{
-  return image->closed;
-}
-
+int GetImageClosed(Image_T *image) { return image->closed; }
 
 // ------------
 // SetLowerLeft
 // ------------
 
-void SetLowerLeft( Image_T *image, double pos[] )
-{
+void SetLowerLeft(Image_T *image, double pos[]) {
   image->lowerleft[0] = pos[0];
   image->lowerleft[1] = pos[1];
-  if ( image->dim == 3 ) {
+  if (image->dim == 3) {
     image->lowerleft[2] = pos[2];
   }
 }
-
 
 // ------------
 // GetLowerLeft
 // ------------
 
-void GetLowerLeft( Image_T *image, double pos[] )
-{
+void GetLowerLeft(Image_T *image, double pos[]) {
   pos[0] = image->lowerleft[0];
   pos[1] = image->lowerleft[1];
   pos[2] = image->lowerleft[2];
 }
 
-
 // --------
 // InBorder
 // --------
 
-int InBorder( Image_T *image, double pos[], int borderWd )
-{
+int InBorder(Image_T *image, double pos[], int borderWd) {
   double border[3];
   double side[3];
   double ppos[3];
 
-  if ( borderWd <= 0 ) {
+  if (borderWd <= 0) {
     return SV_ERROR;
   }
 
@@ -613,14 +581,13 @@ int InBorder( Image_T *image, double pos[], int borderWd )
   side[1] = image->pixelDims[1] * image->imgDims[1];
   side[2] = image->pixelDims[2] * image->imgDims[2];
 
-  if ( ( ppos[0] <= border[0] ) || ( ppos[0] >= ( side[0] - border[0] ) ) ||
-       ( ppos[1] <= border[1] ) || ( ppos[1] >= ( side[1] - border[1] ) ) ||
-       ( ppos[2] <= border[2] ) || ( ppos[2] >= ( side[2] - border[2] ) ) ) {
+  if ((ppos[0] <= border[0]) || (ppos[0] >= (side[0] - border[0])) ||
+      (ppos[1] <= border[1]) || (ppos[1] >= (side[1] - border[1])) ||
+      (ppos[2] <= border[2]) || (ppos[2] >= (side[2] - border[2]))) {
     return SV_OK;
   }
   return SV_ERROR;
 }
-
 
 // --------------------
 // CloseImageGradBounds
@@ -633,8 +600,7 @@ int InBorder( Image_T *image, double pos[], int borderWd )
 // The DIRECTIONALITY of the applied maximum gradient is an unresolved
 // issue.
 
-void CloseImageGradBounds( Image_T *image )
-{
+void CloseImageGradBounds(Image_T *image) {
   int xdim, ydim, zdim;
   int i, j, k, pixIx;
   double maxG;
@@ -642,19 +608,19 @@ void CloseImageGradBounds( Image_T *image )
   int tri;
   int bdReg = 3;
 
-  if ( image->closed ) {
+  if (image->closed) {
     return;
   }
 
-  ComputeImageGrad( image );
-  Img_GetMagGradRange( image, rng );
+  ComputeImageGrad(image);
+  Img_GetMagGradRange(image, rng);
   maxG = rng[1];
 
-  xdim = image->imgDims[0];   // xdim == # cols
-  ydim = image->imgDims[1];   // ydim == # rows
-  zdim = image->imgDims[2];   // zdim == # planes
+  xdim = image->imgDims[0]; // xdim == # cols
+  ydim = image->imgDims[1]; // ydim == # rows
+  zdim = image->imgDims[2]; // zdim == # planes
 
-  if ( image->dim == 3 ) {
+  if (image->dim == 3) {
     tri = 1;
   } else {
     tri = 0;
@@ -663,17 +629,16 @@ void CloseImageGradBounds( Image_T *image )
   for (k = 0; k < zdim; k++) {
     for (j = 0; j < ydim; j++) {
       for (i = 0; i < xdim; i++) {
-	pixIx = (k * xdim * ydim) + (j * ydim) + i;
+        pixIx = (k * xdim * ydim) + (j * ydim) + i;
 
-	if ( ( i < bdReg ) || ( i >= (xdim-bdReg) ) ||
-	     ( j < bdReg ) || ( j >= (ydim-bdReg) ) ||
-	     ( (tri) && ( k < bdReg ) ) ||
-	     ( (tri) && ( k >= (zdim-bdReg) ) ) ) {
-	  image->pixels[pixIx].gradX = maxG;
-	  image->pixels[pixIx].gradY = maxG;
-	  image->pixels[pixIx].gradZ = maxG;
-	  continue;
-	}
+        if ((i < bdReg) || (i >= (xdim - bdReg)) || (j < bdReg) ||
+            (j >= (ydim - bdReg)) || ((tri) && (k < bdReg)) ||
+            ((tri) && (k >= (zdim - bdReg)))) {
+          image->pixels[pixIx].gradX = maxG;
+          image->pixels[pixIx].gradY = maxG;
+          image->pixels[pixIx].gradZ = maxG;
+          continue;
+        }
       }
     }
   }
@@ -682,7 +647,6 @@ void CloseImageGradBounds( Image_T *image )
 
   return;
 }
-
 
 // -----------
 // CreateImage
@@ -697,9 +661,8 @@ void CloseImageGradBounds( Image_T *image )
 // NOTE that the input data array is COPIED, so the caller should NOT
 // surrender memory mgmt of that array upon calling this function.
 
-Image_T *CreateImage( void *data, int numData, char *imgTypeFlag,
-		      int imgDims[], double pixelDims[] )
-{
+Image_T *CreateImage(void *data, int numData, char *imgTypeFlag, int imgDims[],
+                     double pixelDims[]) {
   Image_T *image;
   int i, len;
   short *tmpDataShort;
@@ -708,14 +671,14 @@ Image_T *CreateImage( void *data, int numData, char *imgTypeFlag,
   int rowIx, colIx, planeIx, planeOffset;
   int dataCode;
 
-   // See notes at the other call to FindMachineEpsilon.
+  // See notes at the other call to FindMachineEpsilon.
   gMachineEpsilon = 100.0 * FindMachineEpsilon();
 
-  if ( !strcmp( imgTypeFlag, "-short" ) ) {
+  if (!strcmp(imgTypeFlag, "-short")) {
     dataCode = 0;
-  } else if ( !strcmp( imgTypeFlag, "-double" ) ) {
+  } else if (!strcmp(imgTypeFlag, "-double")) {
     dataCode = 1;
-  } else if ( !strcmp( imgTypeFlag, "-float" ) ) {
+  } else if (!strcmp(imgTypeFlag, "-float")) {
     dataCode = 2;
   } else {
     fprintf(stderr, "ERR: Invalid image data type flag.\n");
@@ -728,7 +691,7 @@ Image_T *CreateImage( void *data, int numData, char *imgTypeFlag,
     image->imgDims[i] = imgDims[i];
     image->pixelDims[i] = pixelDims[i];
   }
-  if ( image->imgDims[2] == 1 ) {
+  if (image->imgDims[2] == 1) {
     image->dim = 2;
   } else {
     image->dim = 3;
@@ -738,7 +701,7 @@ Image_T *CreateImage( void *data, int numData, char *imgTypeFlag,
     fprintf(stderr, "ERR: Data size mismatch.\n");
     return nullptr;
   }
-  image->pixels = new Pixel_T [len];
+  image->pixels = new Pixel_T[len];
 
   switch (dataCode) {
   case 0:
@@ -784,15 +747,13 @@ Image_T *CreateImage( void *data, int numData, char *imgTypeFlag,
   return image;
 }
 
-
 // ------------
 // LinearInterp
 // ------------
 // Bi-/tri- linear interpolation of specified image quantity.
 
-int LinearInterp( Image_T *image, ImageData_T code, double pos[],
-		  double *value )
-{
+int LinearInterp(Image_T *image, ImageData_T code, double pos[],
+                 double *value) {
   int pixelCol, pixelRow, pixelPlane, pixelIx;
   int inBorder, octant;
   double xBdWidth, yBdWidth, zBdWidth;
@@ -809,7 +770,7 @@ int LinearInterp( Image_T *image, ImageData_T code, double pos[],
 
   x = pos[0] - image->lowerleft[0];
   y = pos[1] - image->lowerleft[1];
-  if ( image->dim == 3 ) {
+  if (image->dim == 3) {
     z = pos[2] - image->lowerleft[2];
     tri = 1;
   } else {
@@ -821,44 +782,42 @@ int LinearInterp( Image_T *image, ImageData_T code, double pos[],
   ppos[1] = y;
   ppos[2] = z;
 
-  if ( !InRange( image, ppos ) ) {
+  if (!InRange(image, ppos)) {
     return SV_ERROR;
   }
 
   xBdWidth = image->pixelDims[0] / 2.0;
   yBdWidth = image->pixelDims[1] / 2.0;
   zBdWidth = image->pixelDims[2] / 2.0;
-  if ( ( x <= xBdWidth ) ||
-       ( x >= ( ( image->imgDims[0] * image->pixelDims[0] ) - xBdWidth ) ) ||
-       ( y <= yBdWidth ) ||
-       ( y >= ( ( image->imgDims[1] * image->pixelDims[1] ) - yBdWidth ) ) ||
-       ( (tri) && ( z <= zBdWidth ) ) ||
-       ( (tri) && ( z >= ( ( image->imgDims[2] * image->pixelDims[2] ) -
-			   zBdWidth ) ) ) ) {
+  if ((x <= xBdWidth) ||
+      (x >= ((image->imgDims[0] * image->pixelDims[0]) - xBdWidth)) ||
+      (y <= yBdWidth) ||
+      (y >= ((image->imgDims[1] * image->pixelDims[1]) - yBdWidth)) ||
+      ((tri) && (z <= zBdWidth)) ||
+      ((tri) &&
+       (z >= ((image->imgDims[2] * image->pixelDims[2]) - zBdWidth)))) {
     inBorder = 1;
   } else {
     inBorder = 0;
   }
 
-  pixelCol = (int)floor( x / image->pixelDims[0] );
-  pixelRow = (int)floor( y / image->pixelDims[1] );
+  pixelCol = (int)floor(x / image->pixelDims[0]);
+  pixelRow = (int)floor(y / image->pixelDims[1]);
   if (tri) {
-    pixelPlane = (int)floor( z / image->pixelDims[2] );
+    pixelPlane = (int)floor(z / image->pixelDims[2]);
   } else {
     pixelPlane = 0;
   }
 
-  pixelCol = ( pixelCol >= image->imgDims[0] ) ?
-    ( image->imgDims[0] - 1 ) : pixelCol;
-  pixelRow = ( pixelRow >= image->imgDims[1] ) ?
-    ( image->imgDims[1] - 1 ) : pixelRow;
-  pixelPlane = ( pixelPlane >= image->imgDims[2] ) ?
-    ( image->imgDims[2] - 1 ) : pixelPlane;
+  pixelCol =
+      (pixelCol >= image->imgDims[0]) ? (image->imgDims[0] - 1) : pixelCol;
+  pixelRow =
+      (pixelRow >= image->imgDims[1]) ? (image->imgDims[1] - 1) : pixelRow;
+  pixelPlane =
+      (pixelPlane >= image->imgDims[2]) ? (image->imgDims[2] - 1) : pixelPlane;
 
-  pixelIx = \
-    (image->imgDims[0] * image->imgDims[1] * pixelPlane) \
-    + (image->imgDims[0] * pixelRow) \
-    + pixelCol;
+  pixelIx = (image->imgDims[0] * image->imgDims[1] * pixelPlane) +
+            (image->imgDims[0] * pixelRow) + pixelCol;
 
   if (inBorder) {
     switch (code) {
@@ -885,41 +844,41 @@ int LinearInterp( Image_T *image, ImageData_T code, double pos[],
   pixelCy = pixelRow * image->pixelDims[1] + yBdWidth;
   pixelCz = pixelPlane * image->pixelDims[2] + zBdWidth;
 
-  if ( x > pixelCx ) {
-    if ( y > pixelCy ) {
-      if ( ( !tri ) || ( z > pixelCz ) ) {
-	octant = 1;
+  if (x > pixelCx) {
+    if (y > pixelCy) {
+      if ((!tri) || (z > pixelCz)) {
+        octant = 1;
       } else {
-	octant = 5;
+        octant = 5;
       }
     } else {
-      if ( ( !tri ) || ( z > pixelCz ) ) {
-	octant = 4;
+      if ((!tri) || (z > pixelCz)) {
+        octant = 4;
       } else {
-	octant = 8;
+        octant = 8;
       }
     }
   } else {
-    if ( y > pixelCy ) {
-      if ( ( !tri ) || ( z > pixelCz ) ) {
-	octant = 2;
+    if (y > pixelCy) {
+      if ((!tri) || (z > pixelCz)) {
+        octant = 2;
       } else {
-	octant = 6;
+        octant = 6;
       }
     } else {
-      if ( ( !tri ) || ( z > pixelCz ) ) {
-	octant = 3;
+      if ((!tri) || (z > pixelCz)) {
+        octant = 3;
       } else {
-	octant = 7;
+        octant = 7;
       }
     }
   }
 
-  if ( !tri ) {
-    assert( octant != 5 );
-    assert( octant != 6 );
-    assert( octant != 7 );
-    assert( octant != 8 );
+  if (!tri) {
+    assert(octant != 5);
+    assert(octant != 6);
+    assert(octant != 7);
+    assert(octant != 8);
   }
 
   switch (octant) {
@@ -1029,14 +988,12 @@ int LinearInterp( Image_T *image, ImageData_T code, double pos[],
 
   // Check the sanity of the resulting indices (yes, I'm paranoid):
 
-  assert( (ix1 / (image->imgDims[0] * image->imgDims[1])) >= 0 );
-  assert( (ix1 / (image->imgDims[0] * image->imgDims[1])) <
-	  image->imgDims[2] );
+  assert((ix1 / (image->imgDims[0] * image->imgDims[1])) >= 0);
+  assert((ix1 / (image->imgDims[0] * image->imgDims[1])) < image->imgDims[2]);
 
-  if ( tri ) {
-    assert( (ix5 / (image->imgDims[0] * image->imgDims[1])) >= 0 );
-    assert( (ix5 / (image->imgDims[0] * image->imgDims[1])) <
-	    image->imgDims[2] );
+  if (tri) {
+    assert((ix5 / (image->imgDims[0] * image->imgDims[1])) >= 0);
+    assert((ix5 / (image->imgDims[0] * image->imgDims[1])) < image->imgDims[2]);
   }
 
   switch (code) {
@@ -1045,7 +1002,7 @@ int LinearInterp( Image_T *image, ImageData_T code, double pos[],
     I2 = image->pixels[ix2].intensity;
     I3 = image->pixels[ix3].intensity;
     I4 = image->pixels[ix4].intensity;
-    if ( tri ) {
+    if (tri) {
       I5 = image->pixels[ix5].intensity;
       I6 = image->pixels[ix6].intensity;
       I7 = image->pixels[ix7].intensity;
@@ -1057,7 +1014,7 @@ int LinearInterp( Image_T *image, ImageData_T code, double pos[],
     I2 = image->pixels[ix2].gradX;
     I3 = image->pixels[ix3].gradX;
     I4 = image->pixels[ix4].gradX;
-    if ( tri ) {
+    if (tri) {
       I5 = image->pixels[ix5].gradX;
       I6 = image->pixels[ix6].gradX;
       I7 = image->pixels[ix7].gradX;
@@ -1069,7 +1026,7 @@ int LinearInterp( Image_T *image, ImageData_T code, double pos[],
     I2 = image->pixels[ix2].gradY;
     I3 = image->pixels[ix3].gradY;
     I4 = image->pixels[ix4].gradY;
-    if ( tri ) {
+    if (tri) {
       I5 = image->pixels[ix5].gradY;
       I6 = image->pixels[ix6].gradY;
       I7 = image->pixels[ix7].gradY;
@@ -1081,7 +1038,7 @@ int LinearInterp( Image_T *image, ImageData_T code, double pos[],
     I2 = image->pixels[ix2].gradZ;
     I3 = image->pixels[ix3].gradZ;
     I4 = image->pixels[ix4].gradZ;
-    if ( tri ) {
+    if (tri) {
       I5 = image->pixels[ix5].gradZ;
       I6 = image->pixels[ix6].gradZ;
       I7 = image->pixels[ix7].gradZ;
@@ -1105,170 +1062,160 @@ int LinearInterp( Image_T *image, ImageData_T code, double pos[],
 
   cx1 = colNum1 * image->pixelDims[0] + xBdWidth;
   cy1 = rowNum1 * image->pixelDims[1] + yBdWidth;
-  if ( tri ) {
+  if (tri) {
     cz1 = planeNum1 * image->pixelDims[2] + zBdWidth;
   }
 
-  rx = ( x - cx1 ) / image->pixelDims[0];
-  if ( fabs(rx-1.0) <= gMachineEpsilon ) {
+  rx = (x - cx1) / image->pixelDims[0];
+  if (fabs(rx - 1.0) <= gMachineEpsilon) {
     rx = 1.0;
   }
-  ry = ( y - cy1 ) / image->pixelDims[1];
-  if ( fabs(ry-1.0) <= gMachineEpsilon ) {
+  ry = (y - cy1) / image->pixelDims[1];
+  if (fabs(ry - 1.0) <= gMachineEpsilon) {
     ry = 1.0;
   }
-  if ( tri ) {
-    rz = ( z - cz1 ) / image->pixelDims[2];
-    if ( fabs(rz-1.0) <= gMachineEpsilon ) {
+  if (tri) {
+    rz = (z - cz1) / image->pixelDims[2];
+    if (fabs(rz - 1.0) <= gMachineEpsilon) {
       rz = 1.0;
     }
   }
 
-  assert( rx >= 0.0 );
-  assert( rx <= 1.0 );
-  assert( ry >= 0.0 );
-  assert( ry <= 1.0 );
-  if ( tri ) {
-    assert( rz >= 0.0 );
-    assert( rz <= 1.0 );
+  assert(rx >= 0.0);
+  assert(rx <= 1.0);
+  assert(ry >= 0.0);
+  assert(ry <= 1.0);
+  if (tri) {
+    assert(rz >= 0.0);
+    assert(rz <= 1.0);
   }
 
-  q14 = ( 1.0 - rx - ry + (rx*ry) ) * I1;
-  q14 += rx * ( 1.0 - ry ) * I2;
+  q14 = (1.0 - rx - ry + (rx * ry)) * I1;
+  q14 += rx * (1.0 - ry) * I2;
   q14 += rx * ry * I3;
-  q14 += ry * ( 1.0 - rx ) * I4;
+  q14 += ry * (1.0 - rx) * I4;
 
-  if ( tri ) {
-    q58 = ( 1.0 - rx - ry + (rx*ry) ) * I5;
-    q58 += rx * ( 1.0 - ry ) * I6;
+  if (tri) {
+    q58 = (1.0 - rx - ry + (rx * ry)) * I5;
+    q58 += rx * (1.0 - ry) * I6;
     q58 += rx * ry * I7;
-    q58 += ry * ( 1.0 - rx ) * I8;
+    q58 += ry * (1.0 - rx) * I8;
   }
 
-  if ( !tri ) {
+  if (!tri) {
     result = q14;
   } else {
-    result = rz * ( q58 - q14 ) + q14;
+    result = rz * (q58 - q14) + q14;
   }
 
   *value = result;
   return SV_OK;
 }
 
-
 // ------------
 // GetIntensity
 // ------------
 
-int GetIntensity( Image_T *image, double pos[], double *result )
-{
-  return LinearInterp( image, IMG_INTENSITY, pos, result );
+int GetIntensity(Image_T *image, double pos[], double *result) {
+  return LinearInterp(image, IMG_INTENSITY, pos, result);
 }
-
 
 // ---------
 // GetGradIx
 // ---------
 
-int GetGradIx( Image_T *image, double pos[], double *result )
-{
-  if ( ! image->gradValid ) {
-    ComputeImageGrad( image );
+int GetGradIx(Image_T *image, double pos[], double *result) {
+  if (!image->gradValid) {
+    ComputeImageGrad(image);
   }
-  return LinearInterp( image, IMG_GRADIX, pos, result );
+  return LinearInterp(image, IMG_GRADIX, pos, result);
 }
-
 
 // ---------
 // GetGradIy
 // ---------
 
-int GetGradIy( Image_T *image, double pos[], double *result )
-{
-  if ( ! image->gradValid ) {
-    ComputeImageGrad( image );
+int GetGradIy(Image_T *image, double pos[], double *result) {
+  if (!image->gradValid) {
+    ComputeImageGrad(image);
   }
-  return LinearInterp( image, IMG_GRADIY, pos, result );
+  return LinearInterp(image, IMG_GRADIY, pos, result);
 }
-
 
 // ---------
 // GetGradIz
 // ---------
 
-int GetGradIz( Image_T *image, double pos[], double *result )
-{
-  if ( ! image->gradValid ) {
-    ComputeImageGrad( image );
+int GetGradIz(Image_T *image, double pos[], double *result) {
+  if (!image->gradValid) {
+    ComputeImageGrad(image);
   }
-  return LinearInterp( image, IMG_GRADIZ, pos, result );
+  return LinearInterp(image, IMG_GRADIZ, pos, result);
 }
-
 
 // -----------
 // WriteZSlice
 // -----------
 
-void WriteZSlice( Image_T *image, char *filename, int num,
-		  char *imgTypeFlag, ImageData_T field )
-{
+void WriteZSlice(Image_T *image, char *filename, int num, char *imgTypeFlag,
+                 ImageData_T field) {
   FILE *fp;
   int len, i;
   short sDatum;
   double dDatum;
   int convertShort;
 
-  if ( !strcmp( imgTypeFlag, "-short" ) ) {
+  if (!strcmp(imgTypeFlag, "-short")) {
     convertShort = 1;
-  } else if ( !strcmp( imgTypeFlag, "-double" ) ) {
+  } else if (!strcmp(imgTypeFlag, "-double")) {
     convertShort = 0;
   } else {
     fprintf(stderr, "ERR: Invalid image data type flag.\n");
     return;
   }
 
-  fp = fopen( filename, "w" );
+  fp = fopen(filename, "w");
 
   len = image->imgDims[0] * image->imgDims[1] * image->imgDims[2];
-  for ( i = 0; i < len; i++ ) {
-    if ( image->pixels[i].plane == num ) {
+  for (i = 0; i < len; i++) {
+    if (image->pixels[i].plane == num) {
       switch (field) {
       case IMG_INTENSITY:
-	if (convertShort) {
-	  sDatum = (short)(image->pixels[i].intensity);
-	  fwrite( &sDatum, sizeof(short), 1, fp );
-	} else {
-	  dDatum = image->pixels[i].intensity;
-	  fwrite( &dDatum, sizeof(double), 1, fp );
-	}
-	break;
+        if (convertShort) {
+          sDatum = (short)(image->pixels[i].intensity);
+          fwrite(&sDatum, sizeof(short), 1, fp);
+        } else {
+          dDatum = image->pixels[i].intensity;
+          fwrite(&dDatum, sizeof(double), 1, fp);
+        }
+        break;
       case IMG_GRADIX:
-	if (convertShort) {
-	  sDatum = (short)(image->pixels[i].gradX);
-	  fwrite( &sDatum, sizeof(short), 1, fp );
-	} else {
-	  dDatum = image->pixels[i].gradX;
-	  fwrite( &dDatum, sizeof(double), 1, fp );
-	}
-	break;
+        if (convertShort) {
+          sDatum = (short)(image->pixels[i].gradX);
+          fwrite(&sDatum, sizeof(short), 1, fp);
+        } else {
+          dDatum = image->pixels[i].gradX;
+          fwrite(&dDatum, sizeof(double), 1, fp);
+        }
+        break;
       case IMG_GRADIY:
-	if (convertShort) {
-	  sDatum = (short)(image->pixels[i].gradY);
-	  fwrite( &sDatum, sizeof(short), 1, fp );
-	} else {
-	  dDatum = image->pixels[i].gradY;
-	  fwrite( &dDatum, sizeof(double), 1, fp );
-	}
-	break;
+        if (convertShort) {
+          sDatum = (short)(image->pixels[i].gradY);
+          fwrite(&sDatum, sizeof(short), 1, fp);
+        } else {
+          dDatum = image->pixels[i].gradY;
+          fwrite(&dDatum, sizeof(double), 1, fp);
+        }
+        break;
       case IMG_GRADIZ:
-	if (convertShort) {
-	  sDatum = (short)(image->pixels[i].gradZ);
-	  fwrite( &sDatum, sizeof(short), 1, fp );
-	} else {
-	  dDatum = image->pixels[i].gradZ;
-	  fwrite( &dDatum, sizeof(double), 1, fp );
-	}
-	break;
+        if (convertShort) {
+          sDatum = (short)(image->pixels[i].gradZ);
+          fwrite(&sDatum, sizeof(short), 1, fp);
+        } else {
+          dDatum = image->pixels[i].gradZ;
+          fwrite(&dDatum, sizeof(double), 1, fp);
+        }
+        break;
       }
     }
   }
@@ -1277,14 +1224,12 @@ void WriteZSlice( Image_T *image, char *filename, int num,
   return;
 }
 
-
 // -------
 // InRange
 // -------
 // For INTERNAL USE only!
 
-int InRange( Image_T *image, double pos[] )
-{
+int InRange(Image_T *image, double pos[]) {
   double x, y, z;
   double maxx;
   double maxy;
@@ -1292,20 +1237,20 @@ int InRange( Image_T *image, double pos[] )
 
   x = pos[0];
   maxx = image->pixelDims[0] * image->imgDims[0];
-  if ( (x < 0.0) || (x > maxx) ) {
+  if ((x < 0.0) || (x > maxx)) {
     return SV_ERROR;
   }
 
   y = pos[1];
   maxy = image->pixelDims[1] * image->imgDims[1];
-  if ( (y < 0.0) || (y > maxy) ) {
+  if ((y < 0.0) || (y > maxy)) {
     return SV_ERROR;
   }
 
-  if ( image->dim == 3 ) {
+  if (image->dim == 3) {
     z = pos[2];
     maxz = image->pixelDims[2] * image->imgDims[2];
-    if ( (z < 0.0) || (z > maxz) ) {
+    if ((z < 0.0) || (z > maxz)) {
       return SV_ERROR;
     }
   }
@@ -1313,23 +1258,21 @@ int InRange( Image_T *image, double pos[] )
   return SV_OK;
 }
 
-
 // ------------------
 // Img_GetMemoryUsage
 // ------------------
 
-int Img_GetMemoryUsage( Image_T *image )
-{
+int Img_GetMemoryUsage(Image_T *image) {
   int numPix;
   int sz;
 
-  if ( image == nullptr ) {
+  if (image == nullptr) {
     return 0;
   }
 
   numPix = image->imgDims[0] * image->imgDims[1] * image->imgDims[2];
-  sz = sizeof( Image_T );
-  sz += numPix * sizeof( Pixel_T );
+  sz = sizeof(Image_T);
+  sz += numPix * sizeof(Pixel_T);
 
   return sz;
 }

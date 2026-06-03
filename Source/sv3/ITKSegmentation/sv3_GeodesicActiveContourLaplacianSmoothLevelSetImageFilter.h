@@ -32,74 +32,61 @@
 #ifndef GEODESICACTIVECONTOURLAPLACIANSMOOTHLEVELSETIMAGEFILTER_H_
 #define GEODESICACTIVECONTOURLAPLACIANSMOOTHLEVELSETIMAGEFILTER_H_
 
-#include "itkGeodesicActiveContourLevelSetImageFilter.h"
 #include "itkGeodesicActiveContourLevelSetFunction.h"
+#include "itkGeodesicActiveContourLevelSetImageFilter.h"
 
-namespace itk
-{
-template< typename TInputImage,
-typename TFeatureImage,
-typename TOutputPixelType = float >
-class GeodesicActiveContourLaplacianSmoothLevelSetImageFilter:
-		public GeodesicActiveContourLevelSetImageFilter< TInputImage, TFeatureImage, TOutputPixelType >
-{
+namespace itk {
+template <typename TInputImage, typename TFeatureImage,
+          typename TOutputPixelType = float>
+class GeodesicActiveContourLaplacianSmoothLevelSetImageFilter
+    : public GeodesicActiveContourLevelSetImageFilter<
+          TInputImage, TFeatureImage, TOutputPixelType> {
 public:
+  typedef GeodesicActiveContourLaplacianSmoothLevelSetImageFilter Self;
+  typedef GeodesicActiveContourLevelSetImageFilter<TInputImage, TFeatureImage,
+                                                   TOutputPixelType>
+      Superclass;
 
-	typedef GeodesicActiveContourLaplacianSmoothLevelSetImageFilter Self;
-	typedef GeodesicActiveContourLevelSetImageFilter< TInputImage, TFeatureImage,
-			TOutputPixelType > Superclass;
+  typedef SmartPointer<Self> Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
 
-	typedef SmartPointer< Self >       Pointer;
-	typedef SmartPointer< const Self > ConstPointer;
+  /** Inherited typedef from the superclass. */
+  typedef typename Superclass::ValueType ValueType;
+  typedef typename Superclass::OutputImageType OutputImageType;
+  typedef typename Superclass::FeatureImageType FeatureImageType;
 
-	/** Inherited typedef from the superclass. */
-	typedef typename Superclass::ValueType        ValueType;
-	typedef typename Superclass::OutputImageType  OutputImageType;
-	typedef typename Superclass::FeatureImageType FeatureImageType;
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(GeodesicActiveContourLaplacianSmoothLevelSetImageFilter,
+               GeodesicActiveContourLevelSetImageFilter);
 
-	/** Run-time type information (and related methods). */
-	itkTypeMacro(GeodesicActiveContourLaplacianSmoothLevelSetImageFilter,
-			GeodesicActiveContourLevelSetImageFilter);
+  itkNewMacro(Self);
 
+  void SetLaplacianSmoothingWeight(float value) {
+    if (value !=
+        this->GetSegmentationFunction()->GetLaplacianSmoothingWeight()) {
+      this->GetSegmentationFunction()->SetLaplacianSmoothingWeight(value);
+      this->Modified();
+    }
+  }
 
-	itkNewMacro(Self);
-
-
-
-	void SetLaplacianSmoothingWeight(float value)
-	{
-		if( value != this->GetSegmentationFunction()->GetLaplacianSmoothingWeight())
-		{
-			this->GetSegmentationFunction()->SetLaplacianSmoothingWeight(value);
-			this->Modified();
-		}
-
-	}
-
-	float GetLaplacianSmoothingWeight()
-	{
-		return this->GetSegmentationFunction()->GetLaplacianSmoothingWeight();
-	}
-
+  float GetLaplacianSmoothingWeight() {
+    return this->GetSegmentationFunction()->GetLaplacianSmoothingWeight();
+  }
 
 protected:
-	GeodesicActiveContourLaplacianSmoothLevelSetImageFilter();
-	~GeodesicActiveContourLaplacianSmoothLevelSetImageFilter() {}
-	GeodesicActiveContourLaplacianSmoothLevelSetImageFilter(const Self &); // purposely not                                                 // implemented
-	void operator=(const Self &);
-
+  GeodesicActiveContourLaplacianSmoothLevelSetImageFilter();
+  ~GeodesicActiveContourLaplacianSmoothLevelSetImageFilter() {}
+  GeodesicActiveContourLaplacianSmoothLevelSetImageFilter(
+      const Self &); // purposely not // implemented
+  void operator=(const Self &);
 };
 
-template< typename TInputImage,
-typename TFeatureImage,
-typename TOutputPixelType>
-GeodesicActiveContourLaplacianSmoothLevelSetImageFilter<TInputImage, TFeatureImage, TOutputPixelType>
-::GeodesicActiveContourLaplacianSmoothLevelSetImageFilter() : Superclass()
- {}
-} //namespace
-
-
-
-
+template <typename TInputImage, typename TFeatureImage,
+          typename TOutputPixelType>
+GeodesicActiveContourLaplacianSmoothLevelSetImageFilter<
+    TInputImage, TFeatureImage,
+    TOutputPixelType>::GeodesicActiveContourLaplacianSmoothLevelSetImageFilter()
+    : Superclass() {}
+} // namespace itk
 
 #endif /* GEODESICACTIVECONTOURLAPLACIANSMOOTHLEVELSETIMAGEFILTER_H_ */

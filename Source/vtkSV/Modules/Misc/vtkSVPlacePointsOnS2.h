@@ -48,15 +48,14 @@
 #include "vtkPolyData.h"
 #include "vtkPolyDataAlgorithm.h"
 
-class VTKSVMISC_EXPORT vtkSVPlacePointsOnS2 : public vtkPolyDataAlgorithm
-{
+class VTKSVMISC_EXPORT vtkSVPlacePointsOnS2 : public vtkPolyDataAlgorithm {
 public:
-  static vtkSVPlacePointsOnS2* New();
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  static vtkSVPlacePointsOnS2 *New();
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
-  // \brief Macro to set/get the axis that the object aligns with in order to orient
-  // the object with a unit cube.
+  // \brief Macro to set/get the axis that the object aligns with in order to
+  // orient the object with a unit cube.
   vtkSetVector3Macro(ZAxis, double);
   vtkGetVector3Macro(ZAxis, double);
   vtkSetVector3Macro(XAxis, double);
@@ -76,8 +75,8 @@ protected:
 
   // Usual data generation method
   int RequestData(vtkInformation *vtkNotUsed(request),
-		  vtkInformationVector **inputVector,
-		  vtkInformationVector *outputVector) override;
+                  vtkInformationVector **inputVector,
+                  vtkInformationVector *outputVector) override;
 
   int RunFilter(); // Run filter operations.
   int MoveToOrigin();
@@ -88,8 +87,8 @@ protected:
   int ConvertTextureFieldToPolyData();
 
 private:
-  vtkSVPlacePointsOnS2(const vtkSVPlacePointsOnS2&);  // Not implemented.
-  void operator=(const vtkSVPlacePointsOnS2&);  // Not implemented.
+  vtkSVPlacePointsOnS2(const vtkSVPlacePointsOnS2 &); // Not implemented.
+  void operator=(const vtkSVPlacePointsOnS2 &);       // Not implemented.
 
   vtkPolyData *InitialPd;
   vtkPolyData *WorkPd;

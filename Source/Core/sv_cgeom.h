@@ -40,23 +40,22 @@
  *                                                            *
  *------------------------------------------------------------*/
 
-
 typedef struct _coord_bin_ {
   int id;
   double x, y, z, d;
   struct _coord_bin_ *link;
-  } CoordBin;
+} CoordBin;
 
 typedef struct PolyList {
   int id;
   int loc;
   struct PolyList *next;
-  } PolyList;
+} PolyList;
 
 typedef struct NodeList {
   int id;
   struct NodeList *next;
-  } NodeList;
+} NodeList;
 
 typedef struct EdgeList {
   int poly;
@@ -65,74 +64,87 @@ typedef struct EdgeList {
   int count;
   int polys[10];
   struct EdgeList *next;
-  } EdgeList;
+} EdgeList;
 
 typedef struct EdgeVertexList {
   int node;
   int loc;
   struct EdgeVertexList *next;
-  } EdgeVertexList;
-
+} EdgeVertexList;
 
 typedef struct PolyConnList {
   int num;
   int *conn;
   struct PolyConnList *next;
-  } PolyConnList;
+} PolyConnList;
 
 #include "SimVascular.h"
 #include "svUtilsExports.h" // For exports
 
-void SV_EXPORT_UTILS
-cgeom_VertsCompact (int num_verts, vtkFloatingPointType *verts, int num_polys, int *conn,
-                    int *num_new_verts, vtkFloatingPointType **new_verts);
+void SV_EXPORT_UTILS cgeom_VertsCompact(int num_verts,
+                                        vtkFloatingPointType *verts,
+                                        int num_polys, int *conn,
+                                        int *num_new_verts,
+                                        vtkFloatingPointType **new_verts);
 
-void SV_EXPORT_UTILS
-cgeom_CompArea (int num_verts, vtkFloatingPointType *verts, int num_polys, vtkIdType *conn,
-                vtkFloatingPointType *p_area);
+void SV_EXPORT_UTILS cgeom_CompArea(int num_verts, vtkFloatingPointType *verts,
+                                    int num_polys, vtkIdType *conn,
+                                    vtkFloatingPointType *p_area);
 
-void SV_EXPORT_UTILS
-cgeom_GetPolyCentroid (int num_verts, vtkFloatingPointType *verts, int num_polys, vtkIdType *conn, double centroid[]);
+void SV_EXPORT_UTILS cgeom_GetPolyCentroid(int num_verts,
+                                           vtkFloatingPointType *verts,
+                                           int num_polys, vtkIdType *conn,
+                                           double centroid[]);
 
-void SV_EXPORT_UTILS
-cgeom_CompVol (int num_verts, vtkFloatingPointType *verts, int num_polys, vtkIdType *conn,
-               double *p_vol);
+void SV_EXPORT_UTILS cgeom_CompVol(int num_verts, vtkFloatingPointType *verts,
+                                   int num_polys, vtkIdType *conn,
+                                   double *p_vol);
 
-void SV_EXPORT_UTILS
-cgeom_PolysClosed (int num_verts, vtkFloatingPointType *verts, int num_polys, vtkIdType *conn,
-                   int *closed);
+void SV_EXPORT_UTILS cgeom_PolysClosed(int num_verts,
+                                       vtkFloatingPointType *verts,
+                                       int num_polys, vtkIdType *conn,
+                                       int *closed);
 
-void SV_EXPORT_UTILS
-cgeom_PolysSmooth (int num_verts, vtkFloatingPointType *verts, int num_polys, vtkIdType *conn,
-                   int level, vtkFloatingPointType **p_sverts);
+void SV_EXPORT_UTILS cgeom_PolysSmooth(int num_verts,
+                                       vtkFloatingPointType *verts,
+                                       int num_polys, vtkIdType *conn,
+                                       int level,
+                                       vtkFloatingPointType **p_sverts);
 
-void SV_EXPORT_UTILS
-cgeom_FindDegen (int num_verts, vtkFloatingPointType *verts, int num_polys, vtkIdType *conn,
-                 vtkFloatingPointType tol, int *p_num, int *id);
+void SV_EXPORT_UTILS cgeom_FindDegen(int num_verts, vtkFloatingPointType *verts,
+                                     int num_polys, vtkIdType *conn,
+                                     vtkFloatingPointType tol, int *p_num,
+                                     int *id);
 
-void SV_EXPORT_UTILS
-cgeom_FindVert (int num_cvs, int cv_list[][10], int *vert_stat, int v,
-                int *p_id);
+void SV_EXPORT_UTILS cgeom_FindVert(int num_cvs, int cv_list[][10],
+                                    int *vert_stat, int v, int *p_id);
 
-void SV_EXPORT_UTILS
-cgeom_FixDegen (int num_verts, vtkFloatingPointType *verts, int num_polys, vtkIdType *conn,
-                vtkFloatingPointType tol, int *p_num_verts, vtkFloatingPointType **p_verts, int *p_num_polys,
-                vtkIdType **p_conn);
+void SV_EXPORT_UTILS cgeom_FixDegen(int num_verts, vtkFloatingPointType *verts,
+                                    int num_polys, vtkIdType *conn,
+                                    vtkFloatingPointType tol, int *p_num_verts,
+                                    vtkFloatingPointType **p_verts,
+                                    int *p_num_polys, vtkIdType **p_conn);
 
-void SV_EXPORT_UTILS
-cgeom_PolysManifold (int num_verts, vtkFloatingPointType *verts, int num_polys, vtkIdType *conn,
-                     int *manifold);
+void SV_EXPORT_UTILS cgeom_PolysManifold(int num_verts,
+                                         vtkFloatingPointType *verts,
+                                         int num_polys, vtkIdType *conn,
+                                         int *manifold);
 
-void SV_EXPORT_UTILS
-cgeom_PolysEdgeTab (int num_verts, vtkFloatingPointType *verts, int num_polys, vtkIdType *conn,
-                    EdgeList ***p_edge_table);
+void SV_EXPORT_UTILS cgeom_PolysEdgeTab(int num_verts,
+                                        vtkFloatingPointType *verts,
+                                        int num_polys, vtkIdType *conn,
+                                        EdgeList ***p_edge_table);
 
-void SV_EXPORT_UTILS
-cgeom_PolysEdgeConn (int num_verts, vtkFloatingPointType *verts, int num_polys, vtkIdType *conn,
-                     EdgeList **edge_table, int id, int *p_ncp, int *cp);
+void SV_EXPORT_UTILS cgeom_PolysEdgeConn(int num_verts,
+                                         vtkFloatingPointType *verts,
+                                         int num_polys, vtkIdType *conn,
+                                         EdgeList **edge_table, int id,
+                                         int *p_ncp, int *cp);
 
-void SV_EXPORT_UTILS cgeom_CalcAngle(double *point1, double *point2, double *theta);
+void SV_EXPORT_UTILS cgeom_CalcAngle(double *point1, double *point2,
+                                     double *theta);
 
-void SV_EXPORT_UTILS cgeom_CalcCentroid(double *listOfPts, int numPts, int numDim, double *centroid);
+void SV_EXPORT_UTILS cgeom_CalcCentroid(double *listOfPts, int numPts,
+                                        int numDim, double *centroid);
 
 #endif /* __CGEOM_H */

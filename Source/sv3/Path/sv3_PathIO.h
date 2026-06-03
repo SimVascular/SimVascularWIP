@@ -39,23 +39,22 @@
 
 #include <sv3PathExports.h>
 
-namespace sv3{
-class SV_EXPORT_PATH PathIO
-{
-  public:
+namespace sv3 {
+class SV_EXPORT_PATH PathIO {
+public:
+  PathIO() {};
 
-    PathIO(){};
+  ~PathIO() {};
 
-    ~PathIO(){};
-    
-    PathGroup* ReadFile(std::string fileName);
-    
-    int ReadPath(tinyxml2::XMLDocument& doc, PathElement* path, tinyxml2::XMLElement* pathXml );
-    
-    int Write(std::string fileName, PathGroup* pathGrp);
-    
-    void WritePath(tinyxml2::XMLDocument& doc, PathElement* path, tinyxml2::XMLElement* timeStepElem);
+  PathGroup *ReadFile(std::string fileName);
 
+  int ReadPath(tinyxml2::XMLDocument &doc, PathElement *path,
+               tinyxml2::XMLElement *pathXml);
+
+  int Write(std::string fileName, PathGroup *pathGrp);
+
+  void WritePath(tinyxml2::XMLDocument &doc, PathElement *path,
+                 tinyxml2::XMLElement *timeStepElem);
 };
-}
+} // namespace sv3
 #endif // SV4GUI_PATHIO_H

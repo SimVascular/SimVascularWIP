@@ -35,20 +35,20 @@
 #include "sv4gui_SegmentationUtils.h"
 #include <mitkNodePredicateDataType.h>
 
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
+#include <QHash>
+#include <QList>
+#include <QRegularExpression>
 #include <QString>
 #include <QStringList>
-#include <QList>
-#include <QHash>
-#include <QFile>
 #include <QTextStream>
-#include <QFileInfo>
-#include <QDir>
-#include <QRegularExpression>
 
+#include <vtkErrorCode.h>
 #include <vtkPolyData.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtkXMLPolyDataWriter.h>
-#include <vtkErrorCode.h>
 
 // Fix deprecated endl;
 static QString qt_endl = "\n";
@@ -59,85 +59,84 @@ static QString qt_endl = "\n";
 // Create a sv4guiContourGroup from contour file.
 //
 sv4guiContourGroup::Pointer
-sv4guiSegmentationLegacyIO::CreateGroupFromFile(const std::string& fileName)
-{
-    QString qfileName = QString::fromStdString(fileName);
-    QFileInfo file(qfileName);
-    QString groupName = file.baseName();
+sv4guiSegmentationLegacyIO::CreateGroupFromFile(const std::string &fileName) {
+  QString qfileName = QString::fromStdString(fileName);
+  QFileInfo file(qfileName);
+  QString groupName = file.baseName();
 
-    sv4guiContourGroup::Pointer contourGroup = sv4guiContourGroup::New();
+  sv4guiContourGroup::Pointer contourGroup = sv4guiContourGroup::New();
 
-    QFile inputFile(qfileName);
-    if (!inputFile.open(QIODevice::ReadOnly)) {
-        return contourGroup;
-    }
-
-    QTextStream in(&inputFile);
-
-    while (!in.atEnd()) {
-        QString line = in.readLine();
-        if (!line.contains("/group/")) {
-            continue;
-        }
-
-        QStringList list = line.split("/",Qt::SkipEmptyParts);
-        contourGroup->SetPathName(list[1].toStdString());
-
-        sv4guiContour* contour = new sv4guiContour();
-        contourGroup->InsertContour(-1,contour);
-
-        sv4guiPathElement::sv4guiPathPoint pathPoint;
-        line = in.readLine();
-        pathPoint.id=line.toInt();
-
-        line = in.readLine();
-        list = line.split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
-
-        int index;
-
-        index=list.indexOf("pathId");
-        if(index!=-1) {
-            contourGroup->SetPathID(list[index+1].toInt());
-        }
-
-        index=list.indexOf("pos");
-        if(index!=-1) {
-            for(int i=0;i<3;i++)
-                pathPoint.pos[i]=list[index+i+1].toDouble();
-        }
-
-        index=list.indexOf("nrm");
-        if(index!=-1) {
-            for(int i=0;i<3;i++)
-                pathPoint.tangent[i]=list[index+i+1].toDouble();
-        }
-
-        index=list.indexOf("xhat");
-        if(index!=-1) {
-            for(int i=0;i<3;i++)
-                pathPoint.rotation[i]=list[index+i+1].toDouble();
-        }
-
-        contour->SetPathPoint(pathPoint);
-        contour->SetMethod("Legacy");
-        contour->SetPlaced();
-
-        std::vector<mitk::Point3D> contourPoints;
-        while((line=in.readLine().trimmed())!=""){
-            list = line.split(QRegularExpression("\\s+"));
-            mitk::Point3D point;
-            for(int i=0;i<3;i++) {
-                point[i]=list[i].toDouble();
-            }
-            contourPoints.push_back(point);
-        }
-
-        contour->SetContourPoints(contourPoints,false);
-    }
-
-    inputFile.close();
-
+  QFile inputFile(qfileName);
+  if (!inputFile.open(QIODevice::ReadOnly)) {
     return contourGroup;
+  }
+
+  QTextStream in(&inputFile);
+
+  while (!in.atEnd()) {
+    QString line = in.readLine();
+    if (!line.contains("/group/")) {
+      continue;
+    }
+
+    QStringList list = line.split("/", Qt::SkipEmptyParts);
+    contourGroup->SetPathName(list[1].toStdString());
+
+    sv4guiContour *contour = new sv4guiContour();
+    contourGroup->InsertContour(-1, contour);
+
+    sv4guiPathElement::sv4guiPathPoint pathPoint;
+    line = in.readLine();
+    pathPoint.id = line.toInt();
+
+    line = in.readLine();
+    list = line.split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
+
+    int index;
+
+    index = list.indexOf("pathId");
+    if (index != -1) {
+      contourGroup->SetPathID(list[index + 1].toInt());
+    }
+
+    index = list.indexOf("pos");
+    if (index != -1) {
+      for (int i = 0; i < 3; i++)
+        pathPoint.pos[i] = list[index + i + 1].toDouble();
+    }
+
+    index = list.indexOf("nrm");
+    if (index != -1) {
+      for (int i = 0; i < 3; i++)
+        pathPoint.tangent[i] = list[index + i + 1].toDouble();
+    }
+
+    index = list.indexOf("xhat");
+    if (index != -1) {
+      for (int i = 0; i < 3; i++)
+        pathPoint.rotation[i] = list[index + i + 1].toDouble();
+    }
+
+    contour->SetPathPoint(pathPoint);
+    contour->SetMethod("Legacy");
+    contour->SetPlaced();
+
+    std::vector<mitk::Point3D> contourPoints;
+    while ((line = in.readLine().trimmed()) != "") {
+      list = line.split(QRegularExpression("\\s+"));
+      mitk::Point3D point;
+      for (int i = 0; i < 3; i++) {
+        point[i] = list[i].toDouble();
+      }
+      contourPoints.push_back(point);
+    }
+
+    contour->SetContourPoints(contourPoints, false);
+  }
+
+  inputFile.close();
+
+  return contourGroup;
 }
 
 //----------------------
@@ -145,18 +144,19 @@ sv4guiSegmentationLegacyIO::CreateGroupFromFile(const std::string& fileName)
 //----------------------
 // Create a DataNode from a contour file.
 //
-mitk::DataNode::Pointer sv4guiSegmentationLegacyIO::ReadContourGroupFile(QString filePath)
-{
-    QFileInfo file(filePath);
-    QString groupName = file.baseName();
+mitk::DataNode::Pointer
+sv4guiSegmentationLegacyIO::ReadContourGroupFile(QString filePath) {
+  QFileInfo file(filePath);
+  QString groupName = file.baseName();
 
-    sv4guiContourGroup::Pointer contourGroup = CreateGroupFromFile(filePath.toStdString());
+  sv4guiContourGroup::Pointer contourGroup =
+      CreateGroupFromFile(filePath.toStdString());
 
-    mitk::DataNode::Pointer node = mitk::DataNode::New();
-    node->SetData(contourGroup);
-    node->SetName(groupName.toStdString());
+  mitk::DataNode::Pointer node = mitk::DataNode::New();
+  node->SetData(contourGroup);
+  node->SetName(groupName.toStdString());
 
-    return node;
+  return node;
 }
 
 //-----------
@@ -164,210 +164,211 @@ mitk::DataNode::Pointer sv4guiSegmentationLegacyIO::ReadContourGroupFile(QString
 //-----------
 // Create DataNodes from the contour files in a directory.
 //
-std::vector<mitk::DataNode::Pointer> sv4guiSegmentationLegacyIO::ReadFiles(QString segDir)
-{
-    QStringList groupList;
-    QStringList seg3DList;
-    QFile inputFile(segDir+"/group_contents.tcl");
-    if (inputFile.open(QIODevice::ReadOnly))
-    {
-        QTextStream in(&inputFile);
-        while (!in.atEnd())
-        {
-            QString line = in.readLine();
-            QStringList list=line.split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
-            if(list.size()>1 && list[0]=="group_readProfiles")
-                groupList<<list[1];
+std::vector<mitk::DataNode::Pointer>
+sv4guiSegmentationLegacyIO::ReadFiles(QString segDir) {
+  QStringList groupList;
+  QStringList seg3DList;
+  QFile inputFile(segDir + "/group_contents.tcl");
+  if (inputFile.open(QIODevice::ReadOnly)) {
+    QTextStream in(&inputFile);
+    while (!in.atEnd()) {
+      QString line = in.readLine();
+      QStringList list =
+          line.split(QRegularExpression("[(),{}\\s+]"), Qt::SkipEmptyParts);
+      if (list.size() > 1 && list[0] == "group_readProfiles")
+        groupList << list[1];
 
-            if(list.size()>1 && list[0]=="seg3d_readSurf")
-                seg3DList<<list[1];
-        }
-
-        inputFile.close();
+      if (list.size() > 1 && list[0] == "seg3d_readSurf")
+        seg3DList << list[1];
     }
 
-    std::vector<mitk::DataNode::Pointer> nodes;
-    for(int i=0;i<groupList.size();i++)
-    {
-        QString filePath=segDir+"/"+groupList[i];
-        if(!QFile(filePath).exists())
-            continue;
+    inputFile.close();
+  }
 
-        mitk::DataNode::Pointer node=ReadContourGroupFile(filePath);
-        nodes.push_back(node);
+  std::vector<mitk::DataNode::Pointer> nodes;
+  for (int i = 0; i < groupList.size(); i++) {
+    QString filePath = segDir + "/" + groupList[i];
+    if (!QFile(filePath).exists())
+      continue;
+
+    mitk::DataNode::Pointer node = ReadContourGroupFile(filePath);
+    nodes.push_back(node);
+  }
+
+  for (int i = 0; i < seg3DList.size(); i++) {
+    QString filePath = segDir + "/" + seg3DList[i] + ".vtp";
+    if (!QFile(filePath).exists())
+      continue;
+
+    vtkSmartPointer<vtkXMLPolyDataReader> reader =
+        vtkSmartPointer<vtkXMLPolyDataReader>::New();
+    reader->SetFileName(filePath.toStdString().c_str());
+    reader->Update();
+    vtkSmartPointer<vtkPolyData> vpd = reader->GetOutput();
+    if (vpd != nullptr) {
+      sv4guiSeg3D *seg3D = new sv4guiSeg3D();
+      seg3D->SetVtkPolyData(vpd);
+
+      sv4guiMitkSeg3D::Pointer mitkSeg3D = sv4guiMitkSeg3D::New();
+      mitkSeg3D->SetSeg3D(seg3D);
+
+      mitk::DataNode::Pointer node = mitk::DataNode::New();
+      node->SetData(mitkSeg3D);
+      node->SetName(seg3DList[i].toStdString());
+
+      nodes.push_back(node);
     }
+  }
 
-    for(int i=0;i<seg3DList.size();i++)
-    {
-        QString filePath=segDir+"/"+seg3DList[i]+".vtp";
-        if(!QFile(filePath).exists())
-            continue;
-
-        vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
-        reader->SetFileName(filePath.toStdString().c_str());
-        reader->Update();
-        vtkSmartPointer<vtkPolyData> vpd=reader->GetOutput();
-        if(vpd!=nullptr)
-        {
-            sv4guiSeg3D* seg3D=new sv4guiSeg3D();
-            seg3D->SetVtkPolyData(vpd);
-
-            sv4guiMitkSeg3D::Pointer mitkSeg3D=sv4guiMitkSeg3D::New();
-            mitkSeg3D->SetSeg3D(seg3D);
-
-            mitk::DataNode::Pointer node = mitk::DataNode::New();
-            node->SetData(mitkSeg3D);
-            node->SetName(seg3DList[i].toStdString());
-
-            nodes.push_back(node);
-        }
-    }
-
-    return nodes;
+  return nodes;
 }
 
-void sv4guiSegmentationLegacyIO::WriteContourGroupFile(mitk::DataNode::Pointer node, QString filePath)
-{
-    if(node.IsNull()) return;
+void sv4guiSegmentationLegacyIO::WriteContourGroupFile(
+    mitk::DataNode::Pointer node, QString filePath) {
+  if (node.IsNull())
+    return;
 
-    sv4guiContourGroup* contourGroup=dynamic_cast<sv4guiContourGroup*>(node->GetData());
-    if(!contourGroup) return;
+  sv4guiContourGroup *contourGroup =
+      dynamic_cast<sv4guiContourGroup *>(node->GetData());
+  if (!contourGroup)
+    return;
 
-    QFile outputFile(filePath);
-    if(outputFile.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-        QTextStream out(&outputFile);
-         out.setRealNumberPrecision(17);
+  QFile outputFile(filePath);
+  if (outputFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    QTextStream out(&outputFile);
+    out.setRealNumberPrecision(17);
 
-        std::string groupName=node->GetName();
-        std::string pathName=contourGroup->GetPathName();
-        int pathID=contourGroup->GetPathID();
+    std::string groupName = node->GetName();
+    std::string pathName = contourGroup->GetPathName();
+    int pathID = contourGroup->GetPathID();
 
-        for(int i=0;i<contourGroup->GetSize();i++)
-        {
-            sv4guiContour* contour=contourGroup->GetContour(i);
-            if(!contour) continue;
+    for (int i = 0; i < contourGroup->GetSize(); i++) {
+      sv4guiContour *contour = contourGroup->GetContour(i);
+      if (!contour)
+        continue;
 
-            sv4guiPathElement::sv4guiPathPoint pathPoint=contour->GetPathPoint();
+      sv4guiPathElement::sv4guiPathPoint pathPoint = contour->GetPathPoint();
 
-            out<<"/group/"<<groupName.c_str()<<"/"<<pathPoint.id<<qt_endl;
-            out<<pathPoint.id<<qt_endl;
-            out<<"pathId "<<pathID<<" posId "<<pathPoint.id
-                <<" pos {"<<pathPoint.pos[0]<<" "<<pathPoint.pos[1]<<" "<<pathPoint.pos[2]<<"}"
-                <<" nrm {"<<pathPoint.tangent[0]<<" "<<pathPoint.tangent[1]<<" "<<pathPoint.tangent[2]<<"}"
-                <<" xhat {"<<pathPoint.rotation[0]<<" "<<pathPoint.rotation[1]<<" "<<pathPoint.rotation[2]<<"}"
-                <<qt_endl;
+      out << "/group/" << groupName.c_str() << "/" << pathPoint.id << qt_endl;
+      out << pathPoint.id << qt_endl;
+      out << "pathId " << pathID << " posId " << pathPoint.id << " pos {"
+          << pathPoint.pos[0] << " " << pathPoint.pos[1] << " "
+          << pathPoint.pos[2] << "}"
+          << " nrm {" << pathPoint.tangent[0] << " " << pathPoint.tangent[1]
+          << " " << pathPoint.tangent[2] << "}"
+          << " xhat {" << pathPoint.rotation[0] << " " << pathPoint.rotation[1]
+          << " " << pathPoint.rotation[2] << "}" << qt_endl;
 
-            for(int j=0;j<contour->GetContourPointNumber();j++)
-            {
-                mitk::Point3D point=contour->GetContourPoint(j);
-                out<<point[0]<<" "<<point[1]<<" "<<point[2]<<qt_endl;
-            }
+      for (int j = 0; j < contour->GetContourPointNumber(); j++) {
+        mitk::Point3D point = contour->GetContourPoint(j);
+        out << point[0] << " " << point[1] << " " << point[2] << qt_endl;
+      }
 
-            out<<qt_endl;
-
-        }
-
-        outputFile.close();
+      out << qt_endl;
     }
 
+    outputFile.close();
+  }
 }
 
-void sv4guiSegmentationLegacyIO::WriteSeg3DFile(mitk::DataNode::Pointer node, QString filePath)
-{
-    if(node.IsNull()) return;
+void sv4guiSegmentationLegacyIO::WriteSeg3DFile(mitk::DataNode::Pointer node,
+                                                QString filePath) {
+  if (node.IsNull())
+    return;
 
-    sv4guiMitkSeg3D* seg3D=dynamic_cast<sv4guiMitkSeg3D*>(node->GetData());
-    if(!seg3D) return;
+  sv4guiMitkSeg3D *seg3D = dynamic_cast<sv4guiMitkSeg3D *>(node->GetData());
+  if (!seg3D)
+    return;
 
-    vtkPolyData* vpd=seg3D->GetVtkPolyData();
-    if(!vpd) return;
+  vtkPolyData *vpd = seg3D->GetVtkPolyData();
+  if (!vpd)
+    return;
 
-    QFile outputFile(filePath+".svsurf");
-    if(outputFile.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-        QTextStream out(&outputFile);
-         out.setRealNumberPrecision(17);
+  QFile outputFile(filePath + ".svsurf");
+  if (outputFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    QTextStream out(&outputFile);
+    out.setRealNumberPrecision(17);
 
-        std::string seg3DName=node->GetName();
+    std::string seg3DName = node->GetName();
 
-        out<<"name:"<<seg3DName.c_str()<<qt_endl;
-        out<<"metadata:opacity .8 color steelblue"<<qt_endl;
-        out<<"vtp_filename:"<<(seg3DName+".vtp").c_str()<<qt_endl;
-        out<<"vtp_filename:476556BCC9C6082371E7EEF6A27F05BE"<<qt_endl;//dummy entry
+    out << "name:" << seg3DName.c_str() << qt_endl;
+    out << "metadata:opacity .8 color steelblue" << qt_endl;
+    out << "vtp_filename:" << (seg3DName + ".vtp").c_str() << qt_endl;
+    out << "vtp_filename:476556BCC9C6082371E7EEF6A27F05BE"
+        << qt_endl; // dummy entry
 
-        outputFile.close();
+    outputFile.close();
+  }
+
+  if (vpd) {
+    vtkSmartPointer<vtkXMLPolyDataWriter> writer =
+        vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+    writer->SetFileName((filePath + ".vtp").toStdString().c_str());
+    writer->SetInputData(vpd);
+    if (writer->Write() == 0 || writer->GetErrorCode() != 0) {
+      std::cerr << "vtkXMLPolyDataWriter error: "
+                << vtkErrorCode::GetStringFromErrorCode(writer->GetErrorCode())
+                << std::endl;
     }
-
-    if(vpd)
-    {
-        vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
-        writer->SetFileName((filePath+".vtp").toStdString().c_str());
-        writer->SetInputData(vpd);
-        if (writer->Write() == 0 || writer->GetErrorCode() != 0 )
-        {
-            std::cerr << "vtkXMLPolyDataWriter error: " << vtkErrorCode::GetStringFromErrorCode(writer->GetErrorCode())<<std::endl;
-        }
-    }
-
-
+  }
 }
 
-void sv4guiSegmentationLegacyIO::WriteTclFile(mitk::DataStorage::SetOfObjects::ConstPointer rsContourGroup, mitk::DataStorage::SetOfObjects::ConstPointer rsSeg3D, QString filePath)
-{
-    QFile outputFile(filePath);
-    if(outputFile.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-        QTextStream out(&outputFile);
+void sv4guiSegmentationLegacyIO::WriteTclFile(
+    mitk::DataStorage::SetOfObjects::ConstPointer rsContourGroup,
+    mitk::DataStorage::SetOfObjects::ConstPointer rsSeg3D, QString filePath) {
+  QFile outputFile(filePath);
+  if (outputFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    QTextStream out(&outputFile);
 
-        out<<"# geodesic_groups_file 2.3"<<qt_endl;
-        out<<qt_endl;
-        out<<"#"<<qt_endl;
+    out << "# geodesic_groups_file 2.3" << qt_endl;
+    out << qt_endl;
+    out << "#" << qt_endl;
 
-        out<<"proc group_autoload {} {"<<qt_endl;
-        out<<"  global gFilenames"<<qt_endl;
-        out<<"  set grpdir $gFilenames(groups_dir)"<<qt_endl;
-        out<<"  # Group Stuff"<<qt_endl;
-        for(int i=0;i<rsContourGroup->size();i++)
-        {
-            std::string name=rsContourGroup->GetElement(i)->GetName();
-            out<<"  group_readProfiles {"<<name.c_str()<<"} [file join $grpdir {"<<name.c_str()<<"}]"<<qt_endl;
-        }
-        out<<"}"<<qt_endl;
-
-        out<<"proc seg3d_autoload {} {"<<qt_endl;
-        out<<"  global gFilenames"<<qt_endl;
-        out<<"  set grpdir $gFilenames(groups_dir)"<<qt_endl;
-        out<<"  # Seg Stuff"<<qt_endl;
-        for(int i=0;i<rsSeg3D->size();i++)
-        {
-            std::string name=rsSeg3D->GetElement(i)->GetName();
-            out<<"  seg3d_readSurf {"<<name.c_str()<<"} [file join $grpdir {"<<name.c_str()<<".svsurf"<<"}]"<<qt_endl;
-        }
-        out<<"}"<<qt_endl;
-
-        outputFile.close();
+    out << "proc group_autoload {} {" << qt_endl;
+    out << "  global gFilenames" << qt_endl;
+    out << "  set grpdir $gFilenames(groups_dir)" << qt_endl;
+    out << "  # Group Stuff" << qt_endl;
+    for (int i = 0; i < rsContourGroup->size(); i++) {
+      std::string name = rsContourGroup->GetElement(i)->GetName();
+      out << "  group_readProfiles {" << name.c_str()
+          << "} [file join $grpdir {" << name.c_str() << "}]" << qt_endl;
     }
+    out << "}" << qt_endl;
+
+    out << "proc seg3d_autoload {} {" << qt_endl;
+    out << "  global gFilenames" << qt_endl;
+    out << "  set grpdir $gFilenames(groups_dir)" << qt_endl;
+    out << "  # Seg Stuff" << qt_endl;
+    for (int i = 0; i < rsSeg3D->size(); i++) {
+      std::string name = rsSeg3D->GetElement(i)->GetName();
+      out << "  seg3d_readSurf {" << name.c_str() << "} [file join $grpdir {"
+          << name.c_str() << ".svsurf" << "}]" << qt_endl;
+    }
+    out << "}" << qt_endl;
+
+    outputFile.close();
+  }
 }
 
-void sv4guiSegmentationLegacyIO::WriteFiles(mitk::DataStorage::SetOfObjects::ConstPointer contoruGroupNodes, mitk::DataStorage::SetOfObjects::ConstPointer seg3DNodes, QString segDir)
-{
-    QDir dirSeg(segDir);
+void sv4guiSegmentationLegacyIO::WriteFiles(
+    mitk::DataStorage::SetOfObjects::ConstPointer contoruGroupNodes,
+    mitk::DataStorage::SetOfObjects::ConstPointer seg3DNodes, QString segDir) {
+  QDir dirSeg(segDir);
 
-    for(int i=0;i<contoruGroupNodes->size();i++){
-        mitk::DataNode::Pointer node=contoruGroupNodes->GetElement(i);
-        QString	filePath=dirSeg.absoluteFilePath(QString::fromStdString(node->GetName()));
-        WriteContourGroupFile(node, filePath);
-    }
+  for (int i = 0; i < contoruGroupNodes->size(); i++) {
+    mitk::DataNode::Pointer node = contoruGroupNodes->GetElement(i);
+    QString filePath =
+        dirSeg.absoluteFilePath(QString::fromStdString(node->GetName()));
+    WriteContourGroupFile(node, filePath);
+  }
 
-    for(int i=0;i<seg3DNodes->size();i++){
-        mitk::DataNode::Pointer node=seg3DNodes->GetElement(i);
-        QString	filePath=dirSeg.absoluteFilePath(QString::fromStdString(node->GetName()));
-        WriteSeg3DFile(node, filePath);
-    }
+  for (int i = 0; i < seg3DNodes->size(); i++) {
+    mitk::DataNode::Pointer node = seg3DNodes->GetElement(i);
+    QString filePath =
+        dirSeg.absoluteFilePath(QString::fromStdString(node->GetName()));
+    WriteSeg3DFile(node, filePath);
+  }
 
-    QString	filePath=dirSeg.absoluteFilePath("group_contents.tcl");
-    WriteTclFile(contoruGroupNodes,seg3DNodes,filePath);
+  QString filePath = dirSeg.absoluteFilePath("group_contents.tcl");
+  WriteTclFile(contoruGroupNodes, seg3DNodes, filePath);
 }
-
-

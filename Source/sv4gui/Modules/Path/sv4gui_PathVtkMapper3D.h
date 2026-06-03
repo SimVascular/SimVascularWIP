@@ -38,8 +38,8 @@
 
 #include "sv4gui_Path.h"
 
-#include "mitkVtkMapper.h"
 #include "mitkBaseRenderer.h"
+#include "mitkVtkMapper.h"
 #include <vtkSmartPointer.h>
 
 class vtkActor;
@@ -49,58 +49,56 @@ class vtkPolyData;
 class vtkTubeFilter;
 class vtkPolyDataMapper;
 
-class SV4GUIMODULEPATH_EXPORT sv4guiPathVtkMapper3D : public mitk::VtkMapper
-{
+class SV4GUIMODULEPATH_EXPORT sv4guiPathVtkMapper3D : public mitk::VtkMapper {
 public:
-    mitkClassMacro(sv4guiPathVtkMapper3D, mitk::VtkMapper);
+  mitkClassMacro(sv4guiPathVtkMapper3D, mitk::VtkMapper);
 
-    itkFactorylessNewMacro(Self)
-    itkCloneMacro(Self)
+  itkFactorylessNewMacro(Self) itkCloneMacro(Self)
 
-    virtual const sv4guiPath* GetInput();
+      virtual const sv4guiPath *GetInput();
 
-    virtual vtkProp* GetVtkProp(mitk::BaseRenderer* renderer) override;
-    virtual void UpdateVtkTransform(mitk::BaseRenderer* renderer) override;
+  virtual vtkProp *GetVtkProp(mitk::BaseRenderer *renderer) override;
+  virtual void UpdateVtkTransform(mitk::BaseRenderer *renderer) override;
 
-    static void SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer = nullptr, bool overwrite = true);
+  static void SetDefaultProperties(mitk::DataNode *node,
+                                   mitk::BaseRenderer *renderer = nullptr,
+                                   bool overwrite = true);
 
-    void ReleaseGraphicsResources(mitk::BaseRenderer* renderer) override;
+  void ReleaseGraphicsResources(mitk::BaseRenderer *renderer) override;
 
-    mitk::LocalStorageHandler<BaseLocalStorage> m_LSH;
+  mitk::LocalStorageHandler<BaseLocalStorage> m_LSH;
 
 protected:
-    sv4guiPathVtkMapper3D();
+  sv4guiPathVtkMapper3D();
 
-    virtual ~sv4guiPathVtkMapper3D();
+  virtual ~sv4guiPathVtkMapper3D();
 
-    virtual void GenerateDataForRenderer(mitk::BaseRenderer* renderer) override;
-    virtual void ResetMapper( mitk::BaseRenderer* renderer ) override;
-    virtual void ApplyAllProperties(mitk::BaseRenderer* renderer);
-    virtual void CreateSpline();
-    virtual void CreateVTKRenderObjects();
+  virtual void GenerateDataForRenderer(mitk::BaseRenderer *renderer) override;
+  virtual void ResetMapper(mitk::BaseRenderer *renderer) override;
+  virtual void ApplyAllProperties(mitk::BaseRenderer *renderer);
+  virtual void CreateSpline();
+  virtual void CreateVTKRenderObjects();
 
-    vtkSmartPointer<vtkAppendPolyData> m_vtkSelectedPoints;
-    vtkSmartPointer<vtkAppendPolyData> m_vtkUnselectedPoints;
-    vtkSmartPointer<vtkAppendPolyData> m_vtkSplinePoints;
+  vtkSmartPointer<vtkAppendPolyData> m_vtkSelectedPoints;
+  vtkSmartPointer<vtkAppendPolyData> m_vtkUnselectedPoints;
+  vtkSmartPointer<vtkAppendPolyData> m_vtkSplinePoints;
 
-    vtkSmartPointer<vtkPolyDataMapper> m_VtkSelectedPolyDataMapper;
-    vtkSmartPointer<vtkPolyDataMapper> m_VtkUnselectedPolyDataMapper;
-    vtkSmartPointer<vtkPolyDataMapper> m_VtkSplinePointsPolyDataMapper;
-    vtkSmartPointer<vtkPolyDataMapper> m_VtkSplinePolyDataMapper;
+  vtkSmartPointer<vtkPolyDataMapper> m_VtkSelectedPolyDataMapper;
+  vtkSmartPointer<vtkPolyDataMapper> m_VtkUnselectedPolyDataMapper;
+  vtkSmartPointer<vtkPolyDataMapper> m_VtkSplinePointsPolyDataMapper;
+  vtkSmartPointer<vtkPolyDataMapper> m_VtkSplinePolyDataMapper;
 
-    vtkSmartPointer<vtkActor> m_SelectedActor;
-    vtkSmartPointer<vtkActor> m_UnselectedActor;
-    vtkSmartPointer<vtkActor> m_SplinePointsActor;
-    vtkSmartPointer<vtkActor> m_SplineActor;
+  vtkSmartPointer<vtkActor> m_SelectedActor;
+  vtkSmartPointer<vtkActor> m_UnselectedActor;
+  vtkSmartPointer<vtkActor> m_SplinePointsActor;
+  vtkSmartPointer<vtkActor> m_SplineActor;
 
-    vtkSmartPointer<vtkPropAssembly> m_PropAssembly;
+  vtkSmartPointer<vtkPropAssembly> m_PropAssembly;
 
-    //variables to check if an update of the vtk objects is needed
-    mitk::ScalarType m_PointSize;          // "point size" property
-    mitk::ScalarType m_SplinePointSize;    // "spline point size" property
-    mitk::ScalarType m_SplineRadius;       // "spline size" property
-
+  // variables to check if an update of the vtk objects is needed
+  mitk::ScalarType m_PointSize;       // "point size" property
+  mitk::ScalarType m_SplinePointSize; // "spline point size" property
+  mitk::ScalarType m_SplineRadius;    // "spline size" property
 };
-
 
 #endif // SV4GUI_PATHVTKMAPPER3D_H

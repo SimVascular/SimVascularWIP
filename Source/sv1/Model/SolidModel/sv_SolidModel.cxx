@@ -33,11 +33,11 @@
 
 #include "SimVascular.h"
 
-#include "sv_SolidModel.h"
 #include "sv_PolyData.h"
+#include "sv_SolidModel.h"
 #include "sv_misc_utils.h"
-#include <string.h>
 #include <assert.h>
+#include <string.h>
 
 SolidModel_KernelT cvSolidModel::gCurrentKernel = SM_KT_PARASOLID;
 
@@ -45,8 +45,8 @@ SolidModel_KernelT cvSolidModel::gCurrentKernel = SM_KT_PARASOLID;
 // cvSolidModel
 // ----------
 
-cvSolidModel::cvSolidModel( SolidModel_KernelT t ) : cvRepositoryData( SOLID_MODEL_T )
-{
+cvSolidModel::cvSolidModel(SolidModel_KernelT t)
+    : cvRepositoryData(SOLID_MODEL_T) {
   kernel_ = t;
   tol_ = 1e6 * FindMachineEpsilon();
 }
@@ -55,25 +55,22 @@ cvSolidModel::cvSolidModel( SolidModel_KernelT t ) : cvRepositoryData( SOLID_MOD
 // ~cvSolidModel
 // -----------
 
-cvSolidModel::~cvSolidModel()
-{
-}
+cvSolidModel::~cvSolidModel() {}
 
 // ----------------------------
 // SolidModel_KernelT_StrToEnum
 // ----------------------------
 
-SolidModel_KernelT SolidModel_KernelT_StrToEnum( char *name )
-{
-  if ( !strcmp( name, "Parasolid" ) ) {
+SolidModel_KernelT SolidModel_KernelT_StrToEnum(char *name) {
+  if (!strcmp(name, "Parasolid")) {
     return SM_KT_PARASOLID;
-  } else if ( !strcmp( name, "Discrete" ) ) {
+  } else if (!strcmp(name, "Discrete")) {
     return SM_KT_DISCRETE;
-  } else if ( !strcmp( name, "PolyData" ) ) {
+  } else if (!strcmp(name, "PolyData")) {
     return SM_KT_POLYDATA;
-  } else if ( !strcmp( name, "OpenCASCADE" ) ) {
+  } else if (!strcmp(name, "OpenCASCADE")) {
     return SM_KT_OCCT;
-  } else if ( !strcmp( name, "MeshSimSolid" ) ) {
+  } else if (!strcmp(name, "MeshSimSolid")) {
     return SM_KT_MESHSIMSOLID;
   } else {
     return SM_KT_INVALID;
@@ -85,48 +82,46 @@ SolidModel_KernelT SolidModel_KernelT_StrToEnum( char *name )
 // ----------------------------
 // Caller should deallocate the returned string.
 
-char *SolidModel_KernelT_EnumToStr( SolidModel_KernelT val )
-{
+char *SolidModel_KernelT_EnumToStr(SolidModel_KernelT val) {
   char *result;
 
   result = new char[100];
   switch (val) {
   case SM_KT_PARASOLID:
-    strcpy( result, "Parasolid" );
+    strcpy(result, "Parasolid");
     break;
   case SM_KT_DISCRETE:
-    strcpy ( result, "Discrete" );
+    strcpy(result, "Discrete");
     break;
   case SM_KT_MESHSIMSOLID:
-    strcpy ( result, "MeshSimSolid" );
+    strcpy(result, "MeshSimSolid");
     break;
   case SM_KT_POLYDATA:
-    strcpy ( result, "PolyData" );
+    strcpy(result, "PolyData");
     break;
   case SM_KT_OCCT:
-    strcpy ( result, "OpenCASCADE" );
+    strcpy(result, "OpenCASCADE");
     break;
   default:
-    strcpy( result, "Invalid kernel name; must be one of "
-	    "{ Parasolid, Discrete, PolyData, OpenCASCADE, MeshSimSolid }" );
+    strcpy(result,
+           "Invalid kernel name; must be one of "
+           "{ Parasolid, Discrete, PolyData, OpenCASCADE, MeshSimSolid }");
     break;
   }
 
   return result;
 }
 
-
 // ---------------------------
 // SolidModel_FacetT_StrToEnum
 // ---------------------------
 
-SolidModel_FacetT SolidModel_FacetT_StrToEnum( char *name )
-{
-  if ( !strcmp( name, "Union" ) ) {
+SolidModel_FacetT SolidModel_FacetT_StrToEnum(char *name) {
+  if (!strcmp(name, "Union")) {
     return SM_Facet_Union;
-  } else if ( !strcmp( name, "Sew" ) ) {
+  } else if (!strcmp(name, "Sew")) {
     return SM_Facet_Sew;
-  } else if ( !strcmp( name, "Web" ) ) {
+  } else if (!strcmp(name, "Web")) {
     return SM_Facet_Web;
   } else {
     return SM_Facet_Invalid;
@@ -138,40 +133,37 @@ SolidModel_FacetT SolidModel_FacetT_StrToEnum( char *name )
 // ---------------------------
 // Caller should deallocate the returned string.
 
-char *SolidModel_FacetT_EnumToStr( SolidModel_FacetT val )
-{
+char *SolidModel_FacetT_EnumToStr(SolidModel_FacetT val) {
   char *result;
 
   result = new char[100];
   switch (val) {
   case SM_Facet_Union:
-    strcpy( result, "Union" );
+    strcpy(result, "Union");
     break;
   case SM_Facet_Sew:
-    strcpy( result, "Sew" );
+    strcpy(result, "Sew");
     break;
   case SM_Facet_Web:
-    strcpy( result, "Web" );
+    strcpy(result, "Web");
     break;
   default:
-    strcpy( result, "Invalid facet type: must be one of "
-	    "{ Union, Sew, Web }." );
+    strcpy(result, "Invalid facet type: must be one of "
+                   "{ Union, Sew, Web }.");
     break;
   }
 
   return result;
 }
 
-
 // ------------------------------
 // SolidModel_SimplifyT_StrToEnum
 // ------------------------------
 
-SolidModel_SimplifyT SolidModel_SimplifyT_StrToEnum( char *name )
-{
-  if ( !strcmp( name, "All" ) ) {
+SolidModel_SimplifyT SolidModel_SimplifyT_StrToEnum(char *name) {
+  if (!strcmp(name, "All")) {
     return SM_Simplify_All;
-  } else if ( !strcmp( name, "None" ) ) {
+  } else if (!strcmp(name, "None")) {
     return SM_Simplify_None;
   } else {
     return SM_Simplify_Invalid;
@@ -183,21 +175,20 @@ SolidModel_SimplifyT SolidModel_SimplifyT_StrToEnum( char *name )
 // ------------------------------
 // Caller should deallocate the returned string.
 
-char *SolidModel_SimplifyT_EnumToStr( SolidModel_SimplifyT val )
-{
+char *SolidModel_SimplifyT_EnumToStr(SolidModel_SimplifyT val) {
   char *result;
 
   result = new char[100];
   switch (val) {
   case SM_Simplify_All:
-    strcpy( result, "All" );
+    strcpy(result, "All");
     break;
   case SM_Simplify_None:
-    strcpy( result, "None" );
+    strcpy(result, "None");
     break;
   default:
-    strcpy( result, "Invalid simplification type: must be one of "
-	    "{ All, None }." );
+    strcpy(result, "Invalid simplification type: must be one of "
+                   "{ All, None }.");
     break;
   }
 

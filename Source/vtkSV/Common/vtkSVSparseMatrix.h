@@ -47,23 +47,22 @@
 
 #include <vector>
 
-class VTKSVCOMMON_EXPORT vtkSVSparseMatrix : public vtkObject
-{
+class VTKSVCOMMON_EXPORT vtkSVSparseMatrix : public vtkObject {
 public:
   static vtkSVSparseMatrix *New();
-  vtkTypeMacro(vtkSVSparseMatrix,vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  vtkTypeMacro(vtkSVSparseMatrix, vtkObject);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
   /// \breif Get/Set for number of rows
   void SetNumberOfRows(int numRows);
-  int  GetNumberOfRows() {return NumberOfRows;}
+  int GetNumberOfRows() { return NumberOfRows; }
   //@}
 
   //@{
   /// \brief Get/Set for number of columns
-  void SetNumberOfColumns(int numCols) {NumberOfColumns = numCols;}
-  int  GetNumberOfColumns() {return NumberOfColumns;}
+  void SetNumberOfColumns(int numCols) { NumberOfColumns = numCols; }
+  int GetNumberOfColumns() { return NumberOfColumns; }
   //@}
 
   /// \brief Set the matrix rows and columns
@@ -91,15 +90,14 @@ protected:
   vtkSVSparseMatrix();
   ~vtkSVSparseMatrix();
 
-  std::vector<std::vector<double> > Data;
-  std::vector<std::vector<int> >    Cols;
+  std::vector<std::vector<double>> Data;
+  std::vector<std::vector<int>> Cols;
   int NumberOfRows;
   int NumberOfColumns;
 
 private:
-  vtkSVSparseMatrix(const vtkSVSparseMatrix&);  // Not implemented.
-  void operator=(const vtkSVSparseMatrix&);  // Not implemented.
-
+  vtkSVSparseMatrix(const vtkSVSparseMatrix &); // Not implemented.
+  void operator=(const vtkSVSparseMatrix &);    // Not implemented.
 };
 
-#endif  // vtkSVSparseMatrix_h
+#endif // vtkSVSparseMatrix_h

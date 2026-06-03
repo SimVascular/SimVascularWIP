@@ -35,10 +35,12 @@
  *  Created on: Dec 11, 2013
  *      Author: jameson
  *
- *      The purpose of this is an interface for the level sets developed in ITK and the tcl code currently in simvascular
+ *      The purpose of this is an interface for the level sets developed in ITK
+ * and the tcl code currently in simvascular
  *
- *      This class should contain the code to generate, setup, and execute the ITK pipeline to obtain the level sets
- *      In addition, it should include helper functions to convert data between the two systems.
+ *      This class should contain the code to generate, setup, and execute the
+ * ITK pipeline to obtain the level sets In addition, it should include helper
+ * functions to convert data between the two systems.
  */
 
 #ifndef CVITKLEVELSET_H_
@@ -46,239 +48,217 @@
 
 #include "SimVascular.h"
 #include "svSegITKExports.h" // For exports
-#include "sv_SolidModel.h"
 #include "sv_PolyData.h"
+#include "sv_SolidModel.h"
 #include "sv_StrPts.h"
 
 #ifndef cvStructuredPoints
 #define cvStructuredPoints cvStrPts
 #endif
 
-#include <sstream>
 #include <iostream>
+#include <sstream>
 #include <string>
 
-#include "sv3_ITKLset_ITK_Macros.h"
-#include "sv3_ITKLset_Macros.h"
 #include "sv3_ITKLset_ConnectVTKITK.h"
 #include "sv3_ITKLset_ExtraUtils.h"
+#include "sv3_ITKLset_ITK_Macros.h"
+#include "sv3_ITKLset_Macros.h"
 
+#include "itkImage.h"
 #include "itkVTKImageExport.h"
 #include "itkVTKImageImport.h"
-#include "itkImage.h"
 
-#include "vtkImageImport.h"
 #include "vtkImageExport.h"
+#include "vtkImageImport.h"
 
-#include "vtkSmartPointer.h"
-#include "vtkStructuredPoints.h"
 #include "vtkImageData.h"
 #include "vtkPolyData.h"
+#include "vtkSmartPointer.h"
+#include "vtkStructuredPoints.h"
 
 #include "itkImageFileWriter.h"
-#include "vtkTIFFWriter.h"
 #include "sv3_ITKLset_ImgInfo.h"
+#include "vtkTIFFWriter.h"
 
 #include "sv3_ITKLset_ITKUtils.h"
 
+#define CVITKException(x)                                                      \
+  {                                                                            \
+    std::ostringstream message;                                                \
+    message << "(" << this                                                     \
+            << "): "                                                           \
+               "x";                                                            \
+    message << __FILE__ << " " << __LINE__ << " ";                             \
+    message << "ERROR: " << this->GetNameOfClass() << " ";                     \
+    message << " " << __PRETTY_FUNCTION__ << std::endl;                        \
+    throw std::runtime_error(message.str());                                   \
+  }
 
-#define CVITKException(x)																\
-		{																				\
-	std::ostringstream message;															\
-	message << "(" << this << "): " "x";												\
-	message << __FILE__ << " " << __LINE__ << " ";										\
-	message << "ERROR: " << this->GetNameOfClass() << " ";								\
-	message << " " << __PRETTY_FUNCTION__ << std::endl;									\
-	throw std::runtime_error(message.str()); 											\
-		}																				\
-
-class SV_EXPORT_SEGITK cvITKLevelSet
-{
+class SV_EXPORT_SEGITK cvITKLevelSet {
 
 public:
+  /** Typedefs */
+  // Depending on image size, this might be better with float...
+  typedef cvITKLevelSet Self;
+  typedef itk::Image<short, 2> ITKExternalImageType;
+  typedef itk::Image<float, 2> ITKInternalImageType;
 
-	/** Typedefs */
-	// Depending on image size, this might be better with float...
-	typedef cvITKLevelSet Self;
-	typedef itk::Image<short,2> ITKExternalImageType;
-	typedef itk::Image<float,2> ITKInternalImageType;
+  typedef itk::VTKImageImport<ITKExternalImageType> itkExternalImportType;
+  typedef itk::VTKImageExport<ITKExternalImageType> itkExternalExportType;
 
-	typedef itk::VTKImageImport<ITKExternalImageType> itkExternalImportType;
-	typedef itk::VTKImageExport<ITKExternalImageType> itkExternalExportType;
+  typedef itk::VTKImageImport<ITKInternalImageType> itkInternalImportType;
+  typedef itk::VTKImageExport<ITKInternalImageType> itkInternalExportType;
 
-	typedef itk::VTKImageImport<ITKInternalImageType> itkInternalImportType;
-	typedef itk::VTKImageExport<ITKInternalImageType> itkInternalExportType;
+  virtual const char *GetNameOfClass() const { return "cvITKLevelSet"; }
 
-	virtual const char *GetNameOfClass() const
-	{
-		return "cvITKLevelSet";
-	}
+  // Feature Image stuff
+  void DeallocateFeatureObjs();
+  int SetFeatureImage(cvStrPts *s);
+  int GetFeatureImage(cvStrPts **s);
 
-	//Feature Image stuff
-	void	DeallocateFeatureObjs();
-	int SetFeatureImage( cvStrPts *s);
-	int GetFeatureImage( cvStrPts **s);
+  //	int GetVelocityImage( cvStrPts **s);
+  cvStrPts *GetVelocityImage();
 
-	//	int GetVelocityImage( cvStrPts **s);
-	cvStrPts* GetVelocityImage();
+  // Seed Image Stuff
+  void DeallocateSeedObjs();
 
-	//Seed Image Stuff
-	void DeallocateSeedObjs();
+  int ComputePhaseOneLevelSet(float kc, float expFactorRising,
+                              float expFactorFalling);
+  int ComputePhaseTwoLevelSet(float kupp, float klow);
+  int ComputeGACLevelSet(float expFactorRising);
 
-	int ComputePhaseOneLevelSet(float kc,
-			float expFactorRising,float expFactorFalling);
-	int ComputePhaseTwoLevelSet(float kupp,float klow);
-	int ComputeGACLevelSet(float expFactorRising);
+  int GenerateFeatureImage();
+  int GenerateSeedImage();
 
-	int GenerateFeatureImage();
-	int GenerateSeedImage();
+  // Front Image Stuff:
+  void DeallocateFrontObjs();
+  int GetFront(cvPolyData **front);
+  cvPolyData *GetFront();
 
+  cvStrPts *GetFrontImage();
 
-	//Front Image Stuff:
-	void DeallocateFrontObjs();
-	int GetFront(cvPolyData** front);
-	cvPolyData* GetFront();
+  // Get and Set Properties
+  cvSetMacro(MaxIterations, int);
+  cvGetMacro(MaxIterations, int);
 
-	cvStrPts* GetFrontImage();
+  cvSetMacro(MaxRMSError, double);
+  cvGetMacro(MaxRMSError, double);
 
-	//Get and Set Properties
-	cvSetMacro(MaxIterations,int);
-	cvGetMacro(MaxIterations,int);
+  cvSetMacro(AdvectionScaling, double);
+  cvGetMacro(AdvectionScaling, double);
 
-	cvSetMacro(MaxRMSError,double);
-	cvGetMacro(MaxRMSError,double);
+  cvSetMacro(PropagationScaling, double);
+  cvGetMacro(PropagationScaling, double);
 
-	cvSetMacro(AdvectionScaling,double);
-	cvGetMacro(AdvectionScaling,double);
+  cvSetMacro(CurvatureScaling, double);
+  cvGetMacro(CurvatureScaling, double);
 
-	cvSetMacro(PropagationScaling,double);
-	cvGetMacro(PropagationScaling,double);
+  cvSetMacro(SigmaFeature, double);
+  cvGetMacro(SigmaFeature, double);
 
-	cvSetMacro(CurvatureScaling,double);
-	cvGetMacro(CurvatureScaling,double);
+  cvSetMacro(SigmaAdvection, double);
+  cvGetMacro(SigmaAdvection, double);
 
-	cvSetMacro(SigmaFeature,double);
-	cvGetMacro(SigmaFeature,double);
+  cvSetRepoObjMacro(Seed, cvPolyData, vtkPolyData);
+  cvGetRepoObjMacro(Seed, cvPolyData);
 
-	cvSetMacro(SigmaAdvection,double);
-	cvGetMacro(SigmaAdvection,double);
+  cvSetMacro(Debug, bool);
+  cvGetMacro(Debug, bool);
 
-	cvSetRepoObjMacro(Seed,cvPolyData,vtkPolyData);
-	cvGetRepoObjMacro(Seed,cvPolyData);
+  cvSetMacro(UseInputImageAsFeature, bool);
+  cvGetMacro(UseInputImageAsFeature, bool);
 
-	cvSetMacro(Debug,bool);
-	cvGetMacro(Debug,bool);
+  cvSetMacro(UseInputImageDistance, bool);
+  cvGetMacro(UseInputImageDistance, bool);
 
-	cvSetMacro(UseInputImageAsFeature,bool);
-	cvGetMacro(UseInputImageAsFeature,bool);
+  // cvSetRepoObjMacro(InputImage,cvStrPts,vtkStructuredPoints);
+  int SetInputImage(cvStrPts *s);
+  cvGetRepoObjMacro(InputImage, cvStrPts);
 
-	cvSetMacro(UseInputImageDistance,bool);
-	cvGetMacro(UseInputImageDistance,bool);
-
-	//cvSetRepoObjMacro(InputImage,cvStrPts,vtkStructuredPoints);
-	int SetInputImage(cvStrPts *s);
-	cvGetRepoObjMacro(InputImage,cvStrPts);
-
-	//Image Info
-	inline void SetInternalImgInfo(vtkStructuredPoints* vtksp)
-	{
-
-	}
+  // Image Info
+  inline void SetInternalImgInfo(vtkStructuredPoints *vtksp) {}
 
 #ifdef USE_QUICKVIEW_DEBUG
-	//some debug stuff
-	void ViewITKFront()
-	{
-		QuickView viewer;
-		bool flip = false;
+  // some debug stuff
+  void ViewITKFront() {
+    QuickView viewer;
+    bool flip = false;
 
-		viewer.AddImage(m_itkFrontImage.GetPointer(),
-				flip,
-				"ITKFront");
+    viewer.AddImage(m_itkFrontImage.GetPointer(), flip, "ITKFront");
 
-		viewer.Visualize();
-
-	}
+    viewer.Visualize();
+  }
 #endif
 
-	void WriteFrontImages()
-	{
-		std::stringstream filenameBase;
-		filenameBase << "frontImage";
-		cvITKLSUtil::WriteImage(m_itkFrontImage.GetPointer(),filenameBase.str());
-		cvITKLSUtil::WriteImage(m_vtkFrontImage,filenameBase.str());
+  void WriteFrontImages() {
+    std::stringstream filenameBase;
+    filenameBase << "frontImage";
+    cvITKLSUtil::WriteImage(m_itkFrontImage.GetPointer(), filenameBase.str());
+    cvITKLSUtil::WriteImage(m_vtkFrontImage, filenameBase.str());
+  }
 
-	}
+  cvITKLevelSet();
+  virtual ~cvITKLevelSet() {
+    if (m_cvInputImage != NULL) {
+      delete m_cvInputImage;
+      m_cvInputImage = NULL;
+    }
+    if (m_cvSeedImage != NULL) {
+      delete m_cvSeedImage;
+      m_cvSeedImage = NULL;
+    }
+  };
 
-	cvITKLevelSet();
-	virtual ~cvITKLevelSet()
-	{
-		if ( m_cvInputImage != NULL ) {
-			delete m_cvInputImage;
-			m_cvInputImage = NULL;
-		}
-		if ( m_cvSeedImage != NULL ) {
-			delete m_cvSeedImage;
-			m_cvSeedImage = NULL;
-		}
+  // To facilitate use with Tcl hash tables:
+  char tclName_[CV_STRLEN];
 
-	};
-
-	// To facilitate use with Tcl hash tables:
-	char tclName_[CV_STRLEN];
 protected:
-
-	//base class
-	void GenerateData(); //Might need a helper function
-	//I do not want the compiler to auto-generate these methods.
-	cvITKLevelSet(const cvITKLevelSet &); // purposely not implemented
-	void operator=(const cvITKLevelSet &); // purposely not implemented
-	//void
-
+  // base class
+  void GenerateData(); // Might need a helper function
+  // I do not want the compiler to auto-generate these methods.
+  cvITKLevelSet(const cvITKLevelSet &);  // purposely not implemented
+  void operator=(const cvITKLevelSet &); // purposely not implemented
+                                         // void
 
 private:
+  ImgInfo InternalImgInfo;
+  ImgInfo ExternalImgInfo;
+  // Input images
+  cvStructuredPoints *m_cvInputImage;
+  cvPolyData *m_cvSeed;
 
-	ImgInfo InternalImgInfo;
-	ImgInfo ExternalImgInfo;
-	//Input images
-	cvStructuredPoints* m_cvInputImage;
-	cvPolyData* m_cvSeed;
+  ITKInternalImageType::Pointer m_itkFeatureImage;
+  ITKInternalImageType::Pointer m_itkSeedImage;
 
-	ITKInternalImageType::Pointer m_itkFeatureImage;
-	ITKInternalImageType::Pointer m_itkSeedImage;
+  // output images
+  vtkSmartPointer<vtkPolyData> m_vtkFrontPolyData;
+  vtkSmartPointer<vtkStructuredPoints> m_vtkFrontImage;
 
-	//output images
-	vtkSmartPointer<vtkPolyData> m_vtkFrontPolyData;
-	vtkSmartPointer<vtkStructuredPoints> m_vtkFrontImage;
+  // Helper and debug output images
+  vtkSmartPointer<vtkStructuredPoints> m_vtkFeatureImage;
+  ITKInternalImageType::Pointer m_itkFrontImage;
+  cvStructuredPoints *m_cvSeedImage;
 
-	//Helper and debug output images
-	vtkSmartPointer<vtkStructuredPoints> m_vtkFeatureImage;
-	ITKInternalImageType::Pointer m_itkFrontImage;
-	cvStructuredPoints* m_cvSeedImage;
+  // Level Set Parameters
+  double m_SigmaFeature;
+  double m_SigmaAdvection;
 
-	//Level Set Parameters
-	double m_SigmaFeature;
-	double m_SigmaAdvection;
+  // Level Set Advanced Parameters
+  double m_MaxRMSError;
+  int m_MaxIterations;
+  double m_PropagationScaling;
+  double m_CurvatureScaling;
+  double m_AdvectionScaling;
 
-	//Level Set Advanced Parameters
-	double m_MaxRMSError;
-	int m_MaxIterations;
-	double m_PropagationScaling;
-	double m_CurvatureScaling;
-	double m_AdvectionScaling;
+  bool m_UseInputImageAsFeature;
+  bool m_UseInputImageDistance;
 
-	bool m_UseInputImageAsFeature;
-	bool m_UseInputImageDistance;
-
-	//ITK Stuff
-	bool m_Debug;
-
+  // ITK Stuff
+  bool m_Debug;
 };
-
-
 
 //throw e_; /* Explicit naming to work around Intel compiler bug.  */					\
 
 
 #endif /* CVITKLEVELSET_H_ */
-

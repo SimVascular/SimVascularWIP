@@ -38,82 +38,80 @@
 
 #include "mitkBaseData.h"
 
-class SV4GUIMODULEROMSIMULATION_EXPORT sv4guiMitkROMSimJob : public mitk::BaseData
-{
+class SV4GUIMODULEROMSIMULATION_EXPORT sv4guiMitkROMSimJob
+    : public mitk::BaseData {
 public:
+  class JobBasicParameters {
+  public:
+    static const std::string FLUID_DENSITY;
+    static const std::string FLUID_VISCOSITY;
+    static const std::string INITIAL_PRESSURE;
+    static const std::string INITIAL_VELOCITIES;
+    static const std::vector<std::string> names;
+  };
 
-    class JobBasicParameters {
-        public:
-            static const std::string FLUID_DENSITY;
-            static const std::string FLUID_VISCOSITY;
-            static const std::string INITIAL_PRESSURE;
-            static const std::string INITIAL_VELOCITIES;
-            static const std::vector<std::string> names;
-    };
+  mitkClassMacro(sv4guiMitkROMSimJob, mitk::BaseData);
+  itkFactorylessNewMacro(Self) itkCloneMacro(Self)
 
-    mitkClassMacro(sv4guiMitkROMSimJob, mitk::BaseData);
-    itkFactorylessNewMacro(Self)
-    itkCloneMacro(Self)
+      virtual void Expand(unsigned int timeSteps = 1) override;
+  //    virtual void ExecuteOperation(mitk::Operation *operation) override;
+  virtual bool IsEmptyTimeStep(unsigned int t) const override;
+  virtual unsigned int GetTimeSize() const;
+  void CalculateBoundingBox(double *bounds, unsigned int t = 0);
 
-    virtual void Expand( unsigned int timeSteps = 1 ) override;
-//    virtual void ExecuteOperation(mitk::Operation *operation) override;
-    virtual bool IsEmptyTimeStep(unsigned int t) const override;
-    virtual unsigned int GetTimeSize() const;
-    void CalculateBoundingBox(double *bounds,unsigned int t = 0 );
+  virtual void UpdateOutputInformation() override;
+  virtual void SetRequestedRegionToLargestPossibleRegion() override;
+  virtual bool RequestedRegionIsOutsideOfTheBufferedRegion() override;
+  virtual bool VerifyRequestedRegion() override;
+  virtual void SetRequestedRegion(const itk::DataObject *data) override;
 
-    virtual void UpdateOutputInformation() override;
-    virtual void SetRequestedRegionToLargestPossibleRegion() override;
-    virtual bool RequestedRegionIsOutsideOfTheBufferedRegion() override;
-    virtual bool VerifyRequestedRegion() override;
-    virtual void SetRequestedRegion(const itk::DataObject *data) override;
+  sv4guiROMSimJob *GetSimJob(unsigned int t = 0) const;
 
-    sv4guiROMSimJob* GetSimJob(unsigned int t=0) const;
+  void SetSimJob(sv4guiROMSimJob *job, unsigned int t = 0);
 
-    void SetSimJob(sv4guiROMSimJob* job, unsigned int t=0);
+  void SetMeshName(std::string meshName);
+  std::string GetMeshName() const;
 
-    void SetMeshName(std::string meshName);
-    std::string GetMeshName() const;
+  void SetModelName(std::string modelName);
+  std::string GetModelName() const;
 
-    void SetModelName(std::string modelName);
-    std::string GetModelName() const;
+  void SetModelOrder(std::string modelOrder);
+  std::string GetModelOrder() const;
 
-    void SetModelOrder(std::string modelOrder);
-    std::string GetModelOrder() const;
+  std::string GetStatus() const;
+  void SetStatus(std::string status);
 
-    std::string GetStatus() const;
-    void SetStatus(std::string status);
+  bool IsDataModified() { return m_DataModified; }
+  void SetDataModified(bool modified = true) { m_DataModified = modified; }
 
-    bool IsDataModified(){return m_DataModified;}
-    void SetDataModified(bool modified = true){m_DataModified=modified;}
+protected:
+  mitkCloneMacro(Self);
 
-  protected:
+  sv4guiMitkROMSimJob();
+  sv4guiMitkROMSimJob(const sv4guiMitkROMSimJob &other);
+  virtual ~sv4guiMitkROMSimJob();
 
-    mitkCloneMacro(Self);
+  //    virtual void PrintSelf(std::ostream& os, itk::Indent indent) const
+  //    override;
+  virtual void ClearData() override;
+  virtual void InitializeEmpty() override;
 
-    sv4guiMitkROMSimJob();
-    sv4guiMitkROMSimJob(const sv4guiMitkROMSimJob &other);
-    virtual ~sv4guiMitkROMSimJob();
+  //    sv4guiSimJob* m_Job;
+  std::vector<sv4guiROMSimJob *> m_JobSet;
 
-//    virtual void PrintSelf(std::ostream& os, itk::Indent indent) const override;
-    virtual void ClearData() override;
-    virtual void InitializeEmpty() override;
+  bool m_CalculateBoundingBox;
 
-//    sv4guiSimJob* m_Job;
-    std::vector<sv4guiROMSimJob*> m_JobSet;
+  std::string m_MeshName;
 
-    bool m_CalculateBoundingBox;
+  std::string m_ModelName;
 
-    std::string m_MeshName;
+  std::string m_ModelOrder;
 
-    std::string m_ModelName;
+  std::string m_Status;
 
-    std::string m_ModelOrder;
-
-    std::string m_Status;
-
-    bool m_DataModified;
+  bool m_DataModified;
 };
 
-itkEventMacro( sv4guiMitkROMSimJobEvent, itk::AnyEvent );
+itkEventMacro(sv4guiMitkROMSimJobEvent, itk::AnyEvent);
 
-#endif 
+#endif

@@ -53,7 +53,6 @@ ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
 PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 */
 
-
 // list.h
 //	Data structures to manage LISP-like lists.
 //
@@ -66,13 +65,12 @@ PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 // All rights reserved.  See copyright.h for copyright notice and limitation
 // of liability and disclaimer of warranty provisions.
 
-
 #ifndef CVLISPLIST_BERKELEY_LIST_H
 #define CVLISPLIST_BERKELEY_LIST_H
 
 #include "SimVascular.h"
 
-#define TRUE  1
+#define TRUE 1
 #define FALSE 0
 
 #include <assert.h>
@@ -90,12 +88,11 @@ template <class T> class cvLispListIterator;
 // This class is private to this module (and classes that inherit
 // from this module). Made public for notational convenience.
 
-template <class T>
-class cvLispListElement {
-  public:
-    cvLispListElement(T itm); 	// initialize a list element
-    cvLispListElement *next;     	// next element on list, nullptr if this is last
-    T item; 	   	     	// item on the list
+template <class T> class cvLispListElement {
+public:
+  cvLispListElement(T itm); // initialize a list element
+  cvLispListElement *next;  // next element on list, nullptr if this is last
+  T item;                   // item on the list
 };
 
 // The following class defines a "list" -- a singly linked list of
@@ -104,42 +101,41 @@ class cvLispListElement {
 // no guarantees it will work in general.  For instance, all types
 // to be inserted into a list must have a "==" operator defined.
 
-template <class T>
-class cvLispList {
-  public:
-    cvLispList();			// initialize the list
-    virtual ~cvLispList();	// de-allocate the list
+template <class T> class cvLispList {
+public:
+  cvLispList();          // initialize the list
+  virtual ~cvLispList(); // de-allocate the list
 
-    virtual void Prepend(T item);// Put item at the beginning of the list
-    virtual void Append(T item); // Put item at the end of the list
+  virtual void Prepend(T item); // Put item at the beginning of the list
+  virtual void Append(T item);  // Put item at the end of the list
 
-    T Front() { return first->item; }
-    				// Return first item on list
-				// without removing it
-    T RemoveFront(); 		// Take item off the front of the list
-    void Remove(T item); 	// Remove specific item from list
+  T Front() { return first->item; }
+  // Return first item on list
+  // without removing it
+  T RemoveFront();     // Take item off the front of the list
+  void Remove(T item); // Remove specific item from list
 
-    Bool IsInList(T item) const;// is the item in the list?
+  Bool IsInList(T item) const; // is the item in the list?
 
-    unsigned int NumInList() { return numInList;};
-    				// how many items in the list?
-    Bool IsEmpty() { return (numInList == 0); };
-    				// is the list empty?
+  unsigned int NumInList() { return numInList; };
+  // how many items in the list?
+  Bool IsEmpty() { return (numInList == 0); };
+  // is the list empty?
 
-    void Apply(void (*f)(T)) const;
-    				// apply function to all elements in list
+  void Apply(void (*f)(T)) const;
+  // apply function to all elements in list
 
-    virtual void SanityCheck() const;
-				// has this list been corrupted?
-    void SelfTest(T *p, int numEntries);
-				// verify module is working
+  virtual void SanityCheck() const;
+  // has this list been corrupted?
+  void SelfTest(T *p, int numEntries);
+  // verify module is working
 
-  protected:
-    cvLispListElement<T> *first; 	// Head of the list, nullptr if list is empty
-    cvLispListElement<T> *last;	// Last element of list
-    int numInList;		// number of elements in list
+protected:
+  cvLispListElement<T> *first; // Head of the list, nullptr if list is empty
+  cvLispListElement<T> *last;  // Last element of list
+  int numInList;               // number of elements in list
 
-friend class cvLispListIterator<T>;
+  friend class cvLispListIterator<T>;
 };
 
 // The following class defines a "sorted list" -- a singly linked list of
@@ -152,25 +148,25 @@ friend class cvLispListIterator<T>;
 //		returns 0 if x == y
 //		returns 1 if x > y
 
-template <class T>
-class cvSortedList : public cvLispList<T> {
-  public:
-    cvSortedList(int (*comp)(T x, T y)) : cvLispList<T>() { compare = comp;};
-    ~cvSortedList() {};		// base class destructor called automatically
+template <class T> class cvSortedList : public cvLispList<T> {
+public:
+  cvSortedList(int (*comp)(T x, T y)) : cvLispList<T>() { compare = comp; };
+  ~cvSortedList() {}; // base class destructor called automatically
 
-    void Insert(T item); 	// insert an item onto the list in sorted order
+  void Insert(T item); // insert an item onto the list in sorted order
 
-    void SanityCheck() const;	// has this list been corrupted?
-    void SelfTest(T *p, int numEntries);
-				// verify module is working
+  void SanityCheck() const; // has this list been corrupted?
+  void SelfTest(T *p, int numEntries);
+  // verify module is working
 
-  private:
-    int (*compare)(T x, T y);	// function for sorting list elements
+private:
+  int (*compare)(T x, T y); // function for sorting list elements
 
-    void Prepend(T item) { Insert(item); }  // *pre*pending has no meaning
-				             //	in a sorted list
-    void Append(T item) { Insert(item); }   // neither does *ap*pend
-
+  void Prepend(T item) {
+    Insert(item);
+  } // *pre*pending has no meaning
+    //	in a sorted list
+  void Append(T item) { Insert(item); } // neither does *ap*pend
 };
 
 // The following class can be used to step through a list.
@@ -181,23 +177,25 @@ class cvSortedList : public cvLispList<T> {
 //	    Operation on iter->Item()
 //      }
 
-template <class T>
-class cvLispListIterator {
-  public:
-    cvLispListIterator(cvLispList<T> *list) { current = list->first; }
-				// initialize an iterator
+template <class T> class cvLispListIterator {
+public:
+  cvLispListIterator(cvLispList<T> *list) { current = list->first; }
+  // initialize an iterator
 
-    Bool IsDone() { return current == nullptr; };
-				// return TRUE if we are at the end of the list
+  Bool IsDone() { return current == nullptr; };
+  // return TRUE if we are at the end of the list
 
-    T Item() { cvAssert(!IsDone()); return current->item; };
-				// return current element on list
+  T Item() {
+    cvAssert(!IsDone());
+    return current->item;
+  };
+  // return current element on list
 
-    void Next() { current = current->next; };
-				// update iterator to point to next
+  void Next() { current = current->next; };
+  // update iterator to point to next
 
-  private:
-    cvLispListElement<T> *current;  // where we are in the list
+private:
+  cvLispListElement<T> *current; // where we are in the list
 };
 
 // Adapted from the Berkeley list package, extracted from the NACHOS
@@ -224,7 +222,6 @@ ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
 PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 */
 
-
 // list.cc
 //     	Routines to manage a singly linked list of "things".
 //	Lists are implemented as templates so that we can store
@@ -243,7 +240,6 @@ PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 // All rights reserved.  See copyright.h for copyright notice and limitation
 // of liability and disclaimer of warranty provisions.
 
-
 //----------------------------------------------------------------------
 // cvLispListElement<T>::cvLispListElement
 // 	Initialize a list element, so it can be added somewhere on a list.
@@ -251,13 +247,10 @@ PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 //	"itm" is the thing to be put on the list.
 //----------------------------------------------------------------------
 
-template <class T>
-cvLispListElement<T>::cvLispListElement(T itm)
-{
-     item = itm;
-     next = nullptr;	// always initialize to something!
+template <class T> cvLispListElement<T>::cvLispListElement(T itm) {
+  item = itm;
+  next = nullptr; // always initialize to something!
 }
-
 
 //----------------------------------------------------------------------
 // cvLispList<T>::cvLispList
@@ -265,11 +258,9 @@ cvLispListElement<T>::cvLispListElement(T itm)
 //	Elements can now be added to the list.
 //----------------------------------------------------------------------
 
-template <class T>
-cvLispList<T>::cvLispList()
-{
-    first = last = nullptr;
-    numInList = 0;
+template <class T> cvLispList<T>::cvLispList() {
+  first = last = nullptr;
+  numInList = 0;
 }
 
 //----------------------------------------------------------------------
@@ -277,10 +268,8 @@ cvLispList<T>::cvLispList()
 //	Prepare a list for deallocation.
 //----------------------------------------------------------------------
 
-template <class T>
-cvLispList<T>::~cvLispList()
-{
-    cvAssert(this->IsEmpty());		// make sure list is empty
+template <class T> cvLispList<T>::~cvLispList() {
+  cvAssert(this->IsEmpty()); // make sure list is empty
 }
 
 //----------------------------------------------------------------------
@@ -294,22 +283,19 @@ cvLispList<T>::~cvLispList()
 //	"item" is the thing to put on the list.
 //----------------------------------------------------------------------
 
-template <class T>
-void
-cvLispList<T>::Append(T item)
-{
-    cvLispListElement<T> *element = new cvLispListElement<T>(item);
+template <class T> void cvLispList<T>::Append(T item) {
+  cvLispListElement<T> *element = new cvLispListElement<T>(item);
 
-    cvAssert(!this->IsInList(item));
-    if (this->IsEmpty()) {		// list is empty
-	first = element;
-	last = element;
-    } else {			// else put it after last
-	last->next = element;
-	last = element;
-    }
-    numInList++;
-    cvAssert(this->IsInList(item));
+  cvAssert(!this->IsInList(item));
+  if (this->IsEmpty()) { // list is empty
+    first = element;
+    last = element;
+  } else { // else put it after last
+    last->next = element;
+    last = element;
+  }
+  numInList++;
+  cvAssert(this->IsInList(item));
 }
 
 //----------------------------------------------------------------------
@@ -317,22 +303,19 @@ cvLispList<T>::Append(T item)
 //	Same as Append, only put "item" on the front.
 //----------------------------------------------------------------------
 
-template <class T>
-void
-cvLispList<T>::Prepend(T item)
-{
-    cvLispListElement<T> *element = new cvLispListElement<T>(item);
+template <class T> void cvLispList<T>::Prepend(T item) {
+  cvLispListElement<T> *element = new cvLispListElement<T>(item);
 
-    cvAssert(!this->IsInList(item));
-    if (this->IsEmpty()) {		// list is empty
-	first = element;
-	last = element;
-    } else {			// else put it before first
-	element->next = first;
-	first = element;
-    }
-    numInList++;
-    cvAssert(this->IsInList(item));
+  cvAssert(!this->IsInList(item));
+  if (this->IsEmpty()) { // list is empty
+    first = element;
+    last = element;
+  } else { // else put it before first
+    element->next = first;
+    first = element;
+  }
+  numInList++;
+  cvAssert(this->IsInList(item));
 }
 
 //----------------------------------------------------------------------
@@ -344,25 +327,22 @@ cvLispList<T>::Prepend(T item)
 //	The removed item.
 //----------------------------------------------------------------------
 
-template <class T>
-T
-cvLispList<T>::RemoveFront()
-{
-    cvLispListElement<T> *element = first;
-    T thing;
+template <class T> T cvLispList<T>::RemoveFront() {
+  cvLispListElement<T> *element = first;
+  T thing;
 
-    cvAssert(!this->IsEmpty());
+  cvAssert(!this->IsEmpty());
 
-    thing = first->item;
-    if (first == last) {	// list had one item, now has none
-        first = nullptr;
-	last = nullptr;
-    } else {
-        first = element->next;
-    }
-    numInList--;
-    delete element;
-    return thing;
+  thing = first->item;
+  if (first == last) { // list had one item, now has none
+    first = nullptr;
+    last = nullptr;
+  } else {
+    first = element->next;
+  }
+  numInList--;
+  delete element;
+  return thing;
 }
 
 //----------------------------------------------------------------------
@@ -370,35 +350,32 @@ cvLispList<T>::RemoveFront()
 //      Remove a specific item from the list.  Must be in the list!
 //----------------------------------------------------------------------
 
-template <class T>
-void
-cvLispList<T>::Remove(T item)
-{
-    cvLispListElement<T> *prev, *ptr;
-    T removed;
+template <class T> void cvLispList<T>::Remove(T item) {
+  cvLispListElement<T> *prev, *ptr;
+  T removed;
 
-    cvAssert(this->IsInList(item));
+  cvAssert(this->IsInList(item));
 
-    // if first item on list is match, then remove from front
-    if (item == first->item) {
-        removed = RemoveFront();
-        cvAssert(item == removed);
-    } else {
-	prev = first;
-        for (ptr = first->next; ptr != nullptr; prev = ptr, ptr = ptr->next) {
-            if (item == ptr->item) {
-		prev->next = ptr->next;
-		if (prev->next == nullptr) {
-		    last = prev;
-		}
-		delete ptr;
-		numInList--;
-		break;
-	    }
+  // if first item on list is match, then remove from front
+  if (item == first->item) {
+    removed = RemoveFront();
+    cvAssert(item == removed);
+  } else {
+    prev = first;
+    for (ptr = first->next; ptr != nullptr; prev = ptr, ptr = ptr->next) {
+      if (item == ptr->item) {
+        prev->next = ptr->next;
+        if (prev->next == nullptr) {
+          last = prev;
         }
-        cvAssert(ptr != nullptr);	// should always find item!
+        delete ptr;
+        numInList--;
+        break;
+      }
     }
-    cvAssert(!this->IsInList(item));
+    cvAssert(ptr != nullptr); // should always find item!
+  }
+  cvAssert(!this->IsInList(item));
 }
 
 //----------------------------------------------------------------------
@@ -406,28 +383,24 @@ cvLispList<T>::Remove(T item)
 //      Return TRUE if the item is in the list.
 //----------------------------------------------------------------------
 
-template <class T>
-Bool
-cvLispList<T>::IsInList(T item) const
-{
-    cvLispListElement<T> *ptr;
+template <class T> Bool cvLispList<T>::IsInList(T item) const {
+  cvLispListElement<T> *ptr;
 
-    //    cout << "List<T>::IsInList(T item) const; ";
-    //    cout << "item = " << item << "; ";
-    //    cout << "this = " << this << "; ";
-    //    cout << "first = " << first << ";" << endl;
+  //    cout << "List<T>::IsInList(T item) const; ";
+  //    cout << "item = " << item << "; ";
+  //    cout << "this = " << this << "; ";
+  //    cout << "first = " << first << ";" << endl;
 
-    for (ptr = first; ptr != nullptr; ptr = ptr->next) {
+  for (ptr = first; ptr != nullptr; ptr = ptr->next) {
 
-      //        cout << "\tptr = " << ptr << endl;
+    //        cout << "\tptr = " << ptr << endl;
 
-        if (item == ptr->item) {
-            return TRUE;
-        }
+    if (item == ptr->item) {
+      return TRUE;
     }
-    return FALSE;
+  }
+  return FALSE;
 }
-
 
 //----------------------------------------------------------------------
 // cvLispList<T>::Apply
@@ -436,17 +409,13 @@ cvLispList<T>::IsInList(T item) const
 //	"func" -- the function to apply
 //----------------------------------------------------------------------
 
-template <class T>
-void
-cvLispList<T>::Apply(void (*func)(T)) const
-{
-    cvLispListElement<T> *ptr;
+template <class T> void cvLispList<T>::Apply(void (*func)(T)) const {
+  cvLispListElement<T> *ptr;
 
-    for (ptr = first; ptr != nullptr; ptr = ptr->next) {
-        (*func)(ptr->item);
-    }
+  for (ptr = first; ptr != nullptr; ptr = ptr->next) {
+    (*func)(ptr->item);
+  }
 }
-
 
 //----------------------------------------------------------------------
 // SortedList::Insert
@@ -461,34 +430,31 @@ cvLispList<T>::Apply(void (*func)(T)) const
 //	"item" is the thing to put on the list.
 //----------------------------------------------------------------------
 
-template <class T>
-void
-cvSortedList<T>::Insert(T item)
-{
-    cvLispListElement<T> *element = new cvLispListElement<T>(item);
-    cvLispListElement<T> *ptr;		// keep track
+template <class T> void cvSortedList<T>::Insert(T item) {
+  cvLispListElement<T> *element = new cvLispListElement<T>(item);
+  cvLispListElement<T> *ptr; // keep track
 
-    cvAssert(!this->IsInList(item));
-    if (this->IsEmpty()) {			// if list is empty, put at front
-        this->first = element;
-        this->last = element;
-    } else if (compare(item, (this->first)->item) < 0) {  // item goes at front
-	element->next = this->first;
-	this->first = element;
-    } else {		// look for first elt in list bigger than item
-        for (ptr =this->first; ptr->next != nullptr; ptr = ptr->next) {
-            if (compare(item, ptr->next->item) < 0) {
-		element->next = ptr->next;
-	        ptr->next = element;
-		this->numInList++;
-		return;
-	    }
-	}
-	(this->last)->next = element;		// item goes at end of list
-	this->last = element;
+  cvAssert(!this->IsInList(item));
+  if (this->IsEmpty()) { // if list is empty, put at front
+    this->first = element;
+    this->last = element;
+  } else if (compare(item, (this->first)->item) < 0) { // item goes at front
+    element->next = this->first;
+    this->first = element;
+  } else { // look for first elt in list bigger than item
+    for (ptr = this->first; ptr->next != nullptr; ptr = ptr->next) {
+      if (compare(item, ptr->next->item) < 0) {
+        element->next = ptr->next;
+        ptr->next = element;
+        this->numInList++;
+        return;
+      }
     }
-    this->numInList++;
-    cvAssert(this->IsInList(item));
+    (this->last)->next = element; // item goes at end of list
+    this->last = element;
+  }
+  this->numInList++;
+  cvAssert(this->IsInList(item));
 }
 
 //----------------------------------------------------------------------
@@ -499,25 +465,22 @@ cvSortedList<T>::Insert(T item)
 //	       does the list have the right # of elements?
 //----------------------------------------------------------------------
 
-template <class T>
-void
-cvLispList<T>::SanityCheck() const
-{
-    cvLispListElement<T> *ptr;
-    int numFound;
+template <class T> void cvLispList<T>::SanityCheck() const {
+  cvLispListElement<T> *ptr;
+  int numFound;
 
-    if (first == nullptr) {
-        cvAssert((numInList == 0) && (last == nullptr));
-    } else if (first == last) {
-        cvAssert((numInList == 1) && (last->next == nullptr));
-    } else {
-        for (numFound = 1, ptr = first; ptr != last; ptr = ptr->next) {
-	    numFound++;
-            cvAssert(numFound <= numInList);	// prevent infinite loop
-        }
-        cvAssert(numFound == numInList);
-        cvAssert(last->next == nullptr);
+  if (first == nullptr) {
+    cvAssert((numInList == 0) && (last == nullptr));
+  } else if (first == last) {
+    cvAssert((numInList == 1) && (last->next == nullptr));
+  } else {
+    for (numFound = 1, ptr = first; ptr != last; ptr = ptr->next) {
+      numFound++;
+      cvAssert(numFound <= numInList); // prevent infinite loop
     }
+    cvAssert(numFound == numInList);
+    cvAssert(last->next == nullptr);
+  }
 }
 
 //----------------------------------------------------------------------
@@ -525,35 +488,32 @@ cvLispList<T>::SanityCheck() const
 //      Test whether this module is working.
 //----------------------------------------------------------------------
 
-template <class T>
-void
-cvLispList<T>::SelfTest(T *p, int numEntries)
-{
-    int i;
-    cvLispListIterator<T> *iterator = new cvLispListIterator<T>(this);
+template <class T> void cvLispList<T>::SelfTest(T *p, int numEntries) {
+  int i;
+  cvLispListIterator<T> *iterator = new cvLispListIterator<T>(this);
 
-    SanityCheck();
-    // check various ways that list is empty
-    cvAssert(this->IsEmpty() && (first == nullptr));
-    for (; !iterator->IsDone(); iterator->Next()) {
-      //	cvAssertNOTREACHED();	// nothing on list
-    }
+  SanityCheck();
+  // check various ways that list is empty
+  cvAssert(this->IsEmpty() && (first == nullptr));
+  for (; !iterator->IsDone(); iterator->Next()) {
+    //	cvAssertNOTREACHED();	// nothing on list
+  }
 
-    for (i = 0; i < numEntries; i++) {
-	 Append(p[i]);
-         cvAssert(this->IsInList(p[i]));
-         cvAssert(!this->IsEmpty());
-     }
-     SanityCheck();
+  for (i = 0; i < numEntries; i++) {
+    Append(p[i]);
+    cvAssert(this->IsInList(p[i]));
+    cvAssert(!this->IsEmpty());
+  }
+  SanityCheck();
 
-     // should be able to get out everything we put in
-     for (i = 0; i < numEntries; i++) {
-	 Remove(p[i]);
-         cvAssert(!this->IsInList(p[i]));
-     }
-     cvAssert(this->IsEmpty());
-     SanityCheck();
-     delete iterator;
+  // should be able to get out everything we put in
+  for (i = 0; i < numEntries; i++) {
+    Remove(p[i]);
+    cvAssert(!this->IsInList(p[i]));
+  }
+  cvAssert(this->IsEmpty());
+  SanityCheck();
+  delete iterator;
 }
 
 //----------------------------------------------------------------------
@@ -563,19 +523,16 @@ cvLispList<T>::SelfTest(T *p, int numEntries)
 //	Test: is the list sorted?
 //----------------------------------------------------------------------
 
-template <class T>
-void
-cvSortedList<T>::SanityCheck() const
-{
-    cvLispListElement<T> *prev, *ptr;
+template <class T> void cvSortedList<T>::SanityCheck() const {
+  cvLispListElement<T> *prev, *ptr;
 
-    cvLispList<T>::SanityCheck();
-    if (this->first != this->last) {
-      for (prev = this->first, ptr = (this->first)->next; ptr != nullptr;
-						prev = ptr, ptr = ptr->next) {
-            cvAssert(compare(prev->item, ptr->item) <= 0);
-        }
+  cvLispList<T>::SanityCheck();
+  if (this->first != this->last) {
+    for (prev = this->first, ptr = (this->first)->next; ptr != nullptr;
+         prev = ptr, ptr = ptr->next) {
+      cvAssert(compare(prev->item, ptr->item) <= 0);
     }
+  }
 }
 
 //----------------------------------------------------------------------
@@ -583,35 +540,32 @@ cvSortedList<T>::SanityCheck() const
 //      Test whether this module is working.
 //----------------------------------------------------------------------
 
-template <class T>
-void
-cvSortedList<T>::SelfTest(T *p, int numEntries)
-{
-    int i;
-    T *q = new T[numEntries];
+template <class T> void cvSortedList<T>::SelfTest(T *p, int numEntries) {
+  int i;
+  T *q = new T[numEntries];
 
-    cvLispList<T>::SelfTest(p, numEntries);
+  cvLispList<T>::SelfTest(p, numEntries);
 
-    for (i = 0; i < numEntries; i++) {
-	 Insert(p[i]);
-         cvAssert(this->IsInList(p[i]));
-     }
-     SanityCheck();
+  for (i = 0; i < numEntries; i++) {
+    Insert(p[i]);
+    cvAssert(this->IsInList(p[i]));
+  }
+  SanityCheck();
 
-     // should be able to get out everything we put in
-     for (i = 0; i < numEntries; i++) {
-	 q[i] = this->RemoveFront();
-         cvAssert(!this->IsInList(q[i]));
-     }
-     cvAssert(this->IsEmpty());
+  // should be able to get out everything we put in
+  for (i = 0; i < numEntries; i++) {
+    q[i] = this->RemoveFront();
+    cvAssert(!this->IsInList(q[i]));
+  }
+  cvAssert(this->IsEmpty());
 
-     // make sure everything came out in the right order
-     for (i = 0; i < (numEntries - 1); i++) {
-         cvAssert(compare(q[i], q[i + 1]) <= 0);
-     }
-     SanityCheck();
+  // make sure everything came out in the right order
+  for (i = 0; i < (numEntries - 1); i++) {
+    cvAssert(compare(q[i], q[i + 1]) <= 0);
+  }
+  SanityCheck();
 
-     delete q;
+  delete q;
 }
 
 #endif // BERKELEY_LIST_H

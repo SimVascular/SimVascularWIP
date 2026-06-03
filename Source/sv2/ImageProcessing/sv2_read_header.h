@@ -35,17 +35,15 @@
 #include "SimVascular.h"
 #include "svImageExports.h" // For exports
 
-SV_EXPORT_IMAGE int mrRead_Header (char *filename, float *vdims_x, float *vdims_y,
-                        int *dim_x, int *dim_y, int *file_hdr_size,
-                        float ul[], float ur[], float br[],
-                        int *rtnvenc, float *rtnvencscale,
-                        int *rtnvas_collapse, float *rtnuser2,
-		        float *rtnuser5, float *rtnuser6, float *rtnuser7,
-                        float *rtnuser8, float *rtnuser9,
-                        float *rtnuser12, float *rtnuser13, float *rtnuser14,
-                        char *patid, char *patname, char *psdname,
-                        int *magWeightFlag, int *examNumber,
-                        float nrm_RAS[],int *acquisitionTime,
-                        int *heart_rate,int *im_no, int *im_seno);
+SV_EXPORT_IMAGE int
+mrRead_Header(char *filename, float *vdims_x, float *vdims_y, int *dim_x,
+              int *dim_y, int *file_hdr_size, float ul[], float ur[],
+              float br[], int *rtnvenc, float *rtnvencscale,
+              int *rtnvas_collapse, float *rtnuser2, float *rtnuser5,
+              float *rtnuser6, float *rtnuser7, float *rtnuser8,
+              float *rtnuser9, float *rtnuser12, float *rtnuser13,
+              float *rtnuser14, char *patid, char *patname, char *psdname,
+              int *magWeightFlag, int *examNumber, float nrm_RAS[],
+              int *acquisitionTime, int *heart_rate, int *im_no, int *im_seno);
 
 #endif

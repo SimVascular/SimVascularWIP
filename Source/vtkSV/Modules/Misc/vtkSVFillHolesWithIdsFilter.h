@@ -49,18 +49,18 @@
 
 class vtkAbstractTransform;
 
-class VTKSVMISC_EXPORT vtkSVFillHolesWithIdsFilter : public vtkPolyDataAlgorithm
-{
+class VTKSVMISC_EXPORT vtkSVFillHolesWithIdsFilter
+    : public vtkPolyDataAlgorithm {
 public:
   // Standard methods for instantiation, type information and printing.
   static vtkSVFillHolesWithIdsFilter *New();
-  vtkTypeMacro(vtkSVFillHolesWithIdsFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  vtkTypeMacro(vtkSVFillHolesWithIdsFilter, vtkPolyDataAlgorithm);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
-  /// \brief Specify the maximum hole size to fill. This is represented as a radius
-  /// to the bounding circumsphere containing the hole.  Note that this is an
-  /// approximate area; the actual area cannot be computed without first
+  /// \brief Specify the maximum hole size to fill. This is represented as a
+  /// radius to the bounding circumsphere containing the hole.  Note that this
+  /// is an approximate area; the actual area cannot be computed without first
   /// triangulating the hole.
   vtkSetClampMacro(HoleSize, double, 0.0, VTK_FLOAT_MAX);
   vtkGetMacro(HoleSize, double);
@@ -83,17 +83,14 @@ public:
   //@}
 
   /// \brief FillType VTK_NUM_FILLED and VTK_FILL_ID implemented.
-  enum CapFillType
-  {
-    VTK_NUM_FILLED=0,
-    VTK_FILL_ID,
-    VTK_INCREASING_START
-  };
+  enum CapFillType { VTK_NUM_FILLED = 0, VTK_FILL_ID, VTK_INCREASING_START };
+
 protected:
   vtkSVFillHolesWithIdsFilter();
   ~vtkSVFillHolesWithIdsFilter();
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation *, vtkInformationVector **,
+                  vtkInformationVector *) override;
 
   int FillType;
   double HoleSize;
@@ -103,8 +100,9 @@ protected:
   vtkIntArray *capIdArray;
 
 private:
-  vtkSVFillHolesWithIdsFilter(const vtkSVFillHolesWithIdsFilter&);  // Not implemented.
-  void operator=(const vtkSVFillHolesWithIdsFilter&);  // Not implemented.
+  vtkSVFillHolesWithIdsFilter(
+      const vtkSVFillHolesWithIdsFilter &);            // Not implemented.
+  void operator=(const vtkSVFillHolesWithIdsFilter &); // Not implemented.
 };
 
 #endif

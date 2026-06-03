@@ -35,55 +35,50 @@
 #include "sv_misc_utils.h"
 #include <string.h>
 
-cvMeshObject::KernelType cvMeshSystem::gCurrentKernel = cvMeshObject::KERNEL_INVALID;
-cvMeshSystem* cvMeshSystem::gMeshSystems[] = { nullptr };
+cvMeshObject::KernelType cvMeshSystem::gCurrentKernel =
+    cvMeshObject::KERNEL_INVALID;
+cvMeshSystem *cvMeshSystem::gMeshSystems[] = {nullptr};
 
-cvMeshSystem::cvMeshSystem()
-{
-}
+cvMeshSystem::cvMeshSystem() {}
 
-cvMeshSystem::~cvMeshSystem()
-{
-}
+cvMeshSystem::~cvMeshSystem() {}
 
-cvMeshSystem* cvMeshSystem::GetCurrentKernel()
-{
-  if (gCurrentKernel != cvMeshObject::KERNEL_MESHSIM && gCurrentKernel != cvMeshObject::KERNEL_TETGEN)
-  {
+cvMeshSystem *cvMeshSystem::GetCurrentKernel() {
+  if (gCurrentKernel != cvMeshObject::KERNEL_MESHSIM &&
+      gCurrentKernel != cvMeshObject::KERNEL_TETGEN) {
     return nullptr;
   }
 
   return gMeshSystems[gCurrentKernel];
 }
 
-char* cvMeshSystem::GetCurrentKernelName()
-{
-  return cvMeshObject::GetKernelName( gCurrentKernel );
+char *cvMeshSystem::GetCurrentKernelName() {
+  return cvMeshObject::GetKernelName(gCurrentKernel);
 }
 
-int cvMeshSystem::SetCurrentKernel(cvMeshObject::KernelType kernel_type)
-{
+int cvMeshSystem::SetCurrentKernel(cvMeshObject::KernelType kernel_type) {
   switch (kernel_type) {
-    case cvMeshObject::KERNEL_INVALID:
-        gCurrentKernel = cvMeshObject::KERNEL_INVALID;
-    case cvMeshObject::KERNEL_MESHSIM:
-        gCurrentKernel = cvMeshObject::KERNEL_MESHSIM;
-        return SV_OK;
+  case cvMeshObject::KERNEL_INVALID:
+    gCurrentKernel = cvMeshObject::KERNEL_INVALID;
+  case cvMeshObject::KERNEL_MESHSIM:
+    gCurrentKernel = cvMeshObject::KERNEL_MESHSIM;
+    return SV_OK;
 
-    case cvMeshObject::KERNEL_TETGEN:
-    
-        gCurrentKernel = cvMeshObject::KERNEL_TETGEN;
-        return SV_OK;
-    
-    default:
-      return SV_ERROR;
+  case cvMeshObject::KERNEL_TETGEN:
+
+    gCurrentKernel = cvMeshObject::KERNEL_TETGEN;
+    return SV_OK;
+
+  default:
+    return SV_ERROR;
   }
   return SV_OK;
 }
 
-int cvMeshSystem::RegisterKernel( cvMeshObject::KernelType kernel_type, cvMeshSystem* pKernel )
-{
-  if (kernel_type != cvMeshObject::KERNEL_MESHSIM && kernel_type != cvMeshObject::KERNEL_TETGEN)
+int cvMeshSystem::RegisterKernel(cvMeshObject::KernelType kernel_type,
+                                 cvMeshSystem *pKernel) {
+  if (kernel_type != cvMeshObject::KERNEL_MESHSIM &&
+      kernel_type != cvMeshObject::KERNEL_TETGEN)
     return SV_ERROR;
 
   if (kernel_type == cvMeshObject::KERNEL_MESHSIM)
@@ -93,7 +88,6 @@ int cvMeshSystem::RegisterKernel( cvMeshObject::KernelType kernel_type, cvMeshSy
   gMeshSystems[gCurrentKernel] = pKernel;
   return SV_OK;
 }
-
 
 // ----------------------------
 // DefaultInstantiateMeshObject
@@ -117,37 +111,30 @@ int cvMeshSystem::RegisterKernel( cvMeshObject::KernelType kernel_type, cvMeshSy
 // DefaultInstantiateMeshObject for python
 // ----------------------------
 #ifdef SV_USE_PYTHON
-cvMeshObject* cvMeshSystem::DefaultInstantiateMeshObject(
-  char *const meshFileName,
-  char *const solidFileName )
-{
-cvMeshSystem* meshSystem = nullptr;
-cvMeshObject* meshObject = nullptr;
-if (gCurrentKernel == cvMeshObject::KERNEL_MESHSIM || gCurrentKernel == cvMeshObject::KERNEL_TETGEN)
-{
-  if (gMeshSystems[gCurrentKernel] == nullptr)
-  {
-    fprintf( stdout, "current kernel is not available");
-    return nullptr;
-  }
-  meshSystem = gMeshSystems[gCurrentKernel];
+cvMeshObject *
+cvMeshSystem::DefaultInstantiateMeshObject(char *const meshFileName,
+                                           char *const solidFileName) {
+  cvMeshSystem *meshSystem = nullptr;
+  cvMeshObject *meshObject = nullptr;
+  if (gCurrentKernel == cvMeshObject::KERNEL_MESHSIM ||
+      gCurrentKernel == cvMeshObject::KERNEL_TETGEN) {
+    if (gMeshSystems[gCurrentKernel] == nullptr) {
+      fprintf(stdout, "current kernel is not available");
+      return nullptr;
+    }
+    meshSystem = gMeshSystems[gCurrentKernel];
 
-  meshObject = (cvMeshObject *) (meshSystem->CreateMeshObject());
-  if (meshObject == nullptr)
-  {
-    fprintf( stdout, "Unable to create mesh object");
+    meshObject = (cvMeshObject *)(meshSystem->CreateMeshObject());
+    if (meshObject == nullptr) {
+      fprintf(stdout, "Unable to create mesh object");
+    } else {
+      meshObject->SetMeshFileName(meshFileName);
+      meshObject->SetSolidFileName(solidFileName);
+    }
+  } else {
+    fprintf(stdout, "current kernel is not valid");
   }
-  else
-  {
-    meshObject->SetMeshFileName( meshFileName );
-    meshObject->SetSolidFileName( solidFileName );
-  }
-}
-else
-{
-  fprintf(stdout,"current kernel is not valid");
-}
 
-return meshObject;
+  return meshObject;
 }
 #endif

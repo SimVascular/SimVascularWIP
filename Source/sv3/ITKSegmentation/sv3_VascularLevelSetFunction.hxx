@@ -32,201 +32,169 @@
 #ifndef VASCULARLEVELSETFUNCTION_HXX_
 #define VASCULARLEVELSETFUNCTION_HXX_
 
-namespace itk{
-template< typename TImageType, typename TFeatureImageType >
-const typename VascularLevelSetFunction< TImageType, TFeatureImageType >::NeighborhoodSizeValueType
-VascularLevelSetFunction< TImageType, TFeatureImageType >
-::m_NumVertex = 1 << TImageType::ImageDimension;
+namespace itk {
+template <typename TImageType, typename TFeatureImageType>
+const typename VascularLevelSetFunction<
+    TImageType, TFeatureImageType>::NeighborhoodSizeValueType
+    VascularLevelSetFunction<TImageType, TFeatureImageType>::m_NumVertex =
+        1 << TImageType::ImageDimension;
 
-template< typename TImageType, typename TFeatureImageType >
-const typename VascularLevelSetFunction< TImageType,
-TFeatureImageType >::ScalarValueType
-VascularLevelSetFunction< TImageType, TFeatureImageType >
-::m_DimConst = static_cast< ScalarValueType >( 2.0 / m_NumVertex );
+template <typename TImageType, typename TFeatureImageType>
+const typename VascularLevelSetFunction<TImageType,
+                                        TFeatureImageType>::ScalarValueType
+    VascularLevelSetFunction<TImageType, TFeatureImageType>::m_DimConst =
+        static_cast<ScalarValueType>(2.0 / m_NumVertex);
 
-template< typename TImageType, typename TFeatureImageType >
-typename VascularLevelSetFunction< TImageType,
-TFeatureImageType >::ScalarValueType
-VascularLevelSetFunction< TImageType, TFeatureImageType >
-::ComputeCurvatureFromNormalVector(const NeighborhoodType &neighborhood) const
- {
-	unsigned int  j, k;
-	unsigned int  counterN, counterP;
-	NeighborhoodSizeValueType positionN,  positionP,
-	stride[TImageType::ImageDimension], indicator[TImageType::ImageDimension];
+template <typename TImageType, typename TFeatureImageType>
+typename VascularLevelSetFunction<TImageType,
+                                  TFeatureImageType>::ScalarValueType
+VascularLevelSetFunction<TImageType, TFeatureImageType>::
+    ComputeCurvatureFromNormalVector(
+        const NeighborhoodType &neighborhood) const {
+  unsigned int j, k;
+  unsigned int counterN, counterP;
+  NeighborhoodSizeValueType positionN, positionP,
+      stride[TImageType::ImageDimension], indicator[TImageType::ImageDimension];
 
-	const NeighborhoodSizeValueType one = 1;
-	const NeighborhoodSizeValueType center = neighborhood.Size() / 2;
-	const NeighborhoodScalesType neighborhoodScales = this->ComputeNeighborhoodScales();
+  const NeighborhoodSizeValueType one = 1;
+  const NeighborhoodSizeValueType center = neighborhood.Size() / 2;
+  const NeighborhoodScalesType neighborhoodScales =
+      this->ComputeNeighborhoodScales();
 
-	NormalVectorType normalvector;
-	ScalarValueType  curvature;
+  NormalVectorType normalvector;
+  ScalarValueType curvature;
 
-	for ( j = 0; j < TImageType::ImageDimension; j++ )
-	{
-		stride[j] = neighborhood.GetStride(j);
-		indicator[j] = one << j;
-	}
-	curvature = NumericTraits< ScalarValueType >::Zero;
+  for (j = 0; j < TImageType::ImageDimension; j++) {
+    stride[j] = neighborhood.GetStride(j);
+    indicator[j] = one << j;
+  }
+  curvature = NumericTraits<ScalarValueType>::Zero;
 
-	for ( counterN = 0; counterN < m_NumVertex; counterN++ )
-	{
-		// compute position of normal vector
-		positionN = center;
-		for ( k = 0; k < TImageType::ImageDimension; k++ )
-		{
-			if ( counterN & indicator[k] )
-			{
-				positionN -= stride[k];
-			}
-		}
-		// compute the normal vector
-		for ( j = 0; j < TImageType::ImageDimension; j++ ) // derivative axis
-		{
-			normalvector[j] = NumericTraits< ScalarValueType >::Zero;
-			for ( counterP = 0; counterP < m_NumVertex; counterP++ )
-			{
-				positionP = positionN;
-				for ( k = 0; k < TImageType::ImageDimension; k++ )
-				{
-					if ( counterP & indicator[k] )
-					{
-						positionP += stride[k];
-					}
-				}
-				if ( counterP & indicator[j] )
-				{
-					normalvector[j] += neighborhood.GetPixel (positionP) * neighborhoodScales[j];
-				}
-				else
-				{
-					normalvector[j] -= neighborhood.GetPixel (positionP) * neighborhoodScales[j];
-				}
-			} // end counterP
-		}   // end derivative axis
-		normalvector = normalvector / ( m_MinVectorNorm + normalvector.GetNorm() );
-		// add normal to curvature computation
-		for ( j = 0; j < TImageType::ImageDimension; j++ ) // derivative axis
-		{
-			if ( counterN & indicator[j] )
-			{
-				curvature -= normalvector[j] * neighborhoodScales[j];
-			}
-			else
-			{
-				curvature += normalvector[j] * neighborhoodScales[j];
-			}
-		} // end derivative axis
-	}   // end counterN
+  for (counterN = 0; counterN < m_NumVertex; counterN++) {
+    // compute position of normal vector
+    positionN = center;
+    for (k = 0; k < TImageType::ImageDimension; k++) {
+      if (counterN & indicator[k]) {
+        positionN -= stride[k];
+      }
+    }
+    // compute the normal vector
+    for (j = 0; j < TImageType::ImageDimension; j++) // derivative axis
+    {
+      normalvector[j] = NumericTraits<ScalarValueType>::Zero;
+      for (counterP = 0; counterP < m_NumVertex; counterP++) {
+        positionP = positionN;
+        for (k = 0; k < TImageType::ImageDimension; k++) {
+          if (counterP & indicator[k]) {
+            positionP += stride[k];
+          }
+        }
+        if (counterP & indicator[j]) {
+          normalvector[j] +=
+              neighborhood.GetPixel(positionP) * neighborhoodScales[j];
+        } else {
+          normalvector[j] -=
+              neighborhood.GetPixel(positionP) * neighborhoodScales[j];
+        }
+      } // end counterP
+    } // end derivative axis
+    normalvector = normalvector / (m_MinVectorNorm + normalvector.GetNorm());
+    // add normal to curvature computation
+    for (j = 0; j < TImageType::ImageDimension; j++) // derivative axis
+    {
+      if (counterN & indicator[j]) {
+        curvature -= normalvector[j] * neighborhoodScales[j];
+      } else {
+        curvature += normalvector[j] * neighborhoodScales[j];
+      }
+    } // end derivative axis
+  } // end counterN
 
-	curvature *= m_DimConst;
+  curvature *= m_DimConst;
 
-	return curvature;
- }
-template< typename TImageType, typename TFeatureImageType >
-typename VascularLevelSetFunction< TImageType,
-TFeatureImageType >::NormalVectorType
-VascularLevelSetFunction< TImageType, TFeatureImageType >
-::ComputeNormalVector(const NeighborhoodType &neighborhood) const
- {
-	unsigned int  j, k;
-	unsigned int  counterP;
-	NeighborhoodSizeValueType positionN,  positionP,
-	stride[TImageType::ImageDimension], indicator[TImageType::ImageDimension];
+  return curvature;
+}
+template <typename TImageType, typename TFeatureImageType>
+typename VascularLevelSetFunction<TImageType,
+                                  TFeatureImageType>::NormalVectorType
+VascularLevelSetFunction<TImageType, TFeatureImageType>::ComputeNormalVector(
+    const NeighborhoodType &neighborhood) const {
+  unsigned int j, k;
+  unsigned int counterP;
+  NeighborhoodSizeValueType positionN, positionP,
+      stride[TImageType::ImageDimension], indicator[TImageType::ImageDimension];
 
-	const NeighborhoodSizeValueType one = 1;
-	const NeighborhoodSizeValueType center = neighborhood.Size() / 2;
+  const NeighborhoodSizeValueType one = 1;
+  const NeighborhoodSizeValueType center = neighborhood.Size() / 2;
 
-	const NeighborhoodScalesType neighborhoodScales = this->ComputeNeighborhoodScales();
-	NormalVectorType normalvector;
+  const NeighborhoodScalesType neighborhoodScales =
+      this->ComputeNeighborhoodScales();
+  NormalVectorType normalvector;
 
-	for ( j = 0; j < TImageType::ImageDimension; j++ )
-	{
-		stride[j] = neighborhood.GetStride(j);
-		indicator[j] = one << j;
-	}
-	// compute position of normal vector
-	positionN = center;
-	for ( k = 0; k < TImageType::ImageDimension; k++ )
-	{
-		if ( indicator[k] )
-		{
-			positionN -= stride[k];
-		}
-	}
-	// compute the normal vector
-	for ( j = 0; j < TImageType::ImageDimension; j++ ) // derivative axis
-	{
-		normalvector[j] = NumericTraits< ScalarValueType >::Zero;
-		for ( counterP = 0; counterP < m_NumVertex; counterP++ )
-		{
-			positionP = positionN;
-			for ( k = 0; k < TImageType::ImageDimension; k++ )
-			{
-				if ( counterP & indicator[k] )
-				{
-					positionP += stride[k];
-				}
-			}
-			if ( counterP & indicator[j] )
-			{
-				normalvector[j] += neighborhood.GetPixel (positionP) * neighborhoodScales[j];
-			}
-			else
-			{
-				normalvector[j] -= neighborhood.GetPixel (positionP) * neighborhoodScales[j];
-			}
-		} // end counterP
-	}   // end derivative axis
-	normalvector = normalvector / ( m_MinVectorNorm + normalvector.GetNorm() );
+  for (j = 0; j < TImageType::ImageDimension; j++) {
+    stride[j] = neighborhood.GetStride(j);
+    indicator[j] = one << j;
+  }
+  // compute position of normal vector
+  positionN = center;
+  for (k = 0; k < TImageType::ImageDimension; k++) {
+    if (indicator[k]) {
+      positionN -= stride[k];
+    }
+  }
+  // compute the normal vector
+  for (j = 0; j < TImageType::ImageDimension; j++) // derivative axis
+  {
+    normalvector[j] = NumericTraits<ScalarValueType>::Zero;
+    for (counterP = 0; counterP < m_NumVertex; counterP++) {
+      positionP = positionN;
+      for (k = 0; k < TImageType::ImageDimension; k++) {
+        if (counterP & indicator[k]) {
+          positionP += stride[k];
+        }
+      }
+      if (counterP & indicator[j]) {
+        normalvector[j] +=
+            neighborhood.GetPixel(positionP) * neighborhoodScales[j];
+      } else {
+        normalvector[j] -=
+            neighborhood.GetPixel(positionP) * neighborhoodScales[j];
+      }
+    } // end counterP
+  } // end derivative axis
+  normalvector = normalvector / (m_MinVectorNorm + normalvector.GetNorm());
 
-	//}   // end counterN
+  //}   // end counterN
 
-	return normalvector;
- }
-
-
-
-template< typename TImageType, typename TFeatureImageType >
-typename VascularLevelSetFunction< TImageType,
-TFeatureImageType >::ScalarValueType
-VascularLevelSetFunction< TImageType, TFeatureImageType >
-::ComputeCurvatureTerm(const NeighborhoodType & neighborhood,
-		const FloatOffsetType & offset, GlobalDataStruct *gd){
-	if(m_UseNormalVectorCurvature == true)
-	{
-
-		return this->ComputeCurvatureFromNormalVector(neighborhood);
-	}
-	else if ( this->GetUseMinimalCurvature() == false )
-	{
-
-		return this->ComputeMeanCurvature(neighborhood, offset, gd);
-	}
-	else
-	{
-		if ( ImageDimension == 3 )
-		{
-			return this->ComputeMinimalCurvature(neighborhood, offset, gd);
-		}
-		else if ( ImageDimension == 2 )
-		{
-			std::cout << "Using Mean Curvature: "
-					<< this->ComputeMeanCurvature(neighborhood, offset, gd) << std::endl;
-			return this->ComputeMeanCurvature(neighborhood, offset, gd);
-		}
-		else
-		{
-			return this->ComputeMinimalCurvature(neighborhood, offset, gd);
-		}
-	}
+  return normalvector;
 }
 
+template <typename TImageType, typename TFeatureImageType>
+typename VascularLevelSetFunction<TImageType,
+                                  TFeatureImageType>::ScalarValueType
+VascularLevelSetFunction<TImageType, TFeatureImageType>::ComputeCurvatureTerm(
+    const NeighborhoodType &neighborhood, const FloatOffsetType &offset,
+    GlobalDataStruct *gd) {
+  if (m_UseNormalVectorCurvature == true) {
 
-}// namepace
+    return this->ComputeCurvatureFromNormalVector(neighborhood);
+  } else if (this->GetUseMinimalCurvature() == false) {
 
+    return this->ComputeMeanCurvature(neighborhood, offset, gd);
+  } else {
+    if (ImageDimension == 3) {
+      return this->ComputeMinimalCurvature(neighborhood, offset, gd);
+    } else if (ImageDimension == 2) {
+      std::cout << "Using Mean Curvature: "
+                << this->ComputeMeanCurvature(neighborhood, offset, gd)
+                << std::endl;
+      return this->ComputeMeanCurvature(neighborhood, offset, gd);
+    } else {
+      return this->ComputeMinimalCurvature(neighborhood, offset, gd);
+    }
+  }
+}
 
-
-
+} // namespace itk
 
 #endif /* VASCULARLEVELSETFUNCTION_HXX_ */

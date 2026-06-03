@@ -36,30 +36,27 @@
 
 #include "sv_FactoryRegistrar.h"
 
-cvFactoryRegistrar::cvFactoryRegistrar()
-{
+cvFactoryRegistrar::cvFactoryRegistrar() {
   for (int i = 0; i < CV_MAX_FACTORY_METHOD_PTRS; i++)
     factoryMethodPtrs[i] = nullptr;
 }
 
-FactoryMethodPtr cvFactoryRegistrar::GetFactoryMethodPtr( int factory_type )
-{
-	if (factory_type < 0 || factory_type >= CV_MAX_FACTORY_METHOD_PTRS)
-		return 0;
-	return factoryMethodPtrs[factory_type];
+FactoryMethodPtr cvFactoryRegistrar::GetFactoryMethodPtr(int factory_type) {
+  if (factory_type < 0 || factory_type >= CV_MAX_FACTORY_METHOD_PTRS)
+    return 0;
+  return factoryMethodPtrs[factory_type];
 }
 
-void cvFactoryRegistrar::SetFactoryMethodPtr( int factory_type, FactoryMethodPtr factory_ptr )
-{
-	if (factory_type >= 0 && factory_type < CV_MAX_FACTORY_METHOD_PTRS)
-		factoryMethodPtrs[factory_type] = factory_ptr;
+void cvFactoryRegistrar::SetFactoryMethodPtr(int factory_type,
+                                             FactoryMethodPtr factory_ptr) {
+  if (factory_type >= 0 && factory_type < CV_MAX_FACTORY_METHOD_PTRS)
+    factoryMethodPtrs[factory_type] = factory_ptr;
 }
 
-void* cvFactoryRegistrar::UseFactoryMethod( int factory_type )
-{
-	if (factory_type < 0 || factory_type >= CV_MAX_FACTORY_METHOD_PTRS)
-		return 0;
-	if (factoryMethodPtrs[factory_type] == 0)
-		return 0;
-	return (*factoryMethodPtrs[factory_type])();
+void *cvFactoryRegistrar::UseFactoryMethod(int factory_type) {
+  if (factory_type < 0 || factory_type >= CV_MAX_FACTORY_METHOD_PTRS)
+    return 0;
+  if (factoryMethodPtrs[factory_type] == 0)
+    return 0;
+  return (*factoryMethodPtrs[factory_type])();
 }

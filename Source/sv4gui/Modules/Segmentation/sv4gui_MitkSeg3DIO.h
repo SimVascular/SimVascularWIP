@@ -36,25 +36,24 @@
 
 #include "mitkAbstractFileIO.h"
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiMitkSeg3DIO : public mitk::AbstractFileIO
-{
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiMitkSeg3DIO
+    : public mitk::AbstractFileIO {
 public:
+  sv4guiMitkSeg3DIO();
 
-    sv4guiMitkSeg3DIO();
+  using mitk::AbstractFileReader::Read;
+  std::vector<mitk::BaseData::Pointer> Read() override;
+  std::vector<mitk::BaseData::Pointer> DoRead() override {
+    std::cout << "Should implement this?" << std::endl << std::flush;
+  };
+  static std::vector<mitk::BaseData::Pointer> ReadFile(std::string fileName);
+  mitk::IFileIO::ConfidenceLevel GetReaderConfidenceLevel() const override;
 
-    using mitk::AbstractFileReader::Read;
-    std::vector<mitk::BaseData::Pointer> Read() override;
-    std::vector<mitk::BaseData::Pointer> DoRead() override {
-        std::cout << "Should implement this?" << std::endl << std::flush;
-    };
-    static std::vector<mitk::BaseData::Pointer> ReadFile(std::string fileName);
-    mitk::IFileIO::ConfidenceLevel GetReaderConfidenceLevel() const override;
-
-    void Write() override;
-    mitk::IFileIO::ConfidenceLevel GetWriterConfidenceLevel() const override;
+  void Write() override;
+  mitk::IFileIO::ConfidenceLevel GetWriterConfidenceLevel() const override;
 
 private:
-    sv4guiMitkSeg3DIO* IOClone() const override;
+  sv4guiMitkSeg3DIO *IOClone() const override;
 };
 
 #endif // SV4GUI_MITKSEG3DIO_H

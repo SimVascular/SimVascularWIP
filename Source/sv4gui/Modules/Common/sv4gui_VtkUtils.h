@@ -36,23 +36,22 @@
 
 #include "sv4guiModuleCommonExports.h"
 
-#include <vtkSmartPointer.h>
-#include <vtkPolyData.h>
-#include <vtkImageData.h>
 #include <mitkImage.h>
+#include <vtkImageData.h>
+#include <vtkPolyData.h>
+#include <vtkSmartPointer.h>
 
-class SV4GUIMODULECOMMON_EXPORT sv4guiVtkUtils
-{
+class SV4GUIMODULECOMMON_EXPORT sv4guiVtkUtils {
 public:
+  static vtkSmartPointer<vtkPolyData>
+  MergePoints(vtkSmartPointer<vtkPolyData> inpd);
 
-    static vtkSmartPointer<vtkPolyData> MergePoints(vtkSmartPointer<vtkPolyData> inpd);
+  static vtkSmartPointer<vtkPolyData>
+  MergePoints(vtkSmartPointer<vtkPolyData> inpd, double tol);
 
-    static vtkSmartPointer<vtkPolyData> MergePoints(vtkSmartPointer<vtkPolyData> inpd, double tol);
+  static vtkImageData *MitkImage2VtkImage(mitk::Image *image);
 
-    static vtkImageData* MitkImage2VtkImage(mitk::Image* image);
-
-    static void ResetMitkImage(mitk::Image* image);
-
+  static void ResetMitkImage(mitk::Image *image);
 };
 
 #endif // SV4GUI_VTKUTILS_H

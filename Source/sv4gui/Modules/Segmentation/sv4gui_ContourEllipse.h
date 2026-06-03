@@ -38,40 +38,36 @@
 
 #include "sv4gui_Contour.h"
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourEllipse : public sv4guiContour
-{
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourEllipse
+    : public sv4guiContour {
 
 public:
+  sv4guiContourEllipse();
 
-    sv4guiContourEllipse();
+  sv4guiContourEllipse(const sv4guiContourEllipse &other);
 
-    sv4guiContourEllipse(const sv4guiContourEllipse &other);
+  virtual ~sv4guiContourEllipse();
 
-    virtual ~sv4guiContourEllipse();
+  virtual sv4guiContourEllipse *Clone() override;
 
-    virtual sv4guiContourEllipse* Clone() override;
+  virtual std::string GetClassName() override;
 
-    virtual std::string GetClassName() override;
+  virtual void SetControlPoint(int index, mitk::Point3D point) override;
 
-    virtual void SetControlPoint(int index, mitk::Point3D point) override;
+  virtual void CreateContourPoints() override;
 
-    virtual void CreateContourPoints() override;
+  bool AsCircle();
 
-    bool AsCircle();
+  void SetAsCircle(bool asCircle);
 
-    void SetAsCircle(bool asCircle);
+  void AssignCenterScalingPoints() override;
 
-    void AssignCenterScalingPoints() override;
+  virtual void PlaceControlPoints(mitk::Point3D point) override;
 
-    virtual void PlaceControlPoints(mitk::Point3D point) override;
+  static sv4guiContour *CreateByFitting(sv4guiContour *contour);
 
-    static sv4guiContour* CreateByFitting(sv4guiContour* contour);
-
-  protected:
-
-    bool m_TreatAsCircle;
-
-  };
-
+protected:
+  bool m_TreatAsCircle;
+};
 
 #endif // SV4GUI_CONTOURELLIPSE_H

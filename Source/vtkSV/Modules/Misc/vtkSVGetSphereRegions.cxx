@@ -52,8 +52,8 @@
 #include "vtkThreshold.h"
 #include "vtkUnstructuredGrid.h"
 
-#include "vtkSVGlobals.h"
 #include "vtkSVGeneralUtils.h"
+#include "vtkSVGlobals.h"
 
 #include <iostream>
 
@@ -65,33 +65,28 @@ vtkStandardNewMacro(vtkSVGetSphereRegions);
 // ----------------------
 // Constructor
 // ----------------------
-vtkSVGetSphereRegions::vtkSVGetSphereRegions()
-{
-    this->CellArrayName    = nullptr;
-    this->PointArrayName   = nullptr;
-    this->OutCellArrayName = nullptr;
+vtkSVGetSphereRegions::vtkSVGetSphereRegions() {
+  this->CellArrayName = nullptr;
+  this->PointArrayName = nullptr;
+  this->OutCellArrayName = nullptr;
 
-    this->SphereRadius = 0.0;
+  this->SphereRadius = 0.0;
 }
 
 // ----------------------
 // Destructor
 // ----------------------
-vtkSVGetSphereRegions::~vtkSVGetSphereRegions()
-{
-  if (this->CellArrayName != nullptr)
-  {
-    delete [] this->CellArrayName;
+vtkSVGetSphereRegions::~vtkSVGetSphereRegions() {
+  if (this->CellArrayName != nullptr) {
+    delete[] this->CellArrayName;
     this->CellArrayName = nullptr;
   }
-  if (this->PointArray != nullptr)
-  {
-    delete [] this->PointArrayName;
+  if (this->PointArray != nullptr) {
+    delete[] this->PointArrayName;
     this->PointArrayName = nullptr;
   }
-  if (this->OutCellArrayName != nullptr)
-  {
-    delete [] this->OutCellArrayName;
+  if (this->OutCellArrayName != nullptr) {
+    delete[] this->OutCellArrayName;
     this->OutCellArrayName = nullptr;
   }
 }
@@ -99,8 +94,7 @@ vtkSVGetSphereRegions::~vtkSVGetSphereRegions()
 // ----------------------
 // PrintSelf
 // ----------------------
-void vtkSVGetSphereRegions::PrintSelf(ostream& os, vtkIndent indent)
-{
+void vtkSVGetSphereRegions::PrintSelf(ostream &os, vtkIndent indent) {
   this->Superclass::PrintSelf(os, indent);
 
   os << indent << "Sphere Radius: " << this->SphereRadius << "\n";
@@ -117,80 +111,74 @@ void vtkSVGetSphereRegions::PrintSelf(ostream& os, vtkIndent indent)
 // ----------------------
 int vtkSVGetSphereRegions::RequestData(vtkInformation *vtkNotUsed(request),
                                        vtkInformationVector **inputVector,
-                                       vtkInformationVector *outputVector)
-{
-    // get the input and output
-    vtkPolyData *input = vtkPolyData::GetData(inputVector[0]);
-    vtkPolyData *output = vtkPolyData::GetData(outputVector);
+                                       vtkInformationVector *outputVector) {
+  // get the input and output
+  vtkPolyData *input = vtkPolyData::GetData(inputVector[0]);
+  vtkPolyData *output = vtkPolyData::GetData(outputVector);
 
-    // Define variables used by the algorithm
-    vtkNew(vtkPoints, inpts);
-    vtkNew(vtkCellArray, inPolys);
-    vtkIdType numPts, numPolys;
-    vtkIdType newId, cellId,pointId;
+  // Define variables used by the algorithm
+  vtkNew(vtkPoints, inpts);
+  vtkNew(vtkCellArray, inPolys);
+  vtkIdType numPts, numPolys;
+  vtkIdType newId, cellId, pointId;
 
-    //Get input points, polys and set the up in the vtkPolyData mesh
-    inpts = input->GetPoints();
-    inPolys = input->GetPolys();
+  // Get input points, polys and set the up in the vtkPolyData mesh
+  inpts = input->GetPoints();
+  inPolys = input->GetPolys();
 
-    //Get the number of Polys for scalar  allocation
-    numPolys = input->GetNumberOfPolys();
-    numPts = input->GetNumberOfPoints();
+  // Get the number of Polys for scalar  allocation
+  numPolys = input->GetNumberOfPolys();
+  numPts = input->GetNumberOfPoints();
 
-    //Check the input to make sure it is there
-    if (numPolys < 1)
-    {
-      vtkDebugMacro("No input!");
-      this->SetErrorCode(vtkErrorCode::UserError + 1);
-      return SV_ERROR;
-    }
+  // Check the input to make sure it is there
+  if (numPolys < 1) {
+    vtkDebugMacro("No input!");
+    this->SetErrorCode(vtkErrorCode::UserError + 1);
+    return SV_ERROR;
+  }
 
-    if (this->PointArrayName == nullptr)
-    {
-      std::cout<<"No PointArrayName given." << endl;
-      this->SetErrorCode(vtkErrorCode::UserError + 1);
-      return SV_ERROR;
-    }
-    if (this->CellArrayName == nullptr)
-    {
-      std::cout<<"No CellArrayName given." << endl;
-      this->SetErrorCode(vtkErrorCode::UserError + 1);
-      return SV_ERROR;
-    }
-    if (this->GetArrays(input,0) != 1)
-    {
-      std::cout<<"No Point Array Named "<<this->PointArrayName<<" on surface"<<endl;
-      this->SetErrorCode(vtkErrorCode::UserError + 1);
-      return SV_ERROR;
-    }
-    if (this->GetArrays(input,1) != 1)
-    {
-      std::cout<<"No Cell Array Named "<<this->CellArrayName<<" on surface"<<endl;
-      this->SetErrorCode(vtkErrorCode::UserError + 1);
-      return SV_ERROR;
-    }
-    if (this->OutCellArrayName == 0)
-    {
-      std::cout<<"Need array name for output cell data"<<endl;
-      this->SetErrorCode(vtkErrorCode::UserError + 1);
-      return SV_ERROR;
-    }
+  if (this->PointArrayName == nullptr) {
+    std::cout << "No PointArrayName given." << endl;
+    this->SetErrorCode(vtkErrorCode::UserError + 1);
+    return SV_ERROR;
+  }
+  if (this->CellArrayName == nullptr) {
+    std::cout << "No CellArrayName given." << endl;
+    this->SetErrorCode(vtkErrorCode::UserError + 1);
+    return SV_ERROR;
+  }
+  if (this->GetArrays(input, 0) != 1) {
+    std::cout << "No Point Array Named " << this->PointArrayName
+              << " on surface" << endl;
+    this->SetErrorCode(vtkErrorCode::UserError + 1);
+    return SV_ERROR;
+  }
+  if (this->GetArrays(input, 1) != 1) {
+    std::cout << "No Cell Array Named " << this->CellArrayName << " on surface"
+              << endl;
+    this->SetErrorCode(vtkErrorCode::UserError + 1);
+    return SV_ERROR;
+  }
+  if (this->OutCellArrayName == 0) {
+    std::cout << "Need array name for output cell data" << endl;
+    this->SetErrorCode(vtkErrorCode::UserError + 1);
+    return SV_ERROR;
+  }
 
-    input->BuildLinks();
-    vtkNew(vtkPolyData, linepd);
-    int numloops = 0;
-    this->GetClosedEdgeLoops(input,linepd,&numloops);
-    this->SetSphereRegions(input,linepd,numloops);
+  input->BuildLinks();
+  vtkNew(vtkPolyData, linepd);
+  int numloops = 0;
+  this->GetClosedEdgeLoops(input, linepd, &numloops);
+  this->SetSphereRegions(input, linepd, numloops);
 
-    output->DeepCopy(input);
-    return SV_OK;
+  output->DeepCopy(input);
+  return SV_OK;
 }
 
 // ----------------------
 // GetArrays
 // ----------------------
-int vtkSVGetSphereRegions::GetArrays(vtkPolyData *object,int type)
-{
+int vtkSVGetSphereRegions::GetArrays(vtkPolyData *object, int type) {
   vtkIdType i;
   int numArrays;
 
@@ -204,21 +192,16 @@ int vtkSVGetSphereRegions::GetArrays(vtkPolyData *object,int type)
   // Check if array exists
   int exists = vtkSVGeneralUtils::CheckArrayExists(object, type, arrayName);
 
-  if (exists)
-  {
-    if (type == 0)
-    {
+  if (exists) {
+    if (type == 0) {
       // Get point array
       this->PointArray = vtkIntArray::SafeDownCast(
-	  object->GetPointData()->GetArray(this->PointArrayName));
-    }
-    else
-    {
+          object->GetPointData()->GetArray(this->PointArrayName));
+    } else {
       // Get cell array
       this->CellArray = vtkIntArray::SafeDownCast(
-	  object->GetCellData()->GetArray(this->CellArrayName));
+          object->GetCellData()->GetArray(this->CellArrayName));
     }
-
   }
 
   return exists;
@@ -227,9 +210,9 @@ int vtkSVGetSphereRegions::GetArrays(vtkPolyData *object,int type)
 // ----------------------
 // GetClosedEdgeLoops
 // ----------------------
-int vtkSVGetSphereRegions::GetClosedEdgeLoops(vtkPolyData *pd,vtkPolyData *linepd,
-    int *numLoops)
-{
+int vtkSVGetSphereRegions::GetClosedEdgeLoops(vtkPolyData *pd,
+                                              vtkPolyData *linepd,
+                                              int *numLoops) {
   // Set up vtk objects
   vtkNew(vtkIdList, pointCells);
   vtkNew(vtkIdList, cellPoints);
@@ -243,7 +226,7 @@ int vtkSVGetSphereRegions::GetClosedEdgeLoops(vtkPolyData *pd,vtkPolyData *linep
   int *checked = new int[numPts];
 
   // Set up iterators
-  vtkIdType nextPt=-1,prevPt=-1,prevId = -1;
+  vtkIdType nextPt = -1, prevPt = -1, prevId = -1;
   vtkIdType cellId = 0;
   vtkIdType pointId = 0;
   vtkIdType loopId = -1;
@@ -251,62 +234,54 @@ int vtkSVGetSphereRegions::GetClosedEdgeLoops(vtkPolyData *pd,vtkPolyData *linep
   int iter = 0;
 
   // Initialize checking to 0
-  for (int i=0;i < numPts;i++)
+  for (int i = 0; i < numPts; i++)
     checked[i] = 0;
 
   // Loop around num points
   pd->BuildLinks();
-  for (int i=0;i < numPts;i++)
-  {
+  for (int i = 0; i < numPts; i++) {
 
     // If it hasn't been checked
-    if (checked[i] == 0)
-    {
+    if (checked[i] == 0) {
 
       // Set checked
       checked[i] = 1;
 
       // Get value of point array
-      if (this->PointArray->GetValue(i) == 1)
-      {
+      if (this->PointArray->GetValue(i) == 1) {
         // Set up while vars
         nextPt = i;
-        pd->GetPointCells(i,pointCells);
+        pd->GetPointCells(i, pointCells);
         prevId = pts->InsertNextPoint(pd->GetPoint(i));
         prevPt = i;
         loopId++;
-        iter =0;
+        iter = 0;
 
         // Loop around this loop
-        while ((nextPt != i || iter == 0) && iter < 3000)
-        {
+        while ((nextPt != i || iter == 0) && iter < 3000) {
           // See if we found a point
           foundpt = 0;
-          for (int j=0; j < pointCells->GetNumberOfIds();j++)
-          {
+          for (int j = 0; j < pointCells->GetNumberOfIds(); j++) {
             // Get point cell
             cellId = pointCells->GetId(j);
 
             // Get cell points
-            pd->GetCellPoints(cellId,cellPoints);
+            pd->GetCellPoints(cellId, cellPoints);
 
             // Loop around points
-            for (int k=0; k < cellPoints->GetNumberOfIds();k++)
-            {
+            for (int k = 0; k < cellPoints->GetNumberOfIds(); k++) {
 
               // Get point id
               pointId = cellPoints->GetId(k);
 
               // Check to see if point is one we want
               if (pointId != prevPt && pointId != nextPt &&
-            this->PointArray->GetValue(pointId) == 1)
-              {
+                  this->PointArray->GetValue(pointId) == 1) {
 
                 // Get the cell edge neighbors
-                pd->GetCellEdgeNeighbors(-1,nextPt,pointId,cellNeighs);
+                pd->GetCellEdgeNeighbors(-1, nextPt, pointId, cellNeighs);
                 if (this->CellArray->GetValue(cellNeighs->GetId(0)) ==
-                    this->CellArray->GetValue(cellNeighs->GetId(1)))
-                {
+                    this->CellArray->GetValue(cellNeighs->GetId(1))) {
                   // See if the two cells containing these points has same value
                   // We can step out if they do
                   continue;
@@ -326,16 +301,15 @@ int vtkSVGetSphereRegions::GetClosedEdgeLoops(vtkPolyData *pd,vtkPolyData *linep
                 // Set the loop id
                 scalars->InsertNextValue(loopId);
                 prevId = tmpId;
-                foundpt=1;
+                foundpt = 1;
                 break;
               }
             }
 
             // We found a point!
-            if (foundpt)
-            {
+            if (foundpt) {
               // get the cells for next iter
-              pd->GetPointCells(nextPt,pointCells);
+              pd->GetPointCells(nextPt, pointCells);
               break;
             }
           }
@@ -352,9 +326,9 @@ int vtkSVGetSphereRegions::GetClosedEdgeLoops(vtkPolyData *pd,vtkPolyData *linep
   linepd->GetCellData()->AddArray(scalars);
   linepd->BuildLinks();
 
-  *numLoops = loopId+1;
+  *numLoops = loopId + 1;
 
-  delete [] checked;
+  delete[] checked;
   return SV_OK;
 }
 
@@ -362,8 +336,7 @@ int vtkSVGetSphereRegions::GetClosedEdgeLoops(vtkPolyData *pd,vtkPolyData *linep
 // SetSphereRegions
 // ----------------------
 int vtkSVGetSphereRegions::SetSphereRegions(vtkPolyData *pd, vtkPolyData *lines,
-    int numLoops)
-{
+                                            int numLoops) {
   // Set up vtk objects
   vtkNew(vtkThreshold, thresholder);
   vtkNew(vtkDataSetSurfaceFilter, surfacer);
@@ -373,7 +346,7 @@ int vtkSVGetSphereRegions::SetSphereRegions(vtkPolyData *pd, vtkPolyData *lines,
   // Points and new data
   double pt1[3];
   double pt2[3];
-  double *xc,*xy,*xz,*radius;
+  double *xc, *xy, *xz, *radius;
   xc = new double[numLoops];
   xy = new double[numLoops];
   xz = new double[numLoops];
@@ -382,10 +355,9 @@ int vtkSVGetSphereRegions::SetSphereRegions(vtkPolyData *pd, vtkPolyData *lines,
   // Set up loop thresholder
 
   thresholder->SetInputData(lines);
-  thresholder->SetInputArrayToProcess(0,0,0,1,"LoopId");
+  thresholder->SetInputArrayToProcess(0, 0, 0, 1, "LoopId");
 
-  for (int i=0;i<numLoops;i++)
-  {
+  for (int i = 0; i < numLoops; i++) {
     // Threshold the loop
     thresholder->SetLowerThreshold(i);
     thresholder->SetUpperThreshold(i);
@@ -397,35 +369,37 @@ int vtkSVGetSphereRegions::SetSphereRegions(vtkPolyData *pd, vtkPolyData *lines,
     tmpPD = surfacer->GetOutput();
 
     // Set up our centroid calculator
-    double sx=0,sy=0,sz=0,sL=0;
+    double sx = 0, sy = 0, sz = 0, sL = 0;
 
     // Loop through points
     int numPts = tmpPD->GetNumberOfPoints();
-    for (int j=0;j<numPts-1;j++)
-    {
+    for (int j = 0; j < numPts - 1; j++) {
       // Get points in cell
-      tmpPD->GetPoint(j,pt1);
-      tmpPD->GetPoint(j+1,pt2);
+      tmpPD->GetPoint(j, pt1);
+      tmpPD->GetPoint(j + 1, pt2);
 
       // Calculate length as well as component wise distance
-      double L = sqrt(pow(pt2[0]-pt1[0],2) + pow(pt2[1]-pt1[1],2) + pow(pt2[2]-pt1[2],2));
-      sx += ((pt1[0] + pt2[0])/2.0)*L;
-      sy += ((pt1[1] + pt2[1])/2.0)*L;
-      sz += ((pt1[2] + pt2[2])/2.0)*L;
+      double L = sqrt(pow(pt2[0] - pt1[0], 2) + pow(pt2[1] - pt1[1], 2) +
+                      pow(pt2[2] - pt1[2], 2));
+      sx += ((pt1[0] + pt2[0]) / 2.0) * L;
+      sy += ((pt1[1] + pt2[1]) / 2.0) * L;
+      sz += ((pt1[2] + pt2[2]) / 2.0) * L;
       sL += L;
     }
     // Set our new sphere center
-    xc[i] = sx/sL; xy[i] = sy/sL; xz[i] = sz/sL;
+    xc[i] = sx / sL;
+    xy[i] = sy / sL;
+    xz[i] = sz / sL;
 
     // Lets find the maximum distance point for our radius
     double maxDist = 0.0;
-    for (int j=0;j<numPts;j++)
-    {
+    for (int j = 0; j < numPts; j++) {
       // Get point
-      tmpPD->GetPoint(j,pt1);
+      tmpPD->GetPoint(j, pt1);
 
       // Get distance
-      double dist = sqrt(pow(xc[i]-pt1[0],2) + pow(xy[i]-pt1[1],2) + pow(xz[i]-pt1[2],2));
+      double dist = sqrt(pow(xc[i] - pt1[0], 2) + pow(xy[i] - pt1[1], 2) +
+                         pow(xz[i] - pt1[2], 2));
 
       // Update distance if larger
       if (dist > maxDist)
@@ -442,59 +416,54 @@ int vtkSVGetSphereRegions::SetSphereRegions(vtkPolyData *pd, vtkPolyData *lines,
   int exists = 0;
 
   // Loop through arrays, update if it exists, otherwise, start it up
-  for (int i=0;i<numArrays;i++)
-  {
-    if (!strcmp(pd->GetCellData()->GetArrayName(i),
-	  this->OutCellArrayName))
-    {
+  for (int i = 0; i < numArrays; i++) {
+    if (!strcmp(pd->GetCellData()->GetArrayName(i), this->OutCellArrayName)) {
       exists = 1;
     }
   }
   if (exists)
-    sphereCells = vtkIntArray::SafeDownCast(pd->GetCellData()->GetArray(this->OutCellArrayName));
-  else
-  {
+    sphereCells = vtkIntArray::SafeDownCast(
+        pd->GetCellData()->GetArray(this->OutCellArrayName));
+  else {
     sphereCells->SetNumberOfTuples(pd->GetNumberOfCells());
-    for (vtkIdType id=0;id< pd->GetNumberOfCells();id++)
-      sphereCells->InsertValue(id,0);
+    for (vtkIdType id = 0; id < pd->GetNumberOfCells(); id++)
+      sphereCells->InsertValue(id, 0);
   }
 
   // Time to set our cells in sphere radius
   vtkIdType npts;
   const vtkIdType *pts;
   double centroid[3];
-  for (vtkIdType cellId=0;cellId < pd->GetNumberOfCells();cellId++)
-  {
+  for (vtkIdType cellId = 0; cellId < pd->GetNumberOfCells(); cellId++) {
     // Get cell points
-    pd->GetCellPoints(cellId,npts,pts);
+    pd->GetCellPoints(cellId, npts, pts);
 
     // Set up cell pts
     vtkNew(vtkPoints, polyPts);
     vtkNew(vtkIdTypeArray, polyPtIds);
-    for (int i=0;i<npts;i++)
-    {
+    for (int i = 0; i < npts; i++) {
 
       // Get point
-      pd->GetPoint(pts[i],pt1);
+      pd->GetPoint(pts[i], pt1);
 
       // Loop through out loops
-      for (int j=0;j < numLoops;j++)
-      {
+      for (int j = 0; j < numLoops; j++) {
         // Find idstance
-        double dist = sqrt(pow(xc[j]-pt1[0],2) + pow(xy[j]-pt1[1],2) + pow(xz[j]-pt1[2],2));
+        double dist = sqrt(pow(xc[j] - pt1[0], 2) + pow(xy[j] - pt1[1], 2) +
+                           pow(xz[j] - pt1[2], 2));
 
         // If it inside our sphere, set this piece
         if (dist < this->SphereRadius)
-          sphereCells->InsertValue(cellId,1);
+          sphereCells->InsertValue(cellId, 1);
       }
     }
   }
 
   // Cleanup
-  delete [] xc;
-  delete [] xy;
-  delete [] xz;
-  delete [] radius;
+  delete[] xc;
+  delete[] xy;
+  delete[] xz;
+  delete[] radius;
 
   // Remove the existing array if it is  there
   if (exists)

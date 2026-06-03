@@ -35,12 +35,12 @@
 #include "vtkPolyDataAlgorithm.h"
 #include "vtkSVMiscModule.h" // For export
 
-class VTKSVMISC_EXPORT vtkSVPolyDataSurfaceInspector : public vtkPolyDataAlgorithm
-{
+class VTKSVMISC_EXPORT vtkSVPolyDataSurfaceInspector
+    : public vtkPolyDataAlgorithm {
 public:
   static vtkSVPolyDataSurfaceInspector *New();
-  vtkTypeMacro(vtkSVPolyDataSurfaceInspector,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  vtkTypeMacro(vtkSVPolyDataSurfaceInspector, vtkPolyDataAlgorithm);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
   /// \brief Get and set whether to calculate the number of connected regions
@@ -69,18 +69,14 @@ public:
   vtkGetMacro(NumberOfHoles, int);
   //@}
 
-
 protected:
-
   vtkSVPolyDataSurfaceInspector();
-  ~vtkSVPolyDataSurfaceInspector() {;}
+  ~vtkSVPolyDataSurfaceInspector() { ; }
 
-  virtual int RequestData(vtkInformation *,
-                          vtkInformationVector **,
+  virtual int RequestData(vtkInformation *, vtkInformationVector **,
                           vtkInformationVector *) override;
 
 private:
-
   int NumberOfElements;
   int NumberOfPoints;
   int NumberOfEdges;
@@ -94,8 +90,9 @@ private:
   int CheckNumberOfConnectedRegions;
   int CheckNumberOfHoles;
 
-  vtkSVPolyDataSurfaceInspector(const vtkSVPolyDataSurfaceInspector&);  // Not implemented.
-  void operator=(const vtkSVPolyDataSurfaceInspector&);  // Not implemented.
+  vtkSVPolyDataSurfaceInspector(
+      const vtkSVPolyDataSurfaceInspector &);            // Not implemented.
+  void operator=(const vtkSVPolyDataSurfaceInspector &); // Not implemented.
 };
 
 #endif

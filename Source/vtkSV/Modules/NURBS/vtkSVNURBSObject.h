@@ -52,10 +52,9 @@
 #include "vtkPolyData.h"
 #include "vtkSVControlGrid.h"
 
-class VTKSVNURBS_EXPORT vtkSVNURBSObject : public vtkDataObject
-{
+class VTKSVNURBS_EXPORT vtkSVNURBSObject : public vtkDataObject {
 public:
-  vtkTypeMacro(vtkSVNURBSObject,vtkDataObject);
+  vtkTypeMacro(vtkSVNURBSObject, vtkDataObject);
 
   virtual void DeepCopy(vtkSVNURBSObject *src);
 
@@ -65,18 +64,17 @@ public:
   /**
    * Retrieve an instance of this class from an information object.
    */
-  static vtkSVNURBSObject* GetData(vtkInformation* info);
-  static vtkSVNURBSObject* GetData(vtkInformationVector* v, int i=0);
+  static vtkSVNURBSObject *GetData(vtkInformation *info);
+  static vtkSVNURBSObject *GetData(vtkInformationVector *v, int i = 0);
   //@}
-
 
 protected:
   vtkSVNURBSObject();
   ~vtkSVNURBSObject();
 
 private:
-  vtkSVNURBSObject(const vtkSVNURBSObject&);  // Not implemented.
-  void operator=(const vtkSVNURBSObject&);  // Not implemented.
+  vtkSVNURBSObject(const vtkSVNURBSObject &); // Not implemented.
+  void operator=(const vtkSVNURBSObject &);   // Not implemented.
 };
 
 #endif

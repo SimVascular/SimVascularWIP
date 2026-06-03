@@ -32,9 +32,9 @@
 #include "vtkSVRenderer.h"
 
 #include "vtkCallbackCommand.h"
-#include "vtkRenderer.h"
 #include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
+#include "vtkRenderer.h"
 #include "vtkTextActor.h"
 
 #include "vtkSVGeneralUtils.h"
@@ -50,27 +50,33 @@ vtkStandardNewMacro(vtkSVRenderer);
 // ----------------------
 // Constructor
 // ----------------------
-vtkSVRenderer::vtkSVRenderer()
-{
-  this->WindowSize[0] = 1600; this->WindowSize[1] = 1600;
-  this->WindowPosition[0] = 100; this->WindowPosition[1] = 100;
-  this->Background[0] = 0.1; this->Background[1] = 0.1; this->Background[2] = 0.2;
+vtkSVRenderer::vtkSVRenderer() {
+  this->WindowSize[0] = 1600;
+  this->WindowSize[1] = 1600;
+  this->WindowPosition[0] = 100;
+  this->WindowPosition[1] = 100;
+  this->Background[0] = 0.1;
+  this->Background[1] = 0.1;
+  this->Background[2] = 0.2;
   this->Annotations = 1;
   this->PointSmoothing = 1;
   this->LineSmoothing = 1;
   this->PolygonSmoothing = 0;
   this->TextInputMode = 0;
   this->ExitAfterTextInputMode = 1;
-  this->InputPosition[0] = 0.25; this->InputPosition[1] = 0.1;
-  this->Position[0] = 0.001; this->Position[1] = 0.05;
+  this->InputPosition[0] = 0.25;
+  this->InputPosition[1] = 0.1;
+  this->Position[0] = 0.001;
+  this->Position[1] = 0.05;
 
   this->Renderer = vtkRenderer::New();
   this->Renderer->SetBackground(this->Background);
 
   this->RenderWindow = vtkRenderWindow::New();
   this->RenderWindow->AddRenderer(this->Renderer);
-  this->RenderWindow->SetSize(this->WindowSize[0],this->WindowSize[1]);
-  this->RenderWindow->SetPosition(this->WindowPosition[0],this->WindowPosition[1]);
+  this->RenderWindow->SetSize(this->WindowSize[0], this->WindowSize[1]);
+  this->RenderWindow->SetPosition(this->WindowPosition[0],
+                                  this->WindowPosition[1]);
   this->RenderWindow->SetPointSmoothing(this->PointSmoothing);
   this->RenderWindow->SetLineSmoothing(this->LineSmoothing);
   this->RenderWindow->SetPolygonSmoothing(this->PolygonSmoothing);
@@ -84,30 +90,40 @@ vtkSVRenderer::vtkSVRenderer()
   this->RenderWindowInteractor->GetInteractorStyle()->KeyPressActivationOff();
   vtkNew(vtkCallbackCommand, charCallback);
   charCallback->SetCallback(vtkSVRenderer::CharCallback);
-  this->RenderWindowInteractor->GetInteractorStyle()->AddObserver("CharEvent", charCallback);
+  this->RenderWindowInteractor->GetInteractorStyle()->AddObserver("CharEvent",
+                                                                  charCallback);
   vtkNew(vtkCallbackCommand, keyPressCallback);
   keyPressCallback->SetCallback(vtkSVRenderer::KeyPressCallback);
   keyPressCallback->SetClientData(this);
-  this->RenderWindowInteractor->GetInteractorStyle()->AddObserver("KeyPressEvent",keyPressCallback);
+  this->RenderWindowInteractor->GetInteractorStyle()->AddObserver(
+      "KeyPressEvent", keyPressCallback);
 
   this->ResetCameraCallbackCommand = vtkCallbackCommand::New();
-  this->ResetCameraCallbackCommand->SetCallback(vtkSVRenderer::ResetCameraCallback);
+  this->ResetCameraCallbackCommand->SetCallback(
+      vtkSVRenderer::ResetCameraCallback);
   this->ResetCameraCallbackCommand->SetClientData(this);
-  this->AddKeyBinding("r","Reset camera.",this->ResetCameraCallbackCommand,"0");
+  this->AddKeyBinding("r", "Reset camera.", this->ResetCameraCallbackCommand,
+                      "0");
   this->QuitRendererCallbackCommand = vtkCallbackCommand::New();
-  this->QuitRendererCallbackCommand->SetCallback(vtkSVRenderer::QuitRendererCallback);
+  this->QuitRendererCallbackCommand->SetCallback(
+      vtkSVRenderer::QuitRendererCallback);
   this->QuitRendererCallbackCommand->SetClientData(this);
-  this->AddKeyBinding("q","Quit renderer/proceed.",this->QuitRendererCallbackCommand,"0");
+  this->AddKeyBinding("q", "Quit renderer/proceed.",
+                      this->QuitRendererCallbackCommand, "0");
 
   this->TextActor = vtkTextActor::New();
-  this->TextActor->GetPositionCoordinate()->SetCoordinateSystemToNormalizedViewport();
-  this->TextActor->GetPosition2Coordinate()->SetCoordinateSystemToNormalizedViewport();
+  this->TextActor->GetPositionCoordinate()
+      ->SetCoordinateSystemToNormalizedViewport();
+  this->TextActor->GetPosition2Coordinate()
+      ->SetCoordinateSystemToNormalizedViewport();
   this->TextActor->SetPosition(this->Position);
   this->Renderer->AddActor(this->TextActor);
 
   this->TextInputActor = vtkTextActor::New();
-  this->TextInputActor->GetPositionCoordinate()->SetCoordinateSystemToNormalizedViewport();
-  this->TextInputActor->GetPosition2Coordinate()->SetCoordinateSystemToNormalizedViewport();
+  this->TextInputActor->GetPositionCoordinate()
+      ->SetCoordinateSystemToNormalizedViewport();
+  this->TextInputActor->GetPosition2Coordinate()
+      ->SetCoordinateSystemToNormalizedViewport();
   this->TextInputActor->SetPosition(this->InputPosition);
 
   this->ExitTextInputCallbackCommand = nullptr;
@@ -118,50 +134,40 @@ vtkSVRenderer::vtkSVRenderer()
 // ----------------------
 // Destructor
 // ----------------------
-vtkSVRenderer::~vtkSVRenderer()
-{
-  if (this->Renderer != nullptr)
-  {
+vtkSVRenderer::~vtkSVRenderer() {
+  if (this->Renderer != nullptr) {
     this->Renderer->Delete();
     this->Renderer = nullptr;
   }
-  if (this->RenderWindow != nullptr)
-  {
+  if (this->RenderWindow != nullptr) {
     this->RenderWindow->Delete();
     this->RenderWindow = nullptr;
   }
-  if (this->Renderer != nullptr)
-  {
+  if (this->Renderer != nullptr) {
     this->RenderWindowInteractor->Delete();
     this->RenderWindowInteractor = nullptr;
   }
-  if (this->TextActor != nullptr)
-  {
+  if (this->TextActor != nullptr) {
     this->TextActor->Delete();
     this->TextActor = nullptr;
   }
-  if (this->TextInputActor != nullptr)
-  {
+  if (this->TextInputActor != nullptr) {
     this->TextInputActor->Delete();
     this->TextInputActor = nullptr;
   }
-  if (this->TrackballCamera != nullptr)
-  {
+  if (this->TrackballCamera != nullptr) {
     this->TrackballCamera->Delete();
     this->TrackballCamera = nullptr;
   }
-  if (this->ResetCameraCallbackCommand != nullptr)
-  {
+  if (this->ResetCameraCallbackCommand != nullptr) {
     this->ResetCameraCallbackCommand->Delete();
     this->ResetCameraCallbackCommand = nullptr;
   }
-  if (this->QuitRendererCallbackCommand != nullptr)
-  {
+  if (this->QuitRendererCallbackCommand != nullptr) {
     this->QuitRendererCallbackCommand->Delete();
     this->QuitRendererCallbackCommand = nullptr;
   }
-  if (this->ExitTextInputCallbackCommand != nullptr)
-  {
+  if (this->ExitTextInputCallbackCommand != nullptr) {
     this->ExitTextInputCallbackCommand->Delete();
     this->ExitTextInputCallbackCommand = nullptr;
   }
@@ -170,26 +176,24 @@ vtkSVRenderer::~vtkSVRenderer()
 // ----------------------
 // Render
 // ----------------------
-int vtkSVRenderer::Render(int interactive)
-{
-  if (interactive)
-  {
+int vtkSVRenderer::Render(int interactive) {
+  if (interactive) {
     this->RenderWindowInteractor->Initialize();
   }
   this->RenderWindow->SetWindowName("vtkSV");
 
   std::string textActorInput;
 
-  for (int i=0; i<this->KeyBindings.size(); i++)
-    textActorInput = textActorInput + "\n" + this->KeyBindings[i].key + ": " + this->KeyBindings[i].text;
+  for (int i = 0; i < this->KeyBindings.size(); i++)
+    textActorInput = textActorInput + "\n" + this->KeyBindings[i].key + ": " +
+                     this->KeyBindings[i].text;
 
   this->TextActor->SetInput(textActorInput.c_str());
   this->Renderer->AddActor(this->TextActor);
 
   this->RenderWindow->Render();
 
-  if (interactive)
-  {
+  if (interactive) {
     this->RenderWindowInteractor->Start();
   }
 
@@ -200,8 +204,8 @@ int vtkSVRenderer::Render(int interactive)
 // AddKeyBinding
 // ----------------------
 int vtkSVRenderer::AddKeyBinding(std::string key, std::string text,
-                                 vtkCallbackCommand *callback, std::string group)
-{
+                                 vtkCallbackCommand *callback,
+                                 std::string group) {
   Binding newKey;
   newKey.key = key;
   newKey.text = text;
@@ -216,21 +220,18 @@ int vtkSVRenderer::AddKeyBinding(std::string key, std::string text,
 // ----------------------
 // RemovKeyBinding
 // ----------------------
-int vtkSVRenderer::RemoveKeyBinding(std::string key)
-{
+int vtkSVRenderer::RemoveKeyBinding(std::string key) {
   std::vector<int> deleteList;
-  for (int i=0; i<this->KeyBindings.size(); i++)
-  {
-    if (this->KeyBindings[i].key == key)
-    {
+  for (int i = 0; i < this->KeyBindings.size(); i++) {
+    if (this->KeyBindings[i].key == key) {
       deleteList.push_back(i);
     }
   }
 
-  for (int i=0; i<deleteList.size(); i++)
-  {
-      std::vector<Binding>::iterator delElem = this->KeyBindings.begin() + deleteList[i];
-      this->KeyBindings.erase(delElem, this->KeyBindings.end());
+  for (int i = 0; i < deleteList.size(); i++) {
+    std::vector<Binding>::iterator delElem =
+        this->KeyBindings.begin() + deleteList[i];
+    this->KeyBindings.erase(delElem, this->KeyBindings.end());
   }
 
   return SV_OK;
@@ -239,8 +240,8 @@ int vtkSVRenderer::RemoveKeyBinding(std::string key)
 // ----------------------
 // PromptAsync
 // ----------------------
-int vtkSVRenderer::PromptAsync(std::string queryText, vtkCallbackCommand *callback)
-{
+int vtkSVRenderer::PromptAsync(std::string queryText,
+                               vtkCallbackCommand *callback) {
   this->SetTextInputQuery(queryText.c_str());
   this->ExitTextInputCallbackCommand = callback;
   this->UpdateTextInput();
@@ -252,8 +253,7 @@ int vtkSVRenderer::PromptAsync(std::string queryText, vtkCallbackCommand *callba
 // ----------------------
 // EnterTextInputMode
 // ----------------------
-int vtkSVRenderer::EnterTextInputMode(int interactive)
-{
+int vtkSVRenderer::EnterTextInputMode(int interactive) {
   this->SetCurrentTextInput("");
   this->Renderer->AddActor(this->TextInputActor);
   this->Renderer->RemoveActor(this->TextActor);
@@ -267,15 +267,14 @@ int vtkSVRenderer::EnterTextInputMode(int interactive)
 // ----------------------
 // ExitTextInputMode
 // ----------------------
-int vtkSVRenderer::ExitTextInputMode()
-{
+int vtkSVRenderer::ExitTextInputMode() {
   this->Renderer->RemoveActor(this->TextInputActor);
   this->Renderer->AddActor(this->TextActor);
   this->RenderWindow->Render();
   this->TextInputMode = 0;
 
-  //if (this->ExitTextInputCallbackCommand != nullptr)
-  //  this->ExitTextInputCallbackCommand(this->CurrentTextInput);
+  // if (this->ExitTextInputCallbackCommand != nullptr)
+  //   this->ExitTextInputCallbackCommand(this->CurrentTextInput);
 
   if (this->ExitAfterTextInputMode)
     this->RenderWindowInteractor->ExitCallback();
@@ -286,8 +285,7 @@ int vtkSVRenderer::ExitTextInputMode()
 // ----------------------
 // Close
 // ----------------------
-int vtkSVRenderer::Close()
-{
+int vtkSVRenderer::Close() {
   this->RenderWindowInteractor->TerminateApp();
   return SV_OK;
 }
@@ -295,10 +293,11 @@ int vtkSVRenderer::Close()
 // ----------------------
 // ResetCameraCallback
 // ----------------------
-void vtkSVRenderer::ResetCameraCallback( vtkObject* caller, long unsigned int vtkNotUsed(eventId), void* clientData, void* vtkNotUsed(callData) )
-{
-   vtkSVRenderer* parent =
-     static_cast<vtkSVRenderer*>(clientData);
+void vtkSVRenderer::ResetCameraCallback(vtkObject *caller,
+                                        long unsigned int vtkNotUsed(eventId),
+                                        void *clientData,
+                                        void *vtkNotUsed(callData)) {
+  vtkSVRenderer *parent = static_cast<vtkSVRenderer *>(clientData);
 
   parent->Renderer->ResetCamera();
   parent->RenderWindow->Render();
@@ -307,12 +306,13 @@ void vtkSVRenderer::ResetCameraCallback( vtkObject* caller, long unsigned int vt
 // ----------------------
 // QuitRendererCallback
 // ----------------------
-void vtkSVRenderer::QuitRendererCallback( vtkObject* caller, long unsigned int vtkNotUsed(eventId), void* clientData, void* vtkNotUsed(callData) )
-{
-   vtkSVRenderer* parent =
-     static_cast<vtkSVRenderer*>(clientData);
+void vtkSVRenderer::QuitRendererCallback(vtkObject *caller,
+                                         long unsigned int vtkNotUsed(eventId),
+                                         void *clientData,
+                                         void *vtkNotUsed(callData)) {
+  vtkSVRenderer *parent = static_cast<vtkSVRenderer *>(clientData);
 
-  //parent->SetPrintLog("Quit renderer")
+  // parent->SetPrintLog("Quit renderer")
   parent->Renderer->RemoveActor(parent->TextActor);
   parent->RenderWindowInteractor->ExitCallback();
 }
@@ -320,27 +320,25 @@ void vtkSVRenderer::QuitRendererCallback( vtkObject* caller, long unsigned int v
 // ----------------------
 // KeyPressCallback
 // ----------------------
-void vtkSVRenderer::KeyPressCallback( vtkObject* caller, long unsigned int eventId, void* clientData, void* callData )
-{
+void vtkSVRenderer::KeyPressCallback(vtkObject *caller,
+                                     long unsigned int eventId,
+                                     void *clientData, void *callData) {
   std::cout << "Keypress callback" << std::endl;
 
-   vtkSVRenderer* parent =
-     static_cast<vtkSVRenderer*>(clientData);
+  vtkSVRenderer *parent = static_cast<vtkSVRenderer *>(clientData);
 
-  std::cout << "Pressed: " << parent->GetRenderWindowInteractor()->GetKeySym() << std::endl;
+  std::cout << "Pressed: " << parent->GetRenderWindowInteractor()->GetKeySym()
+            << std::endl;
   std::string key = parent->GetRenderWindowInteractor()->GetKeySym();
 
-  if (key == "Escape")
-  {
+  if (key == "Escape") {
     if (parent->TextInputMode)
       parent->TextInputMode = 0;
     else
       parent->TextInputMode = 1;
   }
-  if (parent->TextInputMode)
-  {
-    if (key == "Return" || key == "Enter")
-    {
+  if (parent->TextInputMode) {
+    if (key == "Return" || key == "Enter") {
       std::cout << "Exit text input mode" << std::endl;
       parent->ExitTextInputMode();
       return;
@@ -358,14 +356,11 @@ void vtkSVRenderer::KeyPressCallback( vtkObject* caller, long unsigned int event
     else if (key.length() > 1 && (key != "Backspace" || key != "BackSpace"))
       key = "";
 
-    if (key == "Backspace" || key == "BackSpace")
-    {
+    if (key == "Backspace" || key == "BackSpace") {
       std::string textInput = parent->CurrentTextInput;
       if (textInput.length() > 0)
         parent->SetCurrentTextInput(textInput.c_str());
-    }
-    else if (key != "")
-    {
+    } else if (key != "") {
       std::string textInput = parent->CurrentTextInput + key;
       parent->SetCurrentTextInput(textInput.c_str());
     }
@@ -375,18 +370,14 @@ void vtkSVRenderer::KeyPressCallback( vtkObject* caller, long unsigned int event
   }
 
   int isKey = -1;
-  for (int i=0; i<parent->KeyBindings.size(); i++)
-  {
+  for (int i = 0; i < parent->KeyBindings.size(); i++) {
     if (parent->KeyBindings[i].key == key)
       isKey = i;
   }
 
-  if (isKey != -1 && parent->KeyBindings[isKey].callback != nullptr)
-  {
+  if (isKey != -1 && parent->KeyBindings[isKey].callback != nullptr) {
     parent->KeyBindings[isKey].callback->Execute(caller, eventId, callData);
-  }
-  else
-  {
+  } else {
     std::cout << key << "is not a bound key" << std::endl;
     if (key == "plus")
       key = "+";
@@ -395,13 +386,11 @@ void vtkSVRenderer::KeyPressCallback( vtkObject* caller, long unsigned int event
     if (key == "equal")
       key = "=";
     isKey = -1;
-    for (int i=0; i<parent->KeyBindings.size(); i++)
-    {
+    for (int i = 0; i < parent->KeyBindings.size(); i++) {
       if (parent->KeyBindings[i].key == key)
         isKey = i;
     }
-    if (isKey != -1 && parent->KeyBindings[isKey].callback != nullptr)
-    {
+    if (isKey != -1 && parent->KeyBindings[isKey].callback != nullptr) {
       parent->KeyBindings[isKey].callback->Execute(caller, eventId, callData);
     }
   }
@@ -410,26 +399,20 @@ void vtkSVRenderer::KeyPressCallback( vtkObject* caller, long unsigned int event
 // ----------------------
 // UpdateTextInput
 // ----------------------
-void vtkSVRenderer::UpdateTextInput()
-{
-  if (this->TextInputQuery != nullptr)
-  {
+void vtkSVRenderer::UpdateTextInput() {
+  if (this->TextInputQuery != nullptr) {
     std::string inputText;
 
-    if (this->CurrentTextInput != nullptr)
-    {
-      std::string queryText   = this->TextInputQuery;
+    if (this->CurrentTextInput != nullptr) {
+      std::string queryText = this->TextInputQuery;
       std::string currentText = this->CurrentTextInput;
       inputText = queryText + currentText + "_";
-    }
-    else
+    } else
       inputText = this->TextInputQuery;
 
     this->TextInputActor->SetInput(inputText.c_str());
     this->Renderer->AddActor(this->TextInputActor);
-  }
-  else
-  {
+  } else {
     this->Renderer->RemoveActor(this->TextInputActor);
   }
   this->RenderWindow->Render();
@@ -438,15 +421,16 @@ void vtkSVRenderer::UpdateTextInput()
 // ----------------------
 // CharCallback
 // ----------------------
-void vtkSVRenderer::CharCallback( vtkObject* caller, long unsigned int vtkNotUsed(eventId), void* vtkNotUsed(clientData), void* vtkNotUsed(callData) )
-{
+void vtkSVRenderer::CharCallback(vtkObject *caller,
+                                 long unsigned int vtkNotUsed(eventId),
+                                 void *vtkNotUsed(clientData),
+                                 void *vtkNotUsed(callData)) {
   return;
 }
 
 // ----------------------
 // PrintSelf
 // ----------------------
-void vtkSVRenderer::PrintSelf(ostream& os, vtkIndent indent)
-{
-  this->Superclass::PrintSelf(os,indent);
+void vtkSVRenderer::PrintSelf(ostream &os, vtkIndent indent) {
+  this->Superclass::PrintSelf(os, indent);
 }

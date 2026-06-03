@@ -39,67 +39,62 @@
 #include "vtkInformation.h"
 #include "vtkObjectFactory.h"
 #include "vtkPolyData.h"
-#include "vtkTriangle.h"
-#include "vtkTriangleStrip.h"
 #include "vtkSVGlobals.h"
 #include "vtkSVIOUtils.h"
 #include "vtkSVNURBSCollection.h"
 #include "vtkSVPERIGEENURBSWriter.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
+#include "vtkTriangle.h"
+#include "vtkTriangleStrip.h"
 
 #if !defined(_WIN32) || defined(__CYGWIN__)
-# include <unistd.h> /* unlink */
+#include <unistd.h> /* unlink */
 #else
-# include <io.h> /* unlink */
+#include <io.h> /* unlink */
 #endif
 
 vtkStandardNewMacro(vtkSVPERIGEENURBSCollectionWriter);
 
-static char header[]="Visualization Toolkit generated SLA File                                        ";
+static char header[] = "Visualization Toolkit generated SLA File               "
+                       "                         ";
 
-vtkSVPERIGEENURBSCollectionWriter::vtkSVPERIGEENURBSCollectionWriter()
-{
+vtkSVPERIGEENURBSCollectionWriter::vtkSVPERIGEENURBSCollectionWriter() {
   this->FileName = nullptr;
   this->InternalCollection = nullptr;
 }
 
-void vtkSVPERIGEENURBSCollectionWriter::SetInputData(vtkSVNURBSCollection *input)
-{
+void vtkSVPERIGEENURBSCollectionWriter::SetInputData(
+    vtkSVNURBSCollection *input) {
   int numItems = input->GetNumberOfItems();
 
   this->SetNumberOfInputPorts(numItems);
-  for (int i=0; i<numItems; i++)
-  {
+  for (int i = 0; i < numItems; i++) {
     this->AddInputDataInternal(i, input->GetItem(i));
   }
 
   this->InternalCollection = input;
 }
 
-void vtkSVPERIGEENURBSCollectionWriter::SetInputData(int index, vtkDataObject *input)
-{
+void vtkSVPERIGEENURBSCollectionWriter::SetInputData(int index,
+                                                     vtkDataObject *input) {
   this->SetInputDataInternal(index, input);
 }
 
 //----------------------------------------------------------------------------
-int vtkSVPERIGEENURBSCollectionWriter::ProcessRequest(vtkInformation* request,
-                                         vtkInformationVector** inputVector,
-                                         vtkInformationVector* outputVector)
-{
+int vtkSVPERIGEENURBSCollectionWriter::ProcessRequest(
+    vtkInformation *request, vtkInformationVector **inputVector,
+    vtkInformationVector *outputVector) {
   // generate the data
-  if(request->Has(vtkDemandDrivenPipeline::REQUEST_DATA()))
-  {
+  if (request->Has(vtkDemandDrivenPipeline::REQUEST_DATA())) {
     return this->RequestData(request, inputVector, outputVector);
   }
 
-  if(request->Has(vtkStreamingDemandDrivenPipeline::REQUEST_UPDATE_EXTENT()))
-  {
+  if (request->Has(vtkStreamingDemandDrivenPipeline::REQUEST_UPDATE_EXTENT())) {
     return this->RequestUpdateExtent(request, inputVector, outputVector);
   }
 
   // execute information
-  if(request->Has(vtkDemandDrivenPipeline::REQUEST_INFORMATION()))
-  {
+  if (request->Has(vtkDemandDrivenPipeline::REQUEST_INFORMATION())) {
     return this->RequestInformation(request, inputVector, outputVector);
   }
 
@@ -108,17 +103,13 @@ int vtkSVPERIGEENURBSCollectionWriter::ProcessRequest(vtkInformation* request,
 
 //----------------------------------------------------------------------------
 int vtkSVPERIGEENURBSCollectionWriter::RequestUpdateExtent(
-  vtkInformation* vtkNotUsed(request),
-  vtkInformationVector** inputVector,
-  vtkInformationVector* vtkNotUsed(outputVector))
-{
+    vtkInformation *vtkNotUsed(request), vtkInformationVector **inputVector,
+    vtkInformationVector *vtkNotUsed(outputVector)) {
   int numInputPorts = this->GetNumberOfInputPorts();
-  for (int i=0; i<numInputPorts; i++)
-  {
+  for (int i = 0; i < numInputPorts; i++) {
     int numInputConnections = this->GetNumberOfInputConnections(i);
-    for (int j=0; j<numInputConnections; j++)
-    {
-      vtkInformation* inputInfo = inputVector[i]->GetInformationObject(j);
+    for (int j = 0; j < numInputConnections; j++) {
+      vtkInformation *inputInfo = inputVector[i]->GetInformationObject(j);
       inputInfo->Set(vtkStreamingDemandDrivenPipeline::EXACT_EXTENT(), 1);
     }
   }
@@ -127,44 +118,37 @@ int vtkSVPERIGEENURBSCollectionWriter::RequestUpdateExtent(
 
 //----------------------------------------------------------------------------
 int vtkSVPERIGEENURBSCollectionWriter::RequestInformation(
-  vtkInformation* vtkNotUsed(request),
-  vtkInformationVector** vtkNotUsed(inputVector),
-  vtkInformationVector* vtkNotUsed(outputVector))
-{
+    vtkInformation *vtkNotUsed(request),
+    vtkInformationVector **vtkNotUsed(inputVector),
+    vtkInformationVector *vtkNotUsed(outputVector)) {
   // do nothing let subclasses handle it
   return 1;
 }
 
-
 int vtkSVPERIGEENURBSCollectionWriter::RequestData(
-                                 vtkInformation *vtkNotUsed(request),
-                                 vtkInformationVector **inputVector,
-                                 vtkInformationVector *outputVector)
-{
- int numInputs = this->GetNumberOfInputPorts();
+    vtkInformation *vtkNotUsed(request), vtkInformationVector **inputVector,
+    vtkInformationVector *outputVector) {
+  int numInputs = this->GetNumberOfInputPorts();
 
-  if (this->FileName == nullptr)
-  {
+  if (this->FileName == nullptr) {
     vtkErrorMacro(<< "Please specify FileName to write");
     this->SetErrorCode(vtkErrorCode::NoFileNameError);
     return SV_ERROR;
   }
 
-  for (int i=0; i<numInputs; i++)
-  {
+  for (int i = 0; i < numInputs; i++) {
     vtkSVNURBSObject *obj = vtkSVNURBSObject::GetData(inputVector[i], 0);
-    if (!strncmp(obj->GetType().c_str(), "Volume", 6))
-    {
+    if (!strncmp(obj->GetType().c_str(), "Volume", 6)) {
       std::string fn;
       if (numInputs == 1)
         fn = this->FileName;
-      else
-      {
+      else {
         std::string pathName = vtkSVIOUtils::GetPath(this->FileName);
-        std::string rawName  = vtkSVIOUtils::GetRawName(this->FileName);
-        std::string extName  = vtkSVIOUtils::GetExt(this->FileName);
+        std::string rawName = vtkSVIOUtils::GetRawName(this->FileName);
+        std::string extName = vtkSVIOUtils::GetExt(this->FileName);
 
-        fn = pathName + "/" + rawName + "_" + vtkSVIOUtils::IntToString(i) + "." + extName;
+        fn = pathName + "/" + rawName + "_" + vtkSVIOUtils::IntToString(i) +
+             "." + extName;
       }
 
       vtkNew(vtkSVPERIGEENURBSWriter, objWriter);
@@ -174,59 +158,58 @@ int vtkSVPERIGEENURBSCollectionWriter::RequestData(
     }
   }
 
-  if (this->InternalCollection->GetNumberOfPatchConnections() > 0)
-  {
+  if (this->InternalCollection->GetNumberOfPatchConnections() > 0) {
     std::string pathName = vtkSVIOUtils::GetPath(this->FileName);
-    std::string rawName  = vtkSVIOUtils::GetRawName(this->FileName);
-    std::string extName  = vtkSVIOUtils::GetExt(this->FileName);
+    std::string rawName = vtkSVIOUtils::GetRawName(this->FileName);
+    std::string extName = vtkSVIOUtils::GetExt(this->FileName);
 
     std::string fn = pathName + "/" + rawName + "_patch_connections." + extName;
 
     FILE *fp;
 
-    if ((fp = fopen(fn.c_str(), "w")) == nullptr)
-    {
+    if ((fp = fopen(fn.c_str(), "w")) == nullptr) {
       vtkErrorMacro(<< "Couldn't open file: " << this->FileName);
       this->SetErrorCode(vtkErrorCode::CannotOpenFileError);
       return SV_ERROR;
     }
 
-    int numConnections = this->InternalCollection->GetNumberOfPatchConnections();
-    std::vector<std::vector<int> > patchConnections = this->InternalCollection->GetPatchConnections();
-    std::vector<std::vector<int> > patchFaceConnections = this->InternalCollection->GetPatchFaceConnections();
-    fprintf(fp, "%d\n", numConnections );
+    int numConnections =
+        this->InternalCollection->GetNumberOfPatchConnections();
+    std::vector<std::vector<int>> patchConnections =
+        this->InternalCollection->GetPatchConnections();
+    std::vector<std::vector<int>> patchFaceConnections =
+        this->InternalCollection->GetPatchFaceConnections();
+    fprintf(fp, "%d\n", numConnections);
 
-    for (int i=0; i<numConnections; i++)
-      fprintf(fp, "%d %d %d %d %d %d\n", patchConnections[i][0], patchConnections[i][1],
-                                         patchFaceConnections[i][0], patchFaceConnections[i][1], 1, 1);
+    for (int i = 0; i < numConnections; i++)
+      fprintf(fp, "%d %d %d %d %d %d\n", patchConnections[i][0],
+              patchConnections[i][1], patchFaceConnections[i][0],
+              patchFaceConnections[i][1], 1, 1);
 
-    if (fflush(fp))
-    {
+    if (fflush(fp)) {
       fclose(fp);
       this->SetErrorCode(vtkErrorCode::OutOfDiskSpaceError);
       return SV_ERROR;
     }
     fclose(fp);
-
   }
 
   return SV_OK;
 }
 
-
 //----------------------------------------------------------------------------
-void vtkSVPERIGEENURBSCollectionWriter::PrintSelf(ostream& os, vtkIndent indent)
-{
-  this->Superclass::PrintSelf(os,indent);
+void vtkSVPERIGEENURBSCollectionWriter::PrintSelf(ostream &os,
+                                                  vtkIndent indent) {
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "FileName: "
-     << ((this->GetFileName() == nullptr) ?
-         "(none)" : this->GetFileName()) << std::endl;
+     << ((this->GetFileName() == nullptr) ? "(none)" : this->GetFileName())
+     << std::endl;
 }
 
 //----------------------------------------------------------------------------
-int vtkSVPERIGEENURBSCollectionWriter::FillInputPortInformation(int, vtkInformation *info)
-{
+int vtkSVPERIGEENURBSCollectionWriter::FillInputPortInformation(
+    int, vtkInformation *info) {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkSVNURBSObject");
   return 1;
 }

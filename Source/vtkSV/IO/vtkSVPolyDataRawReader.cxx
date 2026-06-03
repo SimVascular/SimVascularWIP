@@ -43,9 +43,9 @@
 #include "vtkMergePoints.h"
 #include "vtkObjectFactory.h"
 #include "vtkPolyData.h"
+#include "vtkSVGlobals.h"
 #include "vtkSmartPointer.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
-#include "vtkSVGlobals.h"
 
 #include <algorithm>
 #include <cctype>
@@ -57,14 +57,14 @@
 // ----------------------
 vtkStandardNewMacro(vtkSVPolyDataRawReader);
 
-vtkCxxSetObjectMacro(vtkSVPolyDataRawReader, Locator, vtkIncrementalPointLocator);
+vtkCxxSetObjectMacro(vtkSVPolyDataRawReader, Locator,
+                     vtkIncrementalPointLocator);
 
 // ----------------------
 // Constructor
 // ----------------------
 // Construct object with merging set to true.
-vtkSVPolyDataRawReader::vtkSVPolyDataRawReader()
-{
+vtkSVPolyDataRawReader::vtkSVPolyDataRawReader() {
   this->FileName = nullptr;
   this->Merging = 0;
   this->Locator = nullptr;
@@ -75,8 +75,7 @@ vtkSVPolyDataRawReader::vtkSVPolyDataRawReader()
 // ----------------------
 // Destructor
 // ----------------------
-vtkSVPolyDataRawReader::~vtkSVPolyDataRawReader()
-{
+vtkSVPolyDataRawReader::~vtkSVPolyDataRawReader() {
   this->SetFileName(0);
   this->SetLocator(0);
 }
@@ -85,31 +84,28 @@ vtkSVPolyDataRawReader::~vtkSVPolyDataRawReader()
 // RequestData
 // ----------------------
 int vtkSVPolyDataRawReader::RequestData(
-  vtkInformation *vtkNotUsed(request),
-  vtkInformationVector **vtkNotUsed(inputVector),
-  vtkInformationVector *outputVector)
-{
+    vtkInformation *vtkNotUsed(request),
+    vtkInformationVector **vtkNotUsed(inputVector),
+    vtkInformationVector *outputVector) {
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
-  vtkPolyData *output = vtkPolyData::SafeDownCast(
-    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkPolyData *output =
+      vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
   // All of the data in the first piece.
-  if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) > 0)
-  {
+  if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) >
+      0) {
     return 0;
   }
 
-  if (!this->FileName || *this->FileName == 0)
-  {
-    vtkErrorMacro(<<"A FileName must be specified.");
+  if (!this->FileName || *this->FileName == 0) {
+    vtkErrorMacro(<< "A FileName must be specified.");
     this->SetErrorCode(vtkErrorCode::NoFileNameError);
     return 0;
   }
 
   // Initialize
   FILE *fp = fopen(this->FileName, "r");
-  if (fp == nullptr)
-  {
+  if (fp == nullptr) {
     vtkErrorMacro(<< "File " << this->FileName << " not found");
     this->SetErrorCode(vtkErrorCode::CannotOpenFileError);
     return 0;
@@ -120,52 +116,44 @@ int vtkSVPolyDataRawReader::RequestData(
 
   newPts->Allocate(5000);
   newPolys->Allocate(10000);
-  if (!this->ReadRawFile(fp, newPts, newPolys))
-  {
+  if (!this->ReadRawFile(fp, newPts, newPolys)) {
     fclose(fp);
     return 0;
   }
 
-  vtkDebugMacro(<< "Read: "
-    << newPts->GetNumberOfPoints() << " points, "
-    << newPolys->GetNumberOfCells() << " triangles");
+  vtkDebugMacro(<< "Read: " << newPts->GetNumberOfPoints() << " points, "
+                << newPolys->GetNumberOfCells() << " triangles");
 
   fclose(fp);
 
   // If merging is on, create hash table and merge points/triangles.
   vtkPoints *mergedPts = newPts;
   vtkCellArray *mergedPolys = newPolys;
-  if (this->Merging)
-  {
+  if (this->Merging) {
     mergedPts = vtkPoints::New();
-    mergedPts->Allocate(newPts->GetNumberOfPoints() /2);
+    mergedPts->Allocate(newPts->GetNumberOfPoints() / 2);
     mergedPolys = vtkCellArray::New();
     mergedPolys->Allocate(newPolys->GetSize());
 
     vtkSmartPointer<vtkIncrementalPointLocator> locator = this->Locator;
-    if (this->Locator == nullptr)
-    {
+    if (this->Locator == nullptr) {
       locator.TakeReference(this->NewDefaultLocator());
     }
     locator->InitPointInsertion(mergedPts, newPts->GetBounds());
 
     int nextCell = 0;
-    const vtkIdType* pts;
+    const vtkIdType *pts;
     vtkIdType npts;
-    for (newPolys->InitTraversal(); newPolys->GetNextCell(npts, pts);)
-    {
+    for (newPolys->InitTraversal(); newPolys->GetNextCell(npts, pts);) {
       vtkIdType nodes[3];
-      for (int i = 0; i < 3; i++)
-      {
+      for (int i = 0; i < 3; i++) {
         double x[3];
         newPts->GetPoint(pts[i], x);
         locator->InsertUniquePoint(x, nodes[i]);
       }
 
-      if (nodes[0] != nodes[1] &&
-        nodes[0] != nodes[2] &&
-        nodes[1] != nodes[2])
-      {
+      if (nodes[0] != nodes[1] && nodes[0] != nodes[2] &&
+          nodes[1] != nodes[2]) {
         mergedPolys->InsertNextCell(3, nodes);
       }
       nextCell++;
@@ -174,9 +162,9 @@ int vtkSVPolyDataRawReader::RequestData(
     newPts->Delete();
     newPolys->Delete();
 
-    vtkDebugMacro(<< "Merged to: "
-      << mergedPts->GetNumberOfPoints() << " points, "
-      << mergedPolys->GetNumberOfCells() << " triangles");
+    vtkDebugMacro(<< "Merged to: " << mergedPts->GetNumberOfPoints()
+                  << " points, " << mergedPolys->GetNumberOfCells()
+                  << " triangles");
   }
 
   output->SetPoints(mergedPts);
@@ -190,9 +178,8 @@ int vtkSVPolyDataRawReader::RequestData(
     output->SetLines(mergedPolys);
   mergedPolys->Delete();
 
-  if (this->Locator)
-  {
-    this->Locator->Initialize(); //free storage
+  if (this->Locator) {
+    this->Locator->Initialize(); // free storage
   }
 
   output->Squeeze();
@@ -204,81 +191,68 @@ int vtkSVPolyDataRawReader::RequestData(
 // ReadRawFile
 // ----------------------
 int vtkSVPolyDataRawReader::ReadRawFile(FILE *fp, vtkPoints *newPts,
-                                vtkCellArray *newPolys)
-{
+                                        vtkCellArray *newPolys) {
   vtkDebugMacro(<< "Reading Raw file");
 
-  char  line[256];
+  char line[256];
   float x[3];
-  int   top[2];
+  int top[2];
   vtkIdType tripts[3];
   vtkIdType linepts[2];
 
   // header:
   int lineCount = 0;
-  if(fscanf(fp, "%d %d\n", top, top+1) != 2)
+  if (fscanf(fp, "%d %d\n", top, top + 1) != 2)
     throw std::runtime_error("unable to read Raw header");
   lineCount++;
   newPts->SetNumberOfPoints(top[0]);
 
-  try
-  {
+  try {
     // Go into loop, reading points
-    for (int i=0; i<top[0]; i++)
-    {
+    for (int i = 0; i < top[0]; i++) {
       if (!fgets(line, 255, fp))
         throw std::runtime_error("unable to read Raw vertex line.");
 
-      int numItems = sscanf(line, "%f %f %f\n", x, x+1, x+2);
-      if (numItems != 3)
-      {
-        fprintf(stderr,"%d items on vertex line.\n", numItems);
+      int numItems = sscanf(line, "%f %f %f\n", x, x + 1, x + 2);
+      if (numItems != 3) {
+        fprintf(stderr, "%d items on vertex line.\n", numItems);
         throw std::runtime_error("unable to read Raw vertex.");
       }
       lineCount++;
       newPts->SetPoint(i, x);
-
     }
 
     // Go into loop, reading cells
-    for (int i=0; i<top[1]; i++)
-    {
+    for (int i = 0; i < top[1]; i++) {
       if (!fgets(line, 255, fp))
         throw std::runtime_error("unable to read Raw cell line.");
 
-      int numItems = sscanf(line, "%lld %lld %lld\n", tripts, tripts+1, tripts+2);
-      if (numItems == 3)
-      {
+      int numItems =
+          sscanf(line, "%lld %lld %lld\n", tripts, tripts + 1, tripts + 2);
+      if (numItems == 3) {
         newPolys->InsertNextCell(3, tripts);
-      }
-      else
-      {
-        numItems = sscanf(line, "%lld %lld\n", linepts, linepts+1);
-        if (numItems == 2)
-        {
+      } else {
+        numItems = sscanf(line, "%lld %lld\n", linepts, linepts + 1);
+        if (numItems == 2) {
           vtkNew(vtkLine, newLine);
           newLine->GetPointIds()->SetId(0, linepts[0]);
           newLine->GetPointIds()->SetId(1, linepts[1]);
           newPolys->InsertNextCell(newLine);
-        }
-        else
-        {
-          fprintf(stderr,"%d items on cell line.\n", numItems);
+        } else {
+          fprintf(stderr, "%d items on cell line.\n", numItems);
           throw std::runtime_error("unable to read Raw cell.");
         }
       }
 
       lineCount++;
-      if ((newPolys->GetNumberOfCells() % 5000) == 0)
-      {
-        this->UpdateProgress((newPolys->GetNumberOfCells()%50000) / 50000.0);
+      if ((newPolys->GetNumberOfCells() % 5000) == 0) {
+        this->UpdateProgress((newPolys->GetNumberOfCells() % 50000) / 50000.0);
       }
     }
-  }
-  catch (const std::runtime_error &e)
-  {
-    vtkErrorMacro("RawReader: error while reading file " <<
-      this->FileName << " at line " << lineCount << ": " << e.what());
+  } catch (const std::runtime_error &e) {
+    vtkErrorMacro("RawReader: error while reading file "
+                  << this->FileName << " at line " << lineCount << ": "
+                  << e.what());
     return false;
   }
 
@@ -291,29 +265,24 @@ int vtkSVPolyDataRawReader::ReadRawFile(FILE *fp, vtkPoints *newPts,
 /** \brief Specify a spatial locator for merging points. By
  * default an instance of vtkMergePoints is used.
  */
-vtkIncrementalPointLocator* vtkSVPolyDataRawReader::NewDefaultLocator()
-{
+vtkIncrementalPointLocator *vtkSVPolyDataRawReader::NewDefaultLocator() {
   return vtkMergePoints::New();
 }
 
 // ----------------------
 // PrintSelf
 // ----------------------
-void vtkSVPolyDataRawReader::PrintSelf(ostream& os, vtkIndent indent)
-{
+void vtkSVPolyDataRawReader::PrintSelf(ostream &os, vtkIndent indent) {
   this->Superclass::PrintSelf(os, indent);
 
-  os << indent << "File Name: "
-     <<(this->FileName ? this->FileName : "(none)") << "\n";
+  os << indent << "File Name: " << (this->FileName ? this->FileName : "(none)")
+     << "\n";
 
-  os << indent << "Merging: " <<(this->Merging ? "On\n" : "Off\n");
+  os << indent << "Merging: " << (this->Merging ? "On\n" : "Off\n");
   os << indent << "Locator: ";
-  if (this->Locator)
-  {
+  if (this->Locator) {
     this->Locator->PrintSelf(os << endl, indent.GetNextIndent());
-  }
-  else
-  {
+  } else {
     os << "(none)\n";
   }
 }

@@ -37,25 +37,25 @@
 #include "SimVascular.h"
 #include "svMeshObjectExports.h"
 
-//#include "sys/param.h"
+// #include "sys/param.h"
 #define MAXPATHLEN 1024
 
 #include "sv_RepositoryData.h"
-#include "sv_UnstructuredGrid.h"
 #include "sv_SolidModel.h"
+#include "sv_UnstructuredGrid.h"
 
 #ifdef SV_USE_ZLIB
-  #ifdef SV_USE_SYSTEM_ZLIB
-    #include <zlib.h>
-  #else
-    #include "simvascular_zlib.h"
-  #endif
+#ifdef SV_USE_SYSTEM_ZLIB
+#include <zlib.h>
 #else
-  #include <stdlib.h>
-  #define gzopen fopen
-  #define gzprintf fprintf
-  #define gzFile FILE*
-  #define gzclose fclose
+#include "simvascular_zlib.h"
+#endif
+#else
+#include <stdlib.h>
+#define gzopen fopen
+#define gzprintf fprintf
+#define gzFile FILE *
+#define gzclose fclose
 #endif
 
 //--------------
@@ -75,30 +75,33 @@ public:
   };
 
   // Define the names used to access face information
-  // in the map returned by the GetModelFaceInfo() method. 
+  // in the map returned by the GetModelFaceInfo() method.
   //
   class SV_EXPORT_MESH ModelFaceInfo {
-      public:
-        static const std::string ID;
-        static const std::string NAME;
-        static const std::string MODEL_ID;
+  public:
+    static const std::string ID;
+    static const std::string NAME;
+    static const std::string MODEL_ID;
   };
 
-  static char* GetKernelName( KernelType kernel );
-  static KernelType GetKernelType( const char* kernel_name );
+  static char *GetKernelName(KernelType kernel);
+  static KernelType GetKernelType(const char *kernel_name);
 
-  cvMeshObject();  // can never be called directly;
+  cvMeshObject(); // can never be called directly;
   virtual ~cvMeshObject();
 
-  // Routines that are pulled out of old instantiation since they shouldn't be required.
-  virtual int SetMeshFileName( const char* filename ) = 0;
-  virtual int SetSolidFileName( const char* filename ) = 0;
+  // Routines that are pulled out of old instantiation since they shouldn't be
+  // required.
+  virtual int SetMeshFileName(const char *filename) = 0;
+  virtual int SetSolidFileName(const char *filename) = 0;
   cvMeshObject::KernelType GetMeshKernel() const { return mesh_kernel_; }
 
-  void SetSolidModelKernel(SolidModel_KernelT kernel) { solidmodeling_kernel_ = kernel; }
-  int GetMeshLoaded() { return meshloaded_;}
+  void SetSolidModelKernel(SolidModel_KernelT kernel) {
+    solidmodeling_kernel_ = kernel;
+  }
+  int GetMeshLoaded() { return meshloaded_; }
 
-  //Common functions for abstract base class
+  // Common functions for abstract base class
   virtual int Update() = 0;
   virtual int Print() = 0;
   virtual cvMeshObject *Copy() const = 0;
@@ -108,29 +111,31 @@ public:
   virtual int LoadModel(vtkPolyData *pd) = 0;
   virtual int LoadModel(cvSolidModel *cvModel) = 0;
   virtual int GetBoundaryFaces(double angle) = 0;
-  virtual int LoadMesh(char *filename,char *surfilename) = 0;
+  virtual int LoadMesh(char *filename, char *surfilename) = 0;
   virtual int NewMesh() = 0;
 
-  //Set curve sizes and other mesh options
-  virtual int SetMeshOptions(char *flags,int numValues,double *values) = 0;
+  // Set curve sizes and other mesh options
+  virtual int SetMeshOptions(char *flags, int numValues, double *values) = 0;
 
-  //Set boundary layer and/or specify wall faces
-  virtual int SetBoundaryLayer(int type, int id, int side, int nL, double* H) = 0;
+  // Set boundary layer and/or specify wall faces
+  virtual int SetBoundaryLayer(int type, int id, int side, int nL,
+                               double *H) = 0;
   virtual int SetWalls(int numWalls, int *walls) = 0;
 
-  //Set refinement options
+  // Set refinement options
   virtual int SetCylinderRefinement(double size, double radius, double length,
-                            double* center, double *normal) = 0;
-  virtual int SetSphereRefinement(double size, double radius, double* center) = 0;
+                                    double *center, double *normal) = 0;
+  virtual int SetSphereRefinement(double size, double radius,
+                                  double *center) = 0;
   virtual int SetSizeFunctionBasedMesh(double size, char *sizefunctionname) = 0;
 
-  //Meshing operation and post-meshing cleanup/stats functions
+  // Meshing operation and post-meshing cleanup/stats functions
   virtual int GenerateMesh() = 0;
   virtual int WriteMesh(char *filename, int smsver) = 0;
   virtual int WriteStats(char *filename) = 0;
 
-  //Not necessary anymore, but leaving for now
-  virtual int WriteMetisAdjacency (char *filename) = 0;
+  // Not necessary anymore, but leaving for now
+  virtual int WriteMetisAdjacency(char *filename) = 0;
 
   // general queries
   virtual int GetNodeCoords(int node) = 0;
@@ -138,25 +143,27 @@ public:
   virtual cvPolyData *GetSolid() = 0;
   virtual bool HasSolid() = 0;
   virtual cvUnstructuredGrid *GetUnstructuredGrid() = 0;
-  virtual int GetModelFaceInfo(std::map<std::string,std::vector<std::string>>& faceInfo) = 0;
-  virtual int GetModelFaceIDs(std::vector<int>& faceIDs) = 0;
+  virtual int GetModelFaceInfo(
+      std::map<std::string, std::vector<std::string>> &faceInfo) = 0;
+  virtual int GetModelFaceIDs(std::vector<int> &faceIDs) = 0;
 
   virtual bool HasVolumeMesh() = 0;
   virtual bool HasSurfaceMesh() = 0;
 
   // queries for bc's
-  virtual cvPolyData* GetFacePolyData (int orgfaceid) = 0;
+  virtual cvPolyData *GetFacePolyData(int orgfaceid) = 0;
 
-  //Set PolyData object after instantiation
+  // Set PolyData object after instantiation
   virtual int SetVtkPolyDataObject(vtkPolyData *newPolyData) = 0;
   virtual int SetInputUnstructuredGrid(vtkUnstructuredGrid *ug) = 0;
 
-  //Adapt Functions
+  // Adapt Functions
   virtual int Adapt() = 0;
   virtual int GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd) = 0;
-  virtual int SetMetricOnMesh(double *error_indicator,int lstep,double factor, double hmax, double hmin,int strategy) = 0;
+  virtual int SetMetricOnMesh(double *error_indicator, int lstep, double factor,
+                              double hmax, double hmin, int strategy) = 0;
 
-  int openOutputFile(char* filename);
+  int openOutputFile(char *filename);
   int closeOutputFile();
 
   // node info
@@ -176,7 +183,7 @@ protected:
   int numElements_;
 
   int numModelRegions_;
-  int* regionID_;
+  int *regionID_;
 
   // element info
   int curElemID_;
@@ -188,8 +195,6 @@ protected:
 
   // output file
   gzFile fp_;
-
 };
-
 
 #endif // __CVMESHOBJECT_H

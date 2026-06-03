@@ -42,33 +42,39 @@ public:
   cvMeshSystem();
   virtual ~cvMeshSystem();
 
-  static cvMeshSystem* GetCurrentKernel();
-  static cvMeshObject::KernelType GetCurrentKernelType() { return gCurrentKernel; }
-  static char* GetCurrentKernelName();
-  static int SetCurrentKernel( cvMeshObject::KernelType kernel_type );
+  static cvMeshSystem *GetCurrentKernel();
+  static cvMeshObject::KernelType GetCurrentKernelType() {
+    return gCurrentKernel;
+  }
+  static char *GetCurrentKernelName();
+  static int SetCurrentKernel(cvMeshObject::KernelType kernel_type);
 
-  static int RegisterKernel( cvMeshObject::KernelType kernel_type, cvMeshSystem* pKernel );
+  static int RegisterKernel(cvMeshObject::KernelType kernel_type,
+                            cvMeshSystem *pKernel);
 
-  // Mesh object factory method that delegates creation of meshes to the
-  //  concrete implementations.
-  #ifdef SV_USE_PYTHON
-  static cvMeshObject* DefaultInstantiateMeshObject(
-    char *const meshFileName = nullptr, char *const solidFileName = nullptr );
-  #endif
-  // Methods that concrete implementations must provide for meshing system abstraction.
+// Mesh object factory method that delegates creation of meshes to the
+//  concrete implementations.
+#ifdef SV_USE_PYTHON
+  static cvMeshObject *
+  DefaultInstantiateMeshObject(char *const meshFileName = nullptr,
+                               char *const solidFileName = nullptr);
+#endif
+  // Methods that concrete implementations must provide for meshing system
+  // abstraction.
 
-  virtual int LogOn( char *const filename ) = 0;
+  virtual int LogOn(char *const filename) = 0;
   virtual int LogOff() = 0;
 
 protected:
-  #ifdef SV_USE_PYTHON
-  virtual cvMeshObject* CreateMeshObject() = 0;
-  #endif
+#ifdef SV_USE_PYTHON
+  virtual cvMeshObject *CreateMeshObject() = 0;
+#endif
 
   static cvMeshObject::KernelType gCurrentKernel;
-  static cvMeshSystem* gMeshSystems[cvMeshObject::KERNEL_MAX_TYPES];
+  static cvMeshSystem *gMeshSystems[cvMeshObject::KERNEL_MAX_TYPES];
 };
 
-typedef int (*MeshKernelRegistryMethodPtr)(cvMeshObject::KernelType kernel_type, cvMeshSystem* pKernel);
+typedef int (*MeshKernelRegistryMethodPtr)(cvMeshObject::KernelType kernel_type,
+                                           cvMeshSystem *pKernel);
 
 #endif // __CVMESHSYSTEM_H

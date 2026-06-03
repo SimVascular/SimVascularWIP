@@ -49,8 +49,8 @@
 #include "SimVascular.h"
 #include "svPolyDataSolidExports.h" // For exports
 
-#include "sv_PolyData.h"
 #include "sv_LispList.hxx"
+#include "sv_PolyData.h"
 #include "sv_vtk_utils.h"
 
 #include <array>
@@ -65,28 +65,37 @@ SV_EXPORT_POLYDATASOLID int PlyDtaUtils_Init();
 /* -------- */
 /* Get Info */
 /* -------- */
-SV_EXPORT_POLYDATASOLID int PlyDtaUtils_GetFaceIds( vtkPolyData *geom, int *v_num_faces, int **v_faces);
+SV_EXPORT_POLYDATASOLID int
+PlyDtaUtils_GetFaceIds(vtkPolyData *geom, int *v_num_faces, int **v_faces);
 
-SV_EXPORT_POLYDATASOLID int PlyDtaUtils_GetBoundaryFaces( vtkPolyData *geom,double angle,int *numRegions);
+SV_EXPORT_POLYDATASOLID int
+PlyDtaUtils_GetBoundaryFaces(vtkPolyData *geom, double angle, int *numRegions);
 
-SV_EXPORT_POLYDATASOLID int PlyDtaUtils_GetFacePolyData(vtkPolyData *geom, int *faceid, vtkPolyData *facepd);
+SV_EXPORT_POLYDATASOLID int PlyDtaUtils_GetFacePolyData(vtkPolyData *geom,
+                                                        int *faceid,
+                                                        vtkPolyData *facepd);
 
 /* -------- */
 /* File I/O */
 /* -------- */
-SV_EXPORT_POLYDATASOLID int PlyDtaUtils_ReadNative( char *filename, vtkPolyData *result);
+SV_EXPORT_POLYDATASOLID int PlyDtaUtils_ReadNative(char *filename,
+                                                   vtkPolyData *result);
 
-SV_EXPORT_POLYDATASOLID int PlyDtaUtils_WriteNative( vtkPolyData *geom, int file_version, char *filename );
+SV_EXPORT_POLYDATASOLID int
+PlyDtaUtils_WriteNative(vtkPolyData *geom, int file_version, char *filename);
 
 /* -------- */
 /* PolyData Change and Check Operations */
 /* -------- */
-SV_EXPORT_POLYDATASOLID int PlyDtaUtils_CombineFaces( vtkPolyData *geom, int *targetface, int *loseface);
+SV_EXPORT_POLYDATASOLID int
+PlyDtaUtils_CombineFaces(vtkPolyData *geom, int *targetface, int *loseface);
 
-SV_EXPORT_POLYDATASOLID int PlyDtaUtils_DeleteCells( vtkPolyData *geom, int *numcells, int *cells);
+SV_EXPORT_POLYDATASOLID int PlyDtaUtils_DeleteCells(vtkPolyData *geom,
+                                                    int *numcells, int *cells);
 
-SV_EXPORT_POLYDATASOLID int PlyDtaUtils_DeleteRegion( vtkPolyData *geom, int *regionid);
+SV_EXPORT_POLYDATASOLID int PlyDtaUtils_DeleteRegion(vtkPolyData *geom,
+                                                     int *regionid);
 
-SV_EXPORT_POLYDATASOLID int PlyDtaUtils_CheckLoftSurface( vtkPolyData *geom);
+SV_EXPORT_POLYDATASOLID int PlyDtaUtils_CheckLoftSurface(vtkPolyData *geom);
 
 #endif // __POLYDATASOLID_MODEL_H

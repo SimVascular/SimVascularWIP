@@ -35,7 +35,7 @@
 #include "SimVascular.h"
 #include "svRepositoryExports.h" // For exports
 
-#define RD_MAX_NAME_LEN  1024
+#define RD_MAX_NAME_LEN 1024
 
 // Each class derived from cvRepositoryData should have a type in the
 // following enum.  Note that the enumerations start at 1.  A
@@ -56,8 +56,8 @@ typedef enum {
   CONTOUR_T
 } RepositoryDataT;
 
-SV_EXPORT_REPOSITORY RepositoryDataT RepositoryDataT_StrToEnum( char *name );
-SV_EXPORT_REPOSITORY char *RepositoryDataT_EnumToStr( RepositoryDataT val );
+SV_EXPORT_REPOSITORY RepositoryDataT RepositoryDataT_StrToEnum(char *name);
+SV_EXPORT_REPOSITORY char *RepositoryDataT_EnumToStr(RepositoryDataT val);
 
 //------------------
 // cvRepositoryData
@@ -70,8 +70,7 @@ SV_EXPORT_REPOSITORY char *RepositoryDataT_EnumToStr( RepositoryDataT val );
 class SV_EXPORT_REPOSITORY cvRepositoryData {
 
 public:
-
-  cvRepositoryData( RepositoryDataT type );
+  cvRepositoryData(RepositoryDataT type);
   virtual ~cvRepositoryData();
 
   // This lock mechanism is used ONLY by cvRepository.
@@ -81,15 +80,15 @@ public:
 
   RepositoryDataT GetType() { return type_; }
   char *GetName() { return name_; }
-  void SetName( char *in );
+  void SetName(char *in);
 
   // Labels:
   int GetNumLabels();
-  void GetLabelKeys( int *numKeys, char **keys[] );
-  int IsLabelPresent( char *key );
-  int GetLabel( char *key, char **value );
-  int SetLabel( char *key, char *value );
-  void ClearLabel( char *key );
+  void GetLabelKeys(int *numKeys, char **keys[]);
+  int IsLabelPresent(char *key);
+  int GetLabel(char *key, char **value);
+  int SetLabel(char *key, char *value);
+  void ClearLabel(char *key);
 
   // Memory usage:
   virtual int GetMemoryUsage() { return 0; }
@@ -98,8 +97,7 @@ private:
   RepositoryDataT type_;
   char name_[RD_MAX_NAME_LEN];
   int lockCnt_;
-  //Tcl_HashTable labels_;
+  // Tcl_HashTable labels_;
 };
-
 
 #endif // __REPOSITORY_DATA_H

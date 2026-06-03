@@ -34,34 +34,26 @@
 // ----------------------
 // Constructor
 // ----------------------
-vtkSVNURBSObject::vtkSVNURBSObject()
-{
-}
+vtkSVNURBSObject::vtkSVNURBSObject() {}
 
 // ----------------------
 // Destructor
 // ----------------------
-vtkSVNURBSObject::~vtkSVNURBSObject()
-{
-}
+vtkSVNURBSObject::~vtkSVNURBSObject() {}
 
 // ----------------------
 // DeepCopy
 // ----------------------
-void vtkSVNURBSObject::DeepCopy(vtkSVNURBSObject *src)
-{
+void vtkSVNURBSObject::DeepCopy(vtkSVNURBSObject *src) {
   this->Superclass::DeepCopy(src);
 }
 
 //----------------------------------------------------------------------------
-vtkSVNURBSObject* vtkSVNURBSObject::GetData(vtkInformation* info)
-{
-  return info? vtkSVNURBSObject::SafeDownCast(info->Get(DATA_OBJECT())) : 0;
+vtkSVNURBSObject *vtkSVNURBSObject::GetData(vtkInformation *info) {
+  return info ? vtkSVNURBSObject::SafeDownCast(info->Get(DATA_OBJECT())) : 0;
 }
 
 //----------------------------------------------------------------------------
-vtkSVNURBSObject* vtkSVNURBSObject::GetData(vtkInformationVector* v, int i)
-{
+vtkSVNURBSObject *vtkSVNURBSObject::GetData(vtkInformationVector *v, int i) {
   return vtkSVNURBSObject::GetData(v->GetInformationObject(i));
 }
-

@@ -36,14 +36,14 @@
 
 #include <sv4guiModuleSegmentationExports.h>
 
-#include "sv4gui_ContourModel.h"
 #include "sv4gui_Contour.h"
+#include "sv4gui_ContourModel.h"
 
-#include "mitkVtkMapper.h"
 #include "mitkBaseRenderer.h"
 #include "mitkLocalStorageHandler.h"
+#include "mitkVtkMapper.h"
 
-//VTK
+// VTK
 #include <vtkSmartPointer.h>
 class vtkActor;
 class vtkPropAssembly;
@@ -54,93 +54,89 @@ class vtkGlyph3D;
 class vtkFloatArray;
 class vtkCellArray;
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourModelVtkMapper2D : public mitk::VtkMapper
-{
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourModelVtkMapper2D
+    : public mitk::VtkMapper {
 public:
+  mitkClassMacro(sv4guiContourModelVtkMapper2D, mitk::VtkMapper);
 
-    mitkClassMacro(sv4guiContourModelVtkMapper2D, mitk::VtkMapper);
+  itkFactorylessNewMacro(Self) itkCloneMacro(Self)
 
-    itkFactorylessNewMacro(Self)
-    itkCloneMacro(Self)
+      virtual vtkProp *GetVtkProp(mitk::BaseRenderer *renderer) override;
 
-    virtual vtkProp* GetVtkProp(mitk::BaseRenderer* renderer) override;
+  static void SetDefaultProperties(mitk::DataNode *node,
+                                   mitk::BaseRenderer *renderer = nullptr,
+                                   bool overwrite = false);
 
-    static void SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer = nullptr, bool overwrite = false);
+  void ReleaseGraphicsResources(mitk::BaseRenderer *renderer) override;
 
-    void ReleaseGraphicsResources(mitk::BaseRenderer* renderer) override;
+  class LocalStorage : public mitk::Mapper::BaseLocalStorage {
 
-    class LocalStorage : public mitk::Mapper::BaseLocalStorage
-    {
+  public:
+    LocalStorage();
 
-    public:
+    ~LocalStorage();
 
-        LocalStorage();
+    // points
+    vtkSmartPointer<vtkPoints> m_UnselectedPoints;
+    vtkSmartPointer<vtkPoints> m_SelectedPoints;
 
-        ~LocalStorage();
+    // scales
+    vtkSmartPointer<vtkFloatArray> m_UnselectedScales;
+    vtkSmartPointer<vtkFloatArray> m_SelectedScales;
 
-        // points
-        vtkSmartPointer<vtkPoints> m_UnselectedPoints;
-        vtkSmartPointer<vtkPoints> m_SelectedPoints;
+    // glyph source (provides different shapes for the points)
+    vtkSmartPointer<vtkGlyphSource2D> m_UnselectedGlyphSource2D;
+    vtkSmartPointer<vtkGlyphSource2D> m_SelectedGlyphSource2D;
 
-        // scales
-        vtkSmartPointer<vtkFloatArray> m_UnselectedScales;
-        vtkSmartPointer<vtkFloatArray> m_SelectedScales;
+    // glyph
+    vtkSmartPointer<vtkGlyph3D> m_UnselectedGlyph3D;
+    vtkSmartPointer<vtkGlyph3D> m_SelectedGlyph3D;
 
-        // glyph source (provides different shapes for the points)
-        vtkSmartPointer<vtkGlyphSource2D> m_UnselectedGlyphSource2D;
-        vtkSmartPointer<vtkGlyphSource2D> m_SelectedGlyphSource2D;
+    // polydata
+    vtkSmartPointer<vtkPolyData> m_VtkUnselectedPointsPolyData;
+    vtkSmartPointer<vtkPolyData> m_VtkSelectedPointsPolyData;
+    vtkSmartPointer<vtkPolyData> m_VtkContourPolyData;
 
-        // glyph
-        vtkSmartPointer<vtkGlyph3D> m_UnselectedGlyph3D;
-        vtkSmartPointer<vtkGlyph3D> m_SelectedGlyph3D;
+    // actor
+    vtkSmartPointer<vtkActor> m_UnselectedActor;
+    vtkSmartPointer<vtkActor> m_SelectedActor;
+    vtkSmartPointer<vtkActor> m_ContourActor;
 
-        // polydata
-        vtkSmartPointer<vtkPolyData> m_VtkUnselectedPointsPolyData;
-        vtkSmartPointer<vtkPolyData> m_VtkSelectedPointsPolyData;
-        vtkSmartPointer<vtkPolyData> m_VtkContourPolyData;
+    // mappers
+    vtkSmartPointer<vtkPolyDataMapper> m_VtkUnselectedPolyDataMapper;
+    vtkSmartPointer<vtkPolyDataMapper> m_VtkSelectedPolyDataMapper;
+    vtkSmartPointer<vtkPolyDataMapper> m_VtkContourPolyDataMapper;
 
-        // actor
-        vtkSmartPointer<vtkActor> m_UnselectedActor;
-        vtkSmartPointer<vtkActor> m_SelectedActor;
-        vtkSmartPointer<vtkActor> m_ContourActor;
+    // propassembly
+    vtkSmartPointer<vtkPropAssembly> m_PropAssembly;
+  };
 
-        // mappers
-        vtkSmartPointer<vtkPolyDataMapper> m_VtkUnselectedPolyDataMapper;
-        vtkSmartPointer<vtkPolyDataMapper> m_VtkSelectedPolyDataMapper;
-        vtkSmartPointer<vtkPolyDataMapper> m_VtkContourPolyDataMapper;
-
-        // propassembly
-        vtkSmartPointer<vtkPropAssembly> m_PropAssembly;
-
-    };
-
-    mitk::LocalStorageHandler<LocalStorage> m_LSH;
+  mitk::LocalStorageHandler<LocalStorage> m_LSH;
 
 protected:
+  sv4guiContourModelVtkMapper2D();
 
-    sv4guiContourModelVtkMapper2D();
+  virtual ~sv4guiContourModelVtkMapper2D();
 
-    virtual ~sv4guiContourModelVtkMapper2D();
+  virtual void CreateVTKRenderObjects(mitk::BaseRenderer *renderer);
 
-    virtual void CreateVTKRenderObjects(mitk::BaseRenderer* renderer);
+  virtual void GenerateDataForRenderer(mitk::BaseRenderer *renderer) override;
 
-    virtual void GenerateDataForRenderer(mitk::BaseRenderer* renderer) override;
+  virtual void ResetMapper(mitk::BaseRenderer *renderer) override;
 
-    virtual void ResetMapper( mitk::BaseRenderer* renderer ) override;
+  virtual void FindContourOnCurrentSlice(mitk::BaseRenderer *renderer,
+                                         unsigned int t = 0);
 
-    virtual void FindContourOnCurrentSlice(mitk::BaseRenderer* renderer, unsigned int t = 0) ;
+  sv4guiContour *m_Contour; // available contour on the renderer plane
 
-    sv4guiContour* m_Contour;//available contour on the renderer plane
-
-    // member variables holding the current value of the properties used in this mapper
-    //  bool m_ShowContour;             // "show contour" property
-    bool m_ShowPoints;              // "show points" property
-    int m_LineWidth;                // "line width" property
-    int m_PointLineWidth;           // "point line width" property
-    float m_Point2DSize;              // "point 2D size" property
-    float m_DistanceToPlane;        // "point 2D distance to plane" property
-
-
+  // member variables holding the current value of the properties used in this
+  // mapper
+  //  bool m_ShowContour;             // "show contour" property
+  bool m_ShowPoints;       // "show points" property
+  int m_LineWidth;         // "line width" property
+  int m_PointLineWidth;    // "point line width" property
+  float m_Point2DSize;     // "point 2D size" property
+  float m_DistanceToPlane; // "point 2D distance to plane" property
 };
 
 #endif // SV4GUI_CONTOURMODELVTKMAPPER2D_H

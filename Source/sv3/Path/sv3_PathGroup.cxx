@@ -31,159 +31,103 @@
 #include "SimVascular.h"
 
 #include "sv3_PathElement.h"
-#include "sv_RepositoryData.h"
 #include "sv3_PathGroup.h"
 #include "sv_Math.h"
+#include "sv_RepositoryData.h"
 
 using sv3::PathElement;
 using sv3::PathGroup;
 PathGroup::PathGroup()
-    : cvRepositoryData( PATHGROUP_T )
-    , m_CalculateBoundingBox(true)
-    , m_PathID(-1)
-    , m_Method(sv3::PathElement::CONSTANT_TOTAL_NUMBER)
-    , m_CalculationNumber(100)
-    , m_Spacing(0)
-{
-    this->InitializeEmpty();
+    : cvRepositoryData(PATHGROUP_T), m_CalculateBoundingBox(true), m_PathID(-1),
+      m_Method(sv3::PathElement::CONSTANT_TOTAL_NUMBER),
+      m_CalculationNumber(100), m_Spacing(0) {
+  this->InitializeEmpty();
 }
 
 PathGroup::PathGroup(const PathGroup &other)
-    : cvRepositoryData( PATHGROUP_T )
-    , m_PathID(other.m_PathID)
-    , m_Method(other.m_Method)
-    , m_CalculationNumber(other.m_CalculationNumber)
-    , m_Spacing(other.m_Spacing)
-    , m_PathElementSet(other.GetTimeSize())
-    , m_CalculateBoundingBox(true)
+    : cvRepositoryData(PATHGROUP_T), m_PathID(other.m_PathID),
+      m_Method(other.m_Method), m_CalculationNumber(other.m_CalculationNumber),
+      m_Spacing(other.m_Spacing), m_PathElementSet(other.GetTimeSize()),
+      m_CalculateBoundingBox(true)
 
 {
-    for (std::size_t t = 0; t < other.GetTimeSize(); ++t)
-    {
-        m_PathElementSet[t]=other.GetPathElement(t)->Clone();
-    }
+  for (std::size_t t = 0; t < other.GetTimeSize(); ++t) {
+    m_PathElementSet[t] = other.GetPathElement(t)->Clone();
+  }
 }
 
-PathGroup::~PathGroup()
-{
-    this->ClearData();
+PathGroup::~PathGroup() { this->ClearData(); }
+
+void PathGroup::ClearData() {
+  // may need delele each arrays inside first.
+  m_PathElementSet.clear();
 }
 
-void PathGroup::ClearData()
-{
-    //may need delele each arrays inside first.
-    m_PathElementSet.clear();
+void PathGroup::InitializeEmpty() { m_PathElementSet.resize(1); }
+
+void PathGroup::Expand(unsigned int timeSteps) {
+  unsigned int oldSize = m_PathElementSet.size();
+
+  if (timeSteps > oldSize) {
+
+    m_PathElementSet.resize(timeSteps);
+
+    m_CalculateBoundingBox = true;
+  }
 }
 
-void PathGroup::InitializeEmpty()
-{
-    m_PathElementSet.resize( 1 );
+std::string PathGroup::GetName() const { return m_Name; }
 
+void PathGroup::SetName(const std::string &name) { m_Name = name; }
+
+unsigned int PathGroup::GetTimeSize() const { return m_PathElementSet.size(); }
+
+int PathGroup::GetSize(unsigned int t) const {
+  if (GetPathElement(t))
+    return GetPathElement(t)->GetControlPointNumber();
+  else
+    return 0;
 }
 
-
-void PathGroup::Expand( unsigned int timeSteps )
-{
-    unsigned int oldSize = m_PathElementSet.size();
-
-    if ( timeSteps > oldSize )
-    {
-
-        m_PathElementSet.resize( timeSteps );
-
-        m_CalculateBoundingBox = true;
-
-    }
+PathElement *PathGroup::GetPathElement(unsigned int t) const {
+  if (t < m_PathElementSet.size()) {
+    return m_PathElementSet[t];
+  } else {
+    return nullptr;
+  }
 }
 
-std::string PathGroup::GetName() const
-{
-    return m_Name;
+void PathGroup::SetPathElement(PathElement *pathElement, unsigned int t) {
+  if (t < m_PathElementSet.size()) {
+    m_PathElementSet[t] = pathElement;
+  }
 }
 
-void PathGroup::SetName(const std::string& name) 
-{
-    m_Name = name;
+int PathGroup::GetPathID() const { return m_PathID; }
+
+void PathGroup::SetPathID(int pathID) { m_PathID = pathID; }
+
+void PathGroup::CalculateBoundingBox(double *bounds, unsigned int t) {
+  PathElement *pathElement = GetPathElement(t);
+  if (pathElement) {
+    pathElement->CalculateBoundingBox(bounds);
+  }
 }
 
-unsigned int PathGroup::GetTimeSize() const
-{
-    return m_PathElementSet.size();
+void PathGroup::SetSpacing(double spacing) { m_Spacing = spacing; }
+
+double PathGroup::GetSpacing() const { return m_Spacing; }
+
+void PathGroup::SetMethod(sv3::PathElement::CalculationMethod method) {
+  m_Method = method;
 }
 
-int PathGroup::GetSize( unsigned int t ) const
-{
-    if(GetPathElement(t))
-        return GetPathElement(t)->GetControlPointNumber();
-    else
-        return 0;
+sv3::PathElement::CalculationMethod PathGroup::GetMethod() const {
+  return m_Method;
 }
 
-PathElement* PathGroup::GetPathElement(unsigned int t ) const
-{
-    if ( t < m_PathElementSet.size() )
-    {
-        return m_PathElementSet[t];
-    }
-    else
-    {
-        return nullptr;
-    }
+void PathGroup::SetCalculationNumber(int number) {
+  m_CalculationNumber = number;
 }
 
-void PathGroup::SetPathElement(PathElement* pathElement, unsigned int t)
-{
-    if(t<m_PathElementSet.size())
-    {
-        m_PathElementSet[t]=pathElement;
-    }
-}
-
-int PathGroup::GetPathID() const
-{
-    return m_PathID;
-}
-
-void PathGroup::SetPathID(int pathID)
-{
-    m_PathID=pathID;
-}
-
-void PathGroup::CalculateBoundingBox(double *bounds,unsigned int t)
-{
-    PathElement* pathElement=GetPathElement(t);
-    if(pathElement)
-    {
-        pathElement->CalculateBoundingBox(bounds);
-    }
-}
-
-void PathGroup::SetSpacing(double spacing)
-{
-    m_Spacing=spacing;
-}
-
-double PathGroup::GetSpacing() const
-{
-    return m_Spacing;
-}
-
-void PathGroup::SetMethod(sv3::PathElement::CalculationMethod method)\
-{
-    m_Method=method;
-}
-
-sv3::PathElement::CalculationMethod PathGroup::GetMethod() const
-{
-    return m_Method;
-}
-
-void PathGroup::SetCalculationNumber(int number)
-{
-    m_CalculationNumber=number;
-}
-
-int PathGroup::GetCalculationNumber() const
-{
-    return m_CalculationNumber;
-}
+int PathGroup::GetCalculationNumber() const { return m_CalculationNumber; }

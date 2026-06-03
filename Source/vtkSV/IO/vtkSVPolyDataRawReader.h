@@ -32,24 +32,23 @@
 /**
  * \class   vtkSVPolyDataRawReader
  * \brief   read ASCII raw file
-*/
+ */
 
 #ifndef vtkSVPolyDataRawReader_h
 #define vtkSVPolyDataRawReader_h
 
-#include "vtkSVIOModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
+#include "vtkSVIOModule.h" // For export macro
 
 class vtkCellArray;
 class vtkFloatArray;
 class vtkIncrementalPointLocator;
 class vtkPoints;
 
-class VTKSVIO_EXPORT vtkSVPolyDataRawReader : public vtkPolyDataAlgorithm
-{
+class VTKSVIO_EXPORT vtkSVPolyDataRawReader : public vtkPolyDataAlgorithm {
 public:
-  vtkTypeMacro(vtkSVPolyDataRawReader,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  vtkTypeMacro(vtkSVPolyDataRawReader, vtkPolyDataAlgorithm);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   /**
    * Construct object with merging set to true.
@@ -66,9 +65,9 @@ public:
   /**
    * Turn on/off merging of points/triangles.
    */
-  vtkSetMacro(Merging,int);
-  vtkGetMacro(Merging,int);
-  vtkBooleanMacro(Merging,int);
+  vtkSetMacro(Merging, int);
+  vtkGetMacro(Merging, int);
+  vtkBooleanMacro(Merging, int);
   //@}
 
   //@{
@@ -77,7 +76,7 @@ public:
    * default an instance of vtkMergePoints is used.
    */
   void SetLocator(vtkIncrementalPointLocator *locator);
-  vtkGetObjectMacro(Locator,vtkIncrementalPointLocator);
+  vtkGetObjectMacro(Locator, vtkIncrementalPointLocator);
   //@}
 
 protected:
@@ -87,17 +86,19 @@ protected:
   /**
    * Create default locator. Used to create one when none is specified.
    */
-  vtkIncrementalPointLocator* NewDefaultLocator();
+  vtkIncrementalPointLocator *NewDefaultLocator();
 
   char *FileName;
   int Merging;
   vtkIncrementalPointLocator *Locator;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
-  int ReadRawFile(FILE *fp, vtkPoints*, vtkCellArray*);
+  int RequestData(vtkInformation *, vtkInformationVector **,
+                  vtkInformationVector *) override;
+  int ReadRawFile(FILE *fp, vtkPoints *, vtkCellArray *);
+
 private:
-  vtkSVPolyDataRawReader(const vtkSVPolyDataRawReader&);
-  void operator=(const vtkSVPolyDataRawReader&);
+  vtkSVPolyDataRawReader(const vtkSVPolyDataRawReader &);
+  void operator=(const vtkSVPolyDataRawReader &);
 };
 
 #endif

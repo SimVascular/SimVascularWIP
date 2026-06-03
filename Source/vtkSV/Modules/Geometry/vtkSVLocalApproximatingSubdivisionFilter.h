@@ -30,15 +30,16 @@
  */
 
 /**
-  * \class vtkSVLocalApproximatingSubdivisionFilter - generate a subdivision surface using an Approximating Scheme
-  * \section Description
-  * vtkSVLocalApproximatingSubdivisionFilter is an abstract class that defines
-  * the protocol for Approximating subdivision surface filters.
-  *
-  * \section Thanks
-  * This work was supported by PHS Research Grant No. 1 P41 RR13218-01
-  * from the National Center for Research Resources.
-  */
+ * \class vtkSVLocalApproximatingSubdivisionFilter - generate a subdivision
+ * surface using an Approximating Scheme
+ * \section Description
+ * vtkSVLocalApproximatingSubdivisionFilter is an abstract class that defines
+ * the protocol for Approximating subdivision surface filters.
+ *
+ * \section Thanks
+ * This work was supported by PHS Research Grant No. 1 P41 RR13218-01
+ * from the National Center for Research Resources.
+ */
 
 #ifndef vtkSVLocalApproximatingSubdivisionFilter_h
 #define vtkSVLocalApproximatingSubdivisionFilter_h
@@ -49,20 +50,20 @@
 #include "vtkCellData.h"
 #include "vtkIdList.h"
 #include "vtkIntArray.h"
-#include "vtkPolyDataAlgorithm.h"
 #include "vtkPointData.h"
 #include "vtkPoints.h"
+#include "vtkPolyDataAlgorithm.h"
 
-class VTKSVGEOMETRY_EXPORT vtkSVLocalApproximatingSubdivisionFilter : public vtkPolyDataAlgorithm
-{
+class VTKSVGEOMETRY_EXPORT vtkSVLocalApproximatingSubdivisionFilter
+    : public vtkPolyDataAlgorithm {
 public:
-  vtkTypeMacro(vtkSVLocalApproximatingSubdivisionFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  vtkTypeMacro(vtkSVLocalApproximatingSubdivisionFilter, vtkPolyDataAlgorithm);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
   /// \brief Get/Set the number of subdivision iterations to perform
-  vtkSetMacro(NumberOfSubdivisions,int);
-  vtkGetMacro(NumberOfSubdivisions,int);
+  vtkSetMacro(NumberOfSubdivisions, int);
+  vtkGetMacro(NumberOfSubdivisions, int);
   //@}
 
   //@{
@@ -88,34 +89,38 @@ protected:
   vtkSVLocalApproximatingSubdivisionFilter();
   ~vtkSVLocalApproximatingSubdivisionFilter();
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
-  virtual int GenerateSubdivisionPoints (vtkPolyData *inputDS,
-                                          vtkIntArray *edgeData,
-                                          vtkPoints *outputPts,
-                                          vtkPointData *outputPD) = 0;
-  void GenerateSubdivisionCells (vtkPolyData *inputDS, vtkIntArray *edgeData,
-                                 vtkCellArray *outputPolys,
-                                 vtkCellData *outputCD);
-  int FindEdge (vtkPolyData *mesh, vtkIdType cellId, vtkIdType p1,
-                vtkIdType p2, vtkIntArray *edgeData, vtkIdList *cellIds);
-  vtkIdType InterpolatePosition (vtkPoints *inputPts, vtkPoints *outputPts,
-                                 vtkIdList *stencil, double *weights);
-  vtkIdType KeepPosition (vtkPoints *inputPts, vtkPoints *outputPts,
-                                 vtkIdList *stencil, double *weights);
+  int RequestData(vtkInformation *, vtkInformationVector **,
+                  vtkInformationVector *) override;
+  virtual int GenerateSubdivisionPoints(vtkPolyData *inputDS,
+                                        vtkIntArray *edgeData,
+                                        vtkPoints *outputPts,
+                                        vtkPointData *outputPD) = 0;
+  void GenerateSubdivisionCells(vtkPolyData *inputDS, vtkIntArray *edgeData,
+                                vtkCellArray *outputPolys,
+                                vtkCellData *outputCD);
+  int FindEdge(vtkPolyData *mesh, vtkIdType cellId, vtkIdType p1, vtkIdType p2,
+               vtkIntArray *edgeData, vtkIdList *cellIds);
+  vtkIdType InterpolatePosition(vtkPoints *inputPts, vtkPoints *outputPts,
+                                vtkIdList *stencil, double *weights);
+  vtkIdType KeepPosition(vtkPoints *inputPts, vtkPoints *outputPts,
+                         vtkIdList *stencil, double *weights);
 
-  int GetSubdivideArrays(vtkPolyData *object,int type);
-  vtkIntArray      *SubdivideCellArray;
-  vtkIntArray      *SubdividePointArray;
+  int GetSubdivideArrays(vtkPolyData *object, int type);
+  vtkIntArray *SubdivideCellArray;
+  vtkIntArray *SubdividePointArray;
 
-  char* SubdivideCellArrayName;
-  char* SubdividePointArrayName;
+  char *SubdivideCellArrayName;
+  char *SubdividePointArrayName;
   int UseCellArray;
   int UsePointArray;
 
   int NumberOfSubdivisions;
+
 private:
-  vtkSVLocalApproximatingSubdivisionFilter(const vtkSVLocalApproximatingSubdivisionFilter&);  // Not implemented.
-  void operator=(const vtkSVLocalApproximatingSubdivisionFilter&);  // Not implemented.
+  vtkSVLocalApproximatingSubdivisionFilter(
+      const vtkSVLocalApproximatingSubdivisionFilter &); // Not implemented.
+  void operator=(
+      const vtkSVLocalApproximatingSubdivisionFilter &); // Not implemented.
 };
 
 #endif

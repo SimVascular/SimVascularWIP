@@ -30,7 +30,8 @@
  */
 
 /**
- * \class vtkSVLocalLoopSubdivisionFilter - generate a subdivision surface using the Loop Scheme
+ * \class vtkSVLocalLoopSubdivisionFilter - generate a subdivision surface using
+ * the Loop Scheme
  * \section Description
  * vtkSVLocalLoopSubdivisionFilter is an approximating subdivision scheme that
  * creates four new triangles for each triangle in the mesh. The user can
@@ -62,43 +63,47 @@
 #ifndef vtkSVLocalLoopSubdivisionFilter_h
 #define vtkSVLocalLoopSubdivisionFilter_h
 
-#include "vtkSVLocalApproximatingSubdivisionFilter.h"
 #include "vtkSVGeometryModule.h" // for export
+#include "vtkSVLocalApproximatingSubdivisionFilter.h"
 
 class vtkPolyData;
 class vtkIntArray;
 class vtkPoints;
 class vtkIdList;
 
-class VTKSVGEOMETRY_EXPORT vtkSVLocalLoopSubdivisionFilter : public vtkSVLocalApproximatingSubdivisionFilter
-{
+class VTKSVGEOMETRY_EXPORT vtkSVLocalLoopSubdivisionFilter
+    : public vtkSVLocalApproximatingSubdivisionFilter {
 public:
   // Description:
   // Construct object with NumberOfSubdivisions set to 1.
   static vtkSVLocalLoopSubdivisionFilter *New();
-  vtkTypeMacro(vtkSVLocalLoopSubdivisionFilter,vtkSVLocalApproximatingSubdivisionFilter);
+  vtkTypeMacro(vtkSVLocalLoopSubdivisionFilter,
+               vtkSVLocalApproximatingSubdivisionFilter);
 
 protected:
-  vtkSVLocalLoopSubdivisionFilter () {}
-  ~vtkSVLocalLoopSubdivisionFilter () {}
+  vtkSVLocalLoopSubdivisionFilter() {}
+  ~vtkSVLocalLoopSubdivisionFilter() {}
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **,
+                          vtkInformationVector *) override;
 
-  int GenerateSubdivisionPoints (vtkPolyData *inputDS, vtkIntArray *edgeData,
-                                 vtkPoints *outputPts,
-                                 vtkPointData *outputPD) override;
-  void GenerateEvenStencil (vtkIdType p1, vtkPolyData *polys,
-                            vtkIdList *stencilIds, double *weights);
-  void GenerateOddStencil (vtkIdType p1, vtkIdType p2, vtkPolyData *polys,
+  int GenerateSubdivisionPoints(vtkPolyData *inputDS, vtkIntArray *edgeData,
+                                vtkPoints *outputPts,
+                                vtkPointData *outputPD) override;
+  void GenerateEvenStencil(vtkIdType p1, vtkPolyData *polys,
                            vtkIdList *stencilIds, double *weights);
+  void GenerateOddStencil(vtkIdType p1, vtkIdType p2, vtkPolyData *polys,
+                          vtkIdList *stencilIds, double *weights);
 
-  int SetFixedCells(vtkPolyData *pd,int *noSubdivideCell);
+  int SetFixedCells(vtkPolyData *pd, int *noSubdivideCell);
 
-  virtual int RequestUpdateExtent(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  virtual int RequestUpdateExtent(vtkInformation *, vtkInformationVector **,
+                                  vtkInformationVector *) override;
 
 private:
-  vtkSVLocalLoopSubdivisionFilter(const vtkSVLocalLoopSubdivisionFilter&);  // Not implemented.
-  void operator=(const vtkSVLocalLoopSubdivisionFilter&);  // Not implemented.
+  vtkSVLocalLoopSubdivisionFilter(
+      const vtkSVLocalLoopSubdivisionFilter &);            // Not implemented.
+  void operator=(const vtkSVLocalLoopSubdivisionFilter &); // Not implemented.
 };
 
 #endif

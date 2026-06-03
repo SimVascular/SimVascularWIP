@@ -38,25 +38,24 @@
 #include "SimVascular.h"
 
 #include "sv_PolyDataSolid.h"
-#include "vtkPolyData.h"
-#include "vtkSmartPointer.h"
-#include "vtkSVLoopBooleanPolyDataFilter.h"
-#include "vtkCubeSource.h"
-#include "sv_polydatasolid_utils.h"
 #include "sv_misc_utils.h"
+#include "sv_polydatasolid_utils.h"
 #include "sv_sys_geom.h"
-#include <string.h>
-#include <assert.h>
-#include "vtkMath.h"
+#include "sv_vtk_utils.h"
 #include "vtkCubeSource.h"
 #include "vtkCylinderSource.h"
+#include "vtkMath.h"
+#include "vtkPolyData.h"
+#include "vtkSVLoopBooleanPolyDataFilter.h"
+#include "vtkSmartPointer.h"
 #include "vtkSphereSource.h"
 #include "vtkTransform.h"
 #include "vtkTransformPolyDataFilter.h"
-#include "sv_vtk_utils.h"
+#include <assert.h>
+#include <string.h>
 
 #ifdef SV_USE_VMTK
-  #include "sv_vmtk_utils.h"
+#include "sv_vmtk_utils.h"
 #endif
 
 // ----------
@@ -66,13 +65,11 @@
  * @brief Constructor for cvPolyDataSolid (Should never be called directly)
  */
 
-cvPolyDataSolid::cvPolyDataSolid()
-  : cvSolidModel( SM_KT_POLYDATA)
-{
-/**
- * @brief Data Member is a vtkPolyData. It is initiated as nullptr. When a
- * solid is loaded, a new PolyData is created
- */
+cvPolyDataSolid::cvPolyDataSolid() : cvSolidModel(SM_KT_POLYDATA) {
+  /**
+   * @brief Data Member is a vtkPolyData. It is initiated as nullptr. When a
+   * solid is loaded, a new PolyData is created
+   */
   geom_ = nullptr;
   numBoundaryRegions = 0;
 }
@@ -84,10 +81,8 @@ cvPolyDataSolid::cvPolyDataSolid()
  * @brief Destructor for cvPolyDataSolid
  */
 
-cvPolyDataSolid::~cvPolyDataSolid()
-{
-  if (geom_ != nullptr)
-  {
+cvPolyDataSolid::~cvPolyDataSolid() {
+  if (geom_ != nullptr) {
     geom_->Delete();
   }
 }
@@ -98,12 +93,11 @@ cvPolyDataSolid::~cvPolyDataSolid()
 /**
  * @brief Copy Constructor for cvPolyDataSolid
  */
-cvPolyDataSolid::cvPolyDataSolid( const cvPolyDataSolid& sm)
-	: cvSolidModel( SM_KT_POLYDATA)
-{
+cvPolyDataSolid::cvPolyDataSolid(const cvPolyDataSolid &sm)
+    : cvSolidModel(SM_KT_POLYDATA) {
   geom_ = nullptr;
-  numBoundaryRegions=0;
-  Copy( sm );
+  numBoundaryRegions = 0;
+  Copy(sm);
 }
 
 // -----------
@@ -113,8 +107,7 @@ cvPolyDataSolid::cvPolyDataSolid( const cvPolyDataSolid& sm)
  * @brief Copy for cvSolidModel
  */
 
-int cvPolyDataSolid::Copy(const cvSolidModel& src )
-{
+int cvPolyDataSolid::Copy(const cvSolidModel &src) {
   cvPolyDataSolid *solidPtr;
 
   if (geom_ != nullptr) {
@@ -124,8 +117,8 @@ int cvPolyDataSolid::Copy(const cvSolidModel& src )
     return SV_ERROR;
   }
 
-  solidPtr = (cvPolyDataSolid *)( &src );
-  if ( solidPtr->geom_ == nullptr ) {
+  solidPtr = (cvPolyDataSolid *)(&src);
+  if (solidPtr->geom_ == nullptr) {
     return SV_OK;
   }
 
@@ -146,8 +139,7 @@ int cvPolyDataSolid::Copy(const cvSolidModel& src )
  * @return SV_OK if executed correctly
  */
 
-int cvPolyDataSolid::SetVtkPolyDataObject(vtkPolyData *newPolyData)
-{
+int cvPolyDataSolid::SetVtkPolyDataObject(vtkPolyData *newPolyData) {
   if (geom_ != nullptr) {
     geom_->Delete();
   }
@@ -160,11 +152,10 @@ int cvPolyDataSolid::SetVtkPolyDataObject(vtkPolyData *newPolyData)
   geom_->DeepCopy(cleaner->GetOutput());
   geom_->BuildLinks();
 
-  if (VtkUtils_PDCheckArrayName(geom_,1,"ModelFaceID") == SV_OK)
-  {
+  if (VtkUtils_PDCheckArrayName(geom_, 1, "ModelFaceID") == SV_OK) {
     int *faceIds;
-    int result = PlyDtaUtils_GetFaceIds( geom_, &numBoundaryRegions, &faceIds);
-    delete [] faceIds;
+    int result = PlyDtaUtils_GetFaceIds(geom_, &numBoundaryRegions, &faceIds);
+    delete[] faceIds;
   }
 
   return SV_OK;
@@ -174,8 +165,7 @@ int cvPolyDataSolid::SetVtkPolyDataObject(vtkPolyData *newPolyData)
 // Copy
 // ----
 
-cvSolidModel *cvPolyDataSolid::Copy() const
-{
+cvSolidModel *cvPolyDataSolid::Copy() const {
   cvPolyDataSolid *result = new cvPolyDataSolid(*this);
   return result;
 }
@@ -195,9 +185,8 @@ cvSolidModel *cvPolyDataSolid::Copy() const
  * @note PLY
  */
 
-int cvPolyDataSolid::ReadNative( char *filename )
-{
-  if ( geom_ != nullptr ) {
+int cvPolyDataSolid::ReadNative(char *filename) {
+  if (geom_ != nullptr) {
     return SV_ERROR;
   }
 
@@ -209,12 +198,12 @@ int cvPolyDataSolid::ReadNative( char *filename )
 
   geom_ = vtkPolyData::New();
 
-  if ( PlyDtaUtils_ReadNative( filename, geom_) != SV_OK) {
+  if (PlyDtaUtils_ReadNative(filename, geom_) != SV_OK) {
     return SV_ERROR;
   }
 
   vtkSmartPointer<vtkCleanPolyData> cleaner =
-    vtkSmartPointer<vtkCleanPolyData>::New();
+      vtkSmartPointer<vtkCleanPolyData>::New();
 
   cleaner->SetInputData(geom_);
   cleaner->Update();
@@ -224,7 +213,6 @@ int cvPolyDataSolid::ReadNative( char *filename )
 
   return SV_OK;
 }
-
 
 // -----------
 // WriteNative
@@ -237,20 +225,18 @@ int cvPolyDataSolid::ReadNative( char *filename )
  * or the write function does not return properly.
  */
 
-int cvPolyDataSolid::WriteNative( int file_version, char *filename ) const
-{
-  //Procdure calls PolyData Utils to write the file using vtkWriters
-  if ( geom_ == nullptr ) {
+int cvPolyDataSolid::WriteNative(int file_version, char *filename) const {
+  // Procdure calls PolyData Utils to write the file using vtkWriters
+  if (geom_ == nullptr) {
     return SV_ERROR;
   }
 
-  if (PlyDtaUtils_WriteNative(geom_, file_version, filename ) != SV_OK) {
+  if (PlyDtaUtils_WriteNative(geom_, file_version, filename) != SV_OK) {
     return SV_ERROR;
   }
 
   return SV_OK;
 }
-
 
 // -----------
 // GetPolyData
@@ -262,15 +248,14 @@ int cvPolyDataSolid::WriteNative( int file_version, char *filename ) const
  * @return *result: cvPolyData containing the member vtkPolyData
  */
 
-cvPolyData *cvPolyDataSolid::GetPolyData(int useMaxDist, double max_dist) const
-{
-  ///Procedure returns the current vtkPolyData member as a cvPolyData
+cvPolyData *cvPolyDataSolid::GetPolyData(int useMaxDist,
+                                         double max_dist) const {
+  /// Procedure returns the current vtkPolyData member as a cvPolyData
   cvPolyData *result;
 
   result = new cvPolyData(geom_);
   return result;
 }
-
 
 // ---------------
 // GetFacePolyData
@@ -283,23 +268,22 @@ cvPolyData *cvPolyDataSolid::GetPolyData(int useMaxDist, double max_dist) const
  * @return *result: cvPolyData containg the face vtkPolyData
  */
 
-cvPolyData *cvPolyDataSolid::GetFacePolyData(int faceid, int useMaxDist, double max_dist) const
-{
+cvPolyData *cvPolyDataSolid::GetFacePolyData(int faceid, int useMaxDist,
+                                             double max_dist) const {
   vtkPolyData *facepd = vtkPolyData::New();
   cvPolyData *result;
 
-  if (geom_ == nullptr ) {
+  if (geom_ == nullptr) {
     return nullptr;
   }
 
-  if (PlyDtaUtils_GetFacePolyData(geom_, &faceid, facepd) != SV_OK)
-  {
-   fprintf(stderr,"ERROR: Failed to get Face of PolyData");
+  if (PlyDtaUtils_GetFacePolyData(geom_, &faceid, facepd) != SV_OK) {
+    fprintf(stderr, "ERROR: Failed to get Face of PolyData");
     return SV_ERROR;
   }
 
-  //fprintf(stderr,"Check num Points: %d\n",facepd->GetNumberOfPoints());
-  //fprintf(stderr,"Check Polys: %d\n",facepd->GetNumberOfPolys());
+  // fprintf(stderr,"Check num Points: %d\n",facepd->GetNumberOfPoints());
+  // fprintf(stderr,"Check Polys: %d\n",facepd->GetNumberOfPolys());
 
   cvPolyData *tmpresult = new cvPolyData(facepd);
   facepd->Delete();
@@ -324,13 +308,12 @@ cvPolyData *cvPolyDataSolid::GetFacePolyData(int faceid, int useMaxDist, double 
  * properly
  */
 
-int cvPolyDataSolid::GetBoundaryFaces(double angle)
-{
-  if (geom_ == nullptr ) {
+int cvPolyDataSolid::GetBoundaryFaces(double angle) {
+  if (geom_ == nullptr) {
     return SV_ERROR;
   }
 
-  if (PlyDtaUtils_GetBoundaryFaces(geom_,angle,&numBoundaryRegions) != SV_OK)
+  if (PlyDtaUtils_GetBoundaryFaces(geom_, angle, &numBoundaryRegions) != SV_OK)
     return SV_ERROR;
 
   return SV_OK;
@@ -348,16 +331,16 @@ int cvPolyDataSolid::GetBoundaryFaces(double angle)
  * of faces is zero or faceIds don't exist
  */
 
-int cvPolyDataSolid::GetFaceIds(int *numFaces,int **faceIds)
-{
-  //Procedure calls PolyDataUtils to get the different faceId numbers extracted from GetBoundaryFaces
-  if ( geom_ == nullptr ) {
-      *numFaces = 0;
-      faceIds = nullptr;
-      return SV_OK;
+int cvPolyDataSolid::GetFaceIds(int *numFaces, int **faceIds) {
+  // Procedure calls PolyDataUtils to get the different faceId numbers extracted
+  // from GetBoundaryFaces
+  if (geom_ == nullptr) {
+    *numFaces = 0;
+    faceIds = nullptr;
+    return SV_OK;
   }
 
-  int result = PlyDtaUtils_GetFaceIds( geom_, &numBoundaryRegions, faceIds);
+  int result = PlyDtaUtils_GetFaceIds(geom_, &numBoundaryRegions, faceIds);
   *numFaces = numBoundaryRegions;
 
   return result;
@@ -367,30 +350,27 @@ int cvPolyDataSolid::GetFaceIds(int *numFaces,int **faceIds)
 // GetFaceAttribute
 // ----------------
 
-int cvPolyDataSolid::GetFaceAttribute(char *attr,int faceid, char **value)
-{
-  //Not sure if this procedure is needed currently
-  if ( geom_ == nullptr ) {
-      *value = nullptr;
-      return SV_ERROR;
+int cvPolyDataSolid::GetFaceAttribute(char *attr, int faceid, char **value) {
+  // Not sure if this procedure is needed currently
+  if (geom_ == nullptr) {
+    *value = nullptr;
+    return SV_ERROR;
   }
 
   *value = nullptr;
   return SV_ERROR;
 }
 
-
 // ----------------
 // SetFaceAttribute
 // ----------------
 
-int cvPolyDataSolid::SetFaceAttribute(char *attr,int faceid, char *value)
-{
-  //Not sure if this procedure is needed currently
+int cvPolyDataSolid::SetFaceAttribute(char *attr, int faceid, char *value) {
+  // Not sure if this procedure is needed currently
 
-  if ( geom_ == NULL ) {
-      *value = NULL;
-      return SV_ERROR;
+  if (geom_ == NULL) {
+    *value = NULL;
+    return SV_ERROR;
   }
 
   *value = NULL;
@@ -407,27 +387,25 @@ int cvPolyDataSolid::SetFaceAttribute(char *attr,int faceid, char *value)
  * or the function does not return properly.
  */
 
-int cvPolyDataSolid::DeleteRegion(int regionid)
-{
+int cvPolyDataSolid::DeleteRegion(int regionid) {
 
-  if ( geom_ == nullptr ) {
-      fprintf(stderr,"Solid must exist in order to delete regions\n");
-      return SV_ERROR;
+  if (geom_ == nullptr) {
+    fprintf(stderr, "Solid must exist in order to delete regions\n");
+    return SV_ERROR;
   }
   if (numBoundaryRegions == 0) {
-      fprintf(stderr,"Must have extracted boundaries in order to delete region\n");
-      return SV_ERROR;
-  }
-
-  if (PlyDtaUtils_DeleteRegion(geom_,&regionid) != SV_OK)
-  {
-    fprintf(stderr,"Error: Faces were not deleted correctly\n");
+    fprintf(stderr,
+            "Must have extracted boundaries in order to delete region\n");
     return SV_ERROR;
   }
 
-  //Must update the number of regions
-  numBoundaryRegions = numBoundaryRegions - 1;
+  if (PlyDtaUtils_DeleteRegion(geom_, &regionid) != SV_OK) {
+    fprintf(stderr, "Error: Faces were not deleted correctly\n");
+    return SV_ERROR;
+  }
 
+  // Must update the number of regions
+  numBoundaryRegions = numBoundaryRegions - 1;
 
   return SV_OK;
 }
@@ -443,27 +421,25 @@ int cvPolyDataSolid::DeleteRegion(int regionid)
  * correctly
  */
 
-int cvPolyDataSolid::Intersect( cvSolidModel *a, cvSolidModel *b,
-       		 SolidModel_SimplifyT st )
-{
-  //Geometry should be empty prior to boolean
-  if (geom_ != nullptr)
-  {
+int cvPolyDataSolid::Intersect(cvSolidModel *a, cvSolidModel *b,
+                               SolidModel_SimplifyT st) {
+  // Geometry should be empty prior to boolean
+  if (geom_ != nullptr) {
     return SV_ERROR;
   }
 
-  //Need both objects to create an intersection
+  // Need both objects to create an intersection
   if (a == nullptr)
     return SV_ERROR;
-  if (a->GetKernelT() != SM_KT_POLYDATA ) {
-    fprintf(stderr,"Model not of type POLYDATA\n");
+  if (a->GetKernelT() != SM_KT_POLYDATA) {
+    fprintf(stderr, "Model not of type POLYDATA\n");
     return SV_ERROR;
   }
 
   if (b == nullptr)
     return SV_ERROR;
-  if (b->GetKernelT() != SM_KT_POLYDATA ) {
-    fprintf(stderr,"Model not of type POLYDATA\n");
+  if (b->GetKernelT() != SM_KT_POLYDATA) {
+    fprintf(stderr, "Model not of type POLYDATA\n");
     return SV_ERROR;
   }
   vtkSVLoopBooleanPolyDataFilter *intersectPolyData;
@@ -471,29 +447,28 @@ int cvPolyDataSolid::Intersect( cvSolidModel *a, cvSolidModel *b,
   vtkPolyData *pd2;
 
   intersectPolyData = vtkSVLoopBooleanPolyDataFilter::New();
-  pd1 = (a->GetPolyData(0,0.))->GetVtkPolyData();
-  pd2 = (b->GetPolyData(0,0.))->GetVtkPolyData();;
+  pd1 = (a->GetPolyData(0, 0.))->GetVtkPolyData();
+  pd2 = (b->GetPolyData(0, 0.))->GetVtkPolyData();
+  ;
 
   intersectPolyData->SetOperationToIntersection();
 
-  intersectPolyData->SetInputData(0,pd1);
-  intersectPolyData->SetInputData(1,pd2);
+  intersectPolyData->SetInputData(0, pd1);
+  intersectPolyData->SetInputData(1, pd2);
   intersectPolyData->Update();
 
   vtkSmartPointer<vtkPolyDataNormals> normaler =
-    vtkSmartPointer<vtkPolyDataNormals>::New();
+      vtkSmartPointer<vtkPolyDataNormals>::New();
   normaler->SetInputData(intersectPolyData->GetOutput());
   normaler->Update();
 
-  //set output vtp to output from filter
+  // set output vtp to output from filter
   geom_ = vtkPolyData::New();
   geom_->DeepCopy(normaler->GetOutput());
 
   intersectPolyData->Delete();
 
   return SV_OK;
-
-
 }
 // ----------------
 // Union
@@ -506,26 +481,24 @@ int cvPolyDataSolid::Intersect( cvSolidModel *a, cvSolidModel *b,
  * correctly
  */
 
-int cvPolyDataSolid::Union( cvSolidModel *a, cvSolidModel *b,
-       		 SolidModel_SimplifyT st )
-{
-  //Geometry should be empty prior to boolean
-  if (geom_ != nullptr)
-  {
+int cvPolyDataSolid::Union(cvSolidModel *a, cvSolidModel *b,
+                           SolidModel_SimplifyT st) {
+  // Geometry should be empty prior to boolean
+  if (geom_ != nullptr) {
     return SV_ERROR;
   }
 
-  //Need both objects to create a union
+  // Need both objects to create a union
   if (a == nullptr)
     return SV_ERROR;
-  if (a->GetKernelT() != SM_KT_POLYDATA ) {
-    fprintf(stderr,"Model not of type POLYDATA\n");
+  if (a->GetKernelT() != SM_KT_POLYDATA) {
+    fprintf(stderr, "Model not of type POLYDATA\n");
     return SV_ERROR;
   }
   if (b == nullptr)
     return SV_ERROR;
-  if (b->GetKernelT() != SM_KT_POLYDATA ) {
-    fprintf(stderr,"Model not of type POLYDATA\n");
+  if (b->GetKernelT() != SM_KT_POLYDATA) {
+    fprintf(stderr, "Model not of type POLYDATA\n");
     return SV_ERROR;
   }
 
@@ -534,21 +507,21 @@ int cvPolyDataSolid::Union( cvSolidModel *a, cvSolidModel *b,
   vtkPolyData *pd2;
 
   unionPolyData = vtkSVLoopBooleanPolyDataFilter::New();
-  pd1 = (a->GetPolyData(0,0.))->GetVtkPolyData();
-  pd2 = (b->GetPolyData(0,0.))->GetVtkPolyData();
+  pd1 = (a->GetPolyData(0, 0.))->GetVtkPolyData();
+  pd2 = (b->GetPolyData(0, 0.))->GetVtkPolyData();
 
   unionPolyData->SetOperationToUnion();
 
-  unionPolyData->SetInputData(0,pd1);
-  unionPolyData->SetInputData(1,pd2);
+  unionPolyData->SetInputData(0, pd1);
+  unionPolyData->SetInputData(1, pd2);
   unionPolyData->Update();
 
   vtkSmartPointer<vtkPolyDataNormals> normaler =
-    vtkSmartPointer<vtkPolyDataNormals>::New();
+      vtkSmartPointer<vtkPolyDataNormals>::New();
   normaler->SetInputData(unionPolyData->GetOutput());
   normaler->Update();
 
-  //set output vtp to output from filter
+  // set output vtp to output from filter
   geom_ = vtkPolyData::New();
   geom_->DeepCopy(normaler->GetOutput());
 
@@ -568,27 +541,25 @@ int cvPolyDataSolid::Union( cvSolidModel *a, cvSolidModel *b,
  * correctly
  */
 
-int cvPolyDataSolid::Subtract( cvSolidModel *a, cvSolidModel *b,
-       		SolidModel_SimplifyT st )
-{
-  //Geometry should be empty prior to boolean
-  if (geom_ != nullptr)
-  {
+int cvPolyDataSolid::Subtract(cvSolidModel *a, cvSolidModel *b,
+                              SolidModel_SimplifyT st) {
+  // Geometry should be empty prior to boolean
+  if (geom_ != nullptr) {
     return SV_ERROR;
   }
 
-  //Need both objects to create a subtraction
+  // Need both objects to create a subtraction
   if (a == nullptr)
     return SV_ERROR;
-  if (a->GetKernelT() != SM_KT_POLYDATA ) {
-    fprintf(stderr,"Model not of type POLYDATA\n");
+  if (a->GetKernelT() != SM_KT_POLYDATA) {
+    fprintf(stderr, "Model not of type POLYDATA\n");
     return SV_ERROR;
   }
 
   if (b == nullptr)
     return SV_ERROR;
-  if (b->GetKernelT() != SM_KT_POLYDATA ) {
-    fprintf(stderr,"Model not of type POLYDATA\n");
+  if (b->GetKernelT() != SM_KT_POLYDATA) {
+    fprintf(stderr, "Model not of type POLYDATA\n");
     return SV_ERROR;
   }
   vtkSVLoopBooleanPolyDataFilter *subtractPolyData;
@@ -596,21 +567,22 @@ int cvPolyDataSolid::Subtract( cvSolidModel *a, cvSolidModel *b,
   vtkPolyData *pd2;
 
   subtractPolyData = vtkSVLoopBooleanPolyDataFilter::New();
-  pd1 = (a->GetPolyData(0,0.))->GetVtkPolyData();
-  pd2 = (b->GetPolyData(0,0.))->GetVtkPolyData();;
+  pd1 = (a->GetPolyData(0, 0.))->GetVtkPolyData();
+  pd2 = (b->GetPolyData(0, 0.))->GetVtkPolyData();
+  ;
 
   subtractPolyData->SetOperationToDifference();
 
-  subtractPolyData->SetInputData(0,pd1);
-  subtractPolyData->SetInputData(1,pd2);
+  subtractPolyData->SetInputData(0, pd1);
+  subtractPolyData->SetInputData(1, pd2);
   subtractPolyData->Update();
 
   vtkSmartPointer<vtkPolyDataNormals> normaler =
-    vtkSmartPointer<vtkPolyDataNormals>::New();
+      vtkSmartPointer<vtkPolyDataNormals>::New();
   normaler->SetInputData(subtractPolyData->GetOutput());
   normaler->Update();
 
-  //set output vtp to output from filter
+  // set output vtp to output from filter
   geom_ = vtkPolyData::New();
   geom_->DeepCopy(normaler->GetOutput());
 
@@ -629,21 +601,16 @@ int cvPolyDataSolid::Subtract( cvSolidModel *a, cvSolidModel *b,
  * @return SV_OK if executed correctly, SV_ERROR if the geometry is nullptr
  * or the function does not return properly.
  */
-int cvPolyDataSolid::DeleteFaces( int numfaces, int *faces)
-{
-  if (geom_ == nullptr)
-  {
-    fprintf(stderr,"Need PolyData to perform operation\n");
+int cvPolyDataSolid::DeleteFaces(int numfaces, int *faces) {
+  if (geom_ == nullptr) {
+    fprintf(stderr, "Need PolyData to perform operation\n");
     return SV_ERROR;
   }
 
-  if (PlyDtaUtils_DeleteCells(geom_,&numfaces,faces) != SV_OK)
-  {
-    fprintf(stderr,"Error: Faces were not deleted correctly\n");
+  if (PlyDtaUtils_DeleteCells(geom_, &numfaces, faces) != SV_OK) {
+    fprintf(stderr, "Error: Faces were not deleted correctly\n");
     return SV_ERROR;
   }
-
-
 
   return SV_OK;
 }
@@ -658,41 +625,34 @@ int cvPolyDataSolid::DeleteFaces( int numfaces, int *faces)
  * @return SV_OK if executed correctly, SV_ERROR if the geometry is nullptr
  * or the function does not return properly.
  */
-int cvPolyDataSolid::CombineFaces( int targetface, int loseface)
-{
-  if (geom_ == nullptr)
-  {
-    fprintf(stderr,"Need PolyData to perform operation\n");
+int cvPolyDataSolid::CombineFaces(int targetface, int loseface) {
+  if (geom_ == nullptr) {
+    fprintf(stderr, "Need PolyData to perform operation\n");
     return SV_ERROR;
   }
 
-  if (PlyDtaUtils_CombineFaces(geom_,&targetface,&loseface) != SV_OK)
-  {
-    fprintf(stderr,"Error: Faces were not combined correctly\n");
+  if (PlyDtaUtils_CombineFaces(geom_, &targetface, &loseface) != SV_OK) {
+    fprintf(stderr, "Error: Faces were not combined correctly\n");
     return SV_ERROR;
   }
 
-  //Must update the number of regions
+  // Must update the number of regions
   numBoundaryRegions = numBoundaryRegions - 1;
 
   return SV_OK;
 }
 
-int cvPolyDataSolid::RemeshFace(int numfaces,int *excludedFaces,double size)
-{
+int cvPolyDataSolid::RemeshFace(int numfaces, int *excludedFaces, double size) {
 #ifdef SV_USE_VMTK
-  if (geom_ == nullptr)
-  {
-    fprintf(stderr,"Need PolyData to perform operation\n");
+  if (geom_ == nullptr) {
+    fprintf(stderr, "Need PolyData to perform operation\n");
     return SV_ERROR;
   }
 
   int i;
-  vtkSmartPointer<vtkIdList> excluded =
-    vtkSmartPointer<vtkIdList>::New();
+  vtkSmartPointer<vtkIdList> excluded = vtkSmartPointer<vtkIdList>::New();
 
-  for (i = 0; i< numfaces; i++)
-  {
+  for (i = 0; i < numfaces; i++) {
     excluded->InsertNextId(excludedFaces[i]);
   }
 
@@ -704,18 +664,17 @@ int cvPolyDataSolid::RemeshFace(int numfaces,int *excludedFaces,double size)
   int useSizeFunction = 0;
   std::string markerListName = "ModelFaceID";
 
-  if (VMTKUtils_SurfaceRemeshing(geom_,size,meshcaps,preserveedges,
-	trianglesplitfactor,collapseanglethreshold,excluded,
-	markerListName,useSizeFunction,nullptr) != SV_OK)
-  {
-    fprintf(stderr,"Issue while remeshing surface\n");
+  if (VMTKUtils_SurfaceRemeshing(geom_, size, meshcaps, preserveedges,
+                                 trianglesplitfactor, collapseanglethreshold,
+                                 excluded, markerListName, useSizeFunction,
+                                 nullptr) != SV_OK) {
+    fprintf(stderr, "Issue while remeshing surface\n");
     return SV_ERROR;
   }
 
-
   return SV_OK;
 #else
-  fprintf(stderr,"Must have VMTK to be able to remesh caps\n");
+  fprintf(stderr, "Must have VMTK to be able to remesh caps\n");
   return SV_ERROR;
 #endif
 }
@@ -730,9 +689,8 @@ int cvPolyDataSolid::RemeshFace(int numfaces,int *excludedFaces,double size)
  * @return *result: a box is created
  */
 
-int cvPolyDataSolid::MakeBox3d(double dims[], double ctr[])
-{
-  if ( geom_ != nullptr ) {
+int cvPolyDataSolid::MakeBox3d(double dims[], double ctr[]) {
+  if (geom_ != nullptr) {
     return SV_ERROR;
   }
   geom_ = vtkPolyData::New();
@@ -745,7 +703,7 @@ int cvPolyDataSolid::MakeBox3d(double dims[], double ctr[])
   cube->Update();
 
   vtkSmartPointer<vtkTriangleFilter> triangulator =
-    vtkSmartPointer<vtkTriangleFilter>::New();
+      vtkSmartPointer<vtkTriangleFilter>::New();
   triangulator->SetInputData(cube->GetOutput());
   triangulator->Update();
 
@@ -764,15 +722,14 @@ int cvPolyDataSolid::MakeBox3d(double dims[], double ctr[])
  * @return *result a sphere
  */
 
-int cvPolyDataSolid::MakeSphere(double r, double ctr[])
-{
-  if ( geom_ != nullptr ) {
+int cvPolyDataSolid::MakeSphere(double r, double ctr[]) {
+  if (geom_ != nullptr) {
     return SV_ERROR;
   }
   geom_ = vtkPolyData::New();
 
   vtkSmartPointer<vtkSphereSource> sphere =
-    vtkSmartPointer<vtkSphereSource>::New();
+      vtkSmartPointer<vtkSphereSource>::New();
   sphere->SetCenter(ctr[0], ctr[1], ctr[2]);
   sphere->SetRadius(r);
   sphere->SetThetaResolution(50);
@@ -780,7 +737,7 @@ int cvPolyDataSolid::MakeSphere(double r, double ctr[])
   sphere->Update();
 
   vtkSmartPointer<vtkTriangleFilter> triangulator =
-    vtkSmartPointer<vtkTriangleFilter>::New();
+      vtkSmartPointer<vtkTriangleFilter>::New();
   triangulator->SetInputData(sphere->GetOutput());
   triangulator->Update();
 
@@ -796,50 +753,54 @@ int cvPolyDataSolid::MakeSphere(double r, double ctr[])
 // Create a cylinder aligned with an axis.
 //
 // A VTK cylinder is by default oriented along the vector [0, 1, 0].
-// The cylinder is rotated by the angle between [0, 1, 0] and axis about 
-// the vector [0, 1, 0] x axis.  
+// The cylinder is rotated by the angle between [0, 1, 0] and axis about
+// the vector [0, 1, 0] x axis.
 //
 // Arguments:
 //   r: Cylinder radius.
-//   length: Cylinder length. 
-//   center: Cylinder center. 
-//   axis: Cylinder axis. 
+//   length: Cylinder length.
+//   center: Cylinder center.
+//   axis: Cylinder axis.
 //
-int cvPolyDataSolid::MakeCylinder(double r, double length, double center[3], double axis[3] )
-{
-  if ( geom_ != nullptr ) {
+int cvPolyDataSolid::MakeCylinder(double r, double length, double center[3],
+                                  double axis[3]) {
+  if (geom_ != nullptr) {
     return SV_ERROR;
   }
   geom_ = vtkPolyData::New();
 
   // Create a cylinder oriented along [0.0, 1.0, 0.0].
-  vtkSmartPointer<vtkCylinderSource> cylinder = vtkSmartPointer<vtkCylinderSource>::New();
-  cylinder->SetCenter(0.0,0.0,0.0);
+  vtkSmartPointer<vtkCylinderSource> cylinder =
+      vtkSmartPointer<vtkCylinderSource>::New();
+  cylinder->SetCenter(0.0, 0.0, 0.0);
   cylinder->SetHeight(length);
   cylinder->SetRadius(r);
   cylinder->SetResolution(50);
   cylinder->Update();
 
-  // Define the transformation rotating the default cylinder 
+  // Define the transformation rotating the default cylinder
   // to the given axis.
-  double vec[3] = {0.0, 1.0, 0.0}; 
+  double vec[3] = {0.0, 1.0, 0.0};
   double rotateAxis[3], tmpCross[3];
   vtkMath::Cross(vec, axis, rotateAxis);
   vtkMath::Cross(vec, axis, tmpCross);
-  auto radangle = acos(vtkMath::Dot(axis,vec));
+  auto radangle = acos(vtkMath::Dot(axis, vec));
   auto degangle = vtkMath::DegreesFromRadians(radangle);
-  vtkSmartPointer<vtkTransform> transformer = vtkSmartPointer<vtkTransform>::New();
-  transformer->Translate(center[0],center[1],center[2]);
+  vtkSmartPointer<vtkTransform> transformer =
+      vtkSmartPointer<vtkTransform>::New();
+  transformer->Translate(center[0], center[1], center[2]);
   transformer->RotateWXYZ(degangle, rotateAxis);
 
   // Transform the cylinder geometry.
-  vtkSmartPointer<vtkTransformPolyDataFilter> polyDataTransformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  vtkSmartPointer<vtkTransformPolyDataFilter> polyDataTransformer =
+      vtkSmartPointer<vtkTransformPolyDataFilter>::New();
   polyDataTransformer->SetInputData(cylinder->GetOutput());
   polyDataTransformer->SetTransform(transformer);
   polyDataTransformer->Update();
 
   // Get the transformed cylinder geometry.
-  vtkSmartPointer<vtkTriangleFilter> triangulator = vtkSmartPointer<vtkTriangleFilter>::New();
+  vtkSmartPointer<vtkTriangleFilter> triangulator =
+      vtkSmartPointer<vtkTriangleFilter>::New();
   triangulator->SetInputData(polyDataTransformer->GetOutput());
   triangulator->Update();
 
@@ -847,4 +808,3 @@ int cvPolyDataSolid::MakeCylinder(double r, double length, double center[3], dou
 
   return SV_OK;
 }
-

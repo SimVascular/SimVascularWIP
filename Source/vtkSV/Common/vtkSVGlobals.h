@@ -46,7 +46,7 @@
 #include "vtkSmartPointer.h"
 
 #ifndef vtkNew
-#define vtkNew(type,name) \
+#define vtkNew(type, name)                                                     \
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 #endif
 
@@ -79,18 +79,15 @@
 #endif
 
 /// \brief directions of nodes in graph simplification
-typedef enum SV_CUBE_DIRECTIONS
-{
+typedef enum SV_CUBE_DIRECTIONS {
   RIGHT = 0,
   BACK,
   LEFT,
   FRONT,
-}
-SV_DIRECTIONS;
+} SV_DIRECTIONS;
 
 /// \brief possible cube types
-typedef enum SV_CUBE_END_TYPES
-{
+typedef enum SV_CUBE_END_TYPES {
   NONE = 0,
   VERT_WEDGE,
   HORZ_WEDGE,
@@ -103,12 +100,10 @@ typedef enum SV_CUBE_END_TYPES
   S_TET_2,
   S_TET_3,
   NOTHANDLED
-}
-SV_END_TYPES;
+} SV_END_TYPES;
 
 /// \brief possible split types
-typedef enum SV_CUBE_SPLIT_TYPE
-{
+typedef enum SV_CUBE_SPLIT_TYPE {
   ZERO = 0,
   UNO,
   BI,
@@ -116,31 +111,29 @@ typedef enum SV_CUBE_SPLIT_TYPE
   QUAD,
   PENT,
   TOOMANY
-}
-SV_SPLIT_TYPES;
+} SV_SPLIT_TYPES;
 
-/** \brief Data structure to contain regions of cell scalar labels on a polydata surface.
- * Typically used with clustering algorithms, this data structure allows quick
- * access to the cells in the cluster and the points on the edges of the cluster.
+/** \brief Data structure to contain regions of cell scalar labels on a polydata
+ * surface. Typically used with clustering algorithms, this data structure
+ * allows quick access to the cells in the cluster and the points on the edges
+ * of the cluster.
  */
-struct Region
-{
+struct Region {
   int Index;
   int IndexCluster;
 
   int NumberOfCorners;
   std::vector<int> CornerPoints;
 
-  std::vector<std::vector<int> > BoundaryEdges;
+  std::vector<std::vector<int>> BoundaryEdges;
 
   int NumberOfElements;
   std::vector<int> Elements;
-
 };
 
-/** \brief A small data structure to contain 3D points in a std::vector or list. */
-struct XYZ
-{
+/** \brief A small data structure to contain 3D points in a std::vector or list.
+ */
+struct XYZ {
   double x;
   double y;
   double z;

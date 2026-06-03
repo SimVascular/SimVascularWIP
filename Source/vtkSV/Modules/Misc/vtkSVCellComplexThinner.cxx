@@ -39,8 +39,8 @@
 #include "vtkSmartPointer.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
 
-#include "vtkSVGlobals.h"
 #include "vtkSVGeneralUtils.h"
+#include "vtkSVGlobals.h"
 
 // ----------------------
 // StandardNewMacro
@@ -50,8 +50,7 @@ vtkStandardNewMacro(vtkSVCellComplexThinner);
 // ----------------------
 // Constructor
 // ----------------------
-vtkSVCellComplexThinner::vtkSVCellComplexThinner()
-{
+vtkSVCellComplexThinner::vtkSVCellComplexThinner() {
   this->InputEdgePd = nullptr;
   this->OutputEdgePd = vtkPolyData::New();
 
@@ -64,18 +63,14 @@ vtkSVCellComplexThinner::vtkSVCellComplexThinner()
 // ----------------------
 // Destructor
 // ----------------------
-vtkSVCellComplexThinner::~vtkSVCellComplexThinner()
-{
-  if (this->OutputEdgePd != nullptr)
-  {
+vtkSVCellComplexThinner::~vtkSVCellComplexThinner() {
+  if (this->OutputEdgePd != nullptr) {
     this->OutputEdgePd->Delete();
   }
-  if (this->WorkTriPd != nullptr)
-  {
+  if (this->WorkTriPd != nullptr) {
     this->WorkTriPd->Delete();
   }
-  if (this->WorkEdgePd != nullptr)
-  {
+  if (this->WorkEdgePd != nullptr) {
     this->WorkEdgePd->Delete();
   }
 }
@@ -83,11 +78,9 @@ vtkSVCellComplexThinner::~vtkSVCellComplexThinner()
 // ----------------------
 // RequestData
 // ----------------------
-int vtkSVCellComplexThinner::RequestData(
-                                          vtkInformation *vtkNotUsed(request),
-    vtkInformationVector **inputVector,
-    vtkInformationVector *outputVector)
-{
+int vtkSVCellComplexThinner::RequestData(vtkInformation *vtkNotUsed(request),
+                                         vtkInformationVector **inputVector,
+                                         vtkInformationVector *outputVector) {
   // get the input and output
   vtkPolyData *input = vtkPolyData::GetData(inputVector[0]);
   vtkPolyData *output = vtkPolyData::GetData(outputVector);
@@ -95,16 +88,14 @@ int vtkSVCellComplexThinner::RequestData(
   this->WorkTriPd->DeepCopy(input);
 
   // Prep work for filter
-  if (this->PrepFilter() != SV_OK)
-  {
+  if (this->PrepFilter() != SV_OK) {
     vtkErrorMacro("Prep of filter failed");
     this->SetErrorCode(vtkErrorCode::UserError + 1);
     return SV_ERROR;
   }
 
   // Run the filter
-  if (this->RunFilter() != SV_OK)
-  {
+  if (this->RunFilter() != SV_OK) {
     vtkErrorMacro("Filter failed");
     this->SetErrorCode(vtkErrorCode::UserError + 2);
     return SV_ERROR;
@@ -119,30 +110,24 @@ int vtkSVCellComplexThinner::RequestData(
 // ----------------------
 // PrepFilter
 // ----------------------
-int vtkSVCellComplexThinner::PrepFilter()
-{
-  if (this->InputEdgePd != nullptr)
-  {
+int vtkSVCellComplexThinner::PrepFilter() {
+  if (this->InputEdgePd != nullptr) {
     this->WorkEdgePd->DeepCopy(this->InputEdgePd);
-  }
-  else
-  {
+  } else {
     vtkSVGeneralUtils::GetEdgePolyData(this->WorkTriPd, this->WorkEdgePd);
   }
 
-  if (this->PreserveEdgeCellsArrayName != nullptr)
-  {
-    if (vtkSVGeneralUtils::CheckArrayExists(this->WorkEdgePd, 1, this->PreserveEdgeCellsArrayName) != SV_OK)
-    {
-      vtkErrorMacro("Preserve edges cells array name given, but array not present on the edge pd");
+  if (this->PreserveEdgeCellsArrayName != nullptr) {
+    if (vtkSVGeneralUtils::CheckArrayExists(
+            this->WorkEdgePd, 1, this->PreserveEdgeCellsArrayName) != SV_OK) {
+      vtkErrorMacro("Preserve edges cells array name given, but array not "
+                    "present on the edge pd");
       return SV_ERROR;
     }
   }
 
-  for (int i=0; i<this->WorkTriPd->GetNumberOfCells(); i++)
-  {
-    if (this->WorkTriPd->GetCellType(i) != VTK_TRIANGLE)
-    {
+  for (int i = 0; i < this->WorkTriPd->GetNumberOfCells(); i++) {
+    if (this->WorkTriPd->GetCellType(i) != VTK_TRIANGLE) {
       vtkErrorMacro("Non triangular element found on input polydata");
       return SV_ERROR;
     }
@@ -154,16 +139,15 @@ int vtkSVCellComplexThinner::PrepFilter()
 // ----------------------
 // RunFilter
 // ----------------------
-int vtkSVCellComplexThinner::RunFilter()
-{
+int vtkSVCellComplexThinner::RunFilter() {
   int dontTouch = 0;
   if (this->PreserveEdgeCellsArrayName)
     dontTouch = 1;
 
-  int numTriCells  = this->WorkTriPd->GetNumberOfCells();
-  int numTriPts    = this->WorkTriPd->GetNumberOfPoints();
+  int numTriCells = this->WorkTriPd->GetNumberOfCells();
+  int numTriPts = this->WorkTriPd->GetNumberOfPoints();
   int numEdgeCells = this->WorkEdgePd->GetNumberOfCells();
-  int numEdgePts   = this->WorkEdgePd->GetNumberOfPoints();
+  int numEdgePts = this->WorkEdgePd->GetNumberOfPoints();
 
   std::vector<int> deletedCell(numTriCells, 0);
   std::vector<int> deletedEdge(numEdgeCells, 0);
@@ -213,120 +197,102 @@ int vtkSVCellComplexThinner::RunFilter()
   int cellId;
   int delEdge;
   int isMedEdge;
-  int numDeletedNeighbors     = 0;
-  int numNotDeletedNeighbors  = 0;
+  int numDeletedNeighbors = 0;
+  int numNotDeletedNeighbors = 0;
   int numNotDeletedNeighbors0 = 0;
   int numNotDeletedNeighbors1 = 0;
 
   // Set up connectivity matrices for tri pd
-  std::vector<std::vector<int> > triCellPoints(numTriCells);
-  for (int i=0; i<numTriCells; i++)
-  {
+  std::vector<std::vector<int>> triCellPoints(numTriCells);
+  for (int i = 0; i < numTriCells; i++) {
     this->WorkTriPd->GetCellPoints(i, npts, pts);
-    for (int j=0; j<npts; j++)
+    for (int j = 0; j < npts; j++)
       triCellPoints[i].push_back(pts[j]);
   }
 
   // Set up connectivity matrices for edge pd
-  std::vector<std::vector<int> > edgeCellPoints(numEdgeCells);
-  std::vector<std::vector<int> > edgePointCells(numEdgePts);
-  for (int i=0; i<numEdgeCells; i++)
-  {
+  std::vector<std::vector<int>> edgeCellPoints(numEdgeCells);
+  std::vector<std::vector<int>> edgePointCells(numEdgePts);
+  for (int i = 0; i < numEdgeCells; i++) {
     this->WorkEdgePd->GetCellPoints(i, npts, pts);
-    for (int j=0; j<npts; j++)
+    for (int j = 0; j < npts; j++)
       edgeCellPoints[i].push_back(pts[j]);
   }
 
-  for (int i=0; i<numEdgePts; i++)
-  {
+  for (int i = 0; i < numEdgePts; i++) {
     this->WorkEdgePd->GetPointCells(i, ptCellIds);
-    for (int j=0; j<ptCellIds->GetNumberOfIds(); j++)
+    for (int j = 0; j < ptCellIds->GetNumberOfIds(); j++)
       edgePointCells[i].push_back(ptCellIds->GetId(j));
   }
 
-  while ( nDelTris > 0 || nDelEdges > 0 || iter == 0 )
-  {
+  while (nDelTris > 0 || nDelEdges > 0 || iter == 0) {
     tmpDeletedCells.clear();
     tmpDeletedEdges.clear();
     // --------------------------------------------------------------
     // Do edges before
     nDelEdges = 0;
-    for (int i=0; i<numEdgeCells; i++)
-    {
-      if (!deletedEdge[i])
-      {
+    for (int i = 0; i < numEdgeCells; i++) {
+      if (!deletedEdge[i]) {
         npts = edgeCellPoints[i].size();
 
-        if (npts == 2)
-        {
+        if (npts == 2) {
           ptId0 = edgeCellPoints[i][0];
           ptId1 = edgeCellPoints[i][1];
 
           numNotDeletedNeighbors0 = 0;
           numNotDeletedNeighbors1 = 0;
-          for (int j=0; j<edgePointCells[ptId0].size(); j++)
-          {
+          for (int j = 0; j < edgePointCells[ptId0].size(); j++) {
             cellId = edgePointCells[ptId0][j];
             if (!deletedEdge[cellId])
               numNotDeletedNeighbors0++;
           }
-          for (int j=0; j<edgePointCells[ptId1].size(); j++)
-          {
+          for (int j = 0; j < edgePointCells[ptId1].size(); j++) {
             cellId = edgePointCells[ptId1][j];
             if (!deletedEdge[cellId])
               numNotDeletedNeighbors1++;
           }
 
-          if (numNotDeletedNeighbors0 == 1 ||
-              numNotDeletedNeighbors1 == 1)
-          {
+          if (numNotDeletedNeighbors0 == 1 || numNotDeletedNeighbors1 == 1) {
             delEdge = 1;
-            if (dontTouch)
-            {
-              isMedEdge = this->WorkEdgePd->GetCellData()->GetArray(this->PreserveEdgeCellsArrayName)->GetTuple1(i);
-              if (isMedEdge == 1)
-              {
+            if (dontTouch) {
+              isMedEdge = this->WorkEdgePd->GetCellData()
+                              ->GetArray(this->PreserveEdgeCellsArrayName)
+                              ->GetTuple1(i);
+              if (isMedEdge == 1) {
                 delEdge = 0;
               }
             }
 
-            if (delEdge)
-            {
+            if (delEdge) {
               nDelEdges++;
               tmpDeletedEdges.push_back(i);
               edgeRemoveIterArray->SetTuple1(i, iter);
             }
           }
-
         }
       }
     }
     // --------------------------------------------------------------
     nDelTris = 0;
 
-    for (int i=0; i<numTriCells; i++)
-    {
-      if (!deletedCell[i])
-      {
+    for (int i = 0; i < numTriCells; i++) {
+      if (!deletedCell[i]) {
         npts = triCellPoints[i].size();
 
-        if (npts == 3)
-        {
+        if (npts == 3) {
           openEdges->Reset();
-          for (int j=0; j<npts; j++)
-          {
+          for (int j = 0; j < npts; j++) {
             ptId0 = triCellPoints[i][j];
-            ptId1 = triCellPoints[i][(j+1)%npts];
+            ptId1 = triCellPoints[i][(j + 1) % npts];
 
-            this->WorkTriPd->GetCellEdgeNeighbors(i, ptId0, ptId1, cellNeighborIds);
+            this->WorkTriPd->GetCellEdgeNeighbors(i, ptId0, ptId1,
+                                                  cellNeighborIds);
 
             if (cellNeighborIds->GetNumberOfIds() == 0)
               openEdges->InsertNextId(j);
-            else
-            {
+            else {
               numDeletedNeighbors = 0;
-              for (int k=0; k<cellNeighborIds->GetNumberOfIds(); k++)
-              {
+              for (int k = 0; k < cellNeighborIds->GetNumberOfIds(); k++) {
                 if (deletedCell[cellNeighborIds->GetId(k)])
                   numDeletedNeighbors++;
               }
@@ -334,8 +300,7 @@ int vtkSVCellComplexThinner::RunFilter()
                 openEdges->InsertNextId(j);
             }
           }
-          if (openEdges->GetNumberOfIds() == 3)
-          {
+          if (openEdges->GetNumberOfIds() == 3) {
             nDelTris++;
             tmpDeletedCells.push_back(i);
             removeIterArray->SetTuple1(i, iter);
@@ -352,24 +317,21 @@ int vtkSVCellComplexThinner::RunFilter()
 
             this->WorkEdgePd->GetCellNeighbors(-1, pointIds, edgeCell);
 
-            if (edgeCell->GetNumberOfIds() != 1)
-            {
-              vtkWarningMacro("Number of cells is not 1, it is " << edgeCell->GetNumberOfIds());
-            }
-            else
-            {
+            if (edgeCell->GetNumberOfIds() != 1) {
+              vtkWarningMacro("Number of cells is not 1, it is "
+                              << edgeCell->GetNumberOfIds());
+            } else {
               delEdge = 1;
-              if (dontTouch)
-              {
-                isMedEdge = this->WorkEdgePd->GetCellData()->GetArray(this->PreserveEdgeCellsArrayName)->GetTuple1(edgeCell->GetId(0));
-                if (isMedEdge == 1)
-                {
+              if (dontTouch) {
+                isMedEdge = this->WorkEdgePd->GetCellData()
+                                ->GetArray(this->PreserveEdgeCellsArrayName)
+                                ->GetTuple1(edgeCell->GetId(0));
+                if (isMedEdge == 1) {
                   delEdge = 0;
                 }
               }
 
-              if (delEdge)
-              {
+              if (delEdge) {
                 nDelEdges++;
                 tmpDeletedEdges.push_back(edgeCell->GetId(0));
                 edgeRemoveIterArray->SetTuple1(edgeCell->GetId(0), iter);
@@ -377,19 +339,16 @@ int vtkSVCellComplexThinner::RunFilter()
             }
 
             // --------------------------------------------------------------
-          }
-          else if (openEdges->GetNumberOfIds() == 2)
-          {
+          } else if (openEdges->GetNumberOfIds() == 2) {
             nDelTris++;
-            for (int j=0; j<npts; j++)
-            {
+            for (int j = 0; j < npts; j++) {
               if (j != openEdges->GetId(0) && j != openEdges->GetId(1))
                 loc = j;
             }
 
             ptId0 = triCellPoints[i][loc];
-            ptId1 = triCellPoints[i][(loc+1)%npts];
-            ptId2 = triCellPoints[i][(loc+2)%npts];
+            ptId1 = triCellPoints[i][(loc + 1) % npts];
+            ptId2 = triCellPoints[i][(loc + 2) % npts];
 
             tmpDeletedCells.push_back(i);
             removeIterArray->SetTuple1(i, iter);
@@ -403,41 +362,35 @@ int vtkSVCellComplexThinner::RunFilter()
 
             this->WorkEdgePd->GetCellNeighbors(-1, pointIds, edgeCell);
 
-            if (edgeCell->GetNumberOfIds() != 1)
-            {
-              vtkWarningMacro("Number of cells is not 1, it is " << edgeCell->GetNumberOfIds());
-            }
-            else
-            {
+            if (edgeCell->GetNumberOfIds() != 1) {
+              vtkWarningMacro("Number of cells is not 1, it is "
+                              << edgeCell->GetNumberOfIds());
+            } else {
               delEdge = 1;
-              if (dontTouch)
-              {
-                isMedEdge = this->WorkEdgePd->GetCellData()->GetArray(this->PreserveEdgeCellsArrayName)->GetTuple1(edgeCell->GetId(0));
-                if (isMedEdge == 1)
-                {
+              if (dontTouch) {
+                isMedEdge = this->WorkEdgePd->GetCellData()
+                                ->GetArray(this->PreserveEdgeCellsArrayName)
+                                ->GetTuple1(edgeCell->GetId(0));
+                if (isMedEdge == 1) {
                   delEdge = 0;
                 }
               }
 
-              if (delEdge)
-              {
+              if (delEdge) {
                 nDelEdges++;
                 tmpDeletedEdges.push_back(edgeCell->GetId(0));
                 edgeRemoveIterArray->SetTuple1(edgeCell->GetId(0), iter);
               }
             }
 
-
             // --------------------------------------------------------------
-          }
-          else if (openEdges->GetNumberOfIds() == 1)
-          {
+          } else if (openEdges->GetNumberOfIds() == 1) {
             nDelTris++;
             loc = openEdges->GetId(0);
 
             ptId0 = triCellPoints[i][loc];
-            ptId1 = triCellPoints[i][(loc+1)%npts];
-            ptId2 = triCellPoints[i][(loc+2)%npts];
+            ptId1 = triCellPoints[i][(loc + 1) % npts];
+            ptId2 = triCellPoints[i][(loc + 2) % npts];
 
             tmpDeletedCells.push_back(i);
             removeIterArray->SetTuple1(i, iter);
@@ -451,24 +404,21 @@ int vtkSVCellComplexThinner::RunFilter()
 
             this->WorkEdgePd->GetCellNeighbors(-1, pointIds, edgeCell);
 
-            if (edgeCell->GetNumberOfIds() != 1)
-            {
-              vtkWarningMacro("Number of cells is not 1, it is " << edgeCell->GetNumberOfIds());
-            }
-            else
-            {
+            if (edgeCell->GetNumberOfIds() != 1) {
+              vtkWarningMacro("Number of cells is not 1, it is "
+                              << edgeCell->GetNumberOfIds());
+            } else {
               delEdge = 1;
-              if (dontTouch)
-              {
-                isMedEdge = this->WorkEdgePd->GetCellData()->GetArray(this->PreserveEdgeCellsArrayName)->GetTuple1(edgeCell->GetId(0));
-                if (isMedEdge == 1)
-                {
+              if (dontTouch) {
+                isMedEdge = this->WorkEdgePd->GetCellData()
+                                ->GetArray(this->PreserveEdgeCellsArrayName)
+                                ->GetTuple1(edgeCell->GetId(0));
+                if (isMedEdge == 1) {
                   delEdge = 0;
                 }
               }
 
-              if (delEdge)
-              {
+              if (delEdge) {
                 nDelEdges++;
                 tmpDeletedEdges.push_back(edgeCell->GetId(0));
                 edgeRemoveIterArray->SetTuple1(edgeCell->GetId(0), iter);
@@ -480,27 +430,25 @@ int vtkSVCellComplexThinner::RunFilter()
         }
       }
     }
-    vtkDebugMacro("Iteration " << iter << ", Number of triangles removed: " << nDelTris << ", Number of edges removed: " << nDelEdges);
+    vtkDebugMacro("Iteration " << iter
+                               << ", Number of triangles removed: " << nDelTris
+                               << ", Number of edges removed: " << nDelEdges);
 
-    for (int i=0; i<tmpDeletedCells.size(); i++)
+    for (int i = 0; i < tmpDeletedCells.size(); i++)
       deletedCell[tmpDeletedCells[i]] = 1;
-    for (int i=0; i<tmpDeletedEdges.size(); i++)
+    for (int i = 0; i < tmpDeletedEdges.size(); i++)
       deletedEdge[tmpDeletedEdges[i]] = 1;
 
     // --------------------------------------------------------------
     // Now add to edge isolated list
-    if (nIsolated != numEdgeCells)
-    {
-      for (int i=0; i<numEdgeCells; i++)
-      {
+    if (nIsolated != numEdgeCells) {
+      for (int i = 0; i < numEdgeCells; i++) {
         int currVal = edgeIsolatedIterArray->GetTuple1(i);
 
-        if (currVal == -1)
-        {
+        if (currVal == -1) {
           npts = edgeCellPoints[i].size();
 
-          if (npts == 2)
-          {
+          if (npts == 2) {
             pointIds->Reset();
             pointIds->SetNumberOfIds(2);
             pointIds->SetId(0, edgeCellPoints[i][0]);
@@ -509,14 +457,12 @@ int vtkSVCellComplexThinner::RunFilter()
             this->WorkTriPd->GetCellNeighbors(-1, pointIds, edgeCellIds);
 
             numDeletedNeighbors = 0;
-            for (int j=0; j<edgeCellIds->GetNumberOfIds(); j++)
-            {
+            for (int j = 0; j < edgeCellIds->GetNumberOfIds(); j++) {
               if (deletedCell[edgeCellIds->GetId(j)])
                 numDeletedNeighbors++;
             }
 
-            if (numDeletedNeighbors == edgeCellIds->GetNumberOfIds())
-            {
+            if (numDeletedNeighbors == edgeCellIds->GetNumberOfIds()) {
               endIsolatedIterArray->SetTuple1(i, iter);
               edgeIsolatedIterArray->SetTuple1(i, iter);
               nIsolated++;
@@ -545,8 +491,7 @@ int vtkSVCellComplexThinner::RunFilter()
   mRelArray->FillComponent(0, -1.0);
   mRelArray->SetName("MRel");
 
-  for (int i=0; i<numEdgeCells; i++)
-  {
+  for (int i = 0; i < numEdgeCells; i++) {
     double currIVal = endIsolatedIterArray->GetTuple1(i);
     double edgeRVal = edgeRemoveIterArray->GetTuple1(i);
 
@@ -556,13 +501,12 @@ int vtkSVCellComplexThinner::RunFilter()
       edgeRemoveIterArray->SetTuple1(i, iter);
   }
 
-  for (int i=0; i<numEdgeCells; i++)
-  {
+  for (int i = 0; i < numEdgeCells; i++) {
     double iVal = endIsolatedIterArray->GetTuple1(i);
     double rVal = edgeRemoveIterArray->GetTuple1(i);
 
     int mAbsVal = rVal - iVal;
-    double mRelVal = 1.0 - ((iVal+1)/(rVal+1));
+    double mRelVal = 1.0 - ((iVal + 1) / (rVal + 1));
 
     mAbsArray->SetTuple1(i, mAbsVal);
     mRelArray->SetTuple1(i, mRelVal);

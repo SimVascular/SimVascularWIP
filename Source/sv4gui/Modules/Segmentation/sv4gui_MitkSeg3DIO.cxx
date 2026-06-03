@@ -30,224 +30,224 @@
  */
 
 #include "sv4gui_MitkSeg3DIO.h"
-#include "sv4gui_MitkSeg3D.h"
 #include "sv4gui_ContourGroupIO.h"
+#include "sv4gui_MitkSeg3D.h"
 
 #include <mitkCustomMimeType.h>
 #include <mitkIOMimeTypes.h>
 
 #include <tinyxml2.h>
 
+#include <vtkErrorCode.h>
 #include <vtkPolyData.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtkXMLPolyDataWriter.h>
-#include <vtkErrorCode.h>
 
-auto set_string_from_attribute = &sv4guiContourGroupIO::set_string_from_attribute;
+auto set_string_from_attribute =
+    &sv4guiContourGroupIO::set_string_from_attribute;
 
-static mitk::CustomMimeType Createsv4guiSeg3DMimeType()
-{
-    mitk::CustomMimeType mimeType(mitk::IOMimeTypes::DEFAULT_BASE_NAME() + ".svseg3d");
-    mimeType.SetCategory("SimVascular Files");
-    mimeType.AddExtension("s3d");
-    mimeType.SetComment("SimVascular 3D Segmentation");
+static mitk::CustomMimeType Createsv4guiSeg3DMimeType() {
+  mitk::CustomMimeType mimeType(mitk::IOMimeTypes::DEFAULT_BASE_NAME() +
+                                ".svseg3d");
+  mimeType.SetCategory("SimVascular Files");
+  mimeType.AddExtension("s3d");
+  mimeType.SetComment("SimVascular 3D Segmentation");
 
-    return mimeType;
+  return mimeType;
 }
 
 sv4guiMitkSeg3DIO::sv4guiMitkSeg3DIO()
-    : mitk::AbstractFileIO(sv4guiMitkSeg3D::GetStaticNameOfClass(), Createsv4guiSeg3DMimeType(), "SimVascular 3D Segmentation")
-{
-    this->RegisterService();
+    : mitk::AbstractFileIO(sv4guiMitkSeg3D::GetStaticNameOfClass(),
+                           Createsv4guiSeg3DMimeType(),
+                           "SimVascular 3D Segmentation") {
+  this->RegisterService();
 }
 
-std::vector<mitk::BaseData::Pointer> sv4guiMitkSeg3DIO::Read()
-{
-    std::string fileName=GetInputLocation();
+std::vector<mitk::BaseData::Pointer> sv4guiMitkSeg3DIO::Read() {
+  std::string fileName = GetInputLocation();
 
-    return ReadFile(fileName);
+  return ReadFile(fileName);
 }
 
-std::vector<mitk::BaseData::Pointer> sv4guiMitkSeg3DIO::ReadFile(std::string fileName)
-{
-    //std::cout << "[sv4guiMitkSeg3DIO::ReadFile] ================ ReadFile =========== " << std::endl;
-    std::vector<mitk::BaseData::Pointer> result;
+std::vector<mitk::BaseData::Pointer>
+sv4guiMitkSeg3DIO::ReadFile(std::string fileName) {
+  // std::cout << "[sv4guiMitkSeg3DIO::ReadFile] ================ ReadFile
+  // =========== " << std::endl;
+  std::vector<mitk::BaseData::Pointer> result;
 
-    tinyxml2::XMLDocument document;
+  tinyxml2::XMLDocument document;
 
-    if (document.LoadFile(fileName.c_str()) != tinyxml2::XML_SUCCESS)
-    {
-        mitkThrow() << "Could not open/read/parse " << fileName;
-        //        return result;
-    }
+  if (document.LoadFile(fileName.c_str()) != tinyxml2::XML_SUCCESS) {
+    mitkThrow() << "Could not open/read/parse " << fileName;
+    //        return result;
+  }
 
-    //    TiXmlElement* version = document.FirstChildElement("format");
+  //    TiXmlElement* version = document.FirstChildElement("format");
 
-    auto segElement = document.FirstChildElement("seg3d");
+  auto segElement = document.FirstChildElement("seg3d");
 
-    if(!segElement){
-        mitkThrow() << "No 3D seg data in "<< fileName;
-        //        return result;
-    }
+  if (!segElement) {
+    mitkThrow() << "No 3D seg data in " << fileName;
+    //        return result;
+  }
 
-    sv4guiMitkSeg3D::Pointer mitkSeg3D = sv4guiMitkSeg3D::New();
-    sv4guiSeg3D* seg3D=new sv4guiSeg3D();
-    sv4guiSeg3DParam param;
+  sv4guiMitkSeg3D::Pointer mitkSeg3D = sv4guiMitkSeg3D::New();
+  sv4guiSeg3D *seg3D = new sv4guiSeg3D();
+  sv4guiSeg3DParam param;
 
-    //read parameters
-    auto paramElement = segElement->FirstChildElement("param");
-    if(paramElement)
-    {
-         set_string_from_attribute(paramElement, "method", param.method);
-        // davep paramElement->QueryStringAttribute("method",&param.method);
+  // read parameters
+  auto paramElement = segElement->FirstChildElement("param");
+  if (paramElement) {
+    set_string_from_attribute(paramElement, "method", param.method);
+    // davep paramElement->QueryStringAttribute("method",&param.method);
 
+    if (param.method != "") {
+      paramElement->QueryDoubleAttribute("lower_threshold",
+                                         &param.lowerThreshold);
+      paramElement->QueryDoubleAttribute("upper_threshold",
+                                         &param.upperThreshold);
 
-        if(param.method!="")
-        {
-            paramElement->QueryDoubleAttribute("lower_threshold",&param.lowerThreshold);
-            paramElement->QueryDoubleAttribute("upper_threshold",&param.upperThreshold);
+      // read seeds
+      auto seedsElement = paramElement->FirstChildElement("seeds");
+      if (seedsElement) {
+        for (auto seedElement = seedsElement->FirstChildElement("seed");
+             seedElement != nullptr;
+             seedElement = seedElement->NextSiblingElement("seed")) {
+          if (seedsElement == nullptr)
+            continue;
 
-            //read seeds
-            auto seedsElement = paramElement->FirstChildElement("seeds");
-            if(seedsElement)
-            {
-                for( auto seedElement = seedsElement->FirstChildElement("seed");
-                     seedElement != nullptr;
-                     seedElement = seedElement->NextSiblingElement("seed") )
-                {
-                    if (seedsElement == nullptr)
-                        continue;
+          svSeed seed;
 
-                    svSeed seed;
+          seedElement->QueryIntAttribute("id", &seed.id);
+          set_string_from_attribute(seedElement, "type", seed.type);
+          // davep seedElement->QueryStringAttribute("type", &seed.type);
+          seedElement->QueryDoubleAttribute("x", &seed.x);
+          seedElement->QueryDoubleAttribute("y", &seed.y);
+          seedElement->QueryDoubleAttribute("z", &seed.z);
+          seedElement->QueryDoubleAttribute("radius", &seed.radius);
 
-                    seedElement->QueryIntAttribute("id", &seed.id);
-                    set_string_from_attribute(seedElement, "type", seed.type);
-                    //davep seedElement->QueryStringAttribute("type", &seed.type);
-                    seedElement->QueryDoubleAttribute("x", &seed.x);
-                    seedElement->QueryDoubleAttribute("y", &seed.y);
-                    seedElement->QueryDoubleAttribute("z", &seed.z);
-                    seedElement->QueryDoubleAttribute("radius", &seed.radius);
-
-                    param.AddSeed(seed);
-                }
-            }
+          param.AddSeed(seed);
         }
+      }
     }
+  }
 
-    seg3D->SetParam(param);
-    std::string dataFileName=fileName.substr(0,fileName.find_last_of("."))+".vtp";
-    std::ifstream dataFile(dataFileName);
-    if (dataFile) {
-        vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
+  seg3D->SetParam(param);
+  std::string dataFileName =
+      fileName.substr(0, fileName.find_last_of(".")) + ".vtp";
+  std::ifstream dataFile(dataFileName);
+  if (dataFile) {
+    vtkSmartPointer<vtkXMLPolyDataReader> reader =
+        vtkSmartPointer<vtkXMLPolyDataReader>::New();
 
-        reader->SetFileName(dataFileName.c_str());
-        reader->Update();
-        vtkSmartPointer<vtkPolyData> vpd=reader->GetOutput();
-        if(vpd)
-            seg3D->SetVtkPolyData(vpd);
-    }
+    reader->SetFileName(dataFileName.c_str());
+    reader->Update();
+    vtkSmartPointer<vtkPolyData> vpd = reader->GetOutput();
+    if (vpd)
+      seg3D->SetVtkPolyData(vpd);
+  }
 
-    mitkSeg3D->SetSeg3D(seg3D);
+  mitkSeg3D->SetSeg3D(seg3D);
 
-    result.push_back(mitkSeg3D.GetPointer());
-    return result;
+  result.push_back(mitkSeg3D.GetPointer());
+  return result;
 }
 
-mitk::IFileIO::ConfidenceLevel sv4guiMitkSeg3DIO::GetReaderConfidenceLevel() const
-{
-    if (mitk::AbstractFileIO::GetReaderConfidenceLevel() == mitk::IFileIO::Unsupported)
-    {
-        return mitk::IFileIO::Unsupported;
+mitk::IFileIO::ConfidenceLevel
+sv4guiMitkSeg3DIO::GetReaderConfidenceLevel() const {
+  if (mitk::AbstractFileIO::GetReaderConfidenceLevel() ==
+      mitk::IFileIO::Unsupported) {
+    return mitk::IFileIO::Unsupported;
+  }
+  return Supported;
+}
+
+void sv4guiMitkSeg3DIO::Write() {
+  ValidateOutputLocation();
+
+  std::string fileName = GetOutputLocation();
+
+  const sv4guiMitkSeg3D *mitkSeg3D =
+      dynamic_cast<const sv4guiMitkSeg3D *>(this->GetInput());
+  if (!mitkSeg3D)
+    return;
+
+  tinyxml2::XMLDocument document;
+  auto decl = document.NewDeclaration();
+  document.LinkEndChild(decl);
+
+  sv4guiSeg3D *seg3D = mitkSeg3D->GetSeg3D();
+  if (seg3D) {
+    sv4guiSeg3DParam &param = seg3D->GetParam();
+
+    auto segElement = document.NewElement("seg3d");
+    segElement->SetAttribute("version", "1.0");
+    document.LinkEndChild(segElement);
+
+    auto paramElement = document.NewElement("param");
+    segElement->LinkEndChild(paramElement);
+
+    if (param.method != "") {
+      paramElement->SetAttribute("method", param.method.c_str());
+
+      paramElement->SetAttribute("lower_threshold", param.lowerThreshold);
+      paramElement->SetAttribute("upper_threshold", param.upperThreshold);
+
+      auto seedsElement = document.NewElement("seeds");
+      paramElement->LinkEndChild(seedsElement);
+
+      std::map<int, svSeed> &seedMap = param.GetSeedMap();
+      for (auto s : seedMap) {
+        auto seedElement = document.NewElement("seed");
+        svSeed seed = s.second;
+        seedsElement->LinkEndChild(seedElement);
+        seedElement->SetAttribute("id", seed.id);
+        seedElement->SetAttribute("type", seed.type.c_str());
+        seedElement->SetAttribute("x", seed.x);
+        seedElement->SetAttribute("y", seed.y);
+        seedElement->SetAttribute("z", seed.z);
+        seedElement->SetAttribute("radius", seed.radius);
+      }
     }
+
+    std::string dataFileName =
+        fileName.substr(0, fileName.find_last_of(".")) + ".vtp";
+
+    vtkPolyData *vpd = seg3D->GetVtkPolyData();
+    if (vpd) {
+      vtkSmartPointer<vtkXMLPolyDataWriter> writer =
+          vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+      writer->SetFileName(dataFileName.c_str());
+      writer->SetInputData(vpd);
+      if (writer->Write() == 0 || writer->GetErrorCode() != 0) {
+        std::cerr << "vtkXMLPolyDataWriter error: "
+                  << vtkErrorCode::GetStringFromErrorCode(
+                         writer->GetErrorCode())
+                  << std::endl;
+      }
+    }
+  }
+
+  if (document.SaveFile(fileName.c_str()) != tinyxml2::XML_SUCCESS) {
+    mitkThrow() << "Could not write Segmentation parameters to file "
+                << fileName;
+  }
+}
+
+mitk::IFileIO::ConfidenceLevel
+sv4guiMitkSeg3DIO::GetWriterConfidenceLevel() const {
+  if (mitk::AbstractFileIO::GetWriterConfidenceLevel() ==
+      mitk::IFileIO::Unsupported)
+    return mitk::IFileIO::Unsupported;
+  const sv4guiMitkSeg3D *input =
+      dynamic_cast<const sv4guiMitkSeg3D *>(this->GetInput());
+  if (input) {
     return Supported;
+  } else {
+    return Unsupported;
+  }
 }
 
-void sv4guiMitkSeg3DIO::Write()
-{
-    ValidateOutputLocation();
-
-    std::string fileName=GetOutputLocation();
-
-    const sv4guiMitkSeg3D* mitkSeg3D = dynamic_cast<const sv4guiMitkSeg3D*>(this->GetInput());
-    if(!mitkSeg3D) return;
-
-    tinyxml2::XMLDocument document;
-    auto  decl = document.NewDeclaration();
-    document.LinkEndChild( decl );
-
-    sv4guiSeg3D* seg3D=mitkSeg3D->GetSeg3D();
-    if(seg3D)
-    {
-        sv4guiSeg3DParam& param=seg3D->GetParam();
-
-        auto segElement = document.NewElement("seg3d");
-        segElement->SetAttribute("version",  "1.0" );
-        document.LinkEndChild(segElement);
-
-        auto paramElement = document.NewElement("param");
-        segElement->LinkEndChild(paramElement);
-
-        if(param.method!="")
-        {
-            paramElement->SetAttribute("method", param.method.c_str());
-
-            paramElement->SetAttribute("lower_threshold", param.lowerThreshold);
-            paramElement->SetAttribute("upper_threshold", param.upperThreshold);
-
-            auto seedsElement = document.NewElement("seeds");
-            paramElement->LinkEndChild(seedsElement);
-
-            std::map<int, svSeed>& seedMap=param.GetSeedMap();
-            for(auto s:seedMap)
-            {
-                auto seedElement = document.NewElement("seed");
-                svSeed seed=s.second;
-                seedsElement->LinkEndChild(seedElement);
-                seedElement->SetAttribute("id",seed.id);
-                seedElement->SetAttribute("type", seed.type.c_str());
-                seedElement->SetAttribute("x", seed.x);
-                seedElement->SetAttribute("y", seed.y);
-                seedElement->SetAttribute("z", seed.z);
-                seedElement->SetAttribute("radius", seed.radius);
-            }
-        }
-
-        std::string dataFileName=fileName.substr(0,fileName.find_last_of("."))+".vtp";
-
-        vtkPolyData* vpd=seg3D->GetVtkPolyData();
-        if(vpd)
-        {
-            vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
-            writer->SetFileName(dataFileName.c_str());
-            writer->SetInputData(vpd);
-            if (writer->Write() == 0 || writer->GetErrorCode() != 0 )
-            {
-                std::cerr << "vtkXMLPolyDataWriter error: " << vtkErrorCode::GetStringFromErrorCode(writer->GetErrorCode())<<std::endl;
-            }
-        }
-    }
-
-    if (document.SaveFile(fileName.c_str()) != tinyxml2::XML_SUCCESS)
-    {
-        mitkThrow() << "Could not write Segmentation parameters to file " << fileName;
-
-    }
+sv4guiMitkSeg3DIO *sv4guiMitkSeg3DIO::IOClone() const {
+  return new sv4guiMitkSeg3DIO(*this);
 }
-
-mitk::IFileIO::ConfidenceLevel sv4guiMitkSeg3DIO::GetWriterConfidenceLevel() const
-{
-    if (mitk::AbstractFileIO::GetWriterConfidenceLevel() == mitk::IFileIO::Unsupported) return mitk::IFileIO::Unsupported;
-    const sv4guiMitkSeg3D* input = dynamic_cast<const sv4guiMitkSeg3D*>(this->GetInput());
-    if (input)
-    {
-        return Supported;
-    }else{
-        return Unsupported;
-    }
-}
-
-sv4guiMitkSeg3DIO* sv4guiMitkSeg3DIO::IOClone() const
-{
-    return new sv4guiMitkSeg3DIO(*this);
-}
-

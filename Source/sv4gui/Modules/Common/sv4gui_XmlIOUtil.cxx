@@ -31,102 +31,98 @@
 
 #include "sv4gui_XmlIOUtil.h"
 
-tinyxml2::XMLElement* sv4guiXmlIOUtil::CreateXMLxyzElement(const char* name, double v[3])
-{
-    auto xyzElement = document.NewElement(name);
-    xyzElement->SetAttribute("x", v[0]);
-    xyzElement->SetAttribute("y", v[1]);
-    xyzElement->SetAttribute("z", v[2]);
-    return xyzElement;
+tinyxml2::XMLElement *sv4guiXmlIOUtil::CreateXMLxyzElement(const char *name,
+                                                           double v[3]) {
+  auto xyzElement = document.NewElement(name);
+  xyzElement->SetAttribute("x", v[0]);
+  xyzElement->SetAttribute("y", v[1]);
+  xyzElement->SetAttribute("z", v[2]);
+  return xyzElement;
 }
 
-tinyxml2::XMLElement* sv4guiXmlIOUtil::CreateXMLPointElement(const char* name, int id,mitk::Point3D point)
-{
-    auto  xyzElement = document.NewElement(name);
-    xyzElement->SetAttribute("id", id);
-    xyzElement->SetAttribute("x", point[0]);
-    xyzElement->SetAttribute("y", point[1]);
-    xyzElement->SetAttribute("z", point[2]);
-    return xyzElement;
+tinyxml2::XMLElement *
+sv4guiXmlIOUtil::CreateXMLPointElement(const char *name, int id,
+                                       mitk::Point3D point) {
+  auto xyzElement = document.NewElement(name);
+  xyzElement->SetAttribute("id", id);
+  xyzElement->SetAttribute("x", point[0]);
+  xyzElement->SetAttribute("y", point[1]);
+  xyzElement->SetAttribute("z", point[2]);
+  return xyzElement;
 }
 
-tinyxml2::XMLElement* sv4guiXmlIOUtil::CreateXMLPointElement(const char* name, mitk::Point3D point)
-{
-    double v[3];
-    v[0]=point[0];
-    v[1]=point[1];
-    v[2]=point[2];
+tinyxml2::XMLElement *
+sv4guiXmlIOUtil::CreateXMLPointElement(const char *name, mitk::Point3D point) {
+  double v[3];
+  v[0] = point[0];
+  v[1] = point[1];
+  v[2] = point[2];
 
-    return CreateXMLxyzElement(name,v);
+  return CreateXMLxyzElement(name, v);
 }
 
-tinyxml2::XMLElement* sv4guiXmlIOUtil::CreateXMLVectorElement(const char* name, mitk::Vector3D vec)
-{
-    double v[3];
-    v[0]=vec[0];
-    v[1]=vec[1];
-    v[2]=vec[2];
+tinyxml2::XMLElement *
+sv4guiXmlIOUtil::CreateXMLVectorElement(const char *name, mitk::Vector3D vec) {
+  double v[3];
+  v[0] = vec[0];
+  v[1] = vec[1];
+  v[2] = vec[2];
 
-    return CreateXMLxyzElement(name,v);
+  return CreateXMLxyzElement(name, v);
 }
 
-void sv4guiXmlIOUtil::Getxyz(tinyxml2::XMLElement* element, double xyz[3])
-{
-    element->QueryDoubleAttribute("x", &xyz[0]);
-    element->QueryDoubleAttribute("y", &xyz[1]);
-    element->QueryDoubleAttribute("z", &xyz[2]);
+void sv4guiXmlIOUtil::Getxyz(tinyxml2::XMLElement *element, double xyz[3]) {
+  element->QueryDoubleAttribute("x", &xyz[0]);
+  element->QueryDoubleAttribute("y", &xyz[1]);
+  element->QueryDoubleAttribute("z", &xyz[2]);
 }
 
-mitk::Point3D sv4guiXmlIOUtil::GetPoint(tinyxml2::XMLElement* element)
-{
-    double p[3]={0};
-    Getxyz(element,p);
+mitk::Point3D sv4guiXmlIOUtil::GetPoint(tinyxml2::XMLElement *element) {
+  double p[3] = {0};
+  Getxyz(element, p);
 
-    mitk::Point3D point;
-    point[0]=p[0];
-    point[1]=p[1];
-    point[2]=p[2];
+  mitk::Point3D point;
+  point[0] = p[0];
+  point[1] = p[1];
+  point[2] = p[2];
 
-    return point;
+  return point;
 }
 
-mitk::Vector3D sv4guiXmlIOUtil::GetVector(tinyxml2::XMLElement* element)
-{
-    double v[3]={0};
-    Getxyz(element,v);
+mitk::Vector3D sv4guiXmlIOUtil::GetVector(tinyxml2::XMLElement *element) {
+  double v[3] = {0};
+  Getxyz(element, v);
 
-    mitk::Vector3D vector;
-    vector[0]=v[0];
-    vector[1]=v[1];
-    vector[2]=v[2];
+  mitk::Vector3D vector;
+  vector[0] = v[0];
+  vector[1] = v[1];
+  vector[2] = v[2];
 
-    return vector;
+  return vector;
 }
 
-std::list< double >
-sv4guiXmlIOUtil::GetDoubleAttributeListFromXMLNode(tinyxml2::XMLElement* e, const char *attributeNameBase, unsigned int count)
-{
-    std::list< double > list;
+std::list<double> sv4guiXmlIOUtil::GetDoubleAttributeListFromXMLNode(
+    tinyxml2::XMLElement *e, const char *attributeNameBase,
+    unsigned int count) {
+  std::list<double> list;
 
-    if (e == nullptr)
-    {
-//        throw std::invalid_argument("node invalid");
-        mitkThrow() << "Xml node invalid";
-    }
-    for ( unsigned int i = 0; i < count; ++i )
-    {
-        mitk::ScalarType p(-1.0);
-        std::stringstream attributeName;
-        attributeName << attributeNameBase << i;
+  if (e == nullptr) {
+    //        throw std::invalid_argument("node invalid");
+    mitkThrow() << "Xml node invalid";
+  }
+  for (unsigned int i = 0; i < count; ++i) {
+    mitk::ScalarType p(-1.0);
+    std::stringstream attributeName;
+    attributeName << attributeNameBase << i;
 
-        if (e->QueryAttribute( attributeName.str().c_str(), &p ) == tinyxml2::XML_WRONG_ATTRIBUTE_TYPE)
-        {
-            mitkThrow() << "Xml node malformatted";
-//            throw std::invalid_argument("node malformatted");
-        }
-
-        list.push_back( p );
+    if (e->QueryAttribute(attributeName.str().c_str(), &p) ==
+        tinyxml2::XML_WRONG_ATTRIBUTE_TYPE) {
+      mitkThrow() << "Xml node malformatted";
+      //            throw std::invalid_argument("node malformatted");
     }
 
-    return list;
+    list.push_back(p);
+  }
+
+  return list;
 }

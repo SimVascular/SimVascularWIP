@@ -32,23 +32,23 @@
 #ifndef SU_cvIOstream_H
 #define SU_cvIOstream_H
 
-//dp #include "vtkConfigure.h"
+// dp #include "vtkConfigure.h"
 
+#include <fstream>
 #include <iostream>
 #include <strstream>
-#include <fstream>
 using std::cerr;
-using std::cout;
 using std::cin;
-using std::ios;
+using std::cout;
 using std::endl;
 using std::ends;
-using std::ostream;
+using std::ifstream;
+using std::ios;
 using std::istream;
-using std::ostrstream;
 using std::istrstream;
 using std::ofstream;
-using std::ifstream;
+using std::ostream;
+using std::ostrstream;
 using std::ws;
 
 #endif

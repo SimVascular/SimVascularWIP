@@ -47,25 +47,25 @@
 #include "sv3_ITKLset_ITK_Macros.h"
 #include "sv3_ITKLset_Macros.h"
 
-#include "sv3_ITKLset_ConnectVTKITK.h"
 #include "itkVTKImageExport.h"
 #include "itkVTKImageImport.h"
+#include "sv3_ITKLset_ConnectVTKITK.h"
 
-#include "vtkImageImport.h"
 #include "vtkImageExport.h"
+#include "vtkImageImport.h"
 
-#include "vtkSmartPointer.h"
-#include "vtkStructuredPoints.h"
 #include "vtkImageData.h"
 #include "vtkPolyData.h"
+#include "vtkSmartPointer.h"
+#include "vtkStructuredPoints.h"
 
 #ifdef USE_QUICKVIEW_DEBUG
 #include "QuickView.h"
 #endif
 
 #include "itkImageFileWriter.h"
-#include "vtkTIFFWriter.h"
 #include "sv3_ITKLset_ImgInfo.h"
+#include "vtkTIFFWriter.h"
 
 typedef std::string string;
 
@@ -74,13 +74,12 @@ namespace cvITKLSUtil {
 extern ImgInfo DefaultImgInfo;
 extern bool Debug;
 
-typedef itk::Image<short,2> ITKShort2DImageType;
-typedef itk::Image<float,2> ITKFloat2DImageType;
-typedef itk::Image<float,2> ITKDefaultImageType;
-typedef itk::Image<short,3> ITKShort3DImageType;
-typedef itk::Image<float,3> ITKFloat3DImageType;
-typedef itk::Image<float,3> ITKDefault3DImageType;
-
+typedef itk::Image<short, 2> ITKShort2DImageType;
+typedef itk::Image<float, 2> ITKFloat2DImageType;
+typedef itk::Image<float, 2> ITKDefaultImageType;
+typedef itk::Image<short, 3> ITKShort3DImageType;
+typedef itk::Image<float, 3> ITKFloat3DImageType;
+typedef itk::Image<float, 3> ITKDefault3DImageType;
 
 /** vtk/itk input process **
  * vtkImage -> ChangeInfo -> RecastRescale -> itk
@@ -90,126 +89,140 @@ typedef itk::Image<float,3> ITKDefault3DImageType;
  **/
 
 // Vtk methods
-void vtkChangeImageInformation(vtkStructuredPoints* vtkImage,
-		ImgInfo* refInfo);
-void vtkPolyDataTo2DImage(vtkPolyData* pd,vtkStructuredPoints* vtkImg,
-		ImgInfo* extInfo);
-void vtkPolyDataToVolume(vtkPolyData* pd,vtkStructuredPoints* vtkImg,
-		ImgInfo* extInfo);
-void vtkGenerateCircle(double radius,double center[3],int numPoints,
-		vtkPolyData* circle);
-void WriteImage(vtkStructuredPoints* image,string FilenameBase);
-void vtkWriteImage2(vtkStructuredPoints* image,string FilenameBase);
-void WritePerciseVtkImage(vtkStructuredPoints* image,string FilenameBase);
-
+void vtkChangeImageInformation(vtkStructuredPoints *vtkImage, ImgInfo *refInfo);
+void vtkPolyDataTo2DImage(vtkPolyData *pd, vtkStructuredPoints *vtkImg,
+                          ImgInfo *extInfo);
+void vtkPolyDataToVolume(vtkPolyData *pd, vtkStructuredPoints *vtkImg,
+                         ImgInfo *extInfo);
+void vtkGenerateCircle(double radius, double center[3], int numPoints,
+                       vtkPolyData *circle);
+void WriteImage(vtkStructuredPoints *image, string FilenameBase);
+void vtkWriteImage2(vtkStructuredPoints *image, string FilenameBase);
+void WritePerciseVtkImage(vtkStructuredPoints *image, string FilenameBase);
 
 /* itk templated methods */
-template <typename TImageType,typename TExternalImageType>
-SV_EXPORT_SEGITK int vtkGenerateFeatureImage(vtkStructuredPoints* vtkInputImage,
-		vtkStructuredPoints* vtkOuputImage, ImgInfo* refInfo,double sigma);
+template <typename TImageType, typename TExternalImageType>
+SV_EXPORT_SEGITK int vtkGenerateFeatureImage(vtkStructuredPoints *vtkInputImage,
+                                             vtkStructuredPoints *vtkOuputImage,
+                                             ImgInfo *refInfo, double sigma);
 
-template < typename TImageType , typename TExternalImageType >
-SV_EXPORT_SEGITK void vtk2itkRecastAndRescale(vtkStructuredPoints* vtkImage,
-		typename TImageType::Pointer itkImage, ImgInfo* refInfo);
-
-template < typename TImageType >
-SV_EXPORT_SEGITK void itk2vtkRecast(TImageType* itkImage, vtkStructuredPoints* vtkImage,
-		ImgInfo* refInfo);
-
-template < typename TImageType >
-SV_EXPORT_SEGITK void itk2vtkRecastAndRescale(TImageType* itkImage,
-		vtkStructuredPoints* vtkImage, ImgInfo* refInfo);
-
-template < typename TImageType >
-SV_EXPORT_SEGITK void itk2vtkRecast(TImageType* itkImage, vtkStructuredPoints* vtkImage,
-		ImgInfo* refInfo);
-
-template< typename TImageType >
-SV_EXPORT_SEGITK void itkGenerateFeatureImage(TImageType* itkInputImage,
-		typename TImageType::Pointer featureImage, double sigma);
+template <typename TImageType, typename TExternalImageType>
+SV_EXPORT_SEGITK void
+vtk2itkRecastAndRescale(vtkStructuredPoints *vtkImage,
+                        typename TImageType::Pointer itkImage,
+                        ImgInfo *refInfo);
 
 template <typename TImageType>
-SV_EXPORT_SEGITK void itkGenerateFeatureImageNoGrad(TImageType* itkInputImage,
-		typename TImageType::Pointer outImage, double sigma);
+SV_EXPORT_SEGITK void itk2vtkRecast(TImageType *itkImage,
+                                    vtkStructuredPoints *vtkImage,
+                                    ImgInfo *refInfo);
 
 template <typename TImageType>
-SV_EXPORT_SEGITK void itkGenerateFeatureImageDistance(TImageType* itkInputImage,
-		typename TImageType::Pointer outImage,double thres=.5);
+SV_EXPORT_SEGITK void itk2vtkRecastAndRescale(TImageType *itkImage,
+                                              vtkStructuredPoints *vtkImage,
+                                              ImgInfo *refInfo);
 
 template <typename TImageType>
-SV_EXPORT_SEGITK void itkGenerateFeatureImageThreshold(TImageType* itkInputImage,
-		typename TImageType::Pointer outImage,double thres);
+SV_EXPORT_SEGITK void itk2vtkRecast(TImageType *itkImage,
+                                    vtkStructuredPoints *vtkImage,
+                                    ImgInfo *refInfo);
 
-template < typename TImageType , typename TExternalImageType >
-SV_EXPORT_SEGITK void vtk2itkBinaryImageToSeedImage(vtkStructuredPoints* vtkImg,
-		typename TImageType::Pointer itkImage,ImgInfo* intInfo);
+template <typename TImageType>
+SV_EXPORT_SEGITK void
+itkGenerateFeatureImage(TImageType *itkInputImage,
+                        typename TImageType::Pointer featureImage,
+                        double sigma);
 
-template < typename TImageType >
-SV_EXPORT_SEGITK void itkDeepCopy(const TImageType* input,
-		typename TImageType::Pointer output);
+template <typename TImageType>
+SV_EXPORT_SEGITK void
+itkGenerateFeatureImageNoGrad(TImageType *itkInputImage,
+                              typename TImageType::Pointer outImage,
+                              double sigma);
 
-template < typename TImageType >
+template <typename TImageType>
+SV_EXPORT_SEGITK void
+itkGenerateFeatureImageDistance(TImageType *itkInputImage,
+                                typename TImageType::Pointer outImage,
+                                double thres = .5);
+
+template <typename TImageType>
+SV_EXPORT_SEGITK void
+itkGenerateFeatureImageThreshold(TImageType *itkInputImage,
+                                 typename TImageType::Pointer outImage,
+                                 double thres);
+
+template <typename TImageType, typename TExternalImageType>
+SV_EXPORT_SEGITK void
+vtk2itkBinaryImageToSeedImage(vtkStructuredPoints *vtkImg,
+                              typename TImageType::Pointer itkImage,
+                              ImgInfo *intInfo);
+
+template <typename TImageType>
+SV_EXPORT_SEGITK void itkDeepCopy(const TImageType *input,
+                                  typename TImageType::Pointer output);
+
+template <typename TImageType>
 SV_EXPORT_SEGITK void itkDeepCopy(typename TImageType::Pointer input,
-		typename TImageType::Pointer output);
+                                  typename TImageType::Pointer output);
 
-template < typename TImageType >
-SV_EXPORT_SEGITK void itkDeepCopy(const TImageType* input,TImageType* output);
+template <typename TImageType>
+SV_EXPORT_SEGITK void itkDeepCopy(const TImageType *input, TImageType *output);
 
-template < typename TImageType >
-SV_EXPORT_SEGITK void CopyVTKtoITK(vtkStructuredPoints* in,TImageType* out);
+template <typename TImageType>
+SV_EXPORT_SEGITK void CopyVTKtoITK(vtkStructuredPoints *in, TImageType *out);
 
-template < typename TImageType >
-SV_EXPORT_SEGITK void CopyITKtoVTK(const TImageType* in,vtkStructuredPoints* out);
+template <typename TImageType>
+SV_EXPORT_SEGITK void CopyITKtoVTK(const TImageType *in,
+                                   vtkStructuredPoints *out);
 
-template < typename TImageType >
-SV_EXPORT_SEGITK void CopyITKtoVTK(const TImageType* in,vtkStructuredPoints* out);
+template <typename TImageType>
+SV_EXPORT_SEGITK void CopyITKtoVTK(const TImageType *in,
+                                   vtkStructuredPoints *out);
 
-template < typename TImageType >
-SV_EXPORT_SEGITK void WriteImage(const TImageType* input,string FilenameBase);
+template <typename TImageType>
+SV_EXPORT_SEGITK void WriteImage(const TImageType *input, string FilenameBase);
 
-template < typename TImageType >
-SV_EXPORT_SEGITK void WriteImage2(const TImageType* input,string FilenameBase);
+template <typename TImageType>
+SV_EXPORT_SEGITK void WriteImage2(const TImageType *input, string FilenameBase);
 
-template < typename TImageType >
-static void WritePNGImage(const TImageType* input,string FilenameBase);
+template <typename TImageType>
+static void WritePNGImage(const TImageType *input, string FilenameBase);
 
-template<typename ITKImageType>
+template <typename ITKImageType>
 SV_EXPORT_SEGITK void CreateImage(typename ITKImageType::Pointer image,
-		typename ITKImageType::SizeType size,
-		typename ITKImageType::SpacingType spacing,
-		typename ITKImageType::PointType origin,
-		typename ITKImageType::PixelType value);
+                                  typename ITKImageType::SizeType size,
+                                  typename ITKImageType::SpacingType spacing,
+                                  typename ITKImageType::PointType origin,
+                                  typename ITKImageType::PixelType value);
 
 /* CV convienience methods */
-SV_EXPORT_SEGITK void inline vtkPolyDataTo2DImage(vtkPolyData* pd,cvStructuredPoints** result,
-		ImgInfo* refInfo)
-{
-	vtkStructuredPoints* out = vtkStructuredPoints::New();
-	vtkPolyDataTo2DImage(pd,out,refInfo);
-	(*result) = new cvStructuredPoints(out);
+SV_EXPORT_SEGITK void inline vtkPolyDataTo2DImage(vtkPolyData *pd,
+                                                  cvStructuredPoints **result,
+                                                  ImgInfo *refInfo) {
+  vtkStructuredPoints *out = vtkStructuredPoints::New();
+  vtkPolyDataTo2DImage(pd, out, refInfo);
+  (*result) = new cvStructuredPoints(out);
 }
 
-SV_EXPORT_SEGITK void inline vtkPolyDataToVolume(vtkPolyData* pd,cvStructuredPoints** result,
-		ImgInfo* refInfo)
-{
-	vtkStructuredPoints* out = vtkStructuredPoints::New();
-	vtkPolyDataToVolume(pd,out,refInfo);
-	(*result) = new cvStructuredPoints(out);
+SV_EXPORT_SEGITK void inline vtkPolyDataToVolume(vtkPolyData *pd,
+                                                 cvStructuredPoints **result,
+                                                 ImgInfo *refInfo) {
+  vtkStructuredPoints *out = vtkStructuredPoints::New();
+  vtkPolyDataToVolume(pd, out, refInfo);
+  (*result) = new cvStructuredPoints(out);
 }
 
-SV_EXPORT_SEGITK void inline vtkGenerateCircle(double radius,double center[3],
-		int numPoints,cvPolyData** circle)
-{
-	vtkPolyData* out = vtkPolyData::New();
-	vtkGenerateCircle(radius,center,numPoints,out);
-	(*circle) = new cvPolyData(out);
+SV_EXPORT_SEGITK void inline vtkGenerateCircle(double radius, double center[3],
+                                               int numPoints,
+                                               cvPolyData **circle) {
+  vtkPolyData *out = vtkPolyData::New();
+  vtkGenerateCircle(radius, center, numPoints, out);
+  (*circle) = new cvPolyData(out);
 }
 
-} // namespace
-
+} // namespace cvITKLSUtil
 
 // Below contains the template function body
 #include "sv3_ITKLset_ITKUtils.hxx"
-
 
 #endif /* CVLEVELSETUTILS_H_ */

@@ -39,54 +39,50 @@
 #include "sv3_Contour.h"
 #include "sv3_PathElement.h"
 
+#include "vtkImageData.h"
 #include "vtkPolyData.h"
 #include "vtkSmartPointer.h"
-#include "vtkImageData.h"
-//#include "vtkPlane.h"
+// #include "vtkPlane.h"
 
 // somehow GetClassName is getting set to GetClassNameA on Windows
 #ifdef GetClassName
 #undef GetClassName
 #endif
 
-namespace sv3{
-class SV_EXPORT_SEGMENTATION circleContour : public Contour
-{
+namespace sv3 {
+class SV_EXPORT_SEGMENTATION circleContour : public Contour {
 
 public:
+  circleContour();
 
-    
-    circleContour();
-    
-    circleContour(const circleContour &other);
-    
-    ~circleContour();
-    
-    virtual circleContour* Clone() override;
-    
-    virtual std::string GetClassName() override;
+  circleContour(const circleContour &other);
 
-    virtual void SetControlPoint(int index, std::array<double,3> point) override;
+  ~circleContour();
 
-    void SetControlPointByRadius(double radius, double* point);
+  virtual circleContour *Clone() override;
 
-    double GetRadius();
+  virtual std::string GetClassName() override;
 
-    void SetRadius(double radius);
-    
-    //virtual void CreateContourPoints() override;
+  virtual void SetControlPoint(int index, std::array<double, 3> point) override;
 
-    virtual void AssignCenterScalingPoints() override;
+  void SetControlPointByRadius(double radius, double *point);
 
-    static circleContour* CreateByFitting(Contour* contour);
-    
-    circleContour* CreateSmoothedContour(int fourierNumber);
-    
-    virtual void CreateContourPoints() override;
+  double GetRadius();
 
-  protected:
+  void SetRadius(double radius);
 
-  };
+  // virtual void CreateContourPoints() override;
 
-}
+  virtual void AssignCenterScalingPoints() override;
+
+  static circleContour *CreateByFitting(Contour *contour);
+
+  circleContour *CreateSmoothedContour(int fourierNumber);
+
+  virtual void CreateContourPoints() override;
+
+protected:
+};
+
+} // namespace sv3
 #endif // SV3_CIRCLECONTOUR_H

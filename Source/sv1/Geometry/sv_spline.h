@@ -39,8 +39,7 @@
  *  TYPEDEFS    *
  ****************/
 
-typedef struct _SplinePoints
-{
+typedef struct _SplinePoints {
   int numPts;
   int dim;
   vtkFloatingPointType *pts;
@@ -48,18 +47,16 @@ typedef struct _SplinePoints
   vtkFloatingPointType *rotVectors;
 } SplinePoints;
 
-
 /****************
  *  CONSTANTS   *
  ****************/
 
-#define MAX_DIM 4  /* Maximum number of dimensions vtk handles for spline interpolation */
-
+#define MAX_DIM                                                                \
+  4 /* Maximum number of dimensions vtk handles for spline interpolation */
 
 /***********************
  *  SPLINE PROCEDURES  *
  ***********************/
-
 
 /***********************************************************************
  *                                                                     *
@@ -76,8 +73,8 @@ typedef struct _SplinePoints
  * -------                                                             *
  ***********************************************************************/
 
-SV_EXPORT_SYSGEOM SplinePoints *sys_geom_SplinePointsInit(int numPts, int dimensions);
-
+SV_EXPORT_SYSGEOM SplinePoints *sys_geom_SplinePointsInit(int numPts,
+                                                          int dimensions);
 
 /***********************************************************************
  *                                                                     *
@@ -132,8 +129,9 @@ SV_EXPORT_SYSGEOM void sys_geom_SplinePointsDelete(SplinePoints *sp);
  *                                                                     *
  ***********************************************************************/
 
-SV_EXPORT_SYSGEOM int sys_geom_SplinePath (SplinePoints *input, int type, int numOutputPts, int matchEndPoints, SplinePoints *output);
-
+SV_EXPORT_SYSGEOM int sys_geom_SplinePath(SplinePoints *input, int type,
+                                          int numOutputPts, int matchEndPoints,
+                                          SplinePoints *output);
 
 /***********************************************************************
  *                                                                     *
@@ -169,8 +167,9 @@ SV_EXPORT_SYSGEOM int sys_geom_SplinePath (SplinePoints *input, int type, int nu
  *                                                                     *
  ***********************************************************************/
 
-SV_EXPORT_SYSGEOM void sys_geom_SplineInterpolate (SplinePoints *input, int type, int numOutputPts, SplinePoints *output);
-
+SV_EXPORT_SYSGEOM void sys_geom_SplineInterpolate(SplinePoints *input, int type,
+                                                  int numOutputPts,
+                                                  SplinePoints *output);
 
 /***********************************************************************
  *                                                                     *
@@ -211,9 +210,10 @@ SV_EXPORT_SYSGEOM void sys_geom_SplineInterpolate (SplinePoints *input, int type
  *                                                                     *
  ***********************************************************************/
 
-SV_EXPORT_SYSGEOM int sys_geom_SplineGetTangents(SplinePoints *input, int type, int numOutputPts, int matchEndPoints, SplinePoints *output);
-
-
+SV_EXPORT_SYSGEOM int sys_geom_SplineGetTangents(SplinePoints *input, int type,
+                                                 int numOutputPts,
+                                                 int matchEndPoints,
+                                                 SplinePoints *output);
 
 /***********************************************************************
  *                                                                     *
@@ -233,7 +233,6 @@ SV_EXPORT_SYSGEOM int sys_geom_SplineGetTangents(SplinePoints *input, int type, 
 
 SV_EXPORT_SYSGEOM void sys_geom_SplineGetRotVectors(SplinePoints *input);
 
-
 /***********************************************************************
  *                                                                     *
  * sys_geom_NormalizeVector                                            *
@@ -247,12 +246,12 @@ SV_EXPORT_SYSGEOM void sys_geom_SplineGetRotVectors(SplinePoints *input);
  *                                                                     *
  * OUTPUTS                                                             *
  * -------                                                             *
- * vtkFloatingPointType *output: normalized vector                                    *
- * error code returned (0 if OK, 1 if error)                           *
+ * vtkFloatingPointType *output: normalized vector       * error code returned
+ * (0 if OK, 1 if error)                           *
  ***********************************************************************/
 
-SV_EXPORT_SYSGEOM int sys_geom_NormalizeVector(vtkFloatingPointType *input, vtkFloatingPointType *output, int sizeVector);
+SV_EXPORT_SYSGEOM int sys_geom_NormalizeVector(vtkFloatingPointType *input,
+                                               vtkFloatingPointType *output,
+                                               int sizeVector);
 
 #endif /* _GEOSPLINE_H */
-
-

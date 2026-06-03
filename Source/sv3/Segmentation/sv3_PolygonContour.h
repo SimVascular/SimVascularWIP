@@ -43,38 +43,34 @@
 
 #include "sv3_Contour.h"
 
-namespace sv3{
-class SV_EXPORT_SEGMENTATION ContourPolygon : public Contour
-{
+namespace sv3 {
+class SV_EXPORT_SEGMENTATION ContourPolygon : public Contour {
 
 public:
+  ContourPolygon();
 
+  ContourPolygon(const ContourPolygon &other);
 
-    ContourPolygon();
+  ~ContourPolygon();
 
-    ContourPolygon(const ContourPolygon &other);
+  virtual ContourPolygon *Clone() override;
 
-    ~ContourPolygon();
+  virtual std::string GetClassName() override;
 
-    virtual ContourPolygon* Clone() override;
+  virtual void SetControlPoint(int index, std::array<double, 3> point) override;
 
-    virtual std::string GetClassName() override;
-    
-    virtual void SetControlPoint(int index, std::array<double,3> point) override;
+  virtual void CreateContourPoints() override;
 
-    virtual void CreateContourPoints() override;
+  virtual int SearchControlPointByContourPoint(int contourPointIndex) override;
 
-    virtual int SearchControlPointByContourPoint( int contourPointIndex ) override;
+  virtual void AssignCenterScalingPoints() override;
 
-    virtual void AssignCenterScalingPoints() override;
+  void PlaceControlPoints(std::array<double, 3> point) override;
 
-    void PlaceControlPoints(std::array<double,3> point) override;
-    
-    ContourPolygon* CreateSmoothedContour(int fourierNumber);
+  ContourPolygon *CreateSmoothedContour(int fourierNumber);
 
-  protected:
-
-  };
+protected:
 };
+}; // namespace sv3
 
 #endif // SV3_POLYGONCONTOUR_H

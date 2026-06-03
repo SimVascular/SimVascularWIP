@@ -39,71 +39,66 @@
 #include "sv3_PathElement.h"
 #include "sv_RepositoryData.h"
 
-
+#include <iostream>
 #include <map>
 #include <sstream>
-#include <iostream>
 #include <string>
 
-namespace sv3{
-class SV_EXPORT_PATH PathGroup : public cvRepositoryData
-{
+namespace sv3 {
+class SV_EXPORT_PATH PathGroup : public cvRepositoryData {
 public:
+  PathGroup();
 
-    PathGroup();
-    
-    PathGroup(const PathGroup &other);
-    
-    virtual ~PathGroup();
+  PathGroup(const PathGroup &other);
 
-    virtual void Expand( unsigned int timeSteps );
-    virtual unsigned int GetTimeSize() const;
-    virtual int GetSize( unsigned int t = 0 ) const;
+  virtual ~PathGroup();
 
-    PathElement* GetPathElement(unsigned int t = 0) const;
-    void SetPathElement(PathElement* pathElement, unsigned int t = 0);
+  virtual void Expand(unsigned int timeSteps);
+  virtual unsigned int GetTimeSize() const;
+  virtual int GetSize(unsigned int t = 0) const;
 
-    void CalculateBoundingBox(double *bounds,unsigned int t = 0 );
+  PathElement *GetPathElement(unsigned int t = 0) const;
+  void SetPathElement(PathElement *pathElement, unsigned int t = 0);
 
-    std::string GetName() const;
-    void SetName(const std::string& name);
+  void CalculateBoundingBox(double *bounds, unsigned int t = 0);
 
-    int GetPathID() const;
-    void SetPathID(int pathID);
+  std::string GetName() const;
+  void SetName(const std::string &name);
 
-    void SetSpacing(double spacing);
-    double GetSpacing() const;
+  int GetPathID() const;
+  void SetPathID(int pathID);
 
-    void SetMethod(sv3::PathElement::CalculationMethod method = sv3::PathElement::CONSTANT_TOTAL_NUMBER );
-    sv3::PathElement::CalculationMethod GetMethod() const;
+  void SetSpacing(double spacing);
+  double GetSpacing() const;
 
-    void SetCalculationNumber(int number);
-    int GetCalculationNumber() const;
+  void SetMethod(sv3::PathElement::CalculationMethod method =
+                     sv3::PathElement::CONSTANT_TOTAL_NUMBER);
+  sv3::PathElement::CalculationMethod GetMethod() const;
 
-  protected:
-    
-    virtual void ClearData();
+  void SetCalculationNumber(int number);
+  int GetCalculationNumber() const;
 
-    virtual void InitializeEmpty();
+protected:
+  virtual void ClearData();
 
-    std::vector< sv3::PathElement* > m_PathElementSet;
+  virtual void InitializeEmpty();
 
-    bool m_CalculateBoundingBox;
+  std::vector<sv3::PathElement *> m_PathElementSet;
 
-    int m_PathID;
+  bool m_CalculateBoundingBox;
 
-    double m_Spacing;
+  int m_PathID;
 
-    sv3::PathElement::CalculationMethod m_Method;
+  double m_Spacing;
 
-    int m_CalculationNumber;
+  sv3::PathElement::CalculationMethod m_Method;
 
-    // Name is only set when reading in legacy paths.
-    std::string m_Name;
+  int m_CalculationNumber;
 
-  };
+  // Name is only set when reading in legacy paths.
+  std::string m_Name;
+};
 
-}
-
+} // namespace sv3
 
 #endif // SV3_PATHGROUP_H

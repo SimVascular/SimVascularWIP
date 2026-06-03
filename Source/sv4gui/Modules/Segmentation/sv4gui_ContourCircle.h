@@ -36,38 +36,34 @@
 
 #include <sv4guiModuleSegmentationExports.h>
 
-#include "sv4gui_Contour.h"
 #include "sv3_CircleContour.h"
+#include "sv4gui_Contour.h"
 
 using sv3::circleContour;
 
-
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourCircle : public sv4guiContour
-{
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourCircle
+    : public sv4guiContour {
 
 public:
+  sv4guiContourCircle();
 
-    sv4guiContourCircle();
+  sv4guiContourCircle(const sv4guiContourCircle &other);
 
-    sv4guiContourCircle(const sv4guiContourCircle &other);
+  virtual ~sv4guiContourCircle();
 
-    virtual ~sv4guiContourCircle();
+  virtual sv4guiContourCircle *Clone() override;
 
-    virtual sv4guiContourCircle* Clone() override;
+  virtual std::string GetClassName() override;
 
-    virtual std::string GetClassName() override;
+  virtual void CreateContourPoints() override;
 
-    virtual void CreateContourPoints() override;
+  virtual void AssignCenterScalingPoints() override;
 
-    virtual void AssignCenterScalingPoints() override;
+  virtual void SetControlPoint(int index, mitk::Point3D point) override;
 
-    virtual void SetControlPoint(int index, mitk::Point3D point) override;
+  static sv4guiContour *CreateByFitting(sv4guiContour *contour);
 
-    static sv4guiContour* CreateByFitting(sv4guiContour* contour);
-
-  protected:
-
-  };
-
+protected:
+};
 
 #endif // SV4GUI_CONTOURCIRCLE_H

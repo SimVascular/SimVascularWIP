@@ -32,39 +32,33 @@
 #include "sv4gui_ContourGroupVtkMapper2D.h"
 #include "sv4gui_ContourGroup.h"
 
-sv4guiContourGroupVtkMapper2D::sv4guiContourGroupVtkMapper2D()
-{
-}
+sv4guiContourGroupVtkMapper2D::sv4guiContourGroupVtkMapper2D() {}
 
-sv4guiContourGroupVtkMapper2D:: ~sv4guiContourGroupVtkMapper2D()
-{
-}
+sv4guiContourGroupVtkMapper2D::~sv4guiContourGroupVtkMapper2D() {}
 
-void sv4guiContourGroupVtkMapper2D::FindContourOnCurrentSlice(mitk::BaseRenderer* renderer, unsigned int t)
-{
-    sv4guiContourGroup* input  = static_cast<sv4guiContourGroup*>(GetDataNode()->GetData());
+void sv4guiContourGroupVtkMapper2D::FindContourOnCurrentSlice(
+    mitk::BaseRenderer *renderer, unsigned int t) {
+  sv4guiContourGroup *input =
+      static_cast<sv4guiContourGroup *>(GetDataNode()->GetData());
 
-    // only update the input data, if the property tells us to
-    bool update = true;
-    this->GetDataNode()->GetBoolProperty("updateDataOnRender", update);
-    if (update)
-    {
-        input->Update();
+  // only update the input data, if the property tells us to
+  bool update = true;
+  this->GetDataNode()->GetBoolProperty("updateDataOnRender", update);
+  if (update) {
+    input->Update();
+  }
+
+  const mitk::PlaneGeometry *rendererPlaneGeometry =
+      renderer->GetCurrentWorldPlaneGeometry();
+  m_Contour = nullptr;
+  if (input != nullptr && rendererPlaneGeometry != nullptr) {
+    int contourIndex =
+        input->SearchContourByPlane(rendererPlaneGeometry, 1.0, t);
+    m_Contour = input->GetContour(contourIndex, t);
+
+    std::string renderName(renderer->GetName());
+    if (renderName == "stdmulti.widget1") {
+      input->SetCurrentIndexOn2DView(contourIndex);
     }
-
-    const mitk::PlaneGeometry *rendererPlaneGeometry = renderer->GetCurrentWorldPlaneGeometry();
-    m_Contour=nullptr;
-    if(input!=nullptr && rendererPlaneGeometry!=nullptr)
-    {
-        int contourIndex=input->SearchContourByPlane(rendererPlaneGeometry,1.0,t);
-        m_Contour=input->GetContour(contourIndex,t);
-
-        std::string renderName(renderer->GetName());
-        if(renderName=="stdmulti.widget1")
-        {
-            input->SetCurrentIndexOn2DView(contourIndex);
-        }
-    }
+  }
 }
-
-

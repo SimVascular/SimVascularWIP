@@ -31,91 +31,57 @@
 
 #include "sv4gui_ContourOperation.h"
 
-sv4guiContourOperation::sv4guiContourOperation(mitk::OperationType operationType, mitk::Point3D point, int contourIndex, int index)
-    : mitk::Operation(operationType)
-    , m_Point(point)
-    , m_ContourIndex(contourIndex)
-    , m_Index(index)
-{
+sv4guiContourOperation::sv4guiContourOperation(
+    mitk::OperationType operationType, mitk::Point3D point, int contourIndex,
+    int index)
+    : mitk::Operation(operationType), m_Point(point),
+      m_ContourIndex(contourIndex), m_Index(index) {}
+
+sv4guiContourOperation::sv4guiContourOperation(
+    mitk::OperationType operationType, unsigned int timeStep,
+    mitk::Point3D point, int contourIndex, int index)
+    : mitk::Operation(operationType), m_TimeStep(timeStep), m_Point(point),
+      m_ContourIndex(contourIndex), m_Index(index) {}
+
+sv4guiContourOperation::sv4guiContourOperation(
+    mitk::OperationType operationType, sv4guiContour *contour, int contourIndex)
+    : mitk::Operation(operationType), m_Contour(contour),
+      m_ContourIndex(contourIndex) {}
+
+sv4guiContourOperation::sv4guiContourOperation(
+    mitk::OperationType operationType, unsigned int timeStep,
+    sv4guiContour *contour, int contourIndex)
+    : mitk::Operation(operationType), m_TimeStep(timeStep), m_Contour(contour),
+      m_ContourIndex(contourIndex) {}
+
+sv4guiContourOperation::sv4guiContourOperation(
+    mitk::OperationType operationType, mitk::Point3D point, int index)
+    : mitk::Operation(operationType), m_Point(point), m_Index(index) {}
+
+sv4guiContourOperation::sv4guiContourOperation(
+    mitk::OperationType operationType, unsigned int timeStep,
+    mitk::Point3D point, int index)
+    : mitk::Operation(operationType), m_TimeStep(timeStep), m_Point(point),
+      m_Index(index) {}
+
+sv4guiContourOperation::sv4guiContourOperation(
+    mitk::OperationType operationType, sv4guiContour *contour)
+    : mitk::Operation(operationType), m_Contour(contour) {}
+
+sv4guiContourOperation::sv4guiContourOperation(
+    mitk::OperationType operationType, unsigned int timeStep,
+    sv4guiContour *contour)
+    : mitk::Operation(operationType), m_TimeStep(timeStep), m_Contour(contour) {
 }
 
-sv4guiContourOperation::sv4guiContourOperation(mitk::OperationType operationType, unsigned int timeStep, mitk::Point3D point, int contourIndex, int index)
-    : mitk::Operation(operationType)
-    , m_TimeStep(timeStep)
-    , m_Point(point)
-    , m_ContourIndex(contourIndex)
-    , m_Index(index)
-{
-}
+sv4guiContourOperation::~sv4guiContourOperation() {}
 
-sv4guiContourOperation::sv4guiContourOperation(mitk::OperationType operationType, sv4guiContour* contour, int contourIndex)
-    : mitk::Operation(operationType)
-    , m_Contour(contour)
-    , m_ContourIndex(contourIndex)
-{
-}
+mitk::Point3D sv4guiContourOperation::GetPoint() { return m_Point; }
 
-sv4guiContourOperation::sv4guiContourOperation(mitk::OperationType operationType, unsigned int timeStep, sv4guiContour* contour, int contourIndex)
-    : mitk::Operation(operationType)
-    , m_TimeStep(timeStep)
-    , m_Contour(contour)
-    , m_ContourIndex(contourIndex)
-{
-}
+sv4guiContour *sv4guiContourOperation::GetContour() { return m_Contour; }
 
-sv4guiContourOperation::sv4guiContourOperation(mitk::OperationType operationType, mitk::Point3D point, int index)
-    : mitk::Operation(operationType)
-    , m_Point(point)
-    , m_Index(index)
-{
-   }
+int sv4guiContourOperation::GetContourIndex() { return m_ContourIndex; }
 
-sv4guiContourOperation::sv4guiContourOperation(mitk::OperationType operationType, unsigned int timeStep, mitk::Point3D point, int index)
-    : mitk::Operation(operationType)
-    , m_TimeStep(timeStep)
-    , m_Point(point)
-    , m_Index(index)
-{
-}
+int sv4guiContourOperation::GetIndex() { return m_Index; }
 
-sv4guiContourOperation::sv4guiContourOperation(mitk::OperationType operationType, sv4guiContour* contour)
-    : mitk::Operation(operationType)
-    , m_Contour(contour)
-{
-}
-
-sv4guiContourOperation::sv4guiContourOperation(mitk::OperationType operationType, unsigned int timeStep, sv4guiContour* contour)
-    : mitk::Operation(operationType)
-    , m_TimeStep(timeStep)
-    , m_Contour(contour)
-{
-}
-
-sv4guiContourOperation::~sv4guiContourOperation()
-{
-}
-
-mitk::Point3D sv4guiContourOperation::GetPoint()
-{
-    return m_Point;
-}
-
-sv4guiContour* sv4guiContourOperation::GetContour()
-{
-    return m_Contour;
-}
-
-int sv4guiContourOperation::GetContourIndex()
-{
-    return m_ContourIndex;
-}
-
-int sv4guiContourOperation::GetIndex()
-{
-    return m_Index;
-}
-
-unsigned int sv4guiContourOperation::GetTimeStep() const
-{
-    return m_TimeStep;
-}
+unsigned int sv4guiContourOperation::GetTimeStep() const { return m_TimeStep; }

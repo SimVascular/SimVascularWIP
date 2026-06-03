@@ -41,39 +41,39 @@
 
 #include "mitkCoreObjectFactoryBase.h"
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiSegmentationObjectFactory : public mitk::CoreObjectFactoryBase
-{
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiSegmentationObjectFactory
+    : public mitk::CoreObjectFactoryBase {
 public:
-    mitkClassMacro(sv4guiSegmentationObjectFactory,mitk::CoreObjectFactoryBase);
-    itkFactorylessNewMacro(Self)
-    itkCloneMacro(Self)
-    virtual mitk::Mapper::Pointer CreateMapper(mitk::DataNode* node, MapperSlotId slotId) override;
-    virtual void SetDefaultProperties(mitk::DataNode* node) override;
-    virtual std::string GetFileExtensions() override;
-    virtual mitk::CoreObjectFactoryBase::MultimapType GetFileExtensionsMap() override;
-    virtual std::string GetSaveFileExtensions() override;
-    virtual mitk::CoreObjectFactoryBase::MultimapType GetSaveFileExtensionsMap() override;
+  mitkClassMacro(sv4guiSegmentationObjectFactory, mitk::CoreObjectFactoryBase);
+  itkFactorylessNewMacro(Self) itkCloneMacro(Self) virtual mitk::Mapper::Pointer
+      CreateMapper(mitk::DataNode *node, MapperSlotId slotId) override;
+  virtual void SetDefaultProperties(mitk::DataNode *node) override;
+  virtual std::string GetFileExtensions() override;
+  virtual mitk::CoreObjectFactoryBase::MultimapType
+  GetFileExtensionsMap() override;
+  virtual std::string GetSaveFileExtensions() override;
+  virtual mitk::CoreObjectFactoryBase::MultimapType
+  GetSaveFileExtensionsMap() override;
 
-    void RegisterIOFactories(); //deprecatedSince{2013_09}
+  void RegisterIOFactories(); // deprecatedSince{2013_09}
 protected:
-    sv4guiSegmentationObjectFactory();
-    ~sv4guiSegmentationObjectFactory();
-    void CreateFileExtensionsMap();
-    MultimapType m_FileExtensionsMap;
-    MultimapType m_SaveFileExtensionsMap;
+  sv4guiSegmentationObjectFactory();
+  ~sv4guiSegmentationObjectFactory();
+  void CreateFileExtensionsMap();
+  MultimapType m_FileExtensionsMap;
+  MultimapType m_SaveFileExtensionsMap;
 
 private:
-
 };
 
-struct SV4GUIMODULESEGMENTATION_EXPORT Registersv4guiSegmentationObjectFactory{
+struct SV4GUIMODULESEGMENTATION_EXPORT Registersv4guiSegmentationObjectFactory {
   Registersv4guiSegmentationObjectFactory();
 
   virtual ~Registersv4guiSegmentationObjectFactory();
 
   sv4guiSegmentationObjectFactory::Pointer m_Factory;
-  sv4guiContourGroupIO* m_ContourGroupIO;
-  sv4guiMitkSeg3DIO* m_Seg3DIO;
+  sv4guiContourGroupIO *m_ContourGroupIO;
+  sv4guiMitkSeg3DIO *m_Seg3DIO;
 };
 
 #endif // SV4GUI_SEGMENTATIONOBJECTFACTORY_H

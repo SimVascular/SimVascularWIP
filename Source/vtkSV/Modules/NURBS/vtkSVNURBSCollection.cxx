@@ -32,8 +32,8 @@
 #include "vtkSVNURBSCollection.h"
 #include "vtkObjectFactory.h"
 
-#include "vtkSVNURBSObject.h"
 #include "vtkSVGlobals.h"
+#include "vtkSVNURBSObject.h"
 
 #include <algorithm>
 
@@ -42,24 +42,21 @@ vtkStandardNewMacro(vtkSVNURBSCollection);
 /**
  * Add a NURBS object to the list.
  */
-void vtkSVNURBSCollection::AddItem(vtkSVNURBSObject *ds)
-{
+void vtkSVNURBSCollection::AddItem(vtkSVNURBSObject *ds) {
   this->vtkCollection::AddItem(ds);
 }
 
 /**
  * Get the next NURBS object in the list.
  */
-vtkSVNURBSObject *vtkSVNURBSCollection::GetNextItem()
-{
+vtkSVNURBSObject *vtkSVNURBSCollection::GetNextItem() {
   return static_cast<vtkSVNURBSObject *>(this->GetNextItemAsObject());
 }
 
 /**
  * Get the ith NURBS object in the list.
  */
-vtkSVNURBSObject *vtkSVNURBSCollection::GetItem(int i)
-{
+vtkSVNURBSObject *vtkSVNURBSCollection::GetItem(int i) {
   return static_cast<vtkSVNURBSObject *>(this->GetItemAsObject(i));
 }
 
@@ -67,36 +64,33 @@ vtkSVNURBSObject *vtkSVNURBSCollection::GetItem(int i)
  * Reentrant safe way to get an object in a collection. Just pass the
  * same cookie back and forth.
  */
-vtkSVNURBSObject *vtkSVNURBSCollection::GetNextDataObject(vtkCollectionSimpleIterator &cookie)
-{
+vtkSVNURBSObject *
+vtkSVNURBSCollection::GetNextDataObject(vtkCollectionSimpleIterator &cookie) {
   return static_cast<vtkSVNURBSObject *>(this->GetNextItemAsObject(cookie));
 }
 
-int vtkSVNURBSCollection::AddPatchConnection(const int patch_0, const int patch_1, const int patch_0_face, const int patch_1_face)
-{
+int vtkSVNURBSCollection::AddPatchConnection(const int patch_0,
+                                             const int patch_1,
+                                             const int patch_0_face,
+                                             const int patch_1_face) {
   std::vector<int> potConnection;
   potConnection.push_back(patch_0);
   potConnection.push_back(patch_1);
   std::sort(potConnection.begin(), potConnection.end());
 
   int addConnection = 1;
-  for (int i=0; i<this->PatchConnections.size(); i++)
-  {
+  for (int i = 0; i < this->PatchConnections.size(); i++) {
     if (this->PatchConnections[i] == potConnection)
       addConnection = 0;
   }
 
-  if (addConnection)
-  {
+  if (addConnection) {
     this->PatchConnections.push_back(potConnection);
     std::vector<int> newFaceConnection;
-    if (potConnection[0] == patch_0)
-    {
+    if (potConnection[0] == patch_0) {
       newFaceConnection.push_back(patch_0_face);
       newFaceConnection.push_back(patch_1_face);
-    }
-    else
-    {
+    } else {
       newFaceConnection.push_back(patch_1_face);
       newFaceConnection.push_back(patch_0_face);
     }

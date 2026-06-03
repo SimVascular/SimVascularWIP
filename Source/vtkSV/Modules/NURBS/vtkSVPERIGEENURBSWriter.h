@@ -32,7 +32,7 @@
 /**
  * \class   vtkSVPERIGEENURBSWriter
  * \brief   write ASCII raw file
-*/
+ */
 
 #ifndef vtkSVPERIGEENURBSWriter_h
 #define vtkSVPERIGEENURBSWriter_h
@@ -45,19 +45,18 @@ class vtkCellArray;
 class vtkPoints;
 class vtkPolyData;
 
-class VTKSVNURBS_EXPORT vtkSVPERIGEENURBSWriter : public vtkWriter
-{
+class VTKSVNURBS_EXPORT vtkSVPERIGEENURBSWriter : public vtkWriter {
 public:
   static vtkSVPERIGEENURBSWriter *New();
-  vtkTypeMacro(vtkSVPERIGEENURBSWriter,vtkWriter);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  vtkTypeMacro(vtkSVPERIGEENURBSWriter, vtkWriter);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
   /**
    * Get the input to this writer.
    */
-  vtkSVNURBSObject* GetInput();
-  vtkSVNURBSObject* GetInput(int port);
+  vtkSVNURBSObject *GetInput();
+  vtkSVNURBSObject *GetInput(int port);
   //@}
 
   //@{
@@ -70,23 +69,19 @@ public:
 
 protected:
   vtkSVPERIGEENURBSWriter();
-  ~vtkSVPERIGEENURBSWriter()
-  {
-    delete[] this->FileName;
-  }
+  ~vtkSVPERIGEENURBSWriter() { delete[] this->FileName; }
 
   void WriteData() override;
 
   void WritePERIGEEFile(vtkSVNURBSObject *object);
 
-  char* FileName;
+  char *FileName;
 
   int FillInputPortInformation(int port, vtkInformation *info) override;
 
 private:
-  vtkSVPERIGEENURBSWriter(const vtkSVPERIGEENURBSWriter&);
-  void operator=(const vtkSVPERIGEENURBSWriter&);
+  vtkSVPERIGEENURBSWriter(const vtkSVPERIGEENURBSWriter &);
+  void operator=(const vtkSVPERIGEENURBSWriter &);
 };
 
 #endif
-

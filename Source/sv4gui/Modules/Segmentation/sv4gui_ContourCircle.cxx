@@ -31,175 +31,159 @@
 
 #include "sv4gui_ContourCircle.h"
 
+sv4guiContourCircle::sv4guiContourCircle() {
+  m_Method = "Manual";
+  m_Type = "Circle";
 
-sv4guiContourCircle::sv4guiContourCircle()
-{
-    m_Method="Manual";
-    m_Type="Circle";
+  m_MinControlPointNumber = 2;
+  m_MaxControlPointNumber = 2;
+  m_ControlPointNonRemovableIndices[0] = 0;
+  m_ControlPointNonRemovableIndices[1] = 1;
 
-    m_MinControlPointNumber=2;
-    m_MaxControlPointNumber=2;
-    m_ControlPointNonRemovableIndices[0]=0;
-    m_ControlPointNonRemovableIndices[1]=1;
-
-    m_SubdivisionType=CONSTANT_TOTAL_NUMBER;
-    m_SubdivisionNumber=36;
-    SetKernel(cKernelType::cKERNEL_CIRCLE);
+  m_SubdivisionType = CONSTANT_TOTAL_NUMBER;
+  m_SubdivisionNumber = 36;
+  SetKernel(cKernelType::cKERNEL_CIRCLE);
 }
 
 sv4guiContourCircle::sv4guiContourCircle(const sv4guiContourCircle &other)
-    :sv4guiContour(other)
-{
+    : sv4guiContour(other) {}
+
+sv4guiContourCircle::~sv4guiContourCircle() {}
+
+sv4guiContourCircle *sv4guiContourCircle::Clone() {
+  return new sv4guiContourCircle(*this);
 }
 
-sv4guiContourCircle::~sv4guiContourCircle()
-{
+std::string sv4guiContourCircle::GetClassName() {
+  return "sv4guiContourCircle";
 }
 
-sv4guiContourCircle* sv4guiContourCircle::Clone()
-{
-    return new sv4guiContourCircle(*this);
+void sv4guiContourCircle::SetControlPoint(int index, mitk::Point3D point) {
+  if (index == 0) {
+    mitk::Vector3D dirVec = point - GetControlPoint(index);
+    Shift(dirVec);
+  } else if (index == 1) {
+    std::array<double, 3> stdPt;
+    for (int i = 0; i < 3; i++)
+      stdPt[i] = point[i];
+    m_ControlPoints[index] = stdPt;
+    ControlPointsChanged();
+  }
 }
 
-std::string sv4guiContourCircle::GetClassName()
-{
-    return "sv4guiContourCircle";
-}
+void sv4guiContourCircle::CreateContourPoints() {
+  mitk::Point2D centerPoint, boundaryPoint;
 
-void sv4guiContourCircle::SetControlPoint(int index, mitk::Point3D point)
-{
-    if(index == 0)
-    {
-        mitk::Vector3D dirVec=point-GetControlPoint(index);
-        Shift(dirVec);
+  m_PlaneGeometry->Map(GetControlPoint(0), centerPoint);
+
+  m_PlaneGeometry->Map(GetControlPoint(1), boundaryPoint);
+
+  double radius = centerPoint.EuclideanDistanceTo(boundaryPoint);
+
+  int interNumber;
+
+  switch (m_SubdivisionType) {
+  case CONSTANT_TOTAL_NUMBER:
+    interNumber = m_SubdivisionNumber;
+    break;
+  case CONSTANT_SPACING:
+    interNumber = 2.0 * vnl_math::pi * radius / m_SubdivisionSpacing;
+    if (interNumber < m_SubdivisionNumber) {
+      interNumber = m_SubdivisionNumber;
     }
-    else if ( index == 1 )
-    {
-    	std::array<double,3> stdPt;
-    	for (int i=0; i<3; i++)
-        	stdPt[i] = point[i];
-        m_ControlPoints[index]=stdPt;
-        ControlPointsChanged();
-    }
-        
+    break;
+  default:
+    break;
+  }
+
+  std::array<double, 3> stdPt;
+  for (int i = 0; i < interNumber; ++i) {
+    double alpha = (double)i * vnl_math::pi * 2.0 / interNumber;
+
+    mitk::Point2D point;
+    mitk::Point3D pt3d;
+    point[0] = centerPoint[0] + radius * cos(alpha);
+    point[1] = centerPoint[1] + radius * sin(alpha);
+
+    m_PlaneGeometry->Map(point, pt3d);
+
+    for (int j = 0; j < 3; j++)
+      stdPt[j] = pt3d[j];
+    m_ContourPoints.push_back(stdPt);
+  }
 }
 
-void sv4guiContourCircle::CreateContourPoints()
-{
-    mitk::Point2D centerPoint, boundaryPoint;
-
-    m_PlaneGeometry->Map(GetControlPoint(0), centerPoint );
-
-    m_PlaneGeometry->Map(GetControlPoint(1), boundaryPoint );
-
-    double radius = centerPoint.EuclideanDistanceTo( boundaryPoint );
-
-    int interNumber;
-
-    switch(m_SubdivisionType)
-    {
-    case CONSTANT_TOTAL_NUMBER:
-        interNumber=m_SubdivisionNumber;
-        break;
-    case CONSTANT_SPACING:
-        interNumber=2.0*vnl_math::pi*radius/m_SubdivisionSpacing;
-        if(interNumber<m_SubdivisionNumber)
-        {
-            interNumber=m_SubdivisionNumber;
-        }
-        break;
-    default:
-        break;
-    }
-
-    std::array<double,3> stdPt;
-    for ( int i = 0; i < interNumber; ++i )
-    {
-        double alpha = (double) i * vnl_math::pi * 2.0 / interNumber;
-
-        mitk::Point2D point;
-        mitk::Point3D pt3d;
-        point[0] = centerPoint[0] + radius * cos( alpha );
-        point[1] = centerPoint[1] + radius * sin( alpha );
-
-        m_PlaneGeometry->Map(point,pt3d);
-        
-        for (int j =0; j<3; j++)
-            stdPt[j] = pt3d[j];
-        m_ContourPoints.push_back(stdPt);
-
-    }
-}
-
-void sv4guiContourCircle::AssignCenterScalingPoints()
-{
-}
+void sv4guiContourCircle::AssignCenterScalingPoints() {}
 
 //-----------------
 // CreateByFitting
 //-----------------
 //
-sv4guiContour* sv4guiContourCircle::CreateByFitting(sv4guiContour* contour)
-{
-    #define n_debug_CreateByFitting 
-    #ifdef debug_CreateByFitting 
-    std::string msg("[sv4guiContourCircle::CreateByFitting] ");
-    std::cout << msg << "========== CreateByFitting ========== " << std::endl;
-    std::cout << msg << "contour: " << contour << std::endl;
-    #endif 
+sv4guiContour *sv4guiContourCircle::CreateByFitting(sv4guiContour *contour) {
+#define n_debug_CreateByFitting
+#ifdef debug_CreateByFitting
+  std::string msg("[sv4guiContourCircle::CreateByFitting] ");
+  std::cout << msg << "========== CreateByFitting ========== " << std::endl;
+  std::cout << msg << "contour: " << contour << std::endl;
+#endif
 
-    double area = contour->GetArea();
-    double radius = sqrt(area/vnl_math::pi);
-    #ifdef debug_CreateByFitting 
-    std::cout << msg << "area: " << area << std::endl;
-    std::cout << msg << "radius: " << radius << std::endl;
-    #endif 
+  double area = contour->GetArea();
+  double radius = sqrt(area / vnl_math::pi);
+#ifdef debug_CreateByFitting
+  std::cout << msg << "area: " << area << std::endl;
+  std::cout << msg << "radius: " << radius << std::endl;
+#endif
 
-    #ifdef debug_CreateByFitting 
-    std::cout << msg << "contour->GetPlaneGeometry()->Map 1 ... " << std::endl;
-    std::cout << msg << "   contour->GetControlPoint(0)  ... " << std::endl;
-    auto cpt0 = contour->GetControlPoint(0); 
-    std::cout << msg << "   cpt0: " << cpt0[0] << " " << cpt0[1] << " " << cpt0[2] << std::endl;
-    auto plane_geom = contour->GetPlaneGeometry();
-    std::cout << msg << "   plane_geom: " << plane_geom << std::endl;
-    #endif 
-    mitk::Point2D centerPoint, boundaryPoint;
-    contour->GetPlaneGeometry()->Map(contour->GetControlPoint(0), centerPoint );
-    boundaryPoint[0] = centerPoint[0] + radius;
-    boundaryPoint[1] = centerPoint[1];
-    #ifdef debug_CreateByFitting 
-    std::cout << msg << "   centerPoint: " << centerPoint[0] << " " << centerPoint[1] << " " << centerPoint[2] << std::endl;
-    #endif 
+#ifdef debug_CreateByFitting
+  std::cout << msg << "contour->GetPlaneGeometry()->Map 1 ... " << std::endl;
+  std::cout << msg << "   contour->GetControlPoint(0)  ... " << std::endl;
+  auto cpt0 = contour->GetControlPoint(0);
+  std::cout << msg << "   cpt0: " << cpt0[0] << " " << cpt0[1] << " " << cpt0[2]
+            << std::endl;
+  auto plane_geom = contour->GetPlaneGeometry();
+  std::cout << msg << "   plane_geom: " << plane_geom << std::endl;
+#endif
+  mitk::Point2D centerPoint, boundaryPoint;
+  contour->GetPlaneGeometry()->Map(contour->GetControlPoint(0), centerPoint);
+  boundaryPoint[0] = centerPoint[0] + radius;
+  boundaryPoint[1] = centerPoint[1];
+#ifdef debug_CreateByFitting
+  std::cout << msg << "   centerPoint: " << centerPoint[0] << " "
+            << centerPoint[1] << " " << centerPoint[2] << std::endl;
+#endif
 
-    #ifdef debug_CreateByFitting 
-    std::cout << msg << "contour->GetPlaneGeometry()->Map 2 ... " << std::endl;
-    #endif 
-    mitk::Point3D pt1,pt2;
-    contour->GetPlaneGeometry()->Map(centerPoint, pt1);
-    contour->GetPlaneGeometry()->Map(boundaryPoint, pt2);
-    #ifdef debug_CreateByFitting 
-    std::cout << msg << "pt1: " << pt1[0] << " " << pt1[1] << " " << pt1[2] << std::endl;
-    std::cout << msg << "pt2: " << pt2[0] << " " << pt2[1] << " " << pt2[2] << std::endl;
-    #endif 
+#ifdef debug_CreateByFitting
+  std::cout << msg << "contour->GetPlaneGeometry()->Map 2 ... " << std::endl;
+#endif
+  mitk::Point3D pt1, pt2;
+  contour->GetPlaneGeometry()->Map(centerPoint, pt1);
+  contour->GetPlaneGeometry()->Map(boundaryPoint, pt2);
+#ifdef debug_CreateByFitting
+  std::cout << msg << "pt1: " << pt1[0] << " " << pt1[1] << " " << pt1[2]
+            << std::endl;
+  std::cout << msg << "pt2: " << pt2[0] << " " << pt2[1] << " " << pt2[2]
+            << std::endl;
+#endif
 
-    std::vector<mitk::Point3D> controlPoints;
-    controlPoints.push_back(pt1);
-    controlPoints.push_back(pt2);
+  std::vector<mitk::Point3D> controlPoints;
+  controlPoints.push_back(pt1);
+  controlPoints.push_back(pt2);
 
-    sv4guiContourCircle* newContour = new sv4guiContourCircle();
-    newContour->SetPathPoint(contour->GetPathPoint());
-    newContour->SetPlaced(true);
-    newContour->SetMethod(contour->GetMethod());
-//    newContour->SetClosed(contour->IsClosed());
-    newContour->SetControlPoints(controlPoints);
+  sv4guiContourCircle *newContour = new sv4guiContourCircle();
+  newContour->SetPathPoint(contour->GetPathPoint());
+  newContour->SetPlaced(true);
+  newContour->SetMethod(contour->GetMethod());
+  //    newContour->SetClosed(contour->IsClosed());
+  newContour->SetControlPoints(controlPoints);
 
-    #ifdef debug_CreateByFitting 
-    std::cout << msg << "contour->GetSubdivisionSpacing(): " << contour->GetSubdivisionSpacing() << std::endl;
-    #endif 
+#ifdef debug_CreateByFitting
+  std::cout << msg << "contour->GetSubdivisionSpacing(): "
+            << contour->GetSubdivisionSpacing() << std::endl;
+#endif
 
-    newContour->SetSubdivisionSpacing(contour->GetSubdivisionSpacing());
-    newContour->SetSubdivisionType(contour->GetSubdivisionType());
-    newContour->SetSubdivisionNumber(contour->GetSubdivisionNumber());
+  newContour->SetSubdivisionSpacing(contour->GetSubdivisionSpacing());
+  newContour->SetSubdivisionType(contour->GetSubdivisionType());
+  newContour->SetSubdivisionNumber(contour->GetSubdivisionNumber());
 
-    return newContour;
+  return newContour;
 }

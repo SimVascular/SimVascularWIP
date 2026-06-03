@@ -30,12 +30,12 @@
  */
 
 /**
-  * \class vtkSVSurfaceVectors - Constrains vectors to surface.
-  * \section Description
-  * This filter works on point vectors.  It does not work on cell vectors yet.
-  * A normal is conputed for a point by averaging normals of surrounding
-  * 2D cells.  The vector is then constrained to be perpendicular to the normal.
-  */
+ * \class vtkSVSurfaceVectors - Constrains vectors to surface.
+ * \section Description
+ * This filter works on point vectors.  It does not work on cell vectors yet.
+ * A normal is conputed for a point by averaging normals of surrounding
+ * 2D cells.  The vector is then constrained to be perpendicular to the normal.
+ */
 
 #ifndef vtkSVSurfaceVectors_h
 #define vtkSVSurfaceVectors_h
@@ -46,33 +46,31 @@
 #include "vtkFloatArray.h"
 #include "vtkIdList.h"
 
-class VTKSVMISC_EXPORT vtkSVSurfaceVectors : public vtkDataSetAlgorithm
-{
+class VTKSVMISC_EXPORT vtkSVSurfaceVectors : public vtkDataSetAlgorithm {
 public:
-  vtkTypeMacro(vtkSVSurfaceVectors,vtkDataSetAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  vtkTypeMacro(vtkSVSurfaceVectors, vtkDataSetAlgorithm);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
   static vtkSVSurfaceVectors *New();
 
-//BTX
-  enum ConstraintMode {
-    Parallel = 0,
-    Perpendicular,
-    PerpendicularScale
-  };
-//ETX
+  // BTX
+  enum ConstraintMode { Parallel = 0, Perpendicular, PerpendicularScale };
+  // ETX
 
   //@{
   /// \brief This mode determines whether this filter projects vectors to be
   /// perpendicular to surface or parallel to surface.
   /// It defaults to parallel.
-  vtkSetMacro(ConstraintMode,int);
-  vtkGetMacro(ConstraintMode,int);
-  void SetConstraintModeToParallel()
-    {this->SetConstraintMode(vtkSVSurfaceVectors::Parallel);}
-  void SetConstraintModeToPerpendicular()
-    {this->SetConstraintMode(vtkSVSurfaceVectors::Perpendicular);}
-  void SetConstraintModeToPerpendicularScale()
-    {this->SetConstraintMode(vtkSVSurfaceVectors::PerpendicularScale);}
+  vtkSetMacro(ConstraintMode, int);
+  vtkGetMacro(ConstraintMode, int);
+  void SetConstraintModeToParallel() {
+    this->SetConstraintMode(vtkSVSurfaceVectors::Parallel);
+  }
+  void SetConstraintModeToPerpendicular() {
+    this->SetConstraintMode(vtkSVSurfaceVectors::Perpendicular);
+  }
+  void SetConstraintModeToPerpendicularScale() {
+    this->SetConstraintMode(vtkSVSurfaceVectors::PerpendicularScale);
+  }
   //@}
 
 protected:
@@ -80,18 +78,16 @@ protected:
   ~vtkSVSurfaceVectors();
 
   // Usual data generation method
-  virtual int RequestData(vtkInformation *,
-                          vtkInformationVector **,
+  virtual int RequestData(vtkInformation *, vtkInformationVector **,
                           vtkInformationVector *) override;
-  virtual int RequestUpdateExtent(vtkInformation*,
-                                  vtkInformationVector**,
-                                  vtkInformationVector*) override;
+  virtual int RequestUpdateExtent(vtkInformation *, vtkInformationVector **,
+                                  vtkInformationVector *) override;
 
-  int   ConstraintMode;
+  int ConstraintMode;
 
 private:
-  vtkSVSurfaceVectors(const vtkSVSurfaceVectors&);  // Not implemented.
-  void operator=(const vtkSVSurfaceVectors&);  // Not implemented.
+  vtkSVSurfaceVectors(const vtkSVSurfaceVectors &); // Not implemented.
+  void operator=(const vtkSVSurfaceVectors &);      // Not implemented.
 };
 
 #endif

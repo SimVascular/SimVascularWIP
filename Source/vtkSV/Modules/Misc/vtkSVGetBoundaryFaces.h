@@ -34,9 +34,9 @@
  *  \brief Get boundary faces separated by feature edges
  *  from poldata and label them with integers
  *  \details
- *  vtkSVGetBoundaryFaces is a filter to extract the boundary surfaces of a model,
- *  separate the surace into multiple regions and number each region. It is
- *  similar to using vtkPolyDataNormals with SplittingOn and then a
+ *  vtkSVGetBoundaryFaces is a filter to extract the boundary surfaces of a
+ * model, separate the surace into multiple regions and number each region. It
+ * is similar to using vtkPolyDataNormals with SplittingOn and then a
  *  vtkConnectivityFilter.
  *
  *  \note See Also vtkExtractEdges
@@ -56,22 +56,21 @@
 #include "vtkFeatureEdges.h"
 #include "vtkPolyDataAlgorithm.h"
 
-class VTKSVMISC_EXPORT vtkSVGetBoundaryFaces : public vtkPolyDataAlgorithm
-{
+class VTKSVMISC_EXPORT vtkSVGetBoundaryFaces : public vtkPolyDataAlgorithm {
 public:
-  static vtkSVGetBoundaryFaces* New();
+  static vtkSVGetBoundaryFaces *New();
   vtkTypeMacro(vtkSVGetBoundaryFaces, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
   // \brief Specify the feature angle for extracting feature edges.
-  vtkGetMacro(FeatureAngle,double);
-  vtkSetMacro(FeatureAngle,double);
+  vtkGetMacro(FeatureAngle, double);
+  vtkSetMacro(FeatureAngle, double);
   //@}
 
   //@{
   // \brief Get the number of regions created.
-  vtkGetMacro(NumberOfRegions,int);
+  vtkGetMacro(NumberOfRegions, int);
   //@}
 
   //@{
@@ -118,11 +117,11 @@ protected:
   int NumberOfRegions;
   // Usual data generation method
   int RequestData(vtkInformation *vtkNotUsed(request),
-		  vtkInformationVector **inputVector,
-		  vtkInformationVector *outputVector) override;
+                  vtkInformationVector **inputVector,
+                  vtkInformationVector *outputVector) override;
 
   /** \brief Function to flood fill region fast. */
-  void FindBoundaryRegion(int reg,int start, double &area);
+  void FindBoundaryRegion(int reg, int start, double &area);
 
   /** \brief Function to flood fill region slower, but is necessary close
    *  to boundaries to make sure it doesn't step over boundary. */
@@ -134,7 +133,7 @@ protected:
   /** \brief function to add currnet cell area to full area.
    *  \param cellId cell whose are to be computed.
    *  \param area area which will be updated with cell area. */
-  int  AddCellArea(const int cellId, double &area);
+  int AddCellArea(const int cellId, double &area);
 
   char *RegionIdsArrayName;
 
@@ -163,8 +162,8 @@ protected:
   int ExtractLargestRegion;
 
 private:
-  vtkSVGetBoundaryFaces(const vtkSVGetBoundaryFaces&);  // Not implemented.
-  void operator=(const vtkSVGetBoundaryFaces&);  // Not implemented.
+  vtkSVGetBoundaryFaces(const vtkSVGetBoundaryFaces &); // Not implemented.
+  void operator=(const vtkSVGetBoundaryFaces &);        // Not implemented.
 };
 
 #endif

@@ -35,16 +35,16 @@
  *
  *
  * vtkSVCleanUnstructuredGrid is a filter that takes unstructured grid data as
- * input and generates unstructured grid data as output. vtkSVCleanUnstructuredGrid can
- * merge duplicate points (with coincident coordinates) using the vtkMergePoints object
- * to merge points.
+ * input and generates unstructured grid data as output.
+ * vtkSVCleanUnstructuredGrid can merge duplicate points (with coincident
+ * coordinates) using the vtkMergePoints object to merge points.
  *
  *  \author Adam Updegrove
  *  \author updega2@gmail.com
  *  \author UC Berkeley
  *  \author shaddenlab.berkeley.edu
  *  \sa vtkCleanPolyData
-*/
+ */
 
 #ifndef vtkSVCleanUnstructuredGrid_h
 #define vtkSVCleanUnstructuredGrid_h
@@ -55,10 +55,9 @@
 #include "vtkUnstructuredGridAlgorithm.h"
 
 class VTKSVMISC_EXPORT vtkSVCleanUnstructuredGrid
-  : public vtkUnstructuredGridAlgorithm
-{
+    : public vtkUnstructuredGridAlgorithm {
 public:
-  static vtkSVCleanUnstructuredGrid* New();
+  static vtkSVCleanUnstructuredGrid *New();
 
   vtkTypeMacro(vtkSVCleanUnstructuredGrid, vtkUnstructuredGridAlgorithm);
   //@{
@@ -76,9 +75,9 @@ public:
    * a fraction of Bounding box diagonal, if true, AbsoluteTolerance is
    * used when adding points to locator (merging)
    */
-  vtkSetMacro(ToleranceIsAbsolute,int);
-  vtkBooleanMacro(ToleranceIsAbsolute,int);
-  vtkGetMacro(ToleranceIsAbsolute,int);
+  vtkSetMacro(ToleranceIsAbsolute, int);
+  vtkBooleanMacro(ToleranceIsAbsolute, int);
+  vtkGetMacro(ToleranceIsAbsolute, int);
   //@}
 
   //@{
@@ -86,16 +85,16 @@ public:
    * \brief Specify tolerance in terms of fraction of bounding box length.
    * Default is 0.0.
    */
-  vtkSetClampMacro(Tolerance,double,0.0,1.0);
-  vtkGetMacro(Tolerance,double);
+  vtkSetClampMacro(Tolerance, double, 0.0, 1.0);
+  vtkGetMacro(Tolerance, double);
   //@}
 
   //@{
   /**
    * \brief Specify tolerance in absolute terms. Default is 1.0.
    */
-  vtkSetClampMacro(AbsoluteTolerance,double,0.0,VTK_DOUBLE_MAX);
-  vtkGetMacro(AbsoluteTolerance,double);
+  vtkSetClampMacro(AbsoluteTolerance, double, 0.0, VTK_DOUBLE_MAX);
+  vtkGetMacro(AbsoluteTolerance, double);
   //@}
 
   /**
@@ -103,7 +102,7 @@ public:
    */
   void CreateDefaultLocator(vtkDataSet *input = 0);
 
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
 protected:
   vtkSVCleanUnstructuredGrid();
@@ -115,12 +114,12 @@ protected:
 
   vtkIncrementalPointLocator *Locator;
 
-  virtual int RequestData(
-    vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
-  virtual int FillInputPortInformation(int port, vtkInformation* info) override;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **,
+                          vtkInformationVector *) override;
+  virtual int FillInputPortInformation(int port, vtkInformation *info) override;
 
 private:
-  vtkSVCleanUnstructuredGrid(const vtkSVCleanUnstructuredGrid&);
-  void operator=(const vtkSVCleanUnstructuredGrid&);
+  vtkSVCleanUnstructuredGrid(const vtkSVCleanUnstructuredGrid &);
+  void operator=(const vtkSVCleanUnstructuredGrid &);
 };
 #endif

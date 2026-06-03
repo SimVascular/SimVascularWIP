@@ -31,227 +31,204 @@
 
 #include "sv3_PolygonContour.h"
 #include "sv_Math.h"
-#include  <cmath>
+#include <cmath>
 
 using sv3::ContourPolygon;
-ContourPolygon::ContourPolygon() : Contour()
-{
-    m_Method="Manual";
-    m_Type="Polygon";
+ContourPolygon::ContourPolygon() : Contour() {
+  m_Method = "Manual";
+  m_Type = "Polygon";
 
-    m_MinControlPointNumber=4;
-    m_MaxControlPointNumber=200;
+  m_MinControlPointNumber = 4;
+  m_MaxControlPointNumber = 200;
 
-    m_ControlPointNonRemovableIndices[0]=0;
-    m_ControlPointNonRemovableIndices[1]=1;
-    //m_Extendable=true;
+  m_ControlPointNonRemovableIndices[0] = 0;
+  m_ControlPointNonRemovableIndices[1] = 1;
+  // m_Extendable=true;
 }
 
-ContourPolygon::ContourPolygon(const ContourPolygon &other)
-    : Contour(other)
-{
+ContourPolygon::ContourPolygon(const ContourPolygon &other) : Contour(other) {}
+
+ContourPolygon::~ContourPolygon() {}
+
+ContourPolygon *ContourPolygon::Clone() { return new ContourPolygon(*this); }
+
+std::string ContourPolygon::GetClassName() { return "ContourPolygon"; }
+
+std::vector<std::array<double, 3>>
+CreateInterpolationPoints(std::array<double, 3> pt1, std::array<double, 3> pt2,
+                          int interNumber) {
+  std::vector<std::array<double, 3>> points;
+
+  double dx, dy, dz;
+  dx = (pt2[0] - pt1[0]) / interNumber;
+  dy = (pt2[1] - pt1[1]) / interNumber;
+  dz = (pt2[2] - pt1[2]) / interNumber;
+
+  std::array<double, 3> pt;
+  for (int i = 1; i < interNumber; i++) {
+    pt[0] = pt1[0] + i * dx;
+    pt[1] = pt1[1] + i * dy;
+    pt[2] = pt1[2] + i * dz;
+
+    points.push_back(pt);
+  }
+
+  return points;
 }
 
-ContourPolygon::~ContourPolygon()
-{
+void ContourPolygon::SetControlPoint(int index, std::array<double, 3> point) {
+  double tmp[3], projPt[3];
+  for (int i = 0; i < 3; i++)
+    tmp[i] = point[i];
+  m_vtkPlaneGeometry->ProjectPoint(tmp, projPt);
+  if (index >= m_ControlPoints.size()) {
+    fprintf(stderr, "Unable to set control point\n");
+    return;
+  }
+  if (index == -1)
+    index = m_ControlPoints.size() - 1;
+
+  if (index < 0 || index > m_ControlPoints.size() - 1)
+    return;
+
+  if (index == 0) {
+    std::array<double, 3> dirVec;
+    for (int i = 0; i < 3; i++)
+      dirVec[i] = projPt[i] - m_ControlPoints[index][i];
+    Shift(dirVec);
+  } else if (index == 1) {
+    Scale(m_ControlPoints[0], m_ControlPoints[index],
+          std::array<double, 3>{projPt[0], projPt[1], projPt[2]});
+  } else if (index < m_ControlPoints.size()) {
+    m_ControlPoints[index] =
+        std::array<double, 3>{projPt[0], projPt[1], projPt[2]};
+    ControlPointsChanged();
+  }
 }
 
-ContourPolygon* ContourPolygon::Clone()
-{
-    return new ContourPolygon(*this);
-}
+void ContourPolygon::CreateContourPoints() {
+  // exclude the first two points
 
-std::string ContourPolygon::GetClassName()
-{
-    return "ContourPolygon";
-}
+  if (m_ContourPoints.size() != 0)
+    m_ContourPoints.clear();
 
+  int controlNumber = GetControlPointNumber();
 
-std::vector<std::array<double,3> > CreateInterpolationPoints(std::array<double,3>  pt1, std::array<double,3>  pt2, int interNumber)
-{
-    std::vector<std::array<double,3> > points;
+  if (controlNumber <= 2) {
+    return;
+  } else if (controlNumber == 3) {
+    m_ContourPoints.push_back(GetControlPoint(2));
+    return;
+  }
 
-    double dx,dy,dz;
-    dx=(pt2[0]-pt1[0])/interNumber;
-    dy=(pt2[1]-pt1[1])/interNumber;
-    dz=(pt2[2]-pt1[2])/interNumber;
+  std::vector<std::array<double, 3>> tempControlPoints = m_ControlPoints;
+  tempControlPoints.push_back(m_ControlPoints[2]);
 
-    std::array<double,3>  pt;
-    for(int i=1;i<interNumber;i++)
-    {
-        pt[0]=pt1[0]+i*dx;
-        pt[1]=pt1[1]+i*dy;
-        pt[2]=pt1[2]+i*dz;
+  int interNumber;
 
-        points.push_back(pt);
-    }
-
-    return points;
-}
-
-void ContourPolygon::SetControlPoint(int index, std::array<double,3>  point)
-{
-    double tmp[3], projPt[3];
-    for (int i = 0; i<3; i++)
-        tmp[i] = point[i];
-    m_vtkPlaneGeometry->ProjectPoint(tmp, projPt);
-    if (index>=m_ControlPoints.size())
-    {
-        fprintf(stderr, "Unable to set control point\n");
-        return;
-    }
-    if(index==-1) index=m_ControlPoints.size()-1;
-
-    if(index<0||index>m_ControlPoints.size()-1) return;
-
-    if(index==0)
-    {
-        std::array<double,3> dirVec;
-        for (int i = 0; i<3; i++)
-            dirVec[i]=projPt[i]-m_ControlPoints[index][i];
-        Shift(dirVec);
-    }
-    else if(index==1)
-    {
-        Scale(m_ControlPoints[0], m_ControlPoints[index], std::array<double,3>{projPt[0],projPt[1],projPt[2]});
-    }
-    else if(index<m_ControlPoints.size())
-    {
-        m_ControlPoints[index]=std::array<double,3>{projPt[0],projPt[1],projPt[2]};
-        ControlPointsChanged();
-    }
-}
-
-void ContourPolygon::CreateContourPoints()
-{
-    //exclude the first two points
-    
-    if (m_ContourPoints.size()!=0)
-        m_ContourPoints.clear();
-
-    int controlNumber=GetControlPointNumber();
-
-    if(controlNumber<=2)
-    {
-        return;
-    }
-    else if(controlNumber==3)
-    {
-        m_ContourPoints.push_back(GetControlPoint(2));
-        return;
-    }
-
-    std::vector<std::array<double,3> > tempControlPoints=m_ControlPoints;
-    tempControlPoints.push_back(m_ControlPoints[2]);
-
-    int interNumber;
-
-    switch(m_SubdivisionType)
-    {
-    case CONSTANT_TOTAL_NUMBER:
-        if(m_Closed)
-            interNumber=std::ceil(m_SubdivisionNumber*1.0/(controlNumber-2));
-        else
-            interNumber=std::ceil((m_SubdivisionNumber-1.0)/(controlNumber-3));
-        break;
-    case CONSTANT_SUBDIVISION_NUMBER:
-            interNumber=m_SubdivisionNumber;
-        break;
-    default:
-        break;
-    }
-
-    int controlBeginIndex=2;
-    for(int i=controlBeginIndex;i<controlNumber;i++)
-    {
-        std::array<double,3>  pt1,pt2;
-        pt1=tempControlPoints[i];
-        pt2=tempControlPoints[i+1];
-
-        m_ContourPoints.push_back(pt1);
-
-        if(i==controlNumber-1 &&!m_Closed) break;
-
-        if(m_SubdivisionType==CONSTANT_SPACING)
-        {
-            double dist = sqrt(pow(pt2[0]-pt1[0],2)+pow(pt2[1]-pt1[1],2)+pow(pt2[2]-pt1[2],2));
-            interNumber=std::ceil(dist/m_SubdivisionSpacing);
-        }
-
-        std::vector<std::array<double,3> > interPoints=CreateInterpolationPoints(pt1,pt2,interNumber);
-
-         m_ContourPoints.insert(m_ContourPoints.end(),interPoints.begin(),interPoints.end());
-    }
-
-}
-
-int ContourPolygon::SearchControlPointByContourPoint( int contourPointIndex )
-{
-    if(contourPointIndex<-1 || contourPointIndex>=m_ContourPoints.size()) return -2;
-
-    if(contourPointIndex==-1) return m_ControlPoints.size();
-
-    int controlBeginIndex=2;//exclude the first two points
-
-    for(int i=contourPointIndex;i<m_ContourPoints.size();i++)
-    {
-        for(int j=controlBeginIndex;j<m_ControlPoints.size();j++)
-        {
-            if(m_ContourPoints[i][0]==m_ControlPoints[j][0]
-                    &&m_ContourPoints[i][1]==m_ControlPoints[j][1]
-                    &&m_ContourPoints[i][2]==m_ControlPoints[j][2])
-            {
-                return j;
-            }
-        }
-    }
-
-    return m_ControlPoints.size();
-}
-
-void ContourPolygon::AssignCenterScalingPoints()
-{
-    if(m_ControlPoints.size()>1)
-    {
-        m_ControlPoints[0]=m_CenterPoint;
-        m_ControlPoints[1]=m_ScalingPoint;
-    }
-}
-
-void ContourPolygon::PlaceControlPoints(std::array<double,3>  point)
-{
-    Contour::PlaceControlPoints(point);
-    m_ControlPointSelectedIndex = 3;
-}
-
-ContourPolygon* ContourPolygon::CreateSmoothedContour(int fourierNumber)
-{
-    if(m_ContourPoints.size()<3)
-        return this->Clone();
-
-    ContourPolygon* contour=new ContourPolygon();
-    contour->SetPathPoint(m_PathPoint);
-    std::string method=m_Method;
-    int idx=method.find("Smoothed");
-    if(idx<0)
-        method=method+" + Smoothed";
-
-    contour->SetMethod(method);
-    contour->SetClosed(m_Closed);
-
-    int pointNumber=m_ContourPoints.size();
-
-    int smoothedPointNumber;
-
-    if((2*pointNumber)<fourierNumber)
-        smoothedPointNumber=3*fourierNumber;
+  switch (m_SubdivisionType) {
+  case CONSTANT_TOTAL_NUMBER:
+    if (m_Closed)
+      interNumber = std::ceil(m_SubdivisionNumber * 1.0 / (controlNumber - 2));
     else
-        smoothedPointNumber=pointNumber;
+      interNumber =
+          std::ceil((m_SubdivisionNumber - 1.0) / (controlNumber - 3));
+    break;
+  case CONSTANT_SUBDIVISION_NUMBER:
+    interNumber = m_SubdivisionNumber;
+    break;
+  default:
+    break;
+  }
 
-    cvMath *cMath = new cvMath();
-    std::vector<std::array<double, 3> > smoothedContourPoints=cMath->CreateSmoothedCurve(m_ContourPoints,m_Closed,fourierNumber,0,smoothedPointNumber);
-    delete cMath;
-    contour->SetContourPoints(smoothedContourPoints);
+  int controlBeginIndex = 2;
+  for (int i = controlBeginIndex; i < controlNumber; i++) {
+    std::array<double, 3> pt1, pt2;
+    pt1 = tempControlPoints[i];
+    pt2 = tempControlPoints[i + 1];
 
-    return contour;
+    m_ContourPoints.push_back(pt1);
+
+    if (i == controlNumber - 1 && !m_Closed)
+      break;
+
+    if (m_SubdivisionType == CONSTANT_SPACING) {
+      double dist = sqrt(pow(pt2[0] - pt1[0], 2) + pow(pt2[1] - pt1[1], 2) +
+                         pow(pt2[2] - pt1[2], 2));
+      interNumber = std::ceil(dist / m_SubdivisionSpacing);
+    }
+
+    std::vector<std::array<double, 3>> interPoints =
+        CreateInterpolationPoints(pt1, pt2, interNumber);
+
+    m_ContourPoints.insert(m_ContourPoints.end(), interPoints.begin(),
+                           interPoints.end());
+  }
+}
+
+int ContourPolygon::SearchControlPointByContourPoint(int contourPointIndex) {
+  if (contourPointIndex < -1 || contourPointIndex >= m_ContourPoints.size())
+    return -2;
+
+  if (contourPointIndex == -1)
+    return m_ControlPoints.size();
+
+  int controlBeginIndex = 2; // exclude the first two points
+
+  for (int i = contourPointIndex; i < m_ContourPoints.size(); i++) {
+    for (int j = controlBeginIndex; j < m_ControlPoints.size(); j++) {
+      if (m_ContourPoints[i][0] == m_ControlPoints[j][0] &&
+          m_ContourPoints[i][1] == m_ControlPoints[j][1] &&
+          m_ContourPoints[i][2] == m_ControlPoints[j][2]) {
+        return j;
+      }
+    }
+  }
+
+  return m_ControlPoints.size();
+}
+
+void ContourPolygon::AssignCenterScalingPoints() {
+  if (m_ControlPoints.size() > 1) {
+    m_ControlPoints[0] = m_CenterPoint;
+    m_ControlPoints[1] = m_ScalingPoint;
+  }
+}
+
+void ContourPolygon::PlaceControlPoints(std::array<double, 3> point) {
+  Contour::PlaceControlPoints(point);
+  m_ControlPointSelectedIndex = 3;
+}
+
+ContourPolygon *ContourPolygon::CreateSmoothedContour(int fourierNumber) {
+  if (m_ContourPoints.size() < 3)
+    return this->Clone();
+
+  ContourPolygon *contour = new ContourPolygon();
+  contour->SetPathPoint(m_PathPoint);
+  std::string method = m_Method;
+  int idx = method.find("Smoothed");
+  if (idx < 0)
+    method = method + " + Smoothed";
+
+  contour->SetMethod(method);
+  contour->SetClosed(m_Closed);
+
+  int pointNumber = m_ContourPoints.size();
+
+  int smoothedPointNumber;
+
+  if ((2 * pointNumber) < fourierNumber)
+    smoothedPointNumber = 3 * fourierNumber;
+  else
+    smoothedPointNumber = pointNumber;
+
+  cvMath *cMath = new cvMath();
+  std::vector<std::array<double, 3>> smoothedContourPoints =
+      cMath->CreateSmoothedCurve(m_ContourPoints, m_Closed, fourierNumber, 0,
+                                 smoothedPointNumber);
+  delete cMath;
+  contour->SetContourPoints(smoothedContourPoints);
+
+  return contour;
 }

@@ -31,7 +31,8 @@
 
 /**
  *  \class vtkSVFindGeodesicPath
- *  \brief This class uses vtkDijkstraGraphGeodesicPath to get path betwen points
+ *  \brief This class uses vtkDijkstraGraphGeodesicPath to get path betwen
+ * points
  *
  *  \author Adam Updegrove
  *  \author updega2@gmail.com
@@ -48,12 +49,11 @@
 #include "vtkPolyData.h"
 #include "vtkPolyDataAlgorithm.h"
 
-class VTKSVMISC_EXPORT vtkSVFindGeodesicPath : public vtkPolyDataAlgorithm
-{
+class VTKSVMISC_EXPORT vtkSVFindGeodesicPath : public vtkPolyDataAlgorithm {
 public:
-  static vtkSVFindGeodesicPath* New();
-  vtkTypeMacro(vtkSVFindGeodesicPath,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  static vtkSVFindGeodesicPath *New();
+  vtkTypeMacro(vtkSVFindGeodesicPath, vtkPolyDataAlgorithm);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
   /// \brief Get/Set macros for point that will be close to the target boundary
@@ -68,8 +68,8 @@ public:
   //@}
 
   //@{
-  /// \brief Get/Set macros for Ids that create the path from the start to the end point
-  /// (if using end pt)
+  /// \brief Get/Set macros for Ids that create the path from the start to the
+  /// end point (if using end pt)
   vtkGetObjectMacro(PathIds, vtkIdList);
   vtkSetObjectMacro(PathIds, vtkIdList);
   //@}
@@ -113,11 +113,11 @@ protected:
 
   // Usual data generation method
   int RequestData(vtkInformation *vtkNotUsed(request),
-		  vtkInformationVector **inputVector,
-		  vtkInformationVector *outputVector) override;
+                  vtkInformationVector **inputVector,
+                  vtkInformationVector *outputVector) override;
 
   int PrepFilter(); // Prep work.
-  int RunFilter(); // Run filter operations.
+  int RunFilter();  // Run filter operations.
 
   /** \brief Sets up and runs vtkDijkstra filter, and if repelPoints are
    *  provided, these are set and used. */
@@ -134,7 +134,7 @@ protected:
 
   /** \brief Gets the boundary points that are direct neighbors to given
    *  pointId. */
-  int GetNeighborBoundaryPoints(const int ptId,vtkPolyData *pd,
+  int GetNeighborBoundaryPoints(const int ptId, vtkPolyData *pd,
                                 vtkPoints *repelPoints);
 
   char *InternalIdsArrayName;
@@ -143,7 +143,7 @@ protected:
 
   vtkPolyData *WorkPd;
   vtkPolyData *BoundaryPd;
-  vtkIdList   *PathIds;
+  vtkIdList *PathIds;
   vtkIntArray *PathBoolean;
 
   int StartPtId;
@@ -155,9 +155,8 @@ protected:
   double ClosePt[3];
 
 private:
-  vtkSVFindGeodesicPath(const vtkSVFindGeodesicPath&);  // Not implemented.
-  void operator=(const vtkSVFindGeodesicPath&);  // Not implemented.
-
+  vtkSVFindGeodesicPath(const vtkSVFindGeodesicPath &); // Not implemented.
+  void operator=(const vtkSVFindGeodesicPath &);        // Not implemented.
 };
 
 #endif

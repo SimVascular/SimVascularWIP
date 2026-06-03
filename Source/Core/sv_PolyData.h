@@ -34,14 +34,13 @@
 
 #include "SimVascular.h"
 #include "svRepositoryExports.h" // For exports
-#include "sv_misc_utils.h"
 #include "sv_VTK.h"
+#include "sv_misc_utils.h"
 
 class SV_EXPORT_REPOSITORY PolyDataCheckResults {
 public:
   std::vector<int> invalid_cells;
 };
-
 
 //--------------------
 // PolyDataException
@@ -51,51 +50,49 @@ public:
 //
 class PolyDataException : public std::runtime_error {
 
-    public:
-        PolyDataException(const std::string& message, const std::vector<std::array<double,3>>& points,
-          vtkPolyData *geometry = nullptr) : std::runtime_error(message)
-        {
-            m_points = points;
+public:
+  PolyDataException(const std::string &message,
+                    const std::vector<std::array<double, 3>> &points,
+                    vtkPolyData *geometry = nullptr)
+      : std::runtime_error(message) {
+    m_points = points;
 
-            if (geometry != nullptr) {
-                m_geometry = vtkSmartPointer<vtkPolyData>::New();
-                m_geometry->DeepCopy(geometry);
-            }
-         }
+    if (geometry != nullptr) {
+      m_geometry = vtkSmartPointer<vtkPolyData>::New();
+      m_geometry->DeepCopy(geometry);
+    }
+  }
 
-         std::vector<std::array<double,3>> getPoints() const { return m_points; }
-         vtkSmartPointer<vtkPolyData> getGeometry() const { return m_geometry; }
+  std::vector<std::array<double, 3>> getPoints() const { return m_points; }
+  vtkSmartPointer<vtkPolyData> getGeometry() const { return m_geometry; }
 
-    private:
-        std::vector<std::array<double,3>> m_points;
-        vtkSmartPointer<vtkPolyData> m_geometry = nullptr;
+private:
+  std::vector<std::array<double, 3>> m_points;
+  vtkSmartPointer<vtkPolyData> m_geometry = nullptr;
 };
 
+typedef enum { PD_DIST_VTK, PD_DIST_INVALID } PolyData_DistanceT;
 
-typedef enum {
-  PD_DIST_VTK, PD_DIST_INVALID
-} PolyData_DistanceT;
-
-#include "sv_RepositoryData.h"
 #include "sv_DataSet.h"
+#include "sv_RepositoryData.h"
 
 class SV_EXPORT_REPOSITORY cvPolyData : public cvDataSet {
 
 public:
   cvPolyData();
-  cvPolyData( vtkPolyData *pd );
-  cvPolyData( cvPolyData *pd );
+  cvPolyData(vtkPolyData *pd);
+  cvPolyData(cvPolyData *pd);
   ~cvPolyData();
 
-  double FindDistance2( double x, double y, double z );
-  double FindDistance( double x, double y, double z );
+  double FindDistance2(double x, double y, double z);
+  double FindDistance(double x, double y, double z);
 
-  double FindDistance2( double x, double y, double z, double radius );
-  double FindDistance( double x, double y, double z, double radius );
+  double FindDistance2(double x, double y, double z, double radius);
+  double FindDistance(double x, double y, double z, double radius);
 
-  vtkPolyData *GetVtkPolyData() { return (vtkPolyData*)data_; }
+  vtkPolyData *GetVtkPolyData() { return (vtkPolyData *)data_; }
 
-  void SetDistMethod( PolyData_DistanceT dt );
+  void SetDistMethod(PolyData_DistanceT dt);
   PolyData_DistanceT GetDistMethod() { return distMethod_; }
 
 private:
@@ -107,21 +104,17 @@ private:
   void ClearVtkCellLocator();
   vtkCellLocator *locator_;
   vtkGenericCell *genericCell_;
-
 };
-
 
 // ------------
 // InitDistance
 // ------------
 
-inline
-int cvPolyData::InitDistance()
-{
+inline int cvPolyData::InitDistance() {
   switch (distMethod_) {
 
   case PD_DIST_VTK:
-    if ( ( locator_ == nullptr ) || ( genericCell_ == nullptr ) ) {
+    if ((locator_ == nullptr) || (genericCell_ == nullptr)) {
       return BuildVtkCellLocator();
     } else {
       return SV_OK;
@@ -133,6 +126,5 @@ int cvPolyData::InitDistance()
   }
   return SV_ERROR;
 }
-
 
 #endif // __POLY_DATA_H

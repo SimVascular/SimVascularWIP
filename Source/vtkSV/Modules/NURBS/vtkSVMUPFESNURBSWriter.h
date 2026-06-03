@@ -32,7 +32,7 @@
 /**
  * \class   vtkSVMUPFESNURBSWriter
  * \brief   write ASCII raw file
-*/
+ */
 
 #ifndef vtkSVMUPFESNURBSWriter_h
 #define vtkSVMUPFESNURBSWriter_h
@@ -45,19 +45,18 @@ class vtkCellArray;
 class vtkPoints;
 class vtkPolyData;
 
-class VTKSVNURBS_EXPORT vtkSVMUPFESNURBSWriter : public vtkWriter
-{
+class VTKSVNURBS_EXPORT vtkSVMUPFESNURBSWriter : public vtkWriter {
 public:
   static vtkSVMUPFESNURBSWriter *New();
-  vtkTypeMacro(vtkSVMUPFESNURBSWriter,vtkWriter);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  vtkTypeMacro(vtkSVMUPFESNURBSWriter, vtkWriter);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
   /**
    * Get the input to this writer.
    */
-  vtkSVNURBSObject* GetInput();
-  vtkSVNURBSObject* GetInput(int port);
+  vtkSVNURBSObject *GetInput();
+  vtkSVNURBSObject *GetInput(int port);
   //@}
 
   //@{
@@ -70,23 +69,19 @@ public:
 
 protected:
   vtkSVMUPFESNURBSWriter();
-  ~vtkSVMUPFESNURBSWriter()
-  {
-    delete[] this->FileName;
-  }
+  ~vtkSVMUPFESNURBSWriter() { delete[] this->FileName; }
 
   void WriteData() override;
 
   void WriteMUPFESFile(vtkSVNURBSObject *object);
 
-  char* FileName;
+  char *FileName;
 
   int FillInputPortInformation(int port, vtkInformation *info) override;
 
 private:
-  vtkSVMUPFESNURBSWriter(const vtkSVMUPFESNURBSWriter&);
-  void operator=(const vtkSVMUPFESNURBSWriter&);
+  vtkSVMUPFESNURBSWriter(const vtkSVMUPFESNURBSWriter &);
+  void operator=(const vtkSVMUPFESNURBSWriter &);
 };
 
 #endif
-

@@ -35,22 +35,22 @@
 
 // [TODO:DaveP] This does not seem to be used anywhere.
 //
-int img_threshold (vtkStructuredPoints *image, vtkFloatingPointType thrMin, vtkFloatingPointType thrMax,
-                   int max_num_pts, cvPolyData **result) {
+int img_threshold(vtkStructuredPoints *image, vtkFloatingPointType thrMin,
+                  vtkFloatingPointType thrMax, int max_num_pts,
+                  cvPolyData **result) {
 
-    // this code doesn't seem to work in vtk 5
-    //ThresholdPoints *throbj = ThresholdPoints::New();
-    vtkThresholdPoints *throbj = vtkThresholdPoints::New();
-    throbj->SetInputDataObject(image);
-    // this method no longer exists in vtk 5
-    //throbj->SetMaxNumPts(max_num_pts);
-    throbj->ThresholdBetween(thrMin,thrMax);
-    throbj->Update();
-    vtkPolyData *pd = throbj->GetOutput();
-    (*result) = new cvPolyData( pd );
-    //pd->Delete();
-    throbj->Delete();
+  // this code doesn't seem to work in vtk 5
+  // ThresholdPoints *throbj = ThresholdPoints::New();
+  vtkThresholdPoints *throbj = vtkThresholdPoints::New();
+  throbj->SetInputDataObject(image);
+  // this method no longer exists in vtk 5
+  // throbj->SetMaxNumPts(max_num_pts);
+  throbj->ThresholdBetween(thrMin, thrMax);
+  throbj->Update();
+  vtkPolyData *pd = throbj->GetOutput();
+  (*result) = new cvPolyData(pd);
+  // pd->Delete();
+  throbj->Delete();
 
-    return SV_OK;
-
+  return SV_OK;
 }

@@ -55,12 +55,12 @@
 #include "vtkFloatArray.h"
 #include "vtkPolyData.h"
 
-class VTKSVPARAMETERIZATION_EXPORT vtkSVSphericalMapper : public vtkPolyDataAlgorithm
-{
+class VTKSVPARAMETERIZATION_EXPORT vtkSVSphericalMapper
+    : public vtkPolyDataAlgorithm {
 public:
-  static vtkSVSphericalMapper* New();
-  //vtkTypeRevisionMacro(vtkSVSphericalMapper, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  static vtkSVSphericalMapper *New();
+  // vtkTypeRevisionMacro(vtkSVSphericalMapper, vtkPolyDataAlgorithm);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   // Description:
   // Print statements used for debugging
@@ -119,45 +119,43 @@ public:
   // Place to save files if Verbose == 3
   vtkSetStringMacro(IterOutputFilename);
 
-  //MAP
-  enum MAP
-  {
-    TUTTE = 0,
-    HARMONIC
-  };
+  // MAP
+  enum MAP { TUTTE = 0, HARMONIC };
 
-  //CG_UPDATE_TYPE
-  enum CG_UPDATE_TYPE
-  {
-    CG_NONE=0, //No update
+  // CG_UPDATE_TYPE
+  enum CG_UPDATE_TYPE {
+    CG_NONE = 0, // No update
     CG_FLETCHER_REEVES,
     CG_POLAK_RIBIERE,
     CG_HESTENESS_STIEFEL,
     CG_DAI_YUAN,
   };
 
-  //BOUNDARY_TYPE
-  enum BOUNDARY_TYPE
-  {
+  // BOUNDARY_TYPE
+  enum BOUNDARY_TYPE {
     CLOSED = 0,
-    NORTH  = 1,
-    SOUTH  = 2,
-    FRONT  = 8,
-    BACK   = 16,
-    LEFT   = 32,
-    RIGHT  = 64,
+    NORTH = 1,
+    SOUTH = 2,
+    FRONT = 8,
+    BACK = 16,
+    LEFT = 32,
+    RIGHT = 64,
   };
 
-  //Helper functions
+  // Helper functions
   static int ComputeEnergy(vtkPolyData *pd, vtkEdgeTable *edgeTable,
                            vtkFloatArray *edgeWeights, double &energy, int map);
   static int ComputeStringEnergy(double e0[], double e1[], double weight,
-                          double stringEnergy[]);
+                                 double stringEnergy[]);
   static int CalculateCircleLength(vtkPolyData *lines, double &length);
-  static int CalculateSquareEdgeLengths(vtkPolyData *lines, vtkIntArray *markerPts, double lengths[]);
-  static int PDCheckArrayName(vtkPolyData *pd, int datatype, std::string arrayname);
+  static int CalculateSquareEdgeLengths(vtkPolyData *lines,
+                                        vtkIntArray *markerPts,
+                                        double lengths[]);
+  static int PDCheckArrayName(vtkPolyData *pd, int datatype,
+                              std::string arrayname);
   static int CubeBoundaryToSphere(double inCoords[], double outCoords[]);
-  static int RotateByAngle(const double pt[3], const double angle, double returnPt[3]);
+  static int RotateByAngle(const double pt[3], const double angle,
+                           double returnPt[3]);
 
 protected:
   vtkSVSphericalMapper();
@@ -165,8 +163,8 @@ protected:
 
   // Usual data generation method
   int RequestData(vtkInformation *vtkNotUsed(request),
-		  vtkInformationVector **inputVector,
-		  vtkInformationVector *outputVector) override;
+                  vtkInformationVector **inputVector,
+                  vtkInformationVector *outputVector) override;
 
   // Main functions in filter
   int PerformMapping();
@@ -177,8 +175,12 @@ protected:
   int SetBoundaries();
   int FindBoundaries();
   int SetLoopOnUnitCircle(vtkPolyData *lines, double length, double radius);
-  int SetCubeBoundary(vtkPolyData *lines, vtkIntArray *markerPts, vtkIntArray *markerDirs, double cubeStart[], double lengths[]);
-  int SetCircleBoundary(vtkPolyData *lines, vtkIntArray *markerPts, vtkIntArray *markerDirs, double cubeStart[], double lengths[], double radius);
+  int SetCubeBoundary(vtkPolyData *lines, vtkIntArray *markerPts,
+                      vtkIntArray *markerDirs, double cubeStart[],
+                      double lengths[]);
+  int SetCircleBoundary(vtkPolyData *lines, vtkIntArray *markerPts,
+                        vtkIntArray *markerDirs, double cubeStart[],
+                        double lengths[], double radius);
   int DetermineBoundaryPlan(int &numLoops, int bBool[]);
   int GetCubeStartPoint(int id, double startCoords[]);
 
@@ -187,55 +189,58 @@ protected:
   int WolfeLineSearch(int map);
   int ComputeMobiusTransformation();
   int ComputeResidual(double &residual);
-  int UpdateMap(vtkFloatArray *laplacian, int map, int cg_update);//Sets current descent direction without cg
-  int StepForward(int map, int cg_update); // https://en.wikipedia.org/wiki/Nonlinear_conjugate_gradient_method
-  int FRUpdateMap(int map); //Fletcher-Reeves
-  int PRUpdateMap(int map); //Polak-Ribier
-  int HSUpdateMap(int map); //Hesteness-Stiefel
-  int DYUpdateMap(int map); //Dai-Yuan
+  int UpdateMap(vtkFloatArray *laplacian, int map,
+                int cg_update); // Sets current descent direction without cg
+  int StepForward(
+      int map,
+      int cg_update); // https://en.wikipedia.org/wiki/Nonlinear_conjugate_gradient_method
+  int FRUpdateMap(int map); // Fletcher-Reeves
+  int PRUpdateMap(int map); // Polak-Ribier
+  int HSUpdateMap(int map); // Hesteness-Stiefel
+  int DYUpdateMap(int map); // Dai-Yuan
   int CGUpdateMap(int map, double beta[]);
 
   // Point and edge wise functions using discrete laplace-beltrami
 
 private:
-  vtkSVSphericalMapper(const vtkSVSphericalMapper&);  // Not implemented.
-  void operator=(const vtkSVSphericalMapper&);  // Not implemented.
+  vtkSVSphericalMapper(const vtkSVSphericalMapper &); // Not implemented.
+  void operator=(const vtkSVSphericalMapper &);       // Not implemented.
 
-  int    Verbose;
+  int Verbose;
   double InitialTimeStep;
   double TimeStep;
   double TutteEnergyCriterion;
   double HarmonicEnergyCriterion;
-  int    MaxNumIterations;
-  int    NumBoundaries;
-  int    CGUpdateMethod;
+  int MaxNumIterations;
+  int NumBoundaries;
+  int CGUpdateMethod;
   double MassCenter[3];
   double ObjectXAxis[3];
   double ObjectZAxis[3];
 
-  vtkPolyData   *InitialPd;
-  vtkEdgeTable  *EdgeTable;
+  vtkPolyData *InitialPd;
+  vtkEdgeTable *EdgeTable;
   vtkFloatArray *EdgeWeights;
   vtkFloatArray *PrevDescent;
   vtkFloatArray *CurrDescent;
   vtkFloatArray *ConjugateDir;
-  vtkIntArray   *EdgeNeighbors;
-  vtkIntArray   *IsBoundary;
-  vtkPolyData   *HarmonicMap[2];
-  vtkPolyData   *Boundaries;
+  vtkIntArray *EdgeNeighbors;
+  vtkIntArray *IsBoundary;
+  vtkPolyData *HarmonicMap[2];
+  vtkPolyData *Boundaries;
 
-  int         BoundaryType;
-  int         BoundaryConstraintType;
-  int         BoundaryStart[2];
-  int         CubeStart[2];
+  int BoundaryType;
+  int BoundaryConstraintType;
+  int BoundaryStart[2];
+  int CubeStart[2];
   vtkIntArray *FirstLoopPts;
   vtkIntArray *SecondLoopPts;
   vtkIntArray *FirstLoopHelper;
   vtkIntArray *SecondLoopHelper;
 
   char *IterOutputFilename;
-  int  NumSaveIterations;
-  int  SaveIter;
+  int NumSaveIterations;
+  int SaveIter;
 };
 
 #endif

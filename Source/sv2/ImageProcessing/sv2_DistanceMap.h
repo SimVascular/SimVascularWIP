@@ -42,50 +42,46 @@ typedef int distanceMapType;
 #define MAX_DISTANCE_VAL 999999999
 // should be more like   2147483647
 // use shorts
-//typedef short distanceMapType;
-//#define DISTANCEMAPVTKTYPE vtkShortArray
-//#define MAX_DISTANCE_VAL 32000
+// typedef short distanceMapType;
+// #define DISTANCEMAPVTKTYPE vtkShortArray
+// #define MAX_DISTANCE_VAL 32000
 
 class SV_EXPORT_IMAGE cvDistanceMap {
 
-  public:
+public:
+  cvDistanceMap();
+  ~cvDistanceMap();
+  int createDistanceMap(vtkStructuredPoints *vtksp, vtkFloatingPointType thrval,
+                        int start[3]);
+  vtkStructuredPoints *getDistanceMap();
+  void setDistanceMap(vtkStructuredPoints *sp);
 
-    cvDistanceMap();
-    ~cvDistanceMap();
-    int createDistanceMap(vtkStructuredPoints *vtksp,
-                          vtkFloatingPointType thrval,
-                          int start[3]);
-    vtkStructuredPoints* getDistanceMap();
-    void setDistanceMap(vtkStructuredPoints *sp);
+  vtkPolyData *getPath(int stop[3], int minqstop);
+  vtkPolyData *getPathByThinning(int stop[3], int minqstop, int maxIterNum);
+  vtkPolyData *getPathOld(int stop[3]);
 
-    vtkPolyData* getPath(int stop[3], int minqstop);
-    vtkPolyData* getPathByThinning(int stop[3], int minqstop, int maxIterNum);
-    vtkPolyData* getPathOld(int stop[3]);
+  void setUseCityBlockDistance();
+  void setUse26ConnectivityDistance();
 
-    void setUseCityBlockDistance();
-    void setUse26ConnectivityDistance();
+private:
+  int getCityBlockNeighbors(int p);
+  int get26ConnectivityNeighbors(int p);
+  int createInitMask();
+  int thinMask(int *numPixelsRemoved);
 
-  private:
+  vtkStructuredPoints *map_;
+  vtkStructuredPoints *mask_;
+  vtkPolyData *path_;
+  int start_[3];
+  int stop_[3];
 
-    int getCityBlockNeighbors(int p);
-    int get26ConnectivityNeighbors(int p);
-    int createInitMask();
-    int thinMask(int *numPixelsRemoved);
+  int neighbors_[26];
+  int numNeighbors_;
+  // 26 connectivity index lookup table
+  int b_[3][26];
+  int useCityBlock_;
 
-    vtkStructuredPoints *map_;
-    vtkStructuredPoints *mask_;
-    vtkPolyData *path_;
-    int start_[3];
-    int stop_[3];
-
-    int neighbors_[26];
-    int numNeighbors_;
-    // 26 connectivity index lookup table
-    int b_[3][26];
-    int useCityBlock_;
-
-    int imgDims_[3];
-
+  int imgDims_[3];
 };
 
 #endif

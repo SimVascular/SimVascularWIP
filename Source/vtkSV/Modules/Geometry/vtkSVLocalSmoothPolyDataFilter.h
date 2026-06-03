@@ -29,13 +29,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// .NAME vtkSVLocalSmoothPolyDataFilter - adjust point positions using Laplacian smoothing
-// .SECTION Description
-// vtkSVLocalSmoothPolyDataFilter is a filter that adjusts point coordinates using
-// Laplacian smoothing. The effect is to "relax" the mesh, making the cells
-// better shaped and the vertices more evenly distributed. Note that this
-// filter operates on the lines, polygons, and triangle strips composing an
-// instance of vtkPolyData. Vertex or poly-vertex cells are never modified.
+// .NAME vtkSVLocalSmoothPolyDataFilter - adjust point positions using Laplacian
+// smoothing .SECTION Description vtkSVLocalSmoothPolyDataFilter is a filter
+// that adjusts point coordinates using Laplacian smoothing. The effect is to
+// "relax" the mesh, making the cells better shaped and the vertices more evenly
+// distributed. Note that this filter operates on the lines, polygons, and
+// triangle strips composing an instance of vtkPolyData. Vertex or poly-vertex
+// cells are never modified.
 //
 // The algorithm proceeds as follows. For each vertex v, a topological and
 // geometric analysis is performed to determine which vertices are connected
@@ -113,11 +113,11 @@
 
 class vtkSVLocalSmoothPoints;
 
-class VTKSVGEOMETRY_EXPORT vtkSVLocalSmoothPolyDataFilter : public vtkPolyDataAlgorithm
-{
+class VTKSVGEOMETRY_EXPORT vtkSVLocalSmoothPolyDataFilter
+    : public vtkPolyDataAlgorithm {
 public:
-  vtkTypeMacro(vtkSVLocalSmoothPolyDataFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  vtkTypeMacro(vtkSVLocalSmoothPolyDataFilter, vtkPolyDataAlgorithm);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   // Description:
   // Construct object with number of iterations 20; relaxation factor .01;
@@ -130,13 +130,13 @@ public:
   // Description:
   // Specify a convergence criterion for the iteration
   // process. Smaller numbers result in more smoothing iterations.
-  vtkSetClampMacro(Convergence,double,0.0,1.0);
-  vtkGetMacro(Convergence,double);
+  vtkSetClampMacro(Convergence, double, 0.0, 1.0);
+  vtkGetMacro(Convergence, double);
 
   // Description:
   // Specify the number of iterations for Laplacian smoothing,
-  vtkSetClampMacro(NumberOfIterations,int,0,VTK_INT_MAX);
-  vtkGetMacro(NumberOfIterations,int);
+  vtkSetClampMacro(NumberOfIterations, int, 0, VTK_INT_MAX);
+  vtkGetMacro(NumberOfIterations, int);
 
   // Description:
   // Specify the relaxation factor for Laplacian smoothing. As in all
@@ -144,57 +144,57 @@ public:
   // this parameter. In general, small relaxation factors and large
   // numbers of iterations are more stable than larger relaxation
   // factors and smaller numbers of iterations.
-  vtkSetMacro(RelaxationFactor,double);
-  vtkGetMacro(RelaxationFactor,double);
+  vtkSetMacro(RelaxationFactor, double);
+  vtkGetMacro(RelaxationFactor, double);
 
   // Description:
   // Turn on/off smoothing along sharp interior edges.
-  vtkSetMacro(FeatureEdgeSmoothing,int);
-  vtkGetMacro(FeatureEdgeSmoothing,int);
-  vtkBooleanMacro(FeatureEdgeSmoothing,int);
+  vtkSetMacro(FeatureEdgeSmoothing, int);
+  vtkGetMacro(FeatureEdgeSmoothing, int);
+  vtkBooleanMacro(FeatureEdgeSmoothing, int);
 
   // Description:
   // Specify the feature angle for sharp edge identification.
-  vtkSetClampMacro(FeatureAngle,double,0.0,180.0);
-  vtkGetMacro(FeatureAngle,double);
+  vtkSetClampMacro(FeatureAngle, double, 0.0, 180.0);
+  vtkGetMacro(FeatureAngle, double);
 
   // Description:
   // Specify the edge angle to control smoothing along edges (either interior
   // or boundary).
-  vtkSetClampMacro(EdgeAngle,double,0.0,180.0);
-  vtkGetMacro(EdgeAngle,double);
+  vtkSetClampMacro(EdgeAngle, double, 0.0, 180.0);
+  vtkGetMacro(EdgeAngle, double);
 
   // Description:
   // Turn on/off the smoothing of vertices on the boundary of the mesh.
-  vtkSetMacro(BoundarySmoothing,int);
-  vtkGetMacro(BoundarySmoothing,int);
-  vtkBooleanMacro(BoundarySmoothing,int);
+  vtkSetMacro(BoundarySmoothing, int);
+  vtkGetMacro(BoundarySmoothing, int);
+  vtkBooleanMacro(BoundarySmoothing, int);
 
   // Description:
   // Turn on/off the generation of scalar distance values.
-  vtkSetMacro(GenerateErrorScalars,int);
-  vtkGetMacro(GenerateErrorScalars,int);
-  vtkBooleanMacro(GenerateErrorScalars,int);
+  vtkSetMacro(GenerateErrorScalars, int);
+  vtkGetMacro(GenerateErrorScalars, int);
+  vtkBooleanMacro(GenerateErrorScalars, int);
 
   // Description:
   // Turn on/off the generation of error vectors.
-  vtkSetMacro(GenerateErrorVectors,int);
-  vtkGetMacro(GenerateErrorVectors,int);
-  vtkBooleanMacro(GenerateErrorVectors,int);
+  vtkSetMacro(GenerateErrorVectors, int);
+  vtkGetMacro(GenerateErrorVectors, int);
+  vtkBooleanMacro(GenerateErrorVectors, int);
 
   // Description:
   // Turn on/off the use of point array for constraint local operation.
   // If value in array equals 1, nodes will be smoothed
-  vtkSetMacro(UsePointArray,int);
-  vtkGetMacro(UsePointArray,int);
-  vtkBooleanMacro(UsePointArray,int);
+  vtkSetMacro(UsePointArray, int);
+  vtkGetMacro(UsePointArray, int);
+  vtkBooleanMacro(UsePointArray, int);
 
   // Description:
   // Turn on/off the use of cell array for constraint on local operation.
   // If value in array equals 1, nodes of cell will be smoothed
-  vtkSetMacro(UseCellArray,int);
-  vtkGetMacro(UseCellArray,int);
-  vtkBooleanMacro(UseCellArray,int);
+  vtkSetMacro(UseCellArray, int);
+  vtkGetMacro(UseCellArray, int);
+  vtkBooleanMacro(UseCellArray, int);
 
   // Description:
   // Specify the source object which is used to constrain smoothing. The
@@ -207,8 +207,8 @@ public:
   // Set/get the desired precision for the output types. See the documentation
   // for the vtkAlgorithm::DesiredOutputPrecision enum for an explanation of
   // the available precision settings.
-  vtkSetMacro(OutputPointsPrecision,int);
-  vtkGetMacro(OutputPointsPrecision,int);
+  vtkSetMacro(OutputPointsPrecision, int);
+  vtkGetMacro(OutputPointsPrecision, int);
 
   // Description:
   // Set/get the name for the cell array attached to the input surface
@@ -228,28 +228,29 @@ public:
   // If value is 1, all points will be constrained to input surface
   // If value is 0, the cells with value of 1 in the provided constrain array
   // will be constrained
-  vtkSetMacro(ConstrainAllPoints,int);
-  vtkGetMacro(ConstrainAllPoints,int);
-  vtkBooleanMacro(ConstrainAllPoints,int);
+  vtkSetMacro(ConstrainAllPoints, int);
+  vtkGetMacro(ConstrainAllPoints, int);
+  vtkBooleanMacro(ConstrainAllPoints, int);
 
 protected:
   vtkSVLocalSmoothPolyDataFilter();
   ~vtkSVLocalSmoothPolyDataFilter();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **,
+                          vtkInformationVector *) override;
   virtual int FillInputPortInformation(int port, vtkInformation *info) override;
 
-  vtkIntArray 	        *SmoothCellArray;
-  vtkIntArray 	        *SmoothPointArray;
-  vtkIntArray 	        *ConstrainArray;
-  char* SmoothCellArrayName;
+  vtkIntArray *SmoothCellArray;
+  vtkIntArray *SmoothPointArray;
+  vtkIntArray *ConstrainArray;
+  char *SmoothCellArrayName;
   int UseCellArray;
-  char* SmoothPointArrayName;
+  char *SmoothPointArrayName;
   int UsePointArray;
-  char* ConstrainArrayName;
+  char *ConstrainArrayName;
   int ConstrainAllPoints;
 
-  int GetSmoothArrays(vtkPolyData *object,int type);
+  int GetSmoothArrays(vtkPolyData *object, int type);
   int SetFixedPoints(vtkPolyData *pd, int *fixedPoint);
 
   double Convergence;
@@ -264,9 +265,11 @@ protected:
   int OutputPointsPrecision;
 
   vtkSVLocalSmoothPoints *SmoothPoints;
+
 private:
-  vtkSVLocalSmoothPolyDataFilter(const vtkSVLocalSmoothPolyDataFilter&);  // Not implemented.
-  void operator=(const vtkSVLocalSmoothPolyDataFilter&);  // Not implemented.
+  vtkSVLocalSmoothPolyDataFilter(
+      const vtkSVLocalSmoothPolyDataFilter &);            // Not implemented.
+  void operator=(const vtkSVLocalSmoothPolyDataFilter &); // Not implemented.
 };
 
 #endif

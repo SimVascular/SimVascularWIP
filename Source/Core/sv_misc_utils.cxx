@@ -39,8 +39,7 @@
 //   PopArg
 // ==========
 
-char *PopArg( int *argc, char **argv[] )
-{
+char *PopArg(int *argc, char **argv[]) {
   char *arg;
 
   (*argc)--;
@@ -48,7 +47,6 @@ char *PopArg( int *argc, char **argv[] )
   (*argv)++;
   return arg;
 }
-
 
 // ------------------
 // FindMachineEpsilon
@@ -63,17 +61,15 @@ char *PopArg( int *argc, char **argv[] )
 // which the machine can represent... instead, epsilon is the smallest
 // *interval* which the machine can distinguish.
 
-double FindMachineEpsilon()
-{
+double FindMachineEpsilon() {
   double num = 1.0;
   double test = 1.0;
 
-  while ( num + test > num ) {
+  while (num + test > num) {
     test /= 10.0;
   }
   return (test * 10.0);
 }
-
 
 // -----------
 // Compute3dks
@@ -97,8 +93,7 @@ double FindMachineEpsilon()
 //   ks[0] <--> k1
 //   ks[1] <--> k2
 
-int Compute3dks( double Kg, double Km, double tol, double ks[] )
-{
+int Compute3dks(double Kg, double Km, double tol, double ks[]) {
   double kia, kja;
   double kib, kjb;
   double k1a, k2a;
@@ -106,32 +101,30 @@ int Compute3dks( double Kg, double Km, double tol, double ks[] )
   double tmp;
 
   tmp = (4 * Km * Km) - (4 * Kg);
-  if ( tmp < 0.0 ) {
+  if (tmp < 0.0) {
     return SV_ERROR;
   }
-  tmp = sqrt( tmp );
+  tmp = sqrt(tmp);
 
   kia = (2 * Km + tmp) / 2;
   kja = Kg / kia;
-  k1a = svminimum( kia, kja );
-  k2a = svmaximum( kia, kja );
+  k1a = svminimum(kia, kja);
+  k2a = svmaximum(kia, kja);
 
   kib = (2 * Km - tmp) / 2;
   kjb = Kg / kib;
-  k1b = svminimum( kib, kjb );
-  k2b = svmaximum( kib, kjb );
+  k1b = svminimum(kib, kjb);
+  k2b = svmaximum(kib, kjb);
 
-  if ( ( (Km > 0.0) && (k2a > 0.0) ) ||
-       ( (Km < 0.0) && (k1a < 0.0) ) ||
-       ( (cvSign( Km, tol ) == 0.0) && (k1a <= 0.0 ) ) ) {
+  if (((Km > 0.0) && (k2a > 0.0)) || ((Km < 0.0) && (k1a < 0.0)) ||
+      ((cvSign(Km, tol) == 0.0) && (k1a <= 0.0))) {
     ks[0] = k1a;
     ks[1] = k2a;
     return SV_OK;
   }
 
-  if ( ( (Km > 0.0) && (k2b > 0.0) ) ||
-       ( (Km < 0.0) && (k1b < 0.0) ) ||
-       ( (cvSign( Km, tol ) == 0.0) && (k1b <= 0.0 ) ) ) {
+  if (((Km > 0.0) && (k2b > 0.0)) || ((Km < 0.0) && (k1b < 0.0)) ||
+      ((cvSign(Km, tol) == 0.0) && (k1b <= 0.0))) {
     ks[0] = k1b;
     ks[1] = k2b;
     return SV_OK;
@@ -139,7 +132,6 @@ int Compute3dks( double Kg, double Km, double tol, double ks[] )
 
   return SV_ERROR;
 }
-
 
 // ==============
 //   CountLines
@@ -150,16 +142,16 @@ int Compute3dks( double Kg, double Km, double tol, double ks[] )
 // returns the number of newlines plus one, so that any distinct line
 // is counted.
 
-int CountLines( char *filename )
-{
+int CountLines(char *filename) {
   FILE *fp;
   int c, prevC;
   int count = 0;
 
   prevC = EOF;
-  fp = fopen( filename, "r" );
-  if (fp == nullptr) return -1;
-  while ( (c = fgetc(fp)) != EOF ) {
+  fp = fopen(filename, "r");
+  if (fp == nullptr)
+    return -1;
+  while ((c = fgetc(fp)) != EOF) {
     if (c == '\n') {
       count++;
     }

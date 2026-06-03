@@ -42,8 +42,8 @@
 #ifndef vtkSVNURBSCurve_h
 #define vtkSVNURBSCurve_h
 
-#include "vtkSVNURBSObject.h"
 #include "vtkSVNURBSModule.h"
+#include "vtkSVNURBSObject.h"
 
 #include "vtkCellArray.h"
 #include "vtkDenseArray.h"
@@ -54,17 +54,22 @@
 
 class vtkSVNURBSCollection;
 
-class VTKSVNURBS_EXPORT vtkSVNURBSCurve : public vtkSVNURBSObject
-{
+class VTKSVNURBS_EXPORT vtkSVNURBSCurve : public vtkSVNURBSObject {
 public:
   static vtkSVNURBSCurve *New();
 
   // Constructor
-  vtkSVNURBSCurve(int m, vtkPoints *controlPoints, int n, vtkDoubleArray *knotPoints, int deg) {;}
-  vtkSVNURBSCurve(int m, vtkPoints *controlPoints, vtkDoubleArray *knotPoints, vtkIntArray *knotMultiplicity, int deg) {;}
+  vtkSVNURBSCurve(int m, vtkPoints *controlPoints, int n,
+                  vtkDoubleArray *knotPoints, int deg) {
+    ;
+  }
+  vtkSVNURBSCurve(int m, vtkPoints *controlPoints, vtkDoubleArray *knotPoints,
+                  vtkIntArray *knotMultiplicity, int deg) {
+    ;
+  }
 
-  vtkTypeMacro(vtkSVNURBSCurve,vtkSVNURBSObject);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  vtkTypeMacro(vtkSVNURBSCurve, vtkSVNURBSObject);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
   /// \brief Get and set the number of control points for curve
@@ -103,23 +108,26 @@ public:
   // Initialize
   void Initialize() override;
 
-  //PolyData representation functions
+  // PolyData representation functions
   /** \brief Function to generate polydata representation of nurbs curve. Stored
    *  in CurveRepresentation.
    *  \param spacing Sets the spacing to sample the NURBS at. */
   int GeneratePolyDataRepresentation(const double spacing);
 
   /** \brief Get structured grid connectivity.
-   *  \param connectivity empty cell array to be filled with a structured grid connectivity. */
-  int GetStructuredGridConnectivity(const int numPoints, vtkCellArray *connectivity);
+   *  \param connectivity empty cell array to be filled with a structured grid
+   * connectivity. */
+  int GetStructuredGridConnectivity(const int numPoints,
+                                    vtkCellArray *connectivity);
 
   /** \brief Set the control points using a point set. */
   void SetControlPoints(vtkPoints *points1d);
 
-  //Functions to manipulate the geometry
+  // Functions to manipulate the geometry
 
   /** \brief Simply updates the number of control points, number of knot points
-   *  and the degree based on the vectors. Shouldn't really need to be called. */
+   *  and the degree based on the vectors. Shouldn't really need to be called.
+   */
   void UpdateCurve();
 
   /** \brief Increase the degree of the curve a specified number of times. */
@@ -129,26 +137,31 @@ public:
   int DecreaseDegree(const double tolerance);
 
   /** \brief single knot value insertion. Does not replace a knot;
-   *  for that, use SetKnot; this creates an entirely new knot point in the vector. */
+   *  for that, use SetKnot; this creates an entirely new knot point in the
+   * vector. */
   int InsertKnot(const double newKnot, const int numberOfInserts);
 
-  /** \brief insert multiple knots at the same time; should be an increasing knot
-   *  span that is within the bound of the current knots. Make sure this is
+  /** \brief insert multiple knots at the same time; should be an increasing
+   * knot span that is within the bound of the current knots. Make sure this is
    *  done as this is not checked. */
   int InsertKnots(vtkDoubleArray *newKnots);
 
-  /** \brief remove single knot from knot span of specified value. Value must match knots exactly. */
-  int RemoveKnot(const double removeKnot, const int numberOfRemovals, const double tol);
+  /** \brief remove single knot from knot span of specified value. Value must
+   * match knots exactly. */
+  int RemoveKnot(const double removeKnot, const int numberOfRemovals,
+                 const double tol);
 
   /** \brief remove single knot at a specified location in the knot span. */
-  int RemoveKnotAtIndex(const int knotIndex, const int numberOfRemovals, const double tol);
+  int RemoveKnotAtIndex(const int knotIndex, const int numberOfRemovals,
+                        const double tol);
 
-  /** \brief Set the entire knot vector. Must make sure everything is consistent, curve does not check */
+  /** \brief Set the entire knot vector. Must make sure everything is
+   * consistent, curve does not check */
   int SetKnotVector(vtkDoubleArray *knots);
 
   //@{
-  /** \brief Function to set/overwrite the knot/s value at the provided index/indices. Index
-   *  must be less than span length. */
+  /** \brief Function to set/overwrite the knot/s value at the provided
+   * index/indices. Index must be less than span length. */
   int SetKnot(const int index, const double newKnot);
   int SetKnots(vtkIntArray *indices, vtkDoubleArray *newKnots);
   //@}
@@ -159,12 +172,14 @@ public:
   int GetKnots(vtkIntArray *indices, vtkDoubleArray *knotVals);
   //@}
 
-  /** \brief Set the entire control point grid. Must make sure everything is consistent. Input is not checked. */
+  /** \brief Set the entire control point grid. Must make sure everything is
+   * consistent. Input is not checked. */
   int SetControlPointGrid(vtkSVControlGrid *controlPoints);
 
   //@{
   /** \brief Function to set control point/s at the provided index/indices. */
-  int SetControlPoint(const int index, const double coordinates[3], const double weight);
+  int SetControlPoint(const int index, const double coordinates[3],
+                      const double weight);
   int SetControlPoint(const int index, const double pw[4]);
   //@}
 
@@ -175,25 +190,28 @@ public:
   //@}
 
   //@{
-  /** \brief Functions to set/get the weight vectors of the control points. Length
-   *  of weights must match the number of control points. */
+  /** \brief Functions to set/get the weight vectors of the control points.
+   * Length of weights must match the number of control points. */
   int SetWeights(vtkDoubleArray *weights);
   int GetWeights(vtkDoubleArray *weights);
   //}
 
   //@{
-  /** \brief Functions to get and set individual weights in the weight vector. */
+  /** \brief Functions to get and set individual weights in the weight vector.
+   */
   int SetWeight(const int index, const double weight);
   int GetWeight(const int index, double &weight);
   //@}
 
   /** \brief set NURBS to closed, loops around. */
-  void SetClosed(const int closed) {this->Closed = closed;}
+  void SetClosed(const int closed) { this->Closed = closed; }
 
   /** \brief set NURBS to clamped, default on. */
-  void SetClamped(const int clamped) {this->Clamped = clamped;}
+  void SetClamped(const int clamped) { this->Clamped = clamped; }
 
-  int MakePeriodic(const int continuity) {return 0;} /**< \brief Unimplemented */
+  int MakePeriodic(const int continuity) {
+    return 0;
+  } /**< \brief Unimplemented */
 
   /** \brief get the knot vector multiplicity. */
   int GetMultiplicity(vtkIntArray *multiplicity, vtkDoubleArray *singleKnots);
@@ -203,12 +221,12 @@ public:
 
   // Description:
   // Retrieve an instance of this class from an information object.
-  static vtkSVNURBSCurve* GetData(vtkInformation* info);
-  static vtkSVNURBSCurve* GetData(vtkInformationVector* v, int i=0);
+  static vtkSVNURBSCurve *GetData(vtkInformation *info);
+  static vtkSVNURBSCurve *GetData(vtkInformationVector *v, int i = 0);
 
   virtual void DeepCopy(vtkSVNURBSCurve *src);
 
-  virtual std::string GetType() override {return "Curve";}
+  virtual std::string GetType() override { return "Curve"; }
 
 protected:
   vtkSVNURBSCurve();
@@ -226,8 +244,8 @@ protected:
   vtkPolyData *CurveRepresentation;
 
 private:
-  vtkSVNURBSCurve(const vtkSVNURBSCurve&);  // Not implemented.
-  void operator=(const vtkSVNURBSCurve&);  // Not implemented.
+  vtkSVNURBSCurve(const vtkSVNURBSCurve &); // Not implemented.
+  void operator=(const vtkSVNURBSCurve &);  // Not implemented.
 };
 
 #endif

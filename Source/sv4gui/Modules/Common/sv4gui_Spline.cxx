@@ -34,153 +34,139 @@
 #include "sv4gui_Math3.h"
 
 #include "vtkParametricSpline.h"
+#include "vtkPoints.h"
 #include "vtkSmartPointer.h"
 #include "vtkSpline.h"
-#include "vtkPoints.h"
 
 using sv3::VtkParametricSpline;
-sv4guiSpline::sv4guiSpline() : sv3::Spline()
-{
+sv4guiSpline::sv4guiSpline() : sv3::Spline() {}
+
+sv4guiSpline::sv4guiSpline(bool closed, CalculationMethod method,
+                           int furtherSubdivisionNumber)
+    : sv3::Spline(closed, method, furtherSubdivisionNumber) {}
+
+sv4guiSpline::~sv4guiSpline() {}
+
+void sv4guiSpline::SetInputPoints(std::vector<mitk::Point3D> inputPoints) {
+  m_InputPoints = inputPoints;
 }
 
-sv4guiSpline::sv4guiSpline(bool closed, CalculationMethod method, int furtherSubdivisionNumber)
-    : sv3::Spline(closed, method,furtherSubdivisionNumber)
-{
+std::vector<mitk::Point3D> sv4guiSpline::GetInputPoints() {
+  return m_InputPoints;
 }
 
-sv4guiSpline::~sv4guiSpline()
-{
+std::vector<sv4guiSpline::sv4guiSplinePoint> sv4guiSpline::GetSplinePoints() {
+  return m_SplinePoints;
 }
 
-void sv4guiSpline::SetInputPoints(std::vector<mitk::Point3D> inputPoints)
-{
-    m_InputPoints=inputPoints;
+std::vector<mitk::Point3D> sv4guiSpline::GetSplinePosPoints() {
+  std::vector<mitk::Point3D> posPoints;
+  for (int i = 0; i < m_SplinePoints.size(); i++)
+    posPoints.push_back(m_SplinePoints[i].pos);
+
+  return posPoints;
 }
 
-std::vector<mitk::Point3D>  sv4guiSpline::GetInputPoints()
-{
-    return m_InputPoints;
+mitk::Point3D sv4guiSpline::GetPoint(VtkParametricSpline *svpp, double t) {
+  double pt[3];
+  mitk::Point3D point;
+  svpp->Evaluate(t, pt);
+
+  point[0] = pt[0];
+  point[1] = pt[1];
+  point[2] = pt[2];
+
+  return point;
 }
 
-std::vector<sv4guiSpline::sv4guiSplinePoint> sv4guiSpline::GetSplinePoints()
-{
-    return m_SplinePoints;
-}
+void sv4guiSpline::Update() {
+  m_SplinePoints.clear();
 
-std::vector<mitk::Point3D> sv4guiSpline::GetSplinePosPoints()
-{
-    std::vector<mitk::Point3D> posPoints;
-    for(int i=0;i<m_SplinePoints.size();i++)
-        posPoints.push_back(m_SplinePoints[i].pos);
+  VtkParametricSpline *svpp = new VtkParametricSpline();
+  svpp->ParameterizeByLengthOff();
 
-    return posPoints;
-}
+  if (m_Closed)
+    svpp->ClosedOn();
+  else
+    svpp->ClosedOff();
 
-mitk::Point3D sv4guiSpline::GetPoint(VtkParametricSpline* svpp, double t)
-{
-    double pt[3];
-    mitk::Point3D point;
-    svpp->Evaluate(t, pt);
+  int inputPointNumber = m_InputPoints.size();
+  svpp->SetNumberOfPoints(inputPointNumber);
 
-    point[0]=pt[0];
-    point[1]=pt[1];
-    point[2]=pt[2];
+  for (int i = 0; i < inputPointNumber; i++)
+    svpp->SetPoint(i, m_InputPoints[i][0], m_InputPoints[i][1],
+                   m_InputPoints[i][2]);
 
-    return point;
-}
+  sv4guiSplinePoint splinePoint;
+  mitk::Point3D pt1, ptx;
+  int interNumber;
 
-void sv4guiSpline::Update()
-{
-    m_SplinePoints.clear();
-
-    VtkParametricSpline* svpp= new VtkParametricSpline();
-    svpp->ParameterizeByLengthOff();
-
-    if(m_Closed)
-        svpp->ClosedOn();
+  switch (m_Method) {
+  case CONSTANT_TOTAL_NUMBER:
+    if (m_Closed)
+      interNumber = std::ceil((m_CalculationNumber * 1.0) / inputPointNumber);
     else
-        svpp->ClosedOff();
+      interNumber =
+          std::ceil((m_CalculationNumber - 1.0) / (inputPointNumber - 1.0));
+    break;
+  case CONSTANT_SUBDIVISION_NUMBER:
+    interNumber = m_CalculationNumber;
+    break;
+  default:
+    break;
+  }
+  int splinePointID = 0;
+  for (int i = 0; i < inputPointNumber; i++) {
+    pt1 = m_InputPoints[i];
 
-    int inputPointNumber=m_InputPoints.size();
-    svpp->SetNumberOfPoints(inputPointNumber);
-
-    for(int i=0;i<inputPointNumber;i++)
-        svpp->SetPoint(i,m_InputPoints[i][0],m_InputPoints[i][1],m_InputPoints[i][2]);
-
-
-    sv4guiSplinePoint splinePoint;
-    mitk::Point3D pt1,ptx;
-    int interNumber;
-
-    switch(m_Method)
-    {
-    case CONSTANT_TOTAL_NUMBER:
-        if(m_Closed)
-            interNumber=std::ceil((m_CalculationNumber*1.0)/inputPointNumber);
-        else
-            interNumber=std::ceil((m_CalculationNumber-1.0)/(inputPointNumber-1.0));
-        break;
-    case CONSTANT_SUBDIVISION_NUMBER:
-        interNumber=m_CalculationNumber;
-        break;
-    default:
-        break;
-    }
-    int splinePointID=0;
-    for(int i=0;i<inputPointNumber;i++)
-    {
-        pt1=m_InputPoints[i];
-
-        if(m_Method==CONSTANT_SPACING)
-        {
-            if(i<inputPointNumber-1||m_Closed)
-            {
-                interNumber=std::ceil(GetLength(svpp,i,i+1)/m_Spacing);
-                if(interNumber<5) interNumber=5;//make sure not too small
-            }//otherwise interNumber not changes.It means using the previous value
-        }
-
-        splinePoint.pos=pt1;
-
-
-        if(i==inputPointNumber-1 &&!m_Closed)
-        {
-            double tx=i-1.0/interNumber/m_FurtherSubdivisionNumber;
-            ptx=GetPoint(svpp,tx);
-
-            splinePoint.id=splinePointID;
-            splinePointID++;
-            splinePoint.tangent=pt1-ptx;
-            splinePoint.tangent.Normalize();
-            splinePoint.rotation=sv4guiMath3::GetPerpendicularNormalVector(splinePoint.tangent);
-            m_SplinePoints.push_back(splinePoint);
-            break;
-        }
-        double txx=i+1.0/interNumber/m_FurtherSubdivisionNumber;
-        ptx=GetPoint(svpp,txx);
-
-        splinePoint.id=splinePointID;
-        splinePointID++;
-        splinePoint.tangent=ptx-pt1;
-        splinePoint.tangent.Normalize();
-        splinePoint.rotation=sv4guiMath3::GetPerpendicularNormalVector(splinePoint.tangent);
-        m_SplinePoints.push_back(splinePoint);
-        for(int j=1;j<interNumber;j++)
-        {
-            double tnew=i+j*1.0/interNumber;
-            double tx=tnew+1.0/interNumber/m_FurtherSubdivisionNumber;
-
-            pt1=GetPoint(svpp,tnew);
-            ptx=GetPoint(svpp,tx);
-
-            splinePoint.id=splinePointID;
-            splinePointID++;
-            splinePoint.pos=pt1;
-            splinePoint.tangent=ptx-pt1;
-            splinePoint.tangent.Normalize();
-            splinePoint.rotation=sv4guiMath3::GetPerpendicularNormalVector(splinePoint.tangent);
-            m_SplinePoints.push_back(splinePoint);
-        }
+    if (m_Method == CONSTANT_SPACING) {
+      if (i < inputPointNumber - 1 || m_Closed) {
+        interNumber = std::ceil(GetLength(svpp, i, i + 1) / m_Spacing);
+        if (interNumber < 5)
+          interNumber = 5; // make sure not too small
+      } // otherwise interNumber not changes.It means using the previous value
     }
 
+    splinePoint.pos = pt1;
+
+    if (i == inputPointNumber - 1 && !m_Closed) {
+      double tx = i - 1.0 / interNumber / m_FurtherSubdivisionNumber;
+      ptx = GetPoint(svpp, tx);
+
+      splinePoint.id = splinePointID;
+      splinePointID++;
+      splinePoint.tangent = pt1 - ptx;
+      splinePoint.tangent.Normalize();
+      splinePoint.rotation =
+          sv4guiMath3::GetPerpendicularNormalVector(splinePoint.tangent);
+      m_SplinePoints.push_back(splinePoint);
+      break;
+    }
+    double txx = i + 1.0 / interNumber / m_FurtherSubdivisionNumber;
+    ptx = GetPoint(svpp, txx);
+
+    splinePoint.id = splinePointID;
+    splinePointID++;
+    splinePoint.tangent = ptx - pt1;
+    splinePoint.tangent.Normalize();
+    splinePoint.rotation =
+        sv4guiMath3::GetPerpendicularNormalVector(splinePoint.tangent);
+    m_SplinePoints.push_back(splinePoint);
+    for (int j = 1; j < interNumber; j++) {
+      double tnew = i + j * 1.0 / interNumber;
+      double tx = tnew + 1.0 / interNumber / m_FurtherSubdivisionNumber;
+
+      pt1 = GetPoint(svpp, tnew);
+      ptx = GetPoint(svpp, tx);
+
+      splinePoint.id = splinePointID;
+      splinePointID++;
+      splinePoint.pos = pt1;
+      splinePoint.tangent = ptx - pt1;
+      splinePoint.tangent.Normalize();
+      splinePoint.rotation =
+          sv4guiMath3::GetPerpendicularNormalVector(splinePoint.tangent);
+      m_SplinePoints.push_back(splinePoint);
+    }
+  }
 }

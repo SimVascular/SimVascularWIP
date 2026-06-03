@@ -47,27 +47,26 @@
 
 #include "vtkDataArray.h"
 #include "vtkIdList.h"
+#include "vtkPoints.h"
 #include "vtkPolyData.h"
 #include "vtkPolyDataAlgorithm.h"
-#include "vtkPoints.h"
 #include "vtkUnstructuredGrid.h"
 
 #include "vtkSVRenderer.h"
 #include "vtkSVSeedSelector.h"
 
-class VTKSVMISC_EXPORT vtkSVSeedSelector : public vtkPolyDataAlgorithm
-{
-  public:
-  vtkTypeMacro(vtkSVSeedSelector,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+class VTKSVMISC_EXPORT vtkSVSeedSelector : public vtkPolyDataAlgorithm {
+public:
+  vtkTypeMacro(vtkSVSeedSelector, vtkPolyDataAlgorithm);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   static vtkSVSeedSelector *New();
 
-  vtkSetObjectMacro(SourceSeedIds,vtkIdList);
-  vtkGetObjectMacro(SourceSeedIds,vtkIdList);
+  vtkSetObjectMacro(SourceSeedIds, vtkIdList);
+  vtkGetObjectMacro(SourceSeedIds, vtkIdList);
 
-  vtkSetObjectMacro(TargetSeedIds,vtkIdList);
-  vtkGetObjectMacro(TargetSeedIds,vtkIdList);
+  vtkSetObjectMacro(TargetSeedIds, vtkIdList);
+  vtkGetObjectMacro(TargetSeedIds, vtkIdList);
 
   //@{
   /// \brief Get/Set for char*
@@ -83,16 +82,19 @@ class VTKSVMISC_EXPORT vtkSVSeedSelector : public vtkPolyDataAlgorithm
   vtkGetStringMacro(OutputText);
   //@}
 
-  protected:
+protected:
   vtkSVSeedSelector();
   ~vtkSVSeedSelector();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override {return 1;}
+  virtual int RequestData(vtkInformation *, vtkInformationVector **,
+                          vtkInformationVector *) override {
+    return 1;
+  }
 
   vtkPolyData *SurfacePd;
 
-  vtkIdList* SourceSeedIds;
-  vtkIdList* TargetSeedIds;
+  vtkIdList *SourceSeedIds;
+  vtkIdList *TargetSeedIds;
 
   char *PrintLog;
   char *PrintError;
@@ -100,9 +102,9 @@ class VTKSVMISC_EXPORT vtkSVSeedSelector : public vtkPolyDataAlgorithm
   char *OutputText;
   char *InputInfo;
 
-  private:
-  vtkSVSeedSelector(const vtkSVSeedSelector&);  // Not implemented.
-  void operator=(const vtkSVSeedSelector&);  // Not implemented.
+private:
+  vtkSVSeedSelector(const vtkSVSeedSelector &); // Not implemented.
+  void operator=(const vtkSVSeedSelector &);    // Not implemented.
 };
 
 #endif

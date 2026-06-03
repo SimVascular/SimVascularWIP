@@ -31,140 +31,133 @@
 
 #include "sv4gui_ContourSplinePolygon.h"
 #include "sv3_Spline.h"
-#include "sv4gui_Spline.h"
-#include "sv4gui_SegmentationUtils.h"
 #include "sv3_VtkParametricSpline.h"
+#include "sv4gui_SegmentationUtils.h"
+#include "sv4gui_Spline.h"
 
 #include "vtkSplineFilter.h"
 
-
 #include <iostream>
 using namespace std;
-sv4guiContourSplinePolygon::sv4guiContourSplinePolygon()
-{
-    m_Method="Manual";
-    m_Type="SplinePolygon";
-    SetKernel(cKernelType::cKERNEL_SPLINEPOLYGON);
+sv4guiContourSplinePolygon::sv4guiContourSplinePolygon() {
+  m_Method = "Manual";
+  m_Type = "SplinePolygon";
+  SetKernel(cKernelType::cKERNEL_SPLINEPOLYGON);
 }
 
-sv4guiContourSplinePolygon::sv4guiContourSplinePolygon(const sv4guiContourSplinePolygon &other)
-    : sv4guiContourPolygon(other)
-{
+sv4guiContourSplinePolygon::sv4guiContourSplinePolygon(
+    const sv4guiContourSplinePolygon &other)
+    : sv4guiContourPolygon(other) {}
+
+sv4guiContourSplinePolygon::~sv4guiContourSplinePolygon() {}
+
+sv4guiContourSplinePolygon *sv4guiContourSplinePolygon::Clone() {
+  return new sv4guiContourSplinePolygon(*this);
 }
 
-sv4guiContourSplinePolygon::~sv4guiContourSplinePolygon()
-{
+std::string sv4guiContourSplinePolygon::GetClassName() {
+  return "sv4guiContourSplinePolygon";
 }
 
-sv4guiContourSplinePolygon* sv4guiContourSplinePolygon::Clone()
-{
-    return new sv4guiContourSplinePolygon(*this);
+void sv4guiContourSplinePolygon::CreateContourPoints() {
+#ifdef debug_CreateContourPoints
+  std::string msg("[sv4guiContourSplinePolygon::CreateContourPoints] ");
+  std::cout << msg << "========== CreateContourPoints ========== " << std::endl;
+  std::cout << msg << "m_SubdivisionNumber: " << m_SubdivisionNumber
+            << std::endl;
+  std::cout << msg << "m_SubdivisionSpacing: " << m_SubdivisionSpacing
+            << std::endl;
+#endif
+  int controlNumber = GetControlPointNumber();
+
+  if (controlNumber <= 2) {
+    return;
+
+  } else if (controlNumber == 3) {
+    m_ContourPoints.push_back(sv3::Contour::GetControlPoint(2));
+    return;
+  }
+
+  sv3::Spline *spline = new sv3::Spline();
+  spline->SetClosed(m_Closed);
+
+  switch (m_SubdivisionType) {
+  case CONSTANT_TOTAL_NUMBER:
+    spline->SetMethod(sv4guiSpline::CONSTANT_TOTAL_NUMBER);
+    spline->SetCalculationNumber(m_SubdivisionNumber);
+    break;
+  case CONSTANT_SUBDIVISION_NUMBER:
+    spline->SetMethod(sv4guiSpline::CONSTANT_SUBDIVISION_NUMBER);
+    spline->SetCalculationNumber(m_SubdivisionNumber);
+    break;
+  case CONSTANT_SPACING:
+    spline->SetMethod(sv4guiSpline::CONSTANT_SPACING);
+    spline->SetSpacing(m_SubdivisionSpacing);
+    break;
+  default:
+    break;
+  }
+
+  std::vector<std::array<double, 3>> controlPoints;
+  controlPoints.insert(controlPoints.begin(), m_ControlPoints.begin() + 2,
+                       m_ControlPoints.end());
+  spline->SetInputPoints(controlPoints);
+  spline->Update();
+  m_ContourPoints = spline->GetSplinePosPoints();
 }
 
-std::string sv4guiContourSplinePolygon::GetClassName()
-{
-    return "sv4guiContourSplinePolygon";
-}
+sv4guiContour *
+sv4guiContourSplinePolygon::CreateByFitting(sv4guiContour *contour,
+                                            int divisionNumber) {
+  int inputPointNumber = contour->GetContourPointNumber();
 
-void sv4guiContourSplinePolygon::CreateContourPoints()
-{
-    #ifdef debug_CreateContourPoints
-    std::string msg("[sv4guiContourSplinePolygon::CreateContourPoints] ");
-    std::cout << msg << "========== CreateContourPoints ========== " << std::endl;
-    std::cout << msg << "m_SubdivisionNumber: " << m_SubdivisionNumber << std::endl;
-    std::cout << msg << "m_SubdivisionSpacing: " << m_SubdivisionSpacing << std::endl;
-    #endif
-    int controlNumber = GetControlPointNumber();
+  if (inputPointNumber < 3)
+    return contour->Clone();
 
-    if (controlNumber <= 2) {
-        return;
+  sv3::VtkParametricSpline *svpp = new sv3::VtkParametricSpline();
+  svpp->ParameterizeByLengthOn();
 
-    } else if (controlNumber == 3) {
-        m_ContourPoints.push_back(sv3::Contour::GetControlPoint(2));
-        return;
-    }
+  if (contour->IsClosed())
+    svpp->ClosedOn();
+  else
+    svpp->ClosedOff();
 
-    sv3::Spline* spline = new sv3::Spline();
-    spline->SetClosed(m_Closed);
+  svpp->SetNumberOfPoints(inputPointNumber);
 
-    switch(m_SubdivisionType)
-    {
-    case CONSTANT_TOTAL_NUMBER:
-        spline->SetMethod(sv4guiSpline::CONSTANT_TOTAL_NUMBER);
-        spline->SetCalculationNumber(m_SubdivisionNumber);
-        break;
-    case CONSTANT_SUBDIVISION_NUMBER:
-        spline->SetMethod(sv4guiSpline::CONSTANT_SUBDIVISION_NUMBER);
-        spline->SetCalculationNumber(m_SubdivisionNumber);
-        break;
-    case CONSTANT_SPACING:
-        spline->SetMethod(sv4guiSpline::CONSTANT_SPACING);
-        spline->SetSpacing(m_SubdivisionSpacing);
-        break;
-    default:
-        break;
-    }
+  for (int i = 0; i < inputPointNumber; i++) {
+    mitk::Point3D point = contour->GetContourPoint(i);
+    svpp->SetPoint(i, point[0], point[1], point[2]);
+  }
 
-    std::vector<std::array<double,3> > controlPoints;
-    controlPoints.insert(controlPoints.begin(),m_ControlPoints.begin()+2,m_ControlPoints.end());
-    spline->SetInputPoints(controlPoints);
-    spline->Update();
-    m_ContourPoints = spline->GetSplinePosPoints();
-}
+  double pt[3];
+  mitk::Point3D point;
+  std::vector<mitk::Point3D> controlPoints;
+  for (int i = 0; i <= divisionNumber; i++) {
+    if (i == divisionNumber && contour->IsClosed())
+      break;
 
-sv4guiContour* sv4guiContourSplinePolygon::CreateByFitting(sv4guiContour* contour, int divisionNumber)
-{
-    int inputPointNumber=contour->GetContourPointNumber();
+    svpp->EvaluateByLengthFactor(i * 1.0 / divisionNumber, pt);
+    point[0] = pt[0];
+    point[1] = pt[1];
+    point[2] = pt[2];
+    controlPoints.push_back(point);
+  }
 
-    if(inputPointNumber<3)
-        return contour->Clone();
+  // just add the first two points using the last point
+  controlPoints.insert(controlPoints.begin(), point);
+  controlPoints.insert(controlPoints.begin(), point);
 
-    sv3::VtkParametricSpline* svpp= new sv3::VtkParametricSpline();
-    svpp->ParameterizeByLengthOn();
+  sv4guiContourSplinePolygon *newContour = new sv4guiContourSplinePolygon();
+  newContour->SetPathPoint(contour->GetPathPoint());
+  //    newContour->SetPlaneGeometry(contour->GetPlaneGeometry());
+  newContour->SetPlaced(true);
+  newContour->SetMethod(contour->GetMethod());
+  newContour->SetClosed(contour->IsClosed());
+  newContour->SetControlPoints(controlPoints);
 
-    if(contour->IsClosed())
-        svpp->ClosedOn();
-    else
-        svpp->ClosedOff();
+  newContour->SetSubdivisionSpacing(contour->GetSubdivisionSpacing());
+  newContour->SetSubdivisionType(contour->GetSubdivisionType());
+  newContour->SetSubdivisionNumber(contour->GetSubdivisionNumber());
 
-    svpp->SetNumberOfPoints(inputPointNumber);
-
-    for(int i=0;i<inputPointNumber;i++)
-    {
-        mitk::Point3D point=contour->GetContourPoint(i);
-        svpp->SetPoint(i,point[0],point[1],point[2]);
-    }
-
-    double pt[3];
-    mitk::Point3D point;
-    std::vector<mitk::Point3D> controlPoints;
-    for(int i=0;i<=divisionNumber;i++)
-    {
-        if(i==divisionNumber&&contour->IsClosed())
-            break;
-
-        svpp->EvaluateByLengthFactor(i*1.0/divisionNumber, pt);
-        point[0]=pt[0];
-        point[1]=pt[1];
-        point[2]=pt[2];
-        controlPoints.push_back(point);
-    }
-
-    //just add the first two points using the last point
-    controlPoints.insert(controlPoints.begin(),point);
-    controlPoints.insert(controlPoints.begin(),point);
-
-    sv4guiContourSplinePolygon* newContour=new sv4guiContourSplinePolygon();
-    newContour->SetPathPoint(contour->GetPathPoint());
-//    newContour->SetPlaneGeometry(contour->GetPlaneGeometry());
-    newContour->SetPlaced(true);
-    newContour->SetMethod(contour->GetMethod());
-    newContour->SetClosed(contour->IsClosed());
-    newContour->SetControlPoints(controlPoints);
-
-    newContour->SetSubdivisionSpacing(contour->GetSubdivisionSpacing());
-    newContour->SetSubdivisionType(contour->GetSubdivisionType());
-    newContour->SetSubdivisionNumber(contour->GetSubdivisionNumber());
-
-    return newContour;
+  return newContour;
 }

@@ -41,66 +41,71 @@
 #include <itkEventObject.h>
 #include <mitkInteractionPositionEvent.h>
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiMitkSeg3DDataInteractor : public mitk::DataInteractor
-{
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiMitkSeg3DDataInteractor
+    : public mitk::DataInteractor {
 public:
-    mitkClassMacro(sv4guiMitkSeg3DDataInteractor, mitk::DataInteractor);
-    itkFactorylessNewMacro(Self)
-    itkCloneMacro(Self)
+  mitkClassMacro(sv4guiMitkSeg3DDataInteractor, mitk::DataInteractor);
+  itkFactorylessNewMacro(Self) itkCloneMacro(Self)
 
-    void SetMinRadius(double radius) {m_MinRadius=radius;}
+      void SetMinRadius(double radius) {
+    m_MinRadius = radius;
+  }
 
 protected:
+  sv4guiMitkSeg3DDataInteractor();
+  virtual ~sv4guiMitkSeg3DDataInteractor();
 
-    sv4guiMitkSeg3DDataInteractor();
-    virtual ~sv4guiMitkSeg3DDataInteractor();
+  virtual void ConnectActionsAndFunctions() override;
 
-    virtual void ConnectActionsAndFunctions() override;
+  //  Conditions //
 
-    //  Conditions //
+  bool IsOverSeed(const mitk::InteractionEvent *interactionEvent);
 
-    bool IsOverSeed( const mitk::InteractionEvent* interactionEvent );
+  //  Actions //
 
-    //  Actions //
+  void GetPosition(mitk::StateMachineAction *, mitk::InteractionEvent *);
 
-    void GetPosition(mitk::StateMachineAction*, mitk::InteractionEvent*);
+  void AddSeed(mitk::StateMachineAction *,
+               mitk::InteractionEvent *interactionEvent);
 
-    void AddSeed(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
+  void AddEndSeed(mitk::StateMachineAction *,
+                  mitk::InteractionEvent *interactionEvent);
 
-    void AddEndSeed(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
+  void MoveSeed(mitk::StateMachineAction *,
+                mitk::InteractionEvent *interactionEvent);
 
-    void MoveSeed(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
+  void InitChangeRadius(mitk::StateMachineAction *,
+                        mitk::InteractionEvent *interactionEvent);
 
-    void InitChangeRadius(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
+  void ChangeRadius(mitk::StateMachineAction *,
+                    mitk::InteractionEvent *interactionEvent);
 
-    void ChangeRadius(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
+  //    void FinishChangeRadius(mitk::StateMachineAction*,
+  //    mitk::InteractionEvent* interactionEvent);
 
-//    void FinishChangeRadius(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
+  void DeleteSeed(mitk::StateMachineAction *,
+                  mitk::InteractionEvent *interactionEvent);
 
-    void DeleteSeed(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent );
+  // method
 
-    //method
-
-    void FetchDataParam();
+  void FetchDataParam();
 
 private:
+  sv4guiMitkSeg3D *m_MitkSeg3D;
 
-    sv4guiMitkSeg3D* m_MitkSeg3D;
+  sv4guiSeg3DParam *m_Param;
 
-    sv4guiSeg3DParam* m_Param;
+  svSeed *m_Seed;
 
-    svSeed* m_Seed;
+  mitk::Point3D m_CurrentPickedPoint;
 
-    mitk::Point3D m_CurrentPickedPoint;
+  double m_MinRadius;
 
-    double m_MinRadius;
+  //    int m_TimeStep;
 
-//    int m_TimeStep;
+  mitk::Point3D m_LastPoint;
 
-    mitk::Point3D m_LastPoint;
-
-    double m_OriginalRadius;
-
+  double m_OriginalRadius;
 };
 
 #endif // SV4GUI_MITKSEG3DDATAINTERACTOR_H

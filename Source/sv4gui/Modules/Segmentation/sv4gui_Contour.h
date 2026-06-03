@@ -36,133 +36,132 @@
 
 #include <sv4guiModuleSegmentationExports.h>
 
-#include "sv4gui_PathElement.h"
 #include "sv3_Contour.h"
+#include "sv4gui_PathElement.h"
 
+#include "vtkImageData.h"
 #include "vtkPolyData.h"
 #include "vtkSmartPointer.h"
-#include "vtkImageData.h"
 
 #include "mitkBaseData.h"
-#include "mitkPoint.h"
 #include "mitkPlaneGeometry.h"
+#include "mitkPoint.h"
 
 // somehow GetClassName is getting set to GetClassNameA on Windows
 #ifdef GetClassName
 #undef GetClassName
 #endif
 using sv3::Contour;
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContour : public Contour
-{
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContour : public Contour {
 
 public:
+  sv4guiContour();
 
-    sv4guiContour();
+  sv4guiContour(const sv4guiContour &other);
 
-    sv4guiContour(const sv4guiContour &other);
+  virtual ~sv4guiContour();
 
-    virtual ~sv4guiContour();
+  virtual sv4guiContour *Clone();
 
-    virtual sv4guiContour* Clone();
+  void CopyContourData(sv3::Contour *contour);
 
-    void CopyContourData(sv3::Contour* contour);
+  sv4guiPathElement::sv4guiPathPoint GetPathPoint();
 
-    sv4guiPathElement::sv4guiPathPoint GetPathPoint();
+  void SetPathPoint(sv4guiPathElement::sv4guiPathPoint pathPoint);
 
-    void SetPathPoint(sv4guiPathElement::sv4guiPathPoint pathPoint);
+  mitk::Point3D GetPathPosPoint();
 
-    mitk::Point3D GetPathPosPoint();
+  bool IsSelected();
 
-    bool IsSelected();
+  void SetSelected(bool selected = true);
 
-    void SetSelected(bool selected=true);
+  bool IsHovering();
 
-    bool IsHovering();
+  void SetHovering(bool hovering = true);
 
-    void SetHovering(bool hovering=true);
+  bool IsPlaced();
 
-    bool IsPlaced();
+  void SetPlaced(bool placed = true);
 
-    void SetPlaced(bool placed=true);
+  bool IsExtendable();
 
-    bool IsExtendable();
+  void SetExtendable(bool extendable = true);
 
-    void SetExtendable(bool extendable=true);
+  bool IsInitiallyPlaced() { return m_InitiallyPlaced; }
 
-    bool IsInitiallyPlaced(){return m_InitiallyPlaced;}
+  void SetInitiallyPlaced(bool placed) { m_InitiallyPlaced = placed; }
 
-    void SetInitiallyPlaced(bool placed){m_InitiallyPlaced=placed;}
+  void SetPlaneGeometry(mitk::PlaneGeometry *planeGeometry);
 
-    void SetPlaneGeometry(mitk::PlaneGeometry* planeGeometry);
+  mitk::PlaneGeometry *GetPlaneGeometry();
 
-    mitk::PlaneGeometry* GetPlaneGeometry();
+  mitk::Point3D GetControlPoint(int index);
 
-    mitk::Point3D GetControlPoint(int index);
-    
-    void InsertControlPoint(int index, mitk::Point3D point);
+  void InsertControlPoint(int index, mitk::Point3D point);
 
-    virtual void SetControlPoint(int index, mitk::Point3D point);
+  virtual void SetControlPoint(int index, mitk::Point3D point);
 
-    void PlaceContour(mitk::Point3D point);
+  void PlaceContour(mitk::Point3D point);
 
-    virtual void PlaceControlPoints(mitk::Point3D point);
+  virtual void PlaceControlPoints(mitk::Point3D point);
 
-    void SetControlPoints(std::vector<mitk::Point3D> controlPoints, bool updateContour = true);
+  void SetControlPoints(std::vector<mitk::Point3D> controlPoints,
+                        bool updateContour = true);
 
-    void SetPreviewControlPoint(mitk::Point3D point );
-    
-    void HidePreviewControlPoint();
-    
-    bool IsPreviewControlPointVisible();
+  void SetPreviewControlPoint(mitk::Point3D point);
 
-    mitk::Point3D GetPreviewControlPoint();
+  void HidePreviewControlPoint();
 
-    //for contour points
-    //=================================
+  bool IsPreviewControlPointVisible();
 
-    virtual void CreateContourPoints(){}
+  mitk::Point3D GetPreviewControlPoint();
 
-    void SetContourPoints(std::vector<mitk::Point3D> contourPoints, bool update = true);
-    
-    void SetContourPoints(std::vector<std::array<double,3> > contourPoints, bool update=true);
+  // for contour points
+  //=================================
 
-    mitk::Point3D GetContourPoint(int index);
+  virtual void CreateContourPoints() {}
 
-    mitk::Point3D GetCenterPoint();
+  void SetContourPoints(std::vector<mitk::Point3D> contourPoints,
+                        bool update = true);
 
-    virtual sv4guiContour* CreateSmoothedContour(int fourierNumber = 12 );
+  void SetContourPoints(std::vector<std::array<double, 3>> contourPoints,
+                        bool update = true);
 
-    //for all data
-    //===================================
+  mitk::Point3D GetContourPoint(int index);
 
-    void Shift(mitk::Vector3D dirVec);
+  mitk::Point3D GetCenterPoint();
 
-    void Scale(double factor, mitk::Point3D referencePoint);
+  virtual sv4guiContour *CreateSmoothedContour(int fourierNumber = 12);
 
-    void Scale(double factor);
+  // for all data
+  //===================================
 
-    void Scale(mitk::Point3D referencePoint, mitk::Point3D oldPoint, mitk::Point3D newPoint);
+  void Shift(mitk::Vector3D dirVec);
 
-    bool IsOnPlane(const mitk::PlaneGeometry* planeGeometry, double precisionFactor=0.1);
+  void Scale(double factor, mitk::Point3D referencePoint);
 
-  protected:
+  void Scale(double factor);
 
-    bool m_Selected;
+  void Scale(mitk::Point3D referencePoint, mitk::Point3D oldPoint,
+             mitk::Point3D newPoint);
 
-    bool m_Hovering;
+  bool IsOnPlane(const mitk::PlaneGeometry *planeGeometry,
+                 double precisionFactor = 0.1);
 
-    bool m_Placed;
+protected:
+  bool m_Selected;
 
-    bool m_Extendable;
+  bool m_Hovering;
 
-    mitk::PlaneGeometry::Pointer m_PlaneGeometry;
+  bool m_Placed;
 
-    mitk::Point3D m_PreviewControlPoint;
+  bool m_Extendable;
 
-    bool m_PreviewControlPointVisible;
+  mitk::PlaneGeometry::Pointer m_PlaneGeometry;
 
+  mitk::Point3D m_PreviewControlPoint;
 
-  };
-
+  bool m_PreviewControlPointVisible;
+};
 
 #endif // SV4GUI_CONTOUR_H

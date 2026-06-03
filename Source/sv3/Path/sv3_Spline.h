@@ -40,76 +40,76 @@
 #include <vector>
 namespace sv3 {
 
-class SV_EXPORT_PATH Spline
-{
+class SV_EXPORT_PATH Spline {
 public:
+  enum CalculationMethod {
+    CONSTANT_TOTAL_NUMBER,
+    CONSTANT_SUBDIVISION_NUMBER,
+    CONSTANT_SPACING
+  };
 
-    enum CalculationMethod {CONSTANT_TOTAL_NUMBER, CONSTANT_SUBDIVISION_NUMBER, CONSTANT_SPACING};
+  struct SplinePoint {
+    int id;
+    std::array<double, 3> pos;
+    std::array<double, 3> tangent;
+    std::array<double, 3> rotation;
+  };
 
-    struct SplinePoint
-    {
-        int id;
-        std::array<double,3>  pos;
-        std::array<double,3>  tangent;
-        std::array<double,3>  rotation;
-    };
+  Spline();
 
-    Spline();
+  Spline(bool closed, CalculationMethod method,
+         int furtherSubdivionNumber = 10);
 
-    Spline(bool closed, CalculationMethod method, int  furtherSubdivionNumber = 10);
+  virtual ~Spline();
 
-    virtual ~Spline();
+  void SetClosed(bool closed = true);
 
-    void SetClosed(bool closed = true);
+  bool IsClosed();
 
-    bool IsClosed();
+  void SetSpacing(double spacing);
 
-    void SetSpacing(double spacing);
+  double GetSpacing();
 
-    double GetSpacing();
+  void SetMethod(CalculationMethod method = CONSTANT_TOTAL_NUMBER);
 
-    void SetMethod(CalculationMethod method = CONSTANT_TOTAL_NUMBER );
+  CalculationMethod GetMethod();
 
-    CalculationMethod GetMethod();
+  void SetCalculationNumber(int number);
 
-    void SetCalculationNumber(int number);
+  int GetCalculationNumber();
 
-    int GetCalculationNumber();
+  void SetFurtherSubdivisionNumber(int number);
 
-    void SetFurtherSubdivisionNumber(int number);
+  int GetFurtherSubdivsionNumber();
 
-    int GetFurtherSubdivsionNumber();
+  void SetInputPoints(std::vector<std::array<double, 3>> inputPonits);
 
-    void SetInputPoints(std::vector<std::array<double,3> > inputPonits);
+  std::vector<std::array<double, 3>> GetInputPoints();
 
-    std::vector<std::array<double,3> >  GetInputPoints();
+  std::vector<SplinePoint> GetSplinePoints();
 
-    std::vector<SplinePoint> GetSplinePoints();
+  std::vector<std::array<double, 3>> GetSplinePosPoints();
 
-    std::vector<std::array<double,3> > GetSplinePosPoints();
+  void Update();
 
-    void Update();
-    
-    double GetLength(VtkParametricSpline* svpp, double idx1, double idx2);
+  double GetLength(VtkParametricSpline *svpp, double idx1, double idx2);
 
-    std::array<double,3> GetPoint(VtkParametricSpline* svpp, double idx);
+  std::array<double, 3> GetPoint(VtkParametricSpline *svpp, double idx);
 
 protected:
+  bool m_Closed;
 
-    bool m_Closed;
+  double m_Spacing;
 
-    double m_Spacing;
+  CalculationMethod m_Method;
 
-    CalculationMethod m_Method;
+  int m_CalculationNumber;
 
-    int m_CalculationNumber;
+  int m_FurtherSubdivisionNumber; // for tangent calculation;
 
-    int m_FurtherSubdivisionNumber; //for tangent calculation;
+  std::vector<std::array<double, 3>> m_InputPoints;
 
-    std::vector<std::array<double,3> > m_InputPoints;
-
-    std::vector<SplinePoint> m_SplinePoints;
-
+  std::vector<SplinePoint> m_SplinePoints;
 };
-}
+} // namespace sv3
 #endif // SV3_SPLINE_H

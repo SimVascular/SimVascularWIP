@@ -48,22 +48,21 @@
 
 #include "vtkPolyDataAlgorithm.h"
 
-class VTKSVMISC_EXPORT vtkSVLoftSplineSurface : public vtkPolyDataAlgorithm
-{
+class VTKSVMISC_EXPORT vtkSVLoftSplineSurface : public vtkPolyDataAlgorithm {
 public:
   static vtkSVLoftSplineSurface *New();
 
-  vtkTypeMacro(vtkSVLoftSplineSurface,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  vtkTypeMacro(vtkSVLoftSplineSurface, vtkPolyDataAlgorithm);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   // Description:
   // UserManagedInputs allows the user to set inputs by number instead of
   // using the AddInput/RemoveInput functions. Calls to
   // SetNumberOfInputs/SetInputConnectionByNumber should not be mixed with calls
   // to AddInput/RemoveInput. By default, UserManagedInputs is false.
-  vtkSetMacro(UserManagedInputs,int);
-  vtkGetMacro(UserManagedInputs,int);
-  vtkBooleanMacro(UserManagedInputs,int);
+  vtkSetMacro(UserManagedInputs, int);
+  vtkGetMacro(UserManagedInputs, int);
+  vtkBooleanMacro(UserManagedInputs, int);
 
   // Description:
   // Add a dataset to the list of data to append. Should not be
@@ -72,15 +71,16 @@ public:
 
   // Description:
   // Remove a dataset from the list of data to append. Should not be
-  // used when UserManagedInputs is true, use SetInputByNumber (nullptr) instead.
+  // used when UserManagedInputs is true, use SetInputByNumber (nullptr)
+  // instead.
   void RemoveInputData(vtkPolyData *);
 
-//BTX
-  // Description:
-  // Get any input of this filter.
+  // BTX
+  //  Description:
+  //  Get any input of this filter.
   vtkPolyData *GetInput(int idx);
-  vtkPolyData *GetInput() { return this->GetInput( 0 ); };
-//ETX
+  vtkPolyData *GetInput() { return this->GetInput(0); };
+  // ETX
 
   // Description:
   // Directly set(allocate) number of inputs, should only be used
@@ -104,37 +104,37 @@ public:
   vtkGetMacro(ParallelStreaming, int);
   vtkBooleanMacro(ParallelStreaming, int);
 
-  vtkSetMacro(UseLinearSampleAlongLength,int);
-  vtkGetMacro(UseLinearSampleAlongLength,int);
+  vtkSetMacro(UseLinearSampleAlongLength, int);
+  vtkGetMacro(UseLinearSampleAlongLength, int);
 
-  vtkSetMacro(NumLinearPtsAlongLength,int);
-  vtkGetMacro(NumLinearPtsAlongLength,int);
+  vtkSetMacro(NumLinearPtsAlongLength, int);
+  vtkGetMacro(NumLinearPtsAlongLength, int);
 
-  vtkSetMacro(UseFFT,int);
-  vtkGetMacro(UseFFT,int);
+  vtkSetMacro(UseFFT, int);
+  vtkGetMacro(UseFFT, int);
 
-  vtkSetMacro(NumModes,int);
-  vtkGetMacro(NumModes,int);
+  vtkSetMacro(NumModes, int);
+  vtkGetMacro(NumModes, int);
 
-  vtkSetMacro(NumOutPtsInSegs,int);
-  vtkGetMacro(NumOutPtsInSegs,int);
+  vtkSetMacro(NumOutPtsInSegs, int);
+  vtkGetMacro(NumOutPtsInSegs, int);
 
-  vtkSetMacro(NumOutPtsAlongLength,int);
-  vtkGetMacro(NumOutPtsAlongLength,int);
+  vtkSetMacro(NumOutPtsAlongLength, int);
+  vtkGetMacro(NumOutPtsAlongLength, int);
 
-  vtkSetMacro(SplineType,int);
-  vtkGetMacro(SplineType,int);
+  vtkSetMacro(SplineType, int);
+  vtkGetMacro(SplineType, int);
 
-  vtkSetMacro(Bias,double);
-  vtkGetMacro(Bias,double);
+  vtkSetMacro(Bias, double);
+  vtkGetMacro(Bias, double);
 
-  vtkSetMacro(Continuity,double);
-  vtkGetMacro(Continuity,double);
+  vtkSetMacro(Continuity, double);
+  vtkGetMacro(Continuity, double);
 
-  vtkSetMacro(Tension,double);
-  vtkGetMacro(Tension,double);
+  vtkSetMacro(Tension, double);
+  vtkGetMacro(Tension, double);
 
-//ETX
+  // ETX
 protected:
   vtkSVLoftSplineSurface();
   ~vtkSVLoftSplineSurface();
@@ -143,37 +143,39 @@ protected:
   int ParallelStreaming;
 
   // Usual data generation method
-  virtual int RequestData(vtkInformation *,
-                          vtkInformationVector **, vtkInformationVector *) override;
-  virtual int RequestUpdateExtent(vtkInformation *,
-                                  vtkInformationVector **, vtkInformationVector *) override;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **,
+                          vtkInformationVector *) override;
+  virtual int RequestUpdateExtent(vtkInformation *, vtkInformationVector **,
+                                  vtkInformationVector *) override;
   virtual int FillInputPortInformation(int, vtkInformation *) override;
 
- private:
+private:
   // hide the superclass' AddInput() from the user and the compiler
-  void AddInputData(vtkDataObject *)
-    { vtkErrorMacro( << "AddInput() must be called with a vtkPolyData not a vtkDataObject."); };
+  void AddInputData(vtkDataObject *) {
+    vtkErrorMacro(
+        << "AddInput() must be called with a vtkPolyData not a vtkDataObject.");
+  };
 
-  //Function to run the intersection on intersecting polydatas
-  int LoftSolid(vtkPolyData *inputs[],int numInputs,vtkPolyData *outputPD);
+  // Function to run the intersection on intersecting polydatas
+  int LoftSolid(vtkPolyData *inputs[], int numInputs, vtkPolyData *outputPD);
 
   double **createArray(int a, int b);
   void deleteArray(double **ptr, int a, int b);
-  int linearInterpolate(double **orgPts, int numOrgPts, double t0,
-                              double dt, int numOutPts, double ***outPts);
+  int linearInterpolate(double **orgPts, int numOrgPts, double t0, double dt,
+                        int numOutPts, double ***outPts);
   int linearInterpolateCurve(double **orgPts, int numOrgPts, int closed,
                              int numOutPts, double ***rtnOutPts);
   int curveLength(double **pts, int numPts, int closed, double *length);
 
-
   int smoothCurve(double **orgPts, int numOrgPts, int closed, int keepNumModes,
-                          int numOutPts, double ***rtnOutPts);
-  void FFT(double Qdata[],int nn,int isign);
-  int FFT(double **pts, int numPts, int numInterpPts, int numDesiredTerms, double ***terms);
-  int inverseFFT(double **terms, int numTerms, double t0, double dt, double omega,
-                 int numRtnPts, double ***rtnPts);
+                  int numOutPts, double ***rtnOutPts);
+  void FFT(double Qdata[], int nn, int isign);
+  int FFT(double **pts, int numPts, int numInterpPts, int numDesiredTerms,
+          double ***terms);
+  int inverseFFT(double **terms, int numTerms, double t0, double dt,
+                 double omega, int numRtnPts, double ***rtnPts);
 
-  //User defined booleans for filter management
+  // User defined booleans for filter management
   int UserManagedInputs;
 
   int UseLinearSampleAlongLength;
@@ -189,8 +191,8 @@ protected:
   double Tension;
 
 private:
-  vtkSVLoftSplineSurface(const vtkSVLoftSplineSurface&);  // Not implemented.
-  void operator=(const vtkSVLoftSplineSurface&);  // Not implemented.
+  vtkSVLoftSplineSurface(const vtkSVLoftSplineSurface &); // Not implemented.
+  void operator=(const vtkSVLoftSplineSurface &);         // Not implemented.
 };
 
 #endif

@@ -43,34 +43,29 @@
 
 class SV_EXPORT_POST cvCalculateWallShearStress {
 
-  public:
+public:
+  cvCalculateWallShearStress();
+  ~cvCalculateWallShearStress();
 
-    cvCalculateWallShearStress();
-    ~cvCalculateWallShearStress();
+  int SetSurfaceMesh(cvPolyData *surfaceMesh);
+  int SetTensors(cvPolyData *tensors);
+  int SetTractions(cvPolyData *tractions);
+  int CalcWallShearFromStresses();
+  int CalcWallShearFromTractions();
 
-    int SetSurfaceMesh(cvPolyData* surfaceMesh);
-    int SetTensors(cvPolyData* tensors);
-    int SetTractions(cvPolyData* tractions);
-    int CalcWallShearFromStresses();
-    int CalcWallShearFromTractions();
+  cvPolyData *CalcWallShearMean(int numPds, cvPolyData **shearPds);
+  cvPolyData *CalcWallShearPulse(int numPds, cvPolyData **shearPds);
+  cvPolyData *CalcOSI(cvPolyData *shearMean, cvPolyData *shearPulse);
+  cvPolyData *GetWallShear();
 
-    cvPolyData* CalcWallShearMean(int numPds, cvPolyData **shearPds);
-    cvPolyData* CalcWallShearPulse(int numPds, cvPolyData **shearPds);
-    cvPolyData* CalcOSI(cvPolyData *shearMean, cvPolyData *shearPulse);
-    cvPolyData* GetWallShear();
+  cvPolyData *CalcAvgPointData(int numPds, cvPolyData **inputPds);
 
-    cvPolyData* CalcAvgPointData(int numPds, cvPolyData **inputPds);
-
-  protected:
-
-
-  private:
-
-    vtkPolyData* surfaceMesh_;
-    vtkPolyData* tensors_;
-    vtkPolyData* tractions_;
-    vtkFloatingPointArrayType* wallshear_;
-
+protected:
+private:
+  vtkPolyData *surfaceMesh_;
+  vtkPolyData *tensors_;
+  vtkPolyData *tractions_;
+  vtkFloatingPointArrayType *wallshear_;
 };
 
 #endif

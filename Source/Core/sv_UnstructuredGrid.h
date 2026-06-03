@@ -37,20 +37,20 @@
 
 #include "sv_VTK.h"
 
-#include "sv_RepositoryData.h"
 #include "sv_DataSet.h"
+#include "sv_RepositoryData.h"
 
 class SV_EXPORT_REPOSITORY cvUnstructuredGrid : public cvDataSet {
 
 public:
   cvUnstructuredGrid();
-  cvUnstructuredGrid( vtkUnstructuredGrid *ug );
-  cvUnstructuredGrid( cvUnstructuredGrid *src );
+  cvUnstructuredGrid(vtkUnstructuredGrid *ug);
+  cvUnstructuredGrid(cvUnstructuredGrid *src);
   ~cvUnstructuredGrid();
 
-  vtkUnstructuredGrid *GetVtkUnstructuredGrid() { return (vtkUnstructuredGrid*)data_; }
-
+  vtkUnstructuredGrid *GetVtkUnstructuredGrid() {
+    return (vtkUnstructuredGrid *)data_;
+  }
 };
-
 
 #endif // __POLY_DATA_H

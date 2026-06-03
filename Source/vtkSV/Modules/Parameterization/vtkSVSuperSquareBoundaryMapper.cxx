@@ -42,8 +42,8 @@
 
 #include "vtkSVGlobals.h"
 
-#include <sstream>
 #include <map>
+#include <sstream>
 
 // ----------------------
 // StandardNewMacro
@@ -53,20 +53,17 @@ vtkStandardNewMacro(vtkSVSuperSquareBoundaryMapper);
 // ----------------------
 // Constructor
 // ----------------------
-vtkSVSuperSquareBoundaryMapper::vtkSVSuperSquareBoundaryMapper()
-{
+vtkSVSuperSquareBoundaryMapper::vtkSVSuperSquareBoundaryMapper() {
   this->BoundaryLengths = vtkDoubleArray::New();
-  this->SetSuperBoundaryDivisions(0, 0, 0, 0); //regular square boundary
-  this->SetSuperBoundaryLengths(1.0, 1.0, 1.0, 1.0); //regular square boundary
+  this->SetSuperBoundaryDivisions(0, 0, 0, 0);       // regular square boundary
+  this->SetSuperBoundaryLengths(1.0, 1.0, 1.0, 1.0); // regular square boundary
 }
 
 // ----------------------
 // Destructor
 // ----------------------
-vtkSVSuperSquareBoundaryMapper::~vtkSVSuperSquareBoundaryMapper()
-{
-  if (this->BoundaryLengths != nullptr)
-  {
+vtkSVSuperSquareBoundaryMapper::~vtkSVSuperSquareBoundaryMapper() {
+  if (this->BoundaryLengths != nullptr) {
     this->BoundaryLengths->Delete();
   }
 }
@@ -74,19 +71,16 @@ vtkSVSuperSquareBoundaryMapper::~vtkSVSuperSquareBoundaryMapper()
 // ----------------------
 // SetBoundaries
 // ----------------------
-int vtkSVSuperSquareBoundaryMapper::SetBoundaries()
-{
+int vtkSVSuperSquareBoundaryMapper::SetBoundaries() {
   // Calculate each length on full polydata
   vtkNew(vtkIntArray, actualIds);
-  if (this->CalculateSquareEdgeLengths(actualIds) != SV_OK)
-  {
+  if (this->CalculateSquareEdgeLengths(actualIds) != SV_OK) {
     vtkErrorMacro("Didn't work");
     return SV_ERROR;
   }
 
   // Set the boundary now
-  if (!this->SetSquareBoundary(actualIds))
-  {
+  if (!this->SetSquareBoundary(actualIds)) {
     vtkErrorMacro("Was not able to set boundary");
     return SV_ERROR;
   }
@@ -97,10 +91,11 @@ int vtkSVSuperSquareBoundaryMapper::SetBoundaries()
 // ----------------------
 // CalculateSquareEdgeLengths
 // ----------------------
-int vtkSVSuperSquareBoundaryMapper::CalculateSquareEdgeLengths(vtkIntArray *actualIds)
-{
+int vtkSVSuperSquareBoundaryMapper::CalculateSquareEdgeLengths(
+    vtkIntArray *actualIds) {
   // Get the point ids
-  vtkDataArray *pointIds = this->BoundaryLoop->GetPointData()->GetArray(this->InternalIdsArrayName);
+  vtkDataArray *pointIds =
+      this->BoundaryLoop->GetPointData()->GetArray(this->InternalIdsArrayName);
   int numLines = this->BoundaryLoop->GetNumberOfLines();
 
   // Get the number of boundary ids
@@ -116,8 +111,7 @@ int vtkSVSuperSquareBoundaryMapper::CalculateSquareEdgeLengths(vtkIntArray *actu
 
   // Loop through boundary points
   int currCell = 0;
-  for (int i=0; i<numBoundaryPts; i++)
-  {
+  for (int i = 0; i < numBoundaryPts; i++) {
     // Initialize update vars
     vtkIdType npts;
     const vtkIdType *pts;
@@ -126,8 +120,7 @@ int vtkSVSuperSquareBoundaryMapper::CalculateSquareEdgeLengths(vtkIntArray *actu
     int done = 0;
 
     // Go till we can't no more
-    while (!done)
-    {
+    while (!done) {
       // Get cell points
       this->BoundaryLoop->GetCellPoints(currCell, npts, pts);
 
@@ -138,26 +131,24 @@ int vtkSVSuperSquareBoundaryMapper::CalculateSquareEdgeLengths(vtkIntArray *actu
 
       // See if we found a boundary point!
       checkPt = pts[1];
-      for (int j=0; j<numBoundaryPts; j++)
-      {
-        if (checkPt == pointIds->LookupValue(this->BoundaryIds->GetValue(j)))
-        {
-          actualIds->SetValue((i+1)%numBoundaryPts, pointIds->GetTuple1(checkPt));
-          vtkDebugMacro("Found boundary ID!: " <<  this->BoundaryIds->GetValue(j));
+      for (int j = 0; j < numBoundaryPts; j++) {
+        if (checkPt == pointIds->LookupValue(this->BoundaryIds->GetValue(j))) {
+          actualIds->SetValue((i + 1) % numBoundaryPts,
+                              pointIds->GetTuple1(checkPt));
+          vtkDebugMacro(
+              "Found boundary ID!: " << this->BoundaryIds->GetValue(j));
           done = 1;
         }
       }
 
       // Update the distance
-      double dist = sqrt(pow(pt0[0]-pt1[0], 2.0) +
-                         pow(pt0[1]-pt1[1], 2.0) +
-                         pow(pt0[2]-pt1[2], 2.0));
+      double dist = sqrt(pow(pt0[0] - pt1[0], 2.0) + pow(pt0[1] - pt1[1], 2.0) +
+                         pow(pt0[2] - pt1[2], 2.0));
       boundaryDistance += dist;
 
       // Get the next cell in the loop
       currCell++;
-      if (currCell > this->BoundaryLoop->GetNumberOfCells())
-      {
+      if (currCell > this->BoundaryLoop->GetNumberOfCells()) {
         vtkErrorMacro("Error could not find all boundary points provided\n");
         return SV_ERROR;
       }
@@ -173,14 +164,14 @@ int vtkSVSuperSquareBoundaryMapper::CalculateSquareEdgeLengths(vtkIntArray *actu
 // ----------------------
 // SetSquareBoundary
 // ----------------------
-int vtkSVSuperSquareBoundaryMapper::SetSquareBoundary(vtkIntArray *actualIds)
-{
+int vtkSVSuperSquareBoundaryMapper::SetSquareBoundary(vtkIntArray *actualIds) {
   // get point ids on boundary
-  vtkDataArray *pointIds = this->BoundaryLoop->GetPointData()->GetArray(this->InternalIdsArrayName);
+  vtkDataArray *pointIds =
+      this->BoundaryLoop->GetPointData()->GetArray(this->InternalIdsArrayName);
 
   // Set up the coordinates to lay down
   double currCoords[3];
-  for (int i=0; i<3; i++)
+  for (int i = 0; i < 3; i++)
     currCoords[i] = 0.0;
 
   // Get number of boundary ids
@@ -197,9 +188,8 @@ int vtkSVSuperSquareBoundaryMapper::SetSquareBoundary(vtkIntArray *actualIds)
   int divisionCount = 0;
 
   // Loop through points
-  for (int i=0; i<numBoundaryPts; i++)
-  {
-    vtkDebugMacro("Looping to next point: " <<  i);
+  for (int i = 0; i < numBoundaryPts; i++) {
+    vtkDebugMacro("Looping to next point: " << i);
 
     // Update variables
     double currLength = 0.0;
@@ -207,11 +197,11 @@ int vtkSVSuperSquareBoundaryMapper::SetSquareBoundary(vtkIntArray *actualIds)
     const vtkIdType *pts;
 
     // Get id we are looking for
-    int lastPt  = pointIds->LookupValue(actualIds->GetValue((i+1)%numBoundaryPts));
+    int lastPt =
+        pointIds->LookupValue(actualIds->GetValue((i + 1) % numBoundaryPts));
 
     // Go till we can't no more!
-    while (checkPt != lastPt)
-    {
+    while (checkPt != lastPt) {
       // Get cell points
       this->BoundaryLoop->GetCellPoints(currCell, npts, pts);
 
@@ -224,23 +214,28 @@ int vtkSVSuperSquareBoundaryMapper::SetSquareBoundary(vtkIntArray *actualIds)
       checkPt = pts[1];
 
       // Update teh current distance
-      double dist = sqrt(pow(pt0[0]-pt1[0], 2.0) +
-                         pow(pt0[1]-pt1[1], 2.0) +
-                         pow(pt0[2]-pt1[2], 2.0));
+      double dist = sqrt(pow(pt0[0] - pt1[0], 2.0) + pow(pt0[1] - pt1[1], 2.0) +
+                         pow(pt0[2] - pt1[2], 2.0));
       currLength += dist;
 
-      // Get the length of the unit we need to fill until we get to next boundary point
-      double unitLength = this->SuperBoundaryLengths[boundaryNumber]/(this->SuperBoundaryDivisions[boundaryNumber]+1.0);
+      // Get the length of the unit we need to fill until we get to next
+      // boundary point
+      double unitLength = this->SuperBoundaryLengths[boundaryNumber] /
+                          (this->SuperBoundaryDivisions[boundaryNumber] + 1.0);
       // We have four boundaries to fill, based on which side we are on, we
       // need to update our current coordinates differently.
       if (boundaryNumber == 0)
-        currCoords[0] += dist/this->BoundaryLengths->GetTuple1(i) * unitLength;
+        currCoords[0] +=
+            dist / this->BoundaryLengths->GetTuple1(i) * unitLength;
       else if (boundaryNumber == 1)
-        currCoords[1] += dist/this->BoundaryLengths->GetTuple1(i) * unitLength;
+        currCoords[1] +=
+            dist / this->BoundaryLengths->GetTuple1(i) * unitLength;
       else if (boundaryNumber == 2)
-        currCoords[0] -= dist/this->BoundaryLengths->GetTuple1(i) * unitLength;
+        currCoords[0] -=
+            dist / this->BoundaryLengths->GetTuple1(i) * unitLength;
       else
-        currCoords[1] -= dist/this->BoundaryLengths->GetTuple1(i) * unitLength;
+        currCoords[1] -=
+            dist / this->BoundaryLengths->GetTuple1(i) * unitLength;
 
       // Set the points and data for boundary
       newPoints->InsertNextPoint(currCoords);
@@ -251,8 +246,7 @@ int vtkSVSuperSquareBoundaryMapper::SetSquareBoundary(vtkIntArray *actualIds)
     }
     // New division
     divisionCount++;
-    if (divisionCount > this->SuperBoundaryDivisions[boundaryNumber])
-    {
+    if (divisionCount > this->SuperBoundaryDivisions[boundaryNumber]) {
       // We have reached a corner point, update to new boundary edge
       boundaryNumber++;
       divisionCount = 0;
@@ -261,12 +255,11 @@ int vtkSVSuperSquareBoundaryMapper::SetSquareBoundary(vtkIntArray *actualIds)
 
   // Set up cells now that we have points, trivial
   vtkNew(vtkCellArray, newCells);
-  int i=0;
-  for (i=0; i<newPoints->GetNumberOfPoints()-1; i++)
-  {
+  int i = 0;
+  for (i = 0; i < newPoints->GetNumberOfPoints() - 1; i++) {
     newCells->InsertNextCell(2);
     newCells->InsertCellPoint(i);
-    newCells->InsertCellPoint(i+1);
+    newCells->InsertCellPoint(i + 1);
   }
   newCells->InsertNextCell(2);
   newCells->InsertCellPoint(i);
@@ -281,15 +274,14 @@ int vtkSVSuperSquareBoundaryMapper::SetSquareBoundary(vtkIntArray *actualIds)
   return SV_OK;
 }
 
-void vtkSVSuperSquareBoundaryMapper::PrintSelf(ostream& os, vtkIndent indent)
-{
-  this->Superclass::PrintSelf(os,indent);
+void vtkSVSuperSquareBoundaryMapper::PrintSelf(ostream &os, vtkIndent indent) {
+  this->Superclass::PrintSelf(os, indent);
 
-  os << indent << "Boundary Divisions: " <<
-    this->SuperBoundaryDivisions[0] << " " << this->SuperBoundaryDivisions[1] <<
-    " " << this->SuperBoundaryDivisions[2] << this->SuperBoundaryDivisions[3] << "\n";
-  os << indent << "Boundary Lengths: " <<
-    this->SuperBoundaryLengths[0] << " " << this->SuperBoundaryLengths[1] <<
-    " " << this->SuperBoundaryLengths[2] << this->SuperBoundaryLengths[3] << "\n";
-
+  os << indent << "Boundary Divisions: " << this->SuperBoundaryDivisions[0]
+     << " " << this->SuperBoundaryDivisions[1] << " "
+     << this->SuperBoundaryDivisions[2] << this->SuperBoundaryDivisions[3]
+     << "\n";
+  os << indent << "Boundary Lengths: " << this->SuperBoundaryLengths[0] << " "
+     << this->SuperBoundaryLengths[1] << " " << this->SuperBoundaryLengths[2]
+     << this->SuperBoundaryLengths[3] << "\n";
 }

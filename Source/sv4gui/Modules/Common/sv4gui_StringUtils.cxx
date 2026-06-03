@@ -31,26 +31,26 @@
 
 #include "sv4gui_StringUtils.h"
 
-#include <sstream>
 #include <algorithm>
-#include <functional>
 #include <cctype>
+#include <functional>
 #include <locale>
+#include <sstream>
 
-std::vector<std::string> sv4guiStringUtils::split(const std::string &s, char delim)
-{
-    std::stringstream ss(s);
-    std::string item;
-    std::vector<std::string> elems;
-    while (std::getline(ss, item, delim)) {
-        if (item.length() > 0) {
-            elems.push_back(item);
-        }
+std::vector<std::string> sv4guiStringUtils::split(const std::string &s,
+                                                  char delim) {
+  std::stringstream ss(s);
+  std::string item;
+  std::vector<std::string> elems;
+  while (std::getline(ss, item, delim)) {
+    if (item.length() > 0) {
+      elems.push_back(item);
     }
-    return elems;
+  }
+  return elems;
 }
 
-/*dp 
+/*dp
 std::string sv4guiStringUtils::ltrim(std::string s) {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(),
             std::not1(std::ptr_fun<int, int>(std::isspace))));

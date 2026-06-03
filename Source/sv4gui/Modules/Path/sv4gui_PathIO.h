@@ -40,28 +40,26 @@
 
 #include "sv3_PathIO.h"
 
-class SV4GUIMODULEPATH_EXPORT sv4guiPathIO : public mitk::AbstractFileIO, sv3::PathIO
-{
+class SV4GUIMODULEPATH_EXPORT sv4guiPathIO : public mitk::AbstractFileIO,
+                                             sv3::PathIO {
 public:
+  sv4guiPathIO();
 
-    sv4guiPathIO();
+  using mitk::AbstractFileReader::Read;
+  std::vector<mitk::BaseData::Pointer> Read() override;
+  static std::vector<mitk::BaseData::Pointer> ReadFile(std::string fileName);
+  mitk::IFileIO::ConfidenceLevel GetReaderConfidenceLevel() const override;
 
-    using mitk::AbstractFileReader::Read;
-    std::vector<mitk::BaseData::Pointer> Read() override;
-    static std::vector<mitk::BaseData::Pointer> ReadFile(std::string fileName);
-    mitk::IFileIO::ConfidenceLevel GetReaderConfidenceLevel() const override;
+  void Write() override;
+  mitk::IFileIO::ConfidenceLevel GetWriterConfidenceLevel() const override;
 
-    void Write() override;
-    mitk::IFileIO::ConfidenceLevel GetWriterConfidenceLevel() const override;
-
-    std::vector<mitk::BaseData::Pointer> DoRead() override
-    {
-        std::cout << "Need to implement this one" << std::endl << std::flush;
-        exit(1);
-    }
+  std::vector<mitk::BaseData::Pointer> DoRead() override {
+    std::cout << "Need to implement this one" << std::endl << std::flush;
+    exit(1);
+  }
 
 private:
-    sv4guiPathIO* IOClone() const override;
+  sv4guiPathIO *IOClone() const override;
 };
 
 #endif // SV4GUI_PATHIO_H

@@ -31,15 +31,14 @@
 
 #include "SimVascular.h"
 
-#include <stdio.h>
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "sv_VTK.h"
 
-int mr_decode (vtkStructuredPoints *phase,
-               double venc,double vencscale,
-               vtkStructuredPoints **vel) {
+int mr_decode(vtkStructuredPoints *phase, double venc, double vencscale,
+              vtkStructuredPoints **vel) {
 
   double pi = 3.14159265358979323846;
 
@@ -48,18 +47,18 @@ int mr_decode (vtkStructuredPoints *phase,
   int numScalars = phaseScalars->GetNumberOfTuples();
 
   vtkFloatArray *vScalars = vtkFloatArray::New();
-  vScalars->Allocate(100,100);
+  vScalars->Allocate(100, 100);
   vScalars->SetNumberOfTuples(numScalars);
 
   vtkFloatingPointType v_i;
 
-  for (int pixel=0;pixel < numScalars;pixel++) {
+  for (int pixel = 0; pixel < numScalars; pixel++) {
     vtkFloatingPointType phase_i = phaseScalars->GetTuple1(pixel);
-    //fprintf(stdout,"venc: %lf vencscale: %lf  flow_i: %f\n",
-    //               venc,vencscale,phase_i);
+    // fprintf(stdout,"venc: %lf vencscale: %lf  flow_i: %f\n",
+    //                venc,vencscale,phase_i);
     v_i = phase_i * venc / (vencscale * pi);
-    vScalars->InsertTuple1(pixel,v_i);
-    //fprintf(stdout,"pixel %i: %f\n",pixel,v_i);
+    vScalars->InsertTuple1(pixel, v_i);
+    // fprintf(stdout,"pixel %i: %f\n",pixel,v_i);
   }
 
   vtkStructuredPoints *v;
@@ -79,11 +78,8 @@ int mr_decode (vtkStructuredPoints *phase,
   return SV_OK;
 }
 
-
-int mr_decode_masked (vtkStructuredPoints *mag,
-               vtkStructuredPoints *phase,
-               double venc,double vencscale,
-               vtkStructuredPoints **vel) {
+int mr_decode_masked(vtkStructuredPoints *mag, vtkStructuredPoints *phase,
+                     double venc, double vencscale, vtkStructuredPoints **vel) {
 
   double pi = 3.14159265358979323846;
 
@@ -93,24 +89,24 @@ int mr_decode_masked (vtkStructuredPoints *mag,
   int numScalars = magScalars->GetNumberOfTuples();
 
   vtkFloatArray *vScalars = vtkFloatArray::New();
-  vScalars->Allocate(100,100);
+  vScalars->Allocate(100, 100);
   vScalars->SetNumberOfTuples(numScalars);
 
   vtkFloatingPointType v_i;
 
-  for (int pixel=0;pixel < numScalars;pixel++) {
+  for (int pixel = 0; pixel < numScalars; pixel++) {
     vtkFloatingPointType phase_i = phaseScalars->GetTuple1(pixel);
     vtkFloatingPointType mag_i = magScalars->GetTuple1(pixel);
-    //fprintf(stdout,"venc: %lf vencscale: %lf  flow_i: %f mag_i: %f\n",
-    //               venc,vencscale,phase_i,mag_i);
+    // fprintf(stdout,"venc: %lf vencscale: %lf  flow_i: %f mag_i: %f\n",
+    //                venc,vencscale,phase_i,mag_i);
 
     if (abs(mag_i) < 0.0001) {
-        v_i = 0;
+      v_i = 0;
     } else {
-        v_i = phase_i * venc / (vencscale * pi * mag_i);
+      v_i = phase_i * venc / (vencscale * pi * mag_i);
     }
-    vScalars->InsertTuple1(pixel,v_i);
-    //fprintf(stdout,"pixel %i: %f\n",pixel,v_i);
+    vScalars->InsertTuple1(pixel, v_i);
+    // fprintf(stdout,"pixel %i: %f\n",pixel,v_i);
   }
 
   vtkStructuredPoints *v;
@@ -129,4 +125,3 @@ int mr_decode_masked (vtkStructuredPoints *mag,
 
   return SV_OK;
 }
-

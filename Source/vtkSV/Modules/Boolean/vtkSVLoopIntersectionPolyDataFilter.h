@@ -32,8 +32,8 @@
 /**
  * \class vtkSVLoopIntersectionPolyDataFilter
  *
- * \brief vtkSVLoopIntersectionPolyDataFilter computes the intersection between two
- * vtkPolyData objects.
+ * \brief vtkSVLoopIntersectionPolyDataFilter computes the intersection between
+ * two vtkPolyData objects.
  *
  * \details The first output is a set of lines that marks
  * the intersection of the input vtkPolyData objects. This contains five
@@ -81,13 +81,12 @@
 #ifndef vtkSVLoopIntersectionPolyDataFilter_h
 #define vtkSVLoopIntersectionPolyDataFilter_h
 
+#include "sv_PolyData.h"
 #include "vtkPolyDataAlgorithm.h"
 #include "vtkSVBooleanModule.h" // For export macro
-#include "sv_PolyData.h"
 
-class VTKSVBOOLEAN_EXPORT vtkSVLoopIntersectionPolyDataFilter :
-        public vtkPolyDataAlgorithm
-{
+class VTKSVBOOLEAN_EXPORT vtkSVLoopIntersectionPolyDataFilter
+    : public vtkPolyDataAlgorithm {
 public:
   static vtkSVLoopIntersectionPolyDataFilter *New();
   vtkTypeMacro(vtkSVLoopIntersectionPolyDataFilter, vtkPolyDataAlgorithm);
@@ -116,8 +115,8 @@ public:
   //@}
 
   //@{
-  /// \breif If on, the output split surfaces will contain information about which
-  /// points are on the intersection of the two inputs. Default: ON
+  /// \breif If on, the output split surfaces will contain information about
+  /// which points are on the intersection of the two inputs. Default: ON
   vtkGetMacro(ComputeIntersectionPointArray, int);
   vtkSetMacro(ComputeIntersectionPointArray, int);
   vtkBooleanMacro(ComputeIntersectionPointArray, int);
@@ -131,8 +130,8 @@ public:
   //@}
 
   //@{
-  /// \brief If on, the output remeshed surfaces will be checked for bad cells and
-  /// free edges. Default: ON
+  /// \brief If on, the output remeshed surfaces will be checked for bad cells
+  /// and free edges. Default: ON
   vtkGetMacro(CheckMesh, int);
   vtkSetMacro(CheckMesh, int);
   vtkBooleanMacro(CheckMesh, int);
@@ -167,21 +166,22 @@ public:
                                           double pt2[3], double surfaceid[2],
                                           double tolerance);
 
-  /// \brief  Function to clean and check the output surfaces for bad triangles and
-  /// free edges
+  /// \brief  Function to clean and check the output surfaces for bad triangles
+  /// and free edges
   static void CleanAndCheckSurface(vtkPolyData *pd, double stats[2],
-                  double tolerance, PolyDataCheckResults& check_results);
+                                   double tolerance,
+                                   PolyDataCheckResults &check_results);
 
   /// \brief Function to clean and check the inputs
   static void CleanAndCheckInput(vtkPolyData *pd, double tolerance);
 
 protected:
-  vtkSVLoopIntersectionPolyDataFilter();  //Constructor
-  ~vtkSVLoopIntersectionPolyDataFilter();  //Destructor
+  vtkSVLoopIntersectionPolyDataFilter();  // Constructor
+  ~vtkSVLoopIntersectionPolyDataFilter(); // Destructor
 
-  int RequestData(vtkInformation*, vtkInformationVector**,
-                  vtkInformationVector*) override;  //Update
-  int FillInputPortInformation(int, vtkInformation*) override; //Input,Output
+  int RequestData(vtkInformation *, vtkInformationVector **,
+                  vtkInformationVector *) override;             // Update
+  int FillInputPortInformation(int, vtkInformation *) override; // Input,Output
 
   int NumberOfIntersectionPoints;
   int NumberOfIntersectionLines;
@@ -194,11 +194,11 @@ protected:
   double Tolerance;
 
 private:
-  vtkSVLoopIntersectionPolyDataFilter(const vtkSVLoopIntersectionPolyDataFilter&);
-  void operator=(const vtkSVLoopIntersectionPolyDataFilter&);
+  vtkSVLoopIntersectionPolyDataFilter(
+      const vtkSVLoopIntersectionPolyDataFilter &);
+  void operator=(const vtkSVLoopIntersectionPolyDataFilter &);
 
-  class Impl;  //Implementation class
+  class Impl; // Implementation class
 };
-
 
 #endif // vtkSVLoopIntersectionPolyDataFilter_h

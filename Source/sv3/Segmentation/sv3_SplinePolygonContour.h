@@ -43,31 +43,28 @@
 #undef GetClassName
 #endif
 
-namespace sv3{
-class SV_EXPORT_SEGMENTATION ContourSplinePolygon : public ContourPolygon
-{
+namespace sv3 {
+class SV_EXPORT_SEGMENTATION ContourSplinePolygon : public ContourPolygon {
 
 public:
+  ContourSplinePolygon();
 
-    ContourSplinePolygon();
+  ContourSplinePolygon(const ContourSplinePolygon &other);
 
-    ContourSplinePolygon(const ContourSplinePolygon &other);
+  ~ContourSplinePolygon();
 
-    ~ContourSplinePolygon();
+  virtual ContourSplinePolygon *Clone() override;
 
-    virtual ContourSplinePolygon* Clone() override;
-    
-    virtual std::string GetClassName() override;
+  virtual std::string GetClassName() override;
 
-    virtual void CreateContourPoints() override;
+  virtual void CreateContourPoints() override;
 
-    static Contour* CreateByFitting(Contour* contour, int divisionNumber = 12);
-    
-    ContourSplinePolygon* CreateSmoothedContour(int fourierNumber);
+  static Contour *CreateByFitting(Contour *contour, int divisionNumber = 12);
 
-  protected:
+  ContourSplinePolygon *CreateSmoothedContour(int fourierNumber);
 
-  };
-}
+protected:
+};
+} // namespace sv3
 
 #endif // SV3_SPLINEPOLYGONCONTOUR_H

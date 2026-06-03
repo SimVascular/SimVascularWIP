@@ -29,10 +29,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The 'sv4guiMultiPhysicsViscosity' class is used to store data for the various viscosity models.
+// The 'sv4guiMultiPhysicsViscosity' class is used to store data for the various
+// viscosity models.
 
 #ifndef SV4GUI_MULTIPHYSICS_VISCOSITY_H
-#define SV4GUI_MULTIPHYSICS_VISCOSITY_H 
+#define SV4GUI_MULTIPHYSICS_VISCOSITY_H
 
 #include "sv4guiModuleMultiPhysicsExports.h"
 
@@ -46,55 +47,53 @@
 // Stores the viscosity model names recognised by MultiPhysics.
 //
 class MultiPhysicsViscosityModelNames {
-  public:
-    static std::string CARREAU_YASUDA;
-    static std::string CASSONS;
-    static std::string NEWTONIAN;
-    static std::vector<std::string> list;
+public:
+  static std::string CARREAU_YASUDA;
+  static std::string CASSONS;
+  static std::string NEWTONIAN;
+  static std::vector<std::string> list;
 };
 
-class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMultiPhysicsViscosity 
-{
-  public:
-    sv4guiMultiPhysicsViscosity();
-    ~sv4guiMultiPhysicsViscosity();
-    std::string model_name_;
-    std::map<std::string,double> values_;
-    virtual std::map<std::string,double> get_values() = 0;
+class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMultiPhysicsViscosity {
+public:
+  sv4guiMultiPhysicsViscosity();
+  ~sv4guiMultiPhysicsViscosity();
+  std::string model_name_;
+  std::map<std::string, double> values_;
+  virtual std::map<std::string, double> get_values() = 0;
 };
 
-class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMultiPhysicsViscosityCarreauYasuda: sv4guiMultiPhysicsViscosity
-{
-  public:
-    sv4guiMultiPhysicsViscosityCarreauYasuda();
-    ~sv4guiMultiPhysicsViscosityCarreauYasuda();
-    double limiting_high_shear_rate_viscosity_;
-    double limiting_low_shear_rate_viscosity_;
-    double shear_rate_tensor_multiplier_;
-    double shear_rate_tensor_exponent_;
-    double power_law_index_;
-    std::map<std::string,double> get_values();
+class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMultiPhysicsViscosityCarreauYasuda
+    : sv4guiMultiPhysicsViscosity {
+public:
+  sv4guiMultiPhysicsViscosityCarreauYasuda();
+  ~sv4guiMultiPhysicsViscosityCarreauYasuda();
+  double limiting_high_shear_rate_viscosity_;
+  double limiting_low_shear_rate_viscosity_;
+  double shear_rate_tensor_multiplier_;
+  double shear_rate_tensor_exponent_;
+  double power_law_index_;
+  std::map<std::string, double> get_values();
 };
 
-class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMultiPhysicsViscosityCassons: sv4guiMultiPhysicsViscosity
-{
-  public:
-    sv4guiMultiPhysicsViscosityCassons();
-    ~sv4guiMultiPhysicsViscosityCassons();
-    double asymptotic_viscosity_;
-    double yield_stress_;
-    double low_shear_rate_threshold_;
-    std::map<std::string,double> get_values();
+class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMultiPhysicsViscosityCassons
+    : sv4guiMultiPhysicsViscosity {
+public:
+  sv4guiMultiPhysicsViscosityCassons();
+  ~sv4guiMultiPhysicsViscosityCassons();
+  double asymptotic_viscosity_;
+  double yield_stress_;
+  double low_shear_rate_threshold_;
+  std::map<std::string, double> get_values();
 };
 
-class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMultiPhysicsViscosityNewtonian : sv4guiMultiPhysicsViscosity
-{
-  public:
-    sv4guiMultiPhysicsViscosityNewtonian();
-    ~sv4guiMultiPhysicsViscosityNewtonian();
-    double constant_value_;
-    std::map<std::string,double> get_values();
+class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMultiPhysicsViscosityNewtonian
+    : sv4guiMultiPhysicsViscosity {
+public:
+  sv4guiMultiPhysicsViscosityNewtonian();
+  ~sv4guiMultiPhysicsViscosityNewtonian();
+  double constant_value_;
+  std::map<std::string, double> get_values();
 };
 
-
-#endif 
+#endif

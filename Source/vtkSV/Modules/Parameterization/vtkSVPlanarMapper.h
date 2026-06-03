@@ -54,12 +54,12 @@
 #include "vtkSVBoundaryMapper.h"
 #include "vtkSVSparseMatrix.h"
 
-class VTKSVPARAMETERIZATION_EXPORT vtkSVPlanarMapper : public vtkPolyDataAlgorithm
-{
+class VTKSVPARAMETERIZATION_EXPORT vtkSVPlanarMapper
+    : public vtkPolyDataAlgorithm {
 public:
-  static vtkSVPlanarMapper* New();
+  static vtkSVPlanarMapper *New();
   vtkTypeMacro(vtkSVPlanarMapper, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
   /// \brief Get/Set for the boundary mapper object
@@ -74,7 +74,8 @@ public:
   //@}
 
   //@{
-  /// \brief Indicate which two coordinates to parameterize. Dir2 is stationary dir
+  /// \brief Indicate which two coordinates to parameterize. Dir2 is stationary
+  /// dir
   vtkGetMacro(Dir0, int);
   vtkSetMacro(Dir0, int);
   vtkGetMacro(Dir1, int);
@@ -85,18 +86,13 @@ public:
 
   //@{
   /// \details has not effect currently, something to change in future
-  enum WEIGHT_TYPE
-  {
-    HARMONIC = 0,
-    MEAN_VALUE,
-    TUTTE
-  };
+  enum WEIGHT_TYPE { HARMONIC = 0, MEAN_VALUE, TUTTE };
   //@}
 
   //@{
   /// \brief inverst a system that is a multi-dimensional stl vector
-  static int InvertSystem(std::vector<std::vector<double> > &mat,
-                          std::vector<std::vector<double> > &invMat);
+  static int InvertSystem(std::vector<std::vector<double>> &mat,
+                          std::vector<std::vector<double>> &invMat);
 
 protected:
   vtkSVPlanarMapper();
@@ -104,33 +100,33 @@ protected:
 
   // Usual data generation method
   int RequestData(vtkInformation *vtkNotUsed(request),
-		  vtkInformationVector **inputVector,
-		  vtkInformationVector *outputVector) override;
+                  vtkInformationVector **inputVector,
+                  vtkInformationVector *outputVector) override;
 
   // Main functions in filter
-  int PrepFilter(); // Prep work
-  int RunFilter(); // Run operation
-  int SetBoundaries(); // Sets the boundaries
+  int PrepFilter();       // Prep work
+  int RunFilter();        // Run operation
+  int SetBoundaries();    // Sets the boundaries
   int SetInternalNodes(); // Sets the internal nodes after boundaries are done
-  int SolveSystem(); // Solve the system
+  int SolveSystem();      // Solve the system
 
   // Point and edge wise functions using discrete laplace-beltrami
 
 private:
-  vtkSVPlanarMapper(const vtkSVPlanarMapper&);  // Not implemented.
-  void operator=(const vtkSVPlanarMapper&);  // Not implemented.
+  vtkSVPlanarMapper(const vtkSVPlanarMapper &); // Not implemented.
+  void operator=(const vtkSVPlanarMapper &);    // Not implemented.
 
   char *InternalIdsArrayName;
 
-  vtkPolyData   *InitialPd;
-  vtkPolyData   *WorkPd;
-  vtkPolyData   *PlanarPd;
-  vtkEdgeTable  *EdgeTable;
+  vtkPolyData *InitialPd;
+  vtkPolyData *WorkPd;
+  vtkPolyData *PlanarPd;
+  vtkEdgeTable *EdgeTable;
   vtkFloatArray *EdgeWeights;
-  vtkIntArray   *EdgeNeighbors;
-  vtkIntArray   *IsBoundary;
-  vtkPolyData   *Boundaries;
-  vtkPolyData   *BoundaryLoop;
+  vtkIntArray *EdgeNeighbors;
+  vtkIntArray *IsBoundary;
+  vtkPolyData *Boundaries;
+  vtkPolyData *BoundaryLoop;
 
   // Filter to set the boundary!
   vtkSVBoundaryMapper *BoundaryMapper;

@@ -45,20 +45,20 @@
 #include "vtkLabeledDataMapper.h"
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
+#include "vtkPointData.h"
+#include "vtkPointLocator.h"
 #include "vtkPoints.h"
 #include "vtkPolyData.h"
 #include "vtkPolyDataMapper.h"
 #include "vtkPolyLine.h"
-#include "vtkPointData.h"
-#include "vtkPointLocator.h"
 #include "vtkProperty.h"
 #include "vtkSphereSource.h"
 #include "vtkThreshold.h"
 #include "vtkTriangleFilter.h"
 #include "vtkUnstructuredGrid.h"
 
-#include "vtkSVIOUtils.h"
 #include "vtkSVGlobals.h"
+#include "vtkSVIOUtils.h"
 
 // ----------------------
 // StandardNewMacro
@@ -68,8 +68,7 @@ vtkStandardNewMacro(vtkSVPickPointSeedSelector);
 // ----------------------
 // Constructor
 // ----------------------
-vtkSVPickPointSeedSelector::vtkSVPickPointSeedSelector()
-{
+vtkSVPickPointSeedSelector::vtkSVPickPointSeedSelector() {
   this->PickedSeeds = vtkPolyData::New();
 
   this->PickedSeedIds = vtkIdList::New();
@@ -83,30 +82,24 @@ vtkSVPickPointSeedSelector::vtkSVPickPointSeedSelector()
 // ----------------------
 // Destructor
 // ----------------------
-vtkSVPickPointSeedSelector::~vtkSVPickPointSeedSelector()
-{
-  if (this->PickedSeeds != nullptr)
-  {
+vtkSVPickPointSeedSelector::~vtkSVPickPointSeedSelector() {
+  if (this->PickedSeeds != nullptr) {
     this->PickedSeeds->Delete();
     this->PickedSeeds = nullptr;
   }
-  if (this->PickedSeedIds != nullptr)
-  {
+  if (this->PickedSeedIds != nullptr) {
     this->PickedSeedIds->Delete();
     this->PickedSeedIds = nullptr;
   }
-  if (this->SVRenderer != nullptr)
-  {
+  if (this->SVRenderer != nullptr) {
     this->SVRenderer->Delete();
     this->SVRenderer = nullptr;
   }
-  if (this->UndoCallbackCommand != nullptr)
-  {
+  if (this->UndoCallbackCommand != nullptr) {
     this->UndoCallbackCommand->Delete();
     this->UndoCallbackCommand = nullptr;
   }
-  if (this->PickCallbackCommand != nullptr)
-  {
+  if (this->PickCallbackCommand != nullptr) {
     this->PickCallbackCommand->Delete();
     this->PickCallbackCommand = nullptr;
   }
@@ -116,23 +109,20 @@ vtkSVPickPointSeedSelector::~vtkSVPickPointSeedSelector()
 // RequestData
 // ----------------------
 int vtkSVPickPointSeedSelector::RequestData(
-  vtkInformation *vtkNotUsed(request),
-  vtkInformationVector **inputVector,
-  vtkInformationVector *outputVector)
-{
+    vtkInformation *vtkNotUsed(request), vtkInformationVector **inputVector,
+    vtkInformationVector *outputVector) {
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
 
-  vtkPolyData *input = vtkPolyData::SafeDownCast(
-    inInfo->Get(vtkDataObject::DATA_OBJECT()));
-  vtkPolyData *output = vtkPolyData::SafeDownCast(
-    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkPolyData *input =
+      vtkPolyData::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkPolyData *output =
+      vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
   this->SurfacePd->DeepCopy(input);
 
   if (this->SurfacePd->GetNumberOfPoints() == 0 ||
-      this->SurfacePd->GetNumberOfCells() == 0)
-  {
+      this->SurfacePd->GetNumberOfCells() == 0) {
     vtkErrorMacro("Not a valid input surface, need cells and points");
     this->SetErrorCode(vtkErrorCode::UserError + 1);
     return SV_ERROR;
@@ -144,25 +134,28 @@ int vtkSVPickPointSeedSelector::RequestData(
   glyphs->SetInputData(this->PickedSeeds);
   glyphs->SetSourceConnection(glyphSource->GetOutputPort());
   glyphs->SetScaleModeToDataScalingOff();
-  glyphs->SetScaleFactor(this->SurfacePd->GetLength()*0.01);
+  glyphs->SetScaleFactor(this->SurfacePd->GetLength() * 0.01);
 
   vtkNew(vtkPolyDataMapper, glyphMapper);
   glyphMapper->SetInputConnection(glyphs->GetOutputPort());
 
   vtkNew(vtkActor, seedActor);
   seedActor->SetMapper(glyphMapper);
-  seedActor->GetProperty()->SetColor(1.0,0.0,0.0);
+  seedActor->GetProperty()->SetColor(1.0, 0.0, 0.0);
   seedActor->PickableOff();
   this->SVRenderer->GetRenderer()->AddActor(seedActor);
 
   this->UndoCallbackCommand = vtkCallbackCommand::New();
-  this->UndoCallbackCommand->SetCallback(vtkSVPickPointSeedSelector::UndoCallback);
+  this->UndoCallbackCommand->SetCallback(
+      vtkSVPickPointSeedSelector::UndoCallback);
   this->UndoCallbackCommand->SetClientData(this);
-  this->SVRenderer->AddKeyBinding("u","Undo.", this->UndoCallbackCommand,"0");
+  this->SVRenderer->AddKeyBinding("u", "Undo.", this->UndoCallbackCommand, "0");
   this->PickCallbackCommand = vtkCallbackCommand::New();
-  this->PickCallbackCommand->SetCallback(vtkSVPickPointSeedSelector::PickCallback);
+  this->PickCallbackCommand->SetCallback(
+      vtkSVPickPointSeedSelector::PickCallback);
   this->PickCallbackCommand->SetClientData(this);
-  this->SVRenderer->AddKeyBinding("space","Add points.",this->PickCallbackCommand,"0");
+  this->SVRenderer->AddKeyBinding("space", "Add points.",
+                                  this->PickCallbackCommand, "0");
 
   vtkNew(vtkPolyDataMapper, surfaceMapper);
   surfaceMapper->SetInputData(this->SurfacePd);
@@ -174,24 +167,26 @@ int vtkSVPickPointSeedSelector::RequestData(
 
   this->SVRenderer->GetRenderer()->AddActor(surfaceActor);
 
-  this->SVRenderer->SetTextInputQuery("Please position the mouse and press space to add source points, \'u\' to undo\n");
+  this->SVRenderer->SetTextInputQuery(
+      "Please position the mouse and press space to add source points, \'u\' "
+      "to undo\n");
   this->SVRenderer->UpdateTextInput();
 
   int any = 0;
-  while (!any)
-  {
+  while (!any) {
     this->InitializeSeeds();
     this->SVRenderer->Render();
     any = this->PickedSeedIds->GetNumberOfIds();
   }
   this->SourceSeedIds->DeepCopy(this->PickedSeedIds);
 
-  this->SVRenderer->SetTextInputQuery("Please position the mouse and press space to add target points, \'u\' to undo\n");
+  this->SVRenderer->SetTextInputQuery(
+      "Please position the mouse and press space to add target points, \'u\' "
+      "to undo\n");
   this->SVRenderer->UpdateTextInput();
 
   any = 0;
-  while (!any)
-  {
+  while (!any) {
     this->InitializeSeeds();
     this->SVRenderer->Render();
     any = this->PickedSeedIds->GetNumberOfIds();
@@ -204,8 +199,7 @@ int vtkSVPickPointSeedSelector::RequestData(
 // ----------------------
 // InitializeSeeds
 // ----------------------
-void vtkSVPickPointSeedSelector::InitializeSeeds()
-{
+void vtkSVPickPointSeedSelector::InitializeSeeds() {
   this->PickedSeedIds->Initialize();
   this->PickedSeeds->Initialize();
   vtkNew(vtkPoints, seedPoints);
@@ -215,30 +209,34 @@ void vtkSVPickPointSeedSelector::InitializeSeeds()
 // ----------------------
 // PickCallback
 // ----------------------
-void vtkSVPickPointSeedSelector::PickCallback( vtkObject* caller, long unsigned int vtkNotUsed(eventId), void* clientData, void* vtkNotUsed(callData) )
-{
-   vtkSVPickPointSeedSelector* parent =
-     static_cast<vtkSVPickPointSeedSelector*>(clientData);
+void vtkSVPickPointSeedSelector::PickCallback(
+    vtkObject *caller, long unsigned int vtkNotUsed(eventId), void *clientData,
+    void *vtkNotUsed(callData)) {
+  vtkSVPickPointSeedSelector *parent =
+      static_cast<vtkSVPickPointSeedSelector *>(clientData);
 
   vtkNew(vtkCellPicker, picker);
   picker->SetTolerance(1E-4 * parent->SurfacePd->GetLength());
   int eventPosition[2];
-  parent->SVRenderer->GetRenderWindowInteractor()->GetEventPosition(eventPosition);
-  int result = picker->Pick(float(eventPosition[0]),float(eventPosition[1]),0.0,parent->SVRenderer->GetRenderer());
+  parent->SVRenderer->GetRenderWindowInteractor()->GetEventPosition(
+      eventPosition);
+  int result = picker->Pick(float(eventPosition[0]), float(eventPosition[1]),
+                            0.0, parent->SVRenderer->GetRenderer());
   if (result == 0)
     return;
 
   double pickPosition[3];
   picker->GetPickPosition(pickPosition);
   vtkNew(vtkIdList, pickedCellPointIds);
-  pickedCellPointIds = parent->SurfacePd->GetCell(picker->GetCellId())->GetPointIds();
+  pickedCellPointIds =
+      parent->SurfacePd->GetCell(picker->GetCellId())->GetPointIds();
   double minDistance = 1.0e10;
   int pickedSeedId = -1;
-  for (int i=0; i<pickedCellPointIds->GetNumberOfIds(); i++)
-  {
-    double distance = vtkMath::Distance2BetweenPoints(pickPosition,parent->SurfacePd->GetPoint(pickedCellPointIds->GetId(i)));
-    if (distance < minDistance)
-    {
+  for (int i = 0; i < pickedCellPointIds->GetNumberOfIds(); i++) {
+    double distance = vtkMath::Distance2BetweenPoints(
+        pickPosition,
+        parent->SurfacePd->GetPoint(pickedCellPointIds->GetId(i)));
+    if (distance < minDistance) {
       minDistance = distance;
       pickedSeedId = pickedCellPointIds->GetId(i);
     }
@@ -254,10 +252,11 @@ void vtkSVPickPointSeedSelector::PickCallback( vtkObject* caller, long unsigned 
   parent->SVRenderer->GetRenderWindow()->Render();
 }
 
-void vtkSVPickPointSeedSelector::UndoCallback( vtkObject* caller, long unsigned int vtkNotUsed(eventId), void* clientData, void* vtkNotUsed(callData) )
-{
-   vtkSVPickPointSeedSelector* parent =
-     static_cast<vtkSVPickPointSeedSelector*>(clientData);
+void vtkSVPickPointSeedSelector::UndoCallback(
+    vtkObject *caller, long unsigned int vtkNotUsed(eventId), void *clientData,
+    void *vtkNotUsed(callData)) {
+  vtkSVPickPointSeedSelector *parent =
+      static_cast<vtkSVPickPointSeedSelector *>(clientData);
 
   parent->InitializeSeeds();
   parent->PickedSeeds->Modified();
@@ -267,7 +266,6 @@ void vtkSVPickPointSeedSelector::UndoCallback( vtkObject* caller, long unsigned 
 // ----------------------
 // PrintSelf
 // ----------------------
-void vtkSVPickPointSeedSelector::PrintSelf(ostream& os, vtkIndent indent)
-{
-  this->Superclass::PrintSelf(os,indent);
+void vtkSVPickPointSeedSelector::PrintSelf(ostream &os, vtkIndent indent) {
+  this->Superclass::PrintSelf(os, indent);
 }

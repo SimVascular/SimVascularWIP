@@ -40,100 +40,97 @@
 
 #include "sv4gui_SurfaceVtkMapper3D.h"
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiMitkSeg3DVtkMapper3D : public mitk::sv4guiSurfaceVtkMapper3D
-{
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiMitkSeg3DVtkMapper3D
+    : public mitk::sv4guiSurfaceVtkMapper3D {
 public:
+  mitkClassMacro(sv4guiMitkSeg3DVtkMapper3D, mitk::sv4guiSurfaceVtkMapper3D);
+  itkFactorylessNewMacro(Self) itkCloneMacro(Self)
 
-    mitkClassMacro( sv4guiMitkSeg3DVtkMapper3D, mitk::sv4guiSurfaceVtkMapper3D );
-    itkFactorylessNewMacro(Self)
-    itkCloneMacro(Self)
+      virtual const sv4guiMitkSeg3D *GetInput() override;
 
-    virtual const sv4guiMitkSeg3D* GetInput() override;
+  virtual vtkProp *GetVtkProp(mitk::BaseRenderer *renderer) override;
 
-    virtual vtkProp* GetVtkProp(mitk::BaseRenderer* renderer) override;
-
-    static void SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer = nullptr, bool overwrite = false);
+  static void SetDefaultProperties(mitk::DataNode *node,
+                                   mitk::BaseRenderer *renderer = nullptr,
+                                   bool overwrite = false);
 
 protected:
+  sv4guiMitkSeg3DVtkMapper3D();
 
-    sv4guiMitkSeg3DVtkMapper3D();
+  virtual ~sv4guiMitkSeg3DVtkMapper3D();
 
-    virtual ~sv4guiMitkSeg3DVtkMapper3D();
+  virtual void GenerateDataForRenderer(mitk::BaseRenderer *renderer) override;
 
-    virtual void GenerateDataForRenderer(mitk::BaseRenderer* renderer) override;
-
-    virtual void ResetMapper( mitk::BaseRenderer* renderer ) override;
+  virtual void ResetMapper(mitk::BaseRenderer *renderer) override;
 
 public:
+  class svLocalStorage : public mitk::Mapper::BaseLocalStorage {
 
-    class svLocalStorage : public mitk::Mapper::BaseLocalStorage
-    {
+  public:
+    vtkSmartPointer<vtkPropAssembly> m_Assembly;
 
-    public:
-
-        vtkSmartPointer<vtkPropAssembly> m_Assembly;
-
-        vtkSmartPointer<vtkActor> m_SelectedSeedActor;
+    vtkSmartPointer<vtkActor> m_SelectedSeedActor;
 #if VTK_MAJOR_VERSION == 6
-        vtkSmartPointer<vtkPainterPolyDataMapper> m_SelectedSeedVtkPolyDataMapper;
+    vtkSmartPointer<vtkPainterPolyDataMapper> m_SelectedSeedVtkPolyDataMapper;
 #else
-        vtkSmartPointer<vtkOpenGLPolyDataMapper> m_SelectedSeedVtkPolyDataMapper;
+    vtkSmartPointer<vtkOpenGLPolyDataMapper> m_SelectedSeedVtkPolyDataMapper;
 #endif
 
-        vtkSmartPointer<vtkActor> m_SeedActor;
+    vtkSmartPointer<vtkActor> m_SeedActor;
 #if VTK_MAJOR_VERSION == 6
-        vtkSmartPointer<vtkPainterPolyDataMapper> m_SeedVtkPolyDataMapper;
+    vtkSmartPointer<vtkPainterPolyDataMapper> m_SeedVtkPolyDataMapper;
 #else
-        vtkSmartPointer<vtkOpenGLPolyDataMapper> m_SeedVtkPolyDataMapper;
+    vtkSmartPointer<vtkOpenGLPolyDataMapper> m_SeedVtkPolyDataMapper;
 #endif
 
-        vtkSmartPointer<vtkActor> m_EndSeedActor;
+    vtkSmartPointer<vtkActor> m_EndSeedActor;
 #if VTK_MAJOR_VERSION == 6
-        vtkSmartPointer<vtkPainterPolyDataMapper> m_EndSeedVtkPolyDataMapper;
+    vtkSmartPointer<vtkPainterPolyDataMapper> m_EndSeedVtkPolyDataMapper;
 #else
-        vtkSmartPointer<vtkOpenGLPolyDataMapper> m_EndSeedVtkPolyDataMapper;
+    vtkSmartPointer<vtkOpenGLPolyDataMapper> m_EndSeedVtkPolyDataMapper;
 #endif
 
-//        itk::TimeStamp m_LastUpdateTime;
+    //        itk::TimeStamp m_LastUpdateTime;
 
-        svLocalStorage()
-        {
+    svLocalStorage() {
 #if VTK_MAJOR_VERSION == 6
-            m_SelectedSeedVtkPolyDataMapper=vtkSmartPointer<vtkPainterPolyDataMapper>::New();
+      m_SelectedSeedVtkPolyDataMapper =
+          vtkSmartPointer<vtkPainterPolyDataMapper>::New();
 #else
-            m_SelectedSeedVtkPolyDataMapper=vtkSmartPointer<vtkOpenGLPolyDataMapper>::New();
+      m_SelectedSeedVtkPolyDataMapper =
+          vtkSmartPointer<vtkOpenGLPolyDataMapper>::New();
 #endif
-            m_SelectedSeedActor=vtkSmartPointer<vtkActor>::New();
-            m_SelectedSeedActor->SetMapper(m_SelectedSeedVtkPolyDataMapper);
-
-#if VTK_MAJOR_VERSION == 6
-            m_SeedVtkPolyDataMapper=vtkSmartPointer<vtkPainterPolyDataMapper>::New();
-#else
-            m_SeedVtkPolyDataMapper=vtkSmartPointer<vtkOpenGLPolyDataMapper>::New();
-#endif
-            m_SeedActor=vtkSmartPointer<vtkActor>::New();
-            m_SeedActor->SetMapper(m_SeedVtkPolyDataMapper);
+      m_SelectedSeedActor = vtkSmartPointer<vtkActor>::New();
+      m_SelectedSeedActor->SetMapper(m_SelectedSeedVtkPolyDataMapper);
 
 #if VTK_MAJOR_VERSION == 6
-            m_EndSeedVtkPolyDataMapper=vtkSmartPointer<vtkPainterPolyDataMapper>::New();
+      m_SeedVtkPolyDataMapper =
+          vtkSmartPointer<vtkPainterPolyDataMapper>::New();
 #else
-            m_EndSeedVtkPolyDataMapper=vtkSmartPointer<vtkOpenGLPolyDataMapper>::New();
+      m_SeedVtkPolyDataMapper = vtkSmartPointer<vtkOpenGLPolyDataMapper>::New();
 #endif
-            m_EndSeedActor=vtkSmartPointer<vtkActor>::New();
-            m_EndSeedActor->SetMapper(m_EndSeedVtkPolyDataMapper);
+      m_SeedActor = vtkSmartPointer<vtkActor>::New();
+      m_SeedActor->SetMapper(m_SeedVtkPolyDataMapper);
 
-            m_Assembly=vtkSmartPointer<vtkPropAssembly>::New();
-        }
+#if VTK_MAJOR_VERSION == 6
+      m_EndSeedVtkPolyDataMapper =
+          vtkSmartPointer<vtkPainterPolyDataMapper>::New();
+#else
+      m_EndSeedVtkPolyDataMapper =
+          vtkSmartPointer<vtkOpenGLPolyDataMapper>::New();
+#endif
+      m_EndSeedActor = vtkSmartPointer<vtkActor>::New();
+      m_EndSeedActor->SetMapper(m_EndSeedVtkPolyDataMapper);
 
-        ~svLocalStorage()
-        {
-        }
-    };
+      m_Assembly = vtkSmartPointer<vtkPropAssembly>::New();
+    }
 
-    mitk::LocalStorageHandler<svLocalStorage> m_LSHandler;
+    ~svLocalStorage() {}
+  };
 
-    bool m_AlreadyAddParts;
+  mitk::LocalStorageHandler<svLocalStorage> m_LSHandler;
 
+  bool m_AlreadyAddParts;
 };
 
-#endif //SV4GUI_MITKSEG3DVTKMAPPER3D_H
+#endif // SV4GUI_MITKSEG3DVTKMAPPER3D_H

@@ -38,38 +38,40 @@
 
 #include "mitkCoreObjectFactoryBase.h"
 
-class SV4GUIMODULEROMSIMULATION_EXPORT sv4guiMitkROMSimulationObjectFactory : public mitk::CoreObjectFactoryBase
-{
+class SV4GUIMODULEROMSIMULATION_EXPORT sv4guiMitkROMSimulationObjectFactory
+    : public mitk::CoreObjectFactoryBase {
 public:
-    mitkClassMacro(sv4guiMitkROMSimulationObjectFactory,mitk::CoreObjectFactoryBase);
-    itkFactorylessNewMacro(Self)
-    itkCloneMacro(Self)
-    virtual mitk::Mapper::Pointer CreateMapper(mitk::DataNode* node, MapperSlotId slotId) override;
-    virtual void SetDefaultProperties(mitk::DataNode* node) override;
-    virtual std::string GetFileExtensions() override;
-    virtual mitk::CoreObjectFactoryBase::MultimapType GetFileExtensionsMap() override;
-    virtual std::string GetSaveFileExtensions() override;
-    virtual mitk::CoreObjectFactoryBase::MultimapType GetSaveFileExtensionsMap() override;
+  mitkClassMacro(sv4guiMitkROMSimulationObjectFactory,
+                 mitk::CoreObjectFactoryBase);
+  itkFactorylessNewMacro(Self) itkCloneMacro(Self) virtual mitk::Mapper::Pointer
+      CreateMapper(mitk::DataNode *node, MapperSlotId slotId) override;
+  virtual void SetDefaultProperties(mitk::DataNode *node) override;
+  virtual std::string GetFileExtensions() override;
+  virtual mitk::CoreObjectFactoryBase::MultimapType
+  GetFileExtensionsMap() override;
+  virtual std::string GetSaveFileExtensions() override;
+  virtual mitk::CoreObjectFactoryBase::MultimapType
+  GetSaveFileExtensionsMap() override;
 
-    void RegisterIOFactories(); //deprecatedSince{2013_09}
+  void RegisterIOFactories(); // deprecatedSince{2013_09}
 protected:
-    sv4guiMitkROMSimulationObjectFactory();
-    ~sv4guiMitkROMSimulationObjectFactory();
-    void CreateFileExtensionsMap();
-    MultimapType m_FileExtensionsMap;
-    MultimapType m_SaveFileExtensionsMap;
+  sv4guiMitkROMSimulationObjectFactory();
+  ~sv4guiMitkROMSimulationObjectFactory();
+  void CreateFileExtensionsMap();
+  MultimapType m_FileExtensionsMap;
+  MultimapType m_SaveFileExtensionsMap;
 
 private:
-
 };
 
-struct SV4GUIMODULEROMSIMULATION_EXPORT Registersv4guiMitkROMSimulationObjectFactory{
+struct SV4GUIMODULEROMSIMULATION_EXPORT
+    Registersv4guiMitkROMSimulationObjectFactory {
   Registersv4guiMitkROMSimulationObjectFactory();
 
   virtual ~Registersv4guiMitkROMSimulationObjectFactory();
 
   sv4guiMitkROMSimulationObjectFactory::Pointer m_Factory;
-  sv4guiMitkROMSimJobIO* m_MitkSimJobIO;
+  sv4guiMitkROMSimJobIO *m_MitkSimJobIO;
 };
 
-#endif 
+#endif

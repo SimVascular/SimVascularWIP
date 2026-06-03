@@ -43,8 +43,8 @@
 #include "vtkSmartPointer.h"
 
 #include "vtkSVGeneralUtils.h"
-#include "vtkSVMathUtils.h"
 #include "vtkSVGlobals.h"
+#include "vtkSVMathUtils.h"
 
 #include <iostream>
 
@@ -56,8 +56,7 @@ vtkStandardNewMacro(vtkSVHausdorffDistance);
 // ----------------------
 // Constructor
 // ----------------------
-vtkSVHausdorffDistance::vtkSVHausdorffDistance()
-{
+vtkSVHausdorffDistance::vtkSVHausdorffDistance() {
   this->SetNumberOfInputPorts(2);
 
   this->SourcePd = vtkPolyData::New();
@@ -65,28 +64,24 @@ vtkSVHausdorffDistance::vtkSVHausdorffDistance()
 
   this->DistanceArrayName = nullptr;
 
-  this->AverageDistance   = 0.0;
+  this->AverageDistance = 0.0;
   this->HausdorffDistance = 0.0;
 }
 
 // ----------------------
 // Destructor
 // ----------------------
-vtkSVHausdorffDistance::~vtkSVHausdorffDistance()
-{
-  if (this->SourcePd)
-  {
+vtkSVHausdorffDistance::~vtkSVHausdorffDistance() {
+  if (this->SourcePd) {
     this->SourcePd->Delete();
     this->SourcePd = nullptr;
   }
-  if (this->TargetPd)
-  {
+  if (this->TargetPd) {
     this->TargetPd->Delete();
     this->TargetPd = nullptr;
   }
-  if (this->DistanceArrayName != nullptr)
-  {
-    delete [] this->DistanceArrayName;
+  if (this->DistanceArrayName != nullptr) {
+    delete[] this->DistanceArrayName;
     this->DistanceArrayName = nullptr;
   }
 }
@@ -94,14 +89,11 @@ vtkSVHausdorffDistance::~vtkSVHausdorffDistance()
 // ----------------------
 // PrintSelf
 // ----------------------
-void vtkSVHausdorffDistance::PrintSelf(ostream& os, vtkIndent indent)
-{
+void vtkSVHausdorffDistance::PrintSelf(ostream &os, vtkIndent indent) {
   this->Superclass::PrintSelf(os, indent);
 
-  if (this->DistanceArrayName != nullptr)
-  {
-    os << indent << "Distance array name: " <<
-      this->DistanceArrayName << "\n";
+  if (this->DistanceArrayName != nullptr) {
+    os << indent << "Distance array name: " << this->DistanceArrayName << "\n";
   }
   os << indent << "Average Distance: " << this->AverageDistance << "\n";
   os << indent << "Hausdorff Distance: " << this->HausdorffDistance << "\n";
@@ -112,8 +104,7 @@ void vtkSVHausdorffDistance::PrintSelf(ostream& os, vtkIndent indent)
 // ----------------------
 int vtkSVHausdorffDistance::RequestData(vtkInformation *vtkNotUsed(request),
                                         vtkInformationVector **inputVector,
-                                        vtkInformationVector *outputVector)
-{
+                                        vtkInformationVector *outputVector) {
   // Get the input and output
   vtkPolyData *input0 = vtkPolyData::GetData(inputVector[0]);
   vtkPolyData *input1 = vtkPolyData::GetData(inputVector[1]);
@@ -126,8 +117,7 @@ int vtkSVHausdorffDistance::RequestData(vtkInformation *vtkNotUsed(request),
   int numPts1 = input1->GetNumberOfPoints();
 
   // Check the input to make sure it is there
-  if (numPts0 < 1 || numPts1 < 1)
-  {
+  if (numPts0 < 1 || numPts1 < 1) {
     vtkDebugMacro("No input!");
     this->SetErrorCode(vtkErrorCode::UserError + 1);
     return SV_ERROR;
@@ -135,15 +125,13 @@ int vtkSVHausdorffDistance::RequestData(vtkInformation *vtkNotUsed(request),
   this->SourcePd->DeepCopy(input0);
   this->TargetPd->DeepCopy(input1);
 
-  if (this->PrepFilter() != SV_OK)
-  {
+  if (this->PrepFilter() != SV_OK) {
     vtkErrorMacro("Error in prepping filter\n");
     this->SetErrorCode(vtkErrorCode::UserError + 1);
     return SV_ERROR;
   }
 
-  if (this->RunFilter() != SV_OK)
-  {
+  if (this->RunFilter() != SV_OK) {
     vtkErrorMacro("Error in running filter\n");
     this->SetErrorCode(vtkErrorCode::UserError + 2);
     return SV_ERROR;
@@ -156,10 +144,8 @@ int vtkSVHausdorffDistance::RequestData(vtkInformation *vtkNotUsed(request),
 // ----------------------
 // PrepFilter
 // ----------------------
-int vtkSVHausdorffDistance::PrepFilter()
-{
-  if (this->DistanceArrayName == nullptr)
-  {
+int vtkSVHausdorffDistance::PrepFilter() {
+  if (this->DistanceArrayName == nullptr) {
     vtkDebugMacro("Distance Array Name not given, setting to Distance");
     this->DistanceArrayName = new char[strlen("Distance") + 1];
     strcpy(this->DistanceArrayName, "Distance");
@@ -171,8 +157,7 @@ int vtkSVHausdorffDistance::PrepFilter()
 // ----------------------
 // RunFilter
 // ----------------------
-int vtkSVHausdorffDistance::RunFilter()
-{
+int vtkSVHausdorffDistance::RunFilter() {
   // Set up destination array to contain point-wise distances
   int numPoints = this->TargetPd->GetNumberOfPoints();
   vtkNew(vtkDoubleArray, distances);
@@ -186,11 +171,10 @@ int vtkSVHausdorffDistance::RunFilter()
   locator->BuildLocator();
 
   // Loop through each point in target and get distance
-  double maxDistance   = 0.0;
-  double minDistance   = VTK_SV_LARGE_DOUBLE;
+  double maxDistance = 0.0;
+  double minDistance = VTK_SV_LARGE_DOUBLE;
   double totalDistance = 0.0;
-  for (int i=0; i<numPoints; i++)
-  {
+  for (int i = 0; i < numPoints; i++) {
     double pt[3];
     this->TargetPd->GetPoint(i, pt);
 
@@ -215,9 +199,9 @@ int vtkSVHausdorffDistance::RunFilter()
 
   // Add array and update distance information
   this->TargetPd->GetPointData()->AddArray(distances);
-  this->AverageDistance   = totalDistance/numPoints;
+  this->AverageDistance = totalDistance / numPoints;
   this->HausdorffDistance = maxDistance;
-  this->MinimumDistance   = minDistance;
+  this->MinimumDistance = minDistance;
 
   return SV_OK;
 }

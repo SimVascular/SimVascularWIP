@@ -36,9 +36,10 @@
  *  geometry. It will find the boundary between these regions, find a centroid
  *  of the branching region, create a sphere around the branching region,
  *  and set the value to 1 in an output data array within this sphere region.
- *  CellArrayName holds the array that indicates whether a cell is in the sphere region..
- *  Points defining a boundary should be indicated with the PointArrayName. This
- *  can be easily found using the vtkSVFindSeparateRegionsFilter.
+ *  CellArrayName holds the array that indicates whether a cell is in the sphere
+ * region.. Points defining a boundary should be indicated with the
+ * PointArrayName. This can be easily found using the
+ * vtkSVFindSeparateRegionsFilter.
  *
  *  \author Adam Updegrove
  *  \author updega2@gmail.com
@@ -53,12 +54,11 @@
 
 #include "vtkPolyDataAlgorithm.h"
 
-class VTKSVMISC_EXPORT vtkSVGetSphereRegions : public vtkPolyDataAlgorithm
-{
+class VTKSVMISC_EXPORT vtkSVGetSphereRegions : public vtkPolyDataAlgorithm {
 public:
-  static vtkSVGetSphereRegions* New();
+  static vtkSVGetSphereRegions *New();
   vtkTypeMacro(vtkSVGetSphereRegions, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
   /// \brief Array name defining the separate branches.
@@ -66,8 +66,8 @@ public:
   vtkSetStringMacro(CellArrayName);
   //@}
   //@{
-  /// \brief Array name defining points that are the boundary between CellArrayName values.
-  /// Use vtkSVFindSeparateRegions to get these points.
+  /// \brief Array name defining points that are the boundary between
+  /// CellArrayName values. Use vtkSVFindSeparateRegions to get these points.
   vtkGetStringMacro(PointArrayName);
   vtkSetStringMacro(PointArrayName);
   //@{
@@ -88,30 +88,31 @@ protected:
 
   // Usual data generation method
   int RequestData(vtkInformation *vtkNotUsed(request),
-		  vtkInformationVector **inputVector,
-		  vtkInformationVector *outputVector) override;
+                  vtkInformationVector **inputVector,
+                  vtkInformationVector *outputVector) override;
 
-  /** \brief Sets the arrays using the given CellArrayName and PointArrayName. */
-  int GetArrays(vtkPolyData *object,int type);
+  /** \brief Sets the arrays using the given CellArrayName and PointArrayName.
+   */
+  int GetArrays(vtkPolyData *object, int type);
 
   /** \brief Finds the loops of the boundary points. */
-  int GetClosedEdgeLoops(vtkPolyData *pd, vtkPolyData *linepd,int *numLoops);
+  int GetClosedEdgeLoops(vtkPolyData *pd, vtkPolyData *linepd, int *numLoops);
 
   /** \brief Sets the sphere regions at each boundary loop. */
-  int SetSphereRegions(vtkPolyData *pd, vtkPolyData *linepd,int numLoops);
+  int SetSphereRegions(vtkPolyData *pd, vtkPolyData *linepd, int numLoops);
 
   vtkIntArray *CellArray;
   vtkIntArray *PointArray;
 
-  char* CellArrayName;
-  char* PointArrayName;
-  char* OutCellArrayName;
+  char *CellArrayName;
+  char *PointArrayName;
+  char *OutCellArrayName;
 
   double SphereRadius;
 
 private:
-  vtkSVGetSphereRegions(const vtkSVGetSphereRegions&);  // Not implemented.
-  void operator=(const vtkSVGetSphereRegions&);  // Not implemented.
+  vtkSVGetSphereRegions(const vtkSVGetSphereRegions &); // Not implemented.
+  void operator=(const vtkSVGetSphereRegions &);        // Not implemented.
 };
 
 #endif

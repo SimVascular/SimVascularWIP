@@ -36,27 +36,23 @@
 
 #include <sv4guiModuleSegmentationExports.h>
 
-#include <vtkTransform.h>
-#include <vtkPolyData.h>
 #include <vtkImageData.h>
+#include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
+#include <vtkTransform.h>
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiSeg3DUtils
-{
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiSeg3DUtils {
 
 public:
+  sv4guiSeg3DUtils();
 
-    sv4guiSeg3DUtils();
+  virtual ~sv4guiSeg3DUtils();
 
-    virtual ~sv4guiSeg3DUtils();
-
-
-    static vtkSmartPointer<vtkPolyData> collidingFronts(vtkImageData* volumeImage,
-                                                        std::vector<std::vector<int>>& seeds1,
-                                                        std::vector<std::vector<int>>& seeds2,
-                                                        int lowerThreshold =0, int upperThreshold=0);
-
+  static vtkSmartPointer<vtkPolyData>
+  collidingFronts(vtkImageData *volumeImage,
+                  std::vector<std::vector<int>> &seeds1,
+                  std::vector<std::vector<int>> &seeds2, int lowerThreshold = 0,
+                  int upperThreshold = 0);
 };
-
 
 #endif /* SV4GUI_SEG3DUTILS_H */

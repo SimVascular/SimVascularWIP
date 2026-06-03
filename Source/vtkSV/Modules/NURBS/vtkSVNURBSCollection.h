@@ -49,11 +49,10 @@
 
 class vtkSVNURBSObject;
 
-class VTKSVNURBS_EXPORT vtkSVNURBSCollection : public vtkCollection
-{
+class VTKSVNURBS_EXPORT vtkSVNURBSCollection : public vtkCollection {
 public:
   static vtkSVNURBSCollection *New();
-  vtkTypeMacro(vtkSVNURBSCollection,vtkCollection);
+  vtkTypeMacro(vtkSVNURBSCollection, vtkCollection);
 
   /**
    * Add a NURBS object to the list.
@@ -76,28 +75,31 @@ public:
    */
   vtkSVNURBSObject *GetNextDataObject(vtkCollectionSimpleIterator &cookie);
 
-  int AddPatchConnection(const int patch_0, const int patch_1, const int patch_0_face, const int patch_1_face);
+  int AddPatchConnection(const int patch_0, const int patch_1,
+                         const int patch_0_face, const int patch_1_face);
 
-  std::vector<std::vector<int> > GetPatchConnections() {return this->PatchConnections;}
-  std::vector<std::vector<int> > GetPatchFaceConnections() {return this->PatchFaceConnections;}
+  std::vector<std::vector<int>> GetPatchConnections() {
+    return this->PatchConnections;
+  }
+  std::vector<std::vector<int>> GetPatchFaceConnections() {
+    return this->PatchFaceConnections;
+  }
 
-  int GetNumberOfPatchConnections() {return this->PatchConnections.size();}
-
+  int GetNumberOfPatchConnections() { return this->PatchConnections.size(); }
 
 protected:
   vtkSVNURBSCollection() {}
   ~vtkSVNURBSCollection() {}
 
-  std::vector<std::vector<int> > PatchConnections;
-  std::vector<std::vector<int> > PatchFaceConnections;
-
+  std::vector<std::vector<int>> PatchConnections;
+  std::vector<std::vector<int>> PatchFaceConnections;
 
 private:
   // hide the standard AddItem from the user and the compiler.
   void AddItem(vtkObject *o) { this->vtkCollection::AddItem(o); };
 
-  vtkSVNURBSCollection(const vtkSVNURBSCollection&);
-  void operator=(const vtkSVNURBSCollection&);
+  vtkSVNURBSCollection(const vtkSVNURBSCollection &);
+  void operator=(const vtkSVNURBSCollection &);
 };
 
 #endif

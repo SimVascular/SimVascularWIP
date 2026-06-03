@@ -30,34 +30,34 @@
  */
 
 #include "vtkSVIdListSeedSelector.h"
+#include "vtkCellData.h"
 #include "vtkCellPicker.h"
+#include "vtkCleanPolyData.h"
 #include "vtkDataSetSurfaceFilter.h"
+#include "vtkDoubleArray.h"
 #include "vtkErrorCode.h"
+#include "vtkGlyph3D.h"
+#include "vtkIdList.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
-#include "vtkGlyph3D.h"
 #include "vtkIntArray.h"
-#include "vtkPoints.h"
-#include "vtkPolyData.h"
-#include "vtkPolyLine.h"
-#include "vtkPointData.h"
-#include "vtkPointLocator.h"
-#include "vtkPolyDataMapper.h"
-#include "vtkProperty.h"
-#include "vtkIdList.h"
-#include "vtkCellData.h"
-#include "vtkCleanPolyData.h"
-#include "vtkDoubleArray.h"
 #include "vtkLabeledDataMapper.h"
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
+#include "vtkPointData.h"
+#include "vtkPointLocator.h"
+#include "vtkPoints.h"
+#include "vtkPolyData.h"
+#include "vtkPolyDataMapper.h"
+#include "vtkPolyLine.h"
+#include "vtkProperty.h"
 #include "vtkSphereSource.h"
 #include "vtkThreshold.h"
 #include "vtkTriangleFilter.h"
 #include "vtkUnstructuredGrid.h"
 
-#include "vtkSVIOUtils.h"
 #include "vtkSVGlobals.h"
+#include "vtkSVIOUtils.h"
 
 // ----------------------
 // StandardNewMacro
@@ -67,8 +67,7 @@ vtkStandardNewMacro(vtkSVIdListSeedSelector);
 // ----------------------
 // Constructor
 // ----------------------
-vtkSVIdListSeedSelector::vtkSVIdListSeedSelector()
-{
+vtkSVIdListSeedSelector::vtkSVIdListSeedSelector() {
   this->SourceIds = vtkIdList::New();
   this->TargetIds = vtkIdList::New();
 }
@@ -76,15 +75,12 @@ vtkSVIdListSeedSelector::vtkSVIdListSeedSelector()
 // ----------------------
 // Destructor
 // ----------------------
-vtkSVIdListSeedSelector::~vtkSVIdListSeedSelector()
-{
-  if (this->SourceIds != nullptr)
-  {
+vtkSVIdListSeedSelector::~vtkSVIdListSeedSelector() {
+  if (this->SourceIds != nullptr) {
     this->SourceIds->Delete();
     this->SourceIds = nullptr;
   }
-  if (this->TargetIds != nullptr)
-  {
+  if (this->TargetIds != nullptr) {
     this->TargetIds->Delete();
     this->TargetIds = nullptr;
   }
@@ -93,24 +89,21 @@ vtkSVIdListSeedSelector::~vtkSVIdListSeedSelector()
 // ----------------------
 // RequestData
 // ----------------------
-int vtkSVIdListSeedSelector::RequestData(
-  vtkInformation *vtkNotUsed(request),
-  vtkInformationVector **inputVector,
-  vtkInformationVector *outputVector)
-{
+int vtkSVIdListSeedSelector::RequestData(vtkInformation *vtkNotUsed(request),
+                                         vtkInformationVector **inputVector,
+                                         vtkInformationVector *outputVector) {
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
 
-  vtkPolyData *input = vtkPolyData::SafeDownCast(
-    inInfo->Get(vtkDataObject::DATA_OBJECT()));
-  vtkPolyData *output = vtkPolyData::SafeDownCast(
-    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkPolyData *input =
+      vtkPolyData::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkPolyData *output =
+      vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
   this->SurfacePd->DeepCopy(input);
 
   if (this->SurfacePd->GetNumberOfPoints() == 0 ||
-      this->SurfacePd->GetNumberOfCells() == 0)
-  {
+      this->SurfacePd->GetNumberOfCells() == 0) {
     vtkErrorMacro("Not a valid input surface, need cells and points");
     this->SetErrorCode(vtkErrorCode::UserError + 1);
     return SV_ERROR;
@@ -118,20 +111,16 @@ int vtkSVIdListSeedSelector::RequestData(
 
   int maxId = this->SurfacePd->GetNumberOfPoints() - 1;
 
-  for (int i=0; i<this->SourceIds->GetNumberOfIds(); i++)
-  {
-    if (this->SourceIds->GetId(i) > maxId)
-    {
+  for (int i = 0; i < this->SourceIds->GetNumberOfIds(); i++) {
+    if (this->SourceIds->GetId(i) > maxId) {
       vtkErrorMacro("Source seed is larger than number of points");
       this->SetErrorCode(vtkErrorCode::UserError + 1);
       return SV_ERROR;
     }
     this->SourceSeedIds->InsertNextId(this->SourceIds->GetId(i));
   }
-  for (int i=0; i<this->TargetIds->GetNumberOfIds(); i++)
-  {
-    if (this->TargetIds->GetId(i) > maxId)
-    {
+  for (int i = 0; i < this->TargetIds->GetNumberOfIds(); i++) {
+    if (this->TargetIds->GetId(i) > maxId) {
       vtkErrorMacro("Target seed is larger than number of points");
       this->SetErrorCode(vtkErrorCode::UserError + 1);
       return SV_ERROR;
@@ -145,7 +134,6 @@ int vtkSVIdListSeedSelector::RequestData(
 // ----------------------
 // PrintSelf
 // ----------------------
-void vtkSVIdListSeedSelector::PrintSelf(ostream& os, vtkIndent indent)
-{
-  this->Superclass::PrintSelf(os,indent);
+void vtkSVIdListSeedSelector::PrintSelf(ostream &os, vtkIndent indent) {
+  this->Superclass::PrintSelf(os, indent);
 }

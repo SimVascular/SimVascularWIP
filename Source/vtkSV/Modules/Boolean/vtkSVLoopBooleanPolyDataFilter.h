@@ -60,18 +60,15 @@
 
 #include "vtkPolyDataAlgorithm.h"
 
-class VTKSVBOOLEAN_EXPORT vtkSVLoopBooleanPolyDataFilter :
-        public vtkPolyDataAlgorithm
-{
+class VTKSVBOOLEAN_EXPORT vtkSVLoopBooleanPolyDataFilter
+    : public vtkPolyDataAlgorithm {
 public:
-
   /// \brief Construct object that computes the boolean surface.
   static vtkSVLoopBooleanPolyDataFilter *New();
-  vtkTypeMacro(vtkSVLoopBooleanPolyDataFilter,
-               vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkSVLoopBooleanPolyDataFilter, vtkPolyDataAlgorithm);
 
   // PrintSelf
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
   /// \brief Integer describing the number of intersection points and lines
@@ -89,17 +86,11 @@ public:
   //@}
 
   /// \brief Union intersection, or difference
-  enum OperationType
-  {
-    VTK_UNION=0,
-    VTK_INTERSECTION,
-    VTK_DIFFERENCE
-  };
+  enum OperationType { VTK_UNION = 0, VTK_INTERSECTION, VTK_DIFFERENCE };
 
   /// \brief Output if no intersection
-  enum NoIntersectionOutputType
-  {
-    VTK_NEITHER=0,
+  enum NoIntersectionOutputType {
+    VTK_NEITHER = 0,
     VTK_FIRST,
     VTK_SECOND,
     VTK_BOTH,
@@ -107,14 +98,11 @@ public:
 
   //@{
   /// \brief  Set the boolean operation to perform. Defaults to union.
-  vtkSetClampMacro( Operation, int, VTK_UNION, VTK_DIFFERENCE );
-  vtkGetMacro( Operation, int );
-  void SetOperationToUnion()
-  { this->SetOperation( VTK_UNION ); }
-  void SetOperationToIntersection()
-  { this->SetOperation( VTK_INTERSECTION ); }
-  void SetOperationToDifference()
-  { this->SetOperation( VTK_DIFFERENCE ); }
+  vtkSetClampMacro(Operation, int, VTK_UNION, VTK_DIFFERENCE);
+  vtkGetMacro(Operation, int);
+  void SetOperationToUnion() { this->SetOperation(VTK_UNION); }
+  void SetOperationToIntersection() { this->SetOperation(VTK_INTERSECTION); }
+  void SetOperationToDifference() { this->SetOperation(VTK_DIFFERENCE); }
   //@}
 
   /// \brief Check the status of the filter after update.
@@ -130,9 +118,9 @@ protected:
   vtkSVLoopBooleanPolyDataFilter();
   ~vtkSVLoopBooleanPolyDataFilter();
 
-  int RequestData(vtkInformation*, vtkInformationVector**,
-                  vtkInformationVector*) override;
-  int FillInputPortInformation(int, vtkInformation*) override;
+  int RequestData(vtkInformation *, vtkInformationVector **,
+                  vtkInformationVector *) override;
+  int FillInputPortInformation(int, vtkInformation *) override;
 
   vtkPolyData *OutputSurface;
 
@@ -147,10 +135,10 @@ protected:
   /// brief A class containing the actual implementation. Called during Update
   class Impl;
 
-
 private:
-  vtkSVLoopBooleanPolyDataFilter(const vtkSVLoopBooleanPolyDataFilter&);  // Not implemented
-  void operator=(const vtkSVLoopBooleanPolyDataFilter&);  // Not implemented
+  vtkSVLoopBooleanPolyDataFilter(
+      const vtkSVLoopBooleanPolyDataFilter &);            // Not implemented
+  void operator=(const vtkSVLoopBooleanPolyDataFilter &); // Not implemented
 };
 
 #endif

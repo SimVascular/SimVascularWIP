@@ -37,7 +37,7 @@
 #include "sv_VTK.h"
 
 SV_EXPORT_IMAGE int MaskImageInPlace(vtkStructuredPoints *imgsp,
-                          vtkStructuredPoints *masksp,
-                          double replaceVal,int notval);
+                                     vtkStructuredPoints *masksp,
+                                     double replaceVal, int notval);
 
 #endif

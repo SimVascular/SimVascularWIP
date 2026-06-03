@@ -39,8 +39,7 @@
 #include "vtkImageExport.h"
 
 template <typename ImageType>
-void ConnectITKToVTK(itk::VTKImageExport<ImageType>* in, vtkImageImport* out)
-{
+void ConnectITKToVTK(itk::VTKImageExport<ImageType> *in, vtkImageImport *out) {
   out->SetUpdateInformationCallback(in->GetUpdateInformationCallback());
   out->SetPipelineModifiedCallback(in->GetPipelineModifiedCallback());
   out->SetWholeExtentCallback(in->GetWholeExtentCallback());
@@ -55,10 +54,8 @@ void ConnectITKToVTK(itk::VTKImageExport<ImageType>* in, vtkImageImport* out)
   out->SetCallbackUserData(in->GetCallbackUserData());
 };
 
-
 template <typename ImageType>
-void ConnectVTKToITK(vtkImageExport* in, itk::VTKImageImport<ImageType>* out)
-{
+void ConnectVTKToITK(vtkImageExport *in, itk::VTKImageImport<ImageType> *out) {
   out->SetUpdateInformationCallback(in->GetUpdateInformationCallback());
   out->SetPipelineModifiedCallback(in->GetPipelineModifiedCallback());
   out->SetWholeExtentCallback(in->GetWholeExtentCallback());

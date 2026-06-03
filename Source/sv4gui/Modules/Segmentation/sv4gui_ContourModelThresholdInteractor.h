@@ -36,94 +36,100 @@
 
 #include <sv4guiModuleSegmentationExports.h>
 
-#include "sv4gui_ContourModel.h"
 #include "sv4gui_ContourGroupDataInteractor.h"
+#include "sv4gui_ContourModel.h"
 
 #include <itkEventObject.h>
 #include <mitkInteractionPositionEvent.h>
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourModelThresholdInteractor : public mitk::DataInteractor
-{
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourModelThresholdInteractor
+    : public mitk::DataInteractor {
 public:
-    mitkClassMacro(sv4guiContourModelThresholdInteractor, mitk::DataInteractor);
-    itkFactorylessNewMacro(Self)
-    itkCloneMacro(Self)
+  mitkClassMacro(sv4guiContourModelThresholdInteractor, mitk::DataInteractor);
+  itkFactorylessNewMacro(Self) itkCloneMacro(Self)
 
-    void SetScaleBase(double scaleBase);
+      void SetScaleBase(double scaleBase);
 
-    double GetCurrentValue();
+  double GetCurrentValue();
 
-    void SetPathPoint(sv4guiPathElement::sv4guiPathPoint pathPoint) {m_PathPoint=pathPoint;}
+  void SetPathPoint(sv4guiPathElement::sv4guiPathPoint pathPoint) {
+    m_PathPoint = pathPoint;
+  }
 
-    sv4guiPathElement::sv4guiPathPoint GetPathPoint() {return m_PathPoint;}
+  sv4guiPathElement::sv4guiPathPoint GetPathPoint() { return m_PathPoint; }
 
-    vtkImageData* GetVtkImageData() {return m_VtkImageData;}
+  vtkImageData *GetVtkImageData() { return m_VtkImageData; }
 
-    void SetVtkImageData(vtkImageData* imageData) {m_VtkImageData=imageData;}
+  void SetVtkImageData(vtkImageData *imageData) { m_VtkImageData = imageData; }
 
-    void SetResliceSize(double size) {m_ResliceSize=size;}
+  void SetResliceSize(double size) { m_ResliceSize = size; }
 
-    void SetGroupInteractor(sv4guiContourGroupDataInteractor::Pointer groupInteractor) {m_GroupInteractor=groupInteractor;}
+  void SetGroupInteractor(
+      sv4guiContourGroupDataInteractor::Pointer groupInteractor) {
+    m_GroupInteractor = groupInteractor;
+  }
 
-    void SetImageTransform(vtkTransform* imageTransform);
+  void SetImageTransform(vtkTransform *imageTransform);
 
 protected:
+  sv4guiContourModelThresholdInteractor();
+  virtual ~sv4guiContourModelThresholdInteractor();
 
-    sv4guiContourModelThresholdInteractor();
-    virtual ~sv4guiContourModelThresholdInteractor();
+  virtual void ConnectActionsAndFunctions() override;
 
-    virtual void ConnectActionsAndFunctions() override;
+  //  Conditions //
 
-    //  Conditions //
+  bool OnCurrentContourPlane(const mitk::InteractionEvent *interactionEvent);
 
-    bool OnCurrentContourPlane( const mitk::InteractionEvent* interactionEvent );
+  bool AtValidLocation(const mitk::InteractionEvent *interactionEvent);
 
-    bool AtValidLocation( const mitk::InteractionEvent* interactionEvent );
+  //  Actions //
 
-    //  Actions //
+  void StartDrawing(mitk::StateMachineAction *,
+                    mitk::InteractionEvent *interactionEvent);
 
-    void StartDrawing(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
+  void UpdateDrawing(mitk::StateMachineAction *,
+                     mitk::InteractionEvent *interactionEvent);
 
-    void UpdateDrawing(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
+  void FinishDrawing(mitk::StateMachineAction *,
+                     mitk::InteractionEvent *interactionEvent);
 
-    void FinishDrawing(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent );
-
-    void ClearDrawing(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent );
+  void ClearDrawing(mitk::StateMachineAction *,
+                    mitk::InteractionEvent *interactionEvent);
 
 private:
+  sv4guiContour *m_Contour;
 
-    sv4guiContour* m_Contour;
+  mitk::Point3D m_LastPoint;
 
-    mitk::Point3D m_LastPoint;
+  double m_MinValue;
 
-    double m_MinValue;
+  double m_MaxValue;
 
-    double m_MaxValue;
+  double m_CurrentValue;
 
-    double m_CurrentValue;
+  int m_TimeStep;
 
-    int m_TimeStep;
+  double m_ScaleBase; // use display units
 
-    double m_ScaleBase;// use display units
+  std::string m_Method;
 
-    std::string m_Method;
+  vtkImageData *m_VtkImageData;
 
-    vtkImageData* m_VtkImageData;
+  vtkImageData *m_ImageSlice;
 
-    vtkImageData* m_ImageSlice;
+  double m_ResliceSize;
 
-    double m_ResliceSize;
+  sv4guiPathElement::sv4guiPathPoint m_PathPoint;
 
-    sv4guiPathElement::sv4guiPathPoint m_PathPoint;
+  sv4guiContourGroupDataInteractor::Pointer m_GroupInteractor;
 
-    sv4guiContourGroupDataInteractor::Pointer m_GroupInteractor;
-
-    // Stores the mitk image transformation needed to transform 
-    // the 2D image slices definded from path data.
-    vtkSmartPointer<vtkTransform> m_ImageTransformation;
+  // Stores the mitk image transformation needed to transform
+  // the 2D image slices definded from path data.
+  vtkSmartPointer<vtkTransform> m_ImageTransformation;
 };
 
-itkEventMacro( EndInteractionContourModelEvent, sv4guiContourModelEvent );
-itkEventMacro( UpdateInteractionContourModelEvent, sv4guiContourModelEvent );
+itkEventMacro(EndInteractionContourModelEvent, sv4guiContourModelEvent);
+itkEventMacro(UpdateInteractionContourModelEvent, sv4guiContourModelEvent);
 
 #endif // SV4GUI_CONTOURMODELTHRESHOLDINTERACTOR_H

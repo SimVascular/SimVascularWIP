@@ -31,8 +31,8 @@
 
 #include "SimVascular.h"
 
-#include "vtkDataSet.h"
 #include "sv_misc_utils.h"
+#include "vtkDataSet.h"
 #include <stdio.h>
 
 #include "sv_UnstructuredGrid.h"
@@ -41,43 +41,33 @@
 // cvUnstructuredGrid
 // ----------------
 
-cvUnstructuredGrid::cvUnstructuredGrid()
-  : cvDataSet( UNSTRUCTURED_GRID_T )
-{
+cvUnstructuredGrid::cvUnstructuredGrid() : cvDataSet(UNSTRUCTURED_GRID_T) {
   data_ = vtkUnstructuredGrid::New();
 }
-
 
 // ----------------
 // cvUnstructuredGrid
 // ----------------
 
-cvUnstructuredGrid::cvUnstructuredGrid( vtkUnstructuredGrid *ug )
-  : cvDataSet( UNSTRUCTURED_GRID_T )
-{
+cvUnstructuredGrid::cvUnstructuredGrid(vtkUnstructuredGrid *ug)
+    : cvDataSet(UNSTRUCTURED_GRID_T) {
   data_ = vtkUnstructuredGrid::New();
-  ShallowCopy( ug );
+  ShallowCopy(ug);
 }
-
 
 // ----------------
 // cvUnstructuredGrid
 // ----------------
 
-cvUnstructuredGrid::cvUnstructuredGrid( cvUnstructuredGrid *src )
-  : cvDataSet( UNSTRUCTURED_GRID_T )
-{
+cvUnstructuredGrid::cvUnstructuredGrid(cvUnstructuredGrid *src)
+    : cvDataSet(UNSTRUCTURED_GRID_T) {
   data_ = vtkUnstructuredGrid::New();
-  ShallowCopy( static_cast<vtkDataSet*>(src->data_) );
+  ShallowCopy(static_cast<vtkDataSet *>(src->data_));
 }
-
 
 // -----------------
 // ~cvUnstructuredGrid
 // -----------------
 // Delete called by parent class cvDataObject.
 
-cvUnstructuredGrid::~cvUnstructuredGrid()
-{
-  ;
-}
+cvUnstructuredGrid::~cvUnstructuredGrid() { ; }

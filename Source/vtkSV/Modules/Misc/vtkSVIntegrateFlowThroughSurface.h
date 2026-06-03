@@ -30,27 +30,27 @@
  */
 
 /**
-  * \class vtkSVIntegrateFlowThroughSurface - Integrates vector dot normal.
-  * \brief First this filter finds point normals for a surface.  It
-  * Takes a point vector field from the input and computes the
-  * dot product with the normal.  It then integrates this dot value
-  * to get net flow through the surface.
-  */
+ * \class vtkSVIntegrateFlowThroughSurface - Integrates vector dot normal.
+ * \brief First this filter finds point normals for a surface.  It
+ * Takes a point vector field from the input and computes the
+ * dot product with the normal.  It then integrates this dot value
+ * to get net flow through the surface.
+ */
 
 #ifndef vtkSVIntegrateFlowThroughSurface_h
 #define vtkSVIntegrateFlowThroughSurface_h
 
 #include "vtkSVMiscModule.h" // for exports
 
-#include "vtkIdList.h"
 #include "vtkDataSetAttributes.h"
+#include "vtkIdList.h"
 #include "vtkUnstructuredGridAlgorithm.h"
 
-class VTKSVMISC_EXPORT vtkSVIntegrateFlowThroughSurface : public vtkUnstructuredGridAlgorithm
-{
+class VTKSVMISC_EXPORT vtkSVIntegrateFlowThroughSurface
+    : public vtkUnstructuredGridAlgorithm {
 public:
-  vtkTypeMacro(vtkSVIntegrateFlowThroughSurface,vtkUnstructuredGridAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  vtkTypeMacro(vtkSVIntegrateFlowThroughSurface, vtkUnstructuredGridAlgorithm);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
   static vtkSVIntegrateFlowThroughSurface *New();
 
 protected:
@@ -59,23 +59,22 @@ protected:
 
   // Usual data generation method
   // Usual data generation method
-  virtual int RequestData(vtkInformation *,
-                          vtkInformationVector **,
+  virtual int RequestData(vtkInformation *, vtkInformationVector **,
                           vtkInformationVector *) override;
-  virtual int RequestUpdateExtent(vtkInformation*,
-                                  vtkInformationVector**,
-                                  vtkInformationVector*) override;
+  virtual int RequestUpdateExtent(vtkInformation *, vtkInformationVector **,
+                                  vtkInformationVector *) override;
 
-  virtual int FillInputPortInformation(int port, vtkInformation* info) override;
+  virtual int FillInputPortInformation(int port, vtkInformation *info) override;
 
   // Create a default executive.
-  virtual vtkExecutive* CreateDefaultExecutive() override;
+  virtual vtkExecutive *CreateDefaultExecutive() override;
 
-  vtkDataSet* GenerateSurfaceVectors(vtkDataSet* input);
+  vtkDataSet *GenerateSurfaceVectors(vtkDataSet *input);
 
 private:
-  vtkSVIntegrateFlowThroughSurface(const vtkSVIntegrateFlowThroughSurface&); // Not implemented.
-  void operator=(const vtkSVIntegrateFlowThroughSurface&);  // Not implemented.
+  vtkSVIntegrateFlowThroughSurface(
+      const vtkSVIntegrateFlowThroughSurface &);            // Not implemented.
+  void operator=(const vtkSVIntegrateFlowThroughSurface &); // Not implemented.
 };
 
 #endif

@@ -38,82 +38,79 @@
 
 #include "sv4gui_MultiPhysicseqClass.h"
 
-#include <map>
-#include <vector>
-#include <sstream>
 #include <iostream>
+#include <map>
+#include <sstream>
 #include <string>
+#include <vector>
 
 //-------------------
 // sv4guiMultiPhysicsDomain
 //-------------------
 // Store information defining a mesh domain.
 //
-struct SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMultiPhysicsDomain
-{
-    std::string name;
-    std::string folderName;
-    std::string fileName;
-    std::string surfaceName;
-    std::string type; //fluid, or solid for MultiPhysics 
-    int id;
+struct SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMultiPhysicsDomain {
+  std::string name;
+  std::string folderName;
+  std::string fileName;
+  std::string surfaceName;
+  std::string type; // fluid, or solid for MultiPhysics
+  int id;
 
-    std::string faceFolderName;
-    std::vector<std::string> faceNames;
+  std::string faceFolderName;
+  std::vector<std::string> faceNames;
 
-    double edgeSize; //max edge size for remesher
+  double edgeSize; // max edge size for remesher
 
-    sv4guiMultiPhysicsDomain() : name("") , folderName("") , fileName("") , surfaceName(""), type("fluid"), 
-        faceFolderName("mesh-surfaces"), id(0), edgeSize(2.6)
-    {
-    }
-
+  sv4guiMultiPhysicsDomain()
+      : name(""), folderName(""), fileName(""), surfaceName(""), type("fluid"),
+        faceFolderName("mesh-surfaces"), id(0), edgeSize(2.6) {}
 };
 
 //----------------
 // sv4guiMultiPhysicsJob
 //----------------
-// The sv4guiMultiPhysicsJob class is primarily used to store simulation parameters. 
+// The sv4guiMultiPhysicsJob class is primarily used to store simulation
+// parameters.
 //
-// Note: All of the data members are public and set in sv4gui_MultiPhysicsView.cxx 
-// directly from the GUI.
+// Note: All of the data members are public and set in
+// sv4gui_MultiPhysicsView.cxx directly from the GUI.
 //
-class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMultiPhysicsJob
-{
-  public:
-    sv4guiMultiPhysicsJob();
-    sv4guiMultiPhysicsJob(const sv4guiMultiPhysicsJob &other);
-    virtual ~sv4guiMultiPhysicsJob();
-    virtual sv4guiMultiPhysicsJob* Clone();
+class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMultiPhysicsJob {
+public:
+  sv4guiMultiPhysicsJob();
+  sv4guiMultiPhysicsJob(const sv4guiMultiPhysicsJob &other);
+  virtual ~sv4guiMultiPhysicsJob();
+  virtual sv4guiMultiPhysicsJob *Clone();
 
-    int nsd;
-    int timeSteps;
-    std::string stepSize;
-    bool continuePrevious;
+  int nsd;
+  int timeSteps;
+  std::string stepSize;
+  bool continuePrevious;
 
-    std::string restartFileName;
-    int restartInc;
-    int startSavingStep;
+  std::string restartFileName;
+  int restartInc;
+  int startSavingStep;
 
-    bool vtkSaveResults;
-    std::string vtkFileName;
-    int vtkInc;
+  bool vtkSaveResults;
+  std::string vtkFileName;
+  int vtkInc;
 
-    bool saveAvgResult;
-    double rhoInf;
-    std::string stopFileName;
-    bool verbose;
-    bool warn;
-    bool debug;
+  bool saveAvgResult;
+  double rhoInf;
+  std::string stopFileName;
+  bool verbose;
+  bool warn;
+  bool debug;
 
-    bool remeshing;
+  bool remeshing;
 
-    std::map<std::string,sv4guiMultiPhysicsDomain> m_Domains;
+  std::map<std::string, sv4guiMultiPhysicsDomain> m_Domains;
 
-    std::vector<sv4guiMultiPhysicseqClass> m_Eqs;
+  std::vector<sv4guiMultiPhysicseqClass> m_Eqs;
 
-    bool WriteFile(std::string filePath);
-    bool WriteXmlFile(std::string filePath);
-  };
+  bool WriteFile(std::string filePath);
+  bool WriteXmlFile(std::string filePath);
+};
 
 #endif // sv4guiMultiPhysicsJOB_H

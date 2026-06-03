@@ -37,16 +37,16 @@
 #include "vtkCompositeDataSet.h"
 #include "vtkDataArray.h"
 #include "vtkDataSet.h"
-#include "vtkMultiBlockDataSet.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
-#include "vtkSVIntegrateAttributes.h"
+#include "vtkMultiBlockDataSet.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
-#include "vtkStreamingDemandDrivenPipeline.h"
+#include "vtkSVIntegrateAttributes.h"
 #include "vtkSVSurfaceVectors.h"
-#include "vtkUnstructuredGrid.h"
 #include "vtkSmartPointer.h"
+#include "vtkStreamingDemandDrivenPipeline.h"
+#include "vtkUnstructuredGrid.h"
 
 // ----------------------
 // StandardNewMacro
@@ -56,35 +56,32 @@ vtkStandardNewMacro(vtkSVIntegrateFlowThroughSurface);
 // ----------------------
 // Constructor
 // ----------------------
-vtkSVIntegrateFlowThroughSurface::vtkSVIntegrateFlowThroughSurface()
-{
+vtkSVIntegrateFlowThroughSurface::vtkSVIntegrateFlowThroughSurface() {
   // by default process active point vectors
-  this->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_POINTS,
+  this->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_POINTS,
                                vtkDataSetAttributes::VECTORS);
 }
 
 // ----------------------
 // Destructor
 // ----------------------
-vtkSVIntegrateFlowThroughSurface::~vtkSVIntegrateFlowThroughSurface()
-{
-}
+vtkSVIntegrateFlowThroughSurface::~vtkSVIntegrateFlowThroughSurface() {}
 
 // ----------------------
 // RequestUpdateExtent
 // ----------------------
 int vtkSVIntegrateFlowThroughSurface::RequestUpdateExtent(
-                                           vtkInformation * vtkNotUsed(request),
-                                           vtkInformationVector **inputVector,
-                                           vtkInformationVector *outputVector)
-{
+    vtkInformation *vtkNotUsed(request), vtkInformationVector **inputVector,
+    vtkInformationVector *outputVector) {
   // get the info objects
-  vtkInformation* outInfo = outputVector->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
 
-  inInfo->Set(vtkStreamingDemandDrivenPipeline::UPDATE_NUMBER_OF_GHOST_LEVELS(),
-              outInfo->Get(vtkStreamingDemandDrivenPipeline::
-                           UPDATE_NUMBER_OF_GHOST_LEVELS()) + 1);
+  inInfo->Set(
+      vtkStreamingDemandDrivenPipeline::UPDATE_NUMBER_OF_GHOST_LEVELS(),
+      outInfo->Get(
+          vtkStreamingDemandDrivenPipeline::UPDATE_NUMBER_OF_GHOST_LEVELS()) +
+          1);
 
   return 1;
 }
@@ -92,29 +89,27 @@ int vtkSVIntegrateFlowThroughSurface::RequestUpdateExtent(
 // ----------------------
 // GenerateSurfaceVectors
 // ----------------------
-vtkDataSet* vtkSVIntegrateFlowThroughSurface::GenerateSurfaceVectors(
-  vtkDataSet* input)
-{
-  vtkDataSet* inputCopy = input->NewInstance();
+vtkDataSet *
+vtkSVIntegrateFlowThroughSurface::GenerateSurfaceVectors(vtkDataSet *input) {
+  vtkDataSet *inputCopy = input->NewInstance();
   inputCopy->CopyStructure(input);
   vtkDataArray *vectors = this->GetInputArrayToProcess(0, input);
-  if (vectors == 0)
-    {
+  if (vectors == 0) {
     vtkErrorMacro("Missing Vectors.");
     inputCopy->Delete();
     return 0;
-    }
+  }
   inputCopy->GetPointData()->SetVectors(vectors);
   inputCopy->GetCellData()->AddArray(
-    input->GetCellData()->GetArray("vtkGhostLevels"));
+      input->GetCellData()->GetArray("vtkGhostLevels"));
 
-  vtkSVSurfaceVectors* dot = vtkSVSurfaceVectors::New();
+  vtkSVSurfaceVectors *dot = vtkSVSurfaceVectors::New();
   dot->SetInputDataObject(inputCopy);
   dot->SetConstraintModeToPerpendicularScale();
   dot->Update();
 
-  vtkDataSet* output = dot->GetOutput();
-  vtkDataSet* outputCopy = output->NewInstance();
+  vtkDataSet *output = dot->GetOutput();
+  vtkDataSet *outputCopy = output->NewInstance();
   outputCopy->ShallowCopy(output);
 
   dot->Delete();
@@ -127,84 +122,69 @@ vtkDataSet* vtkSVIntegrateFlowThroughSurface::GenerateSurfaceVectors(
 // RequestData
 // ----------------------
 int vtkSVIntegrateFlowThroughSurface::RequestData(
-  vtkInformation *request,
-  vtkInformationVector **inputVector,
-  vtkInformationVector *outputVector)
-{
+    vtkInformation *request, vtkInformationVector **inputVector,
+    vtkInformationVector *outputVector) {
   // get the info objects
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
 
   // get the input and output
-  vtkSmartPointer<vtkDataObject> input = inInfo->Get(vtkDataObject::DATA_OBJECT());
+  vtkSmartPointer<vtkDataObject> input =
+      inInfo->Get(vtkDataObject::DATA_OBJECT());
 
-  vtkDataSet *dsInput = vtkDataSet::SafeDownCast(
-    inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkDataSet *dsInput =
+      vtkDataSet::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
   vtkUnstructuredGrid *output = vtkUnstructuredGrid::SafeDownCast(
-    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+      outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
-  vtkSVIntegrateAttributes* integrate = vtkSVIntegrateAttributes::New();
+  vtkSVIntegrateAttributes *integrate = vtkSVIntegrateAttributes::New();
   vtkCompositeDataSet *hdInput = vtkCompositeDataSet::SafeDownCast(
-    inInfo->Get(vtkDataObject::DATA_OBJECT()));
-  if (hdInput)
-    {
-    vtkMultiBlockDataSet* hds = vtkMultiBlockDataSet::New();
-    vtkCompositeDataIterator* iter = hdInput->NewIterator();
+      inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  if (hdInput) {
+    vtkMultiBlockDataSet *hds = vtkMultiBlockDataSet::New();
+    vtkCompositeDataIterator *iter = hdInput->NewIterator();
     iter->GoToFirstItem();
-    while (!iter->IsDoneWithTraversal())
-      {
-      vtkDataSet* ds = vtkDataSet::SafeDownCast(iter->GetCurrentDataObject());
-      if (ds)
-        {
-        vtkDataSet* intermData = this->GenerateSurfaceVectors(ds);
-        if (intermData)
-          {
+    while (!iter->IsDoneWithTraversal()) {
+      vtkDataSet *ds = vtkDataSet::SafeDownCast(iter->GetCurrentDataObject());
+      if (ds) {
+        vtkDataSet *intermData = this->GenerateSurfaceVectors(ds);
+        if (intermData) {
           hds->SetBlock(hds->GetNumberOfBlocks(), intermData);
           intermData->Delete();
-          }
         }
-      iter->GoToNextItem();
       }
+      iter->GoToNextItem();
+    }
     iter->Delete();
     inInfo->Set(vtkDataObject::DATA_OBJECT(), hds);
     hds->Delete();
-    }
-  else if (dsInput)
-    {
-    vtkDataSet* intermData = this->GenerateSurfaceVectors(dsInput);
-    if (!intermData)
-      {
+  } else if (dsInput) {
+    vtkDataSet *intermData = this->GenerateSurfaceVectors(dsInput);
+    if (!intermData) {
       return 0;
-      }
+    }
     inInfo->Set(vtkDataSet::DATA_OBJECT(), intermData);
     intermData->Delete();
+  } else {
+    if (input) {
+      vtkErrorMacro(
+          "This filter cannot handle input of type: " << input->GetClassName());
     }
-  else
-    {
-    if (input)
-      {
-      vtkErrorMacro("This filter cannot handle input of type: "
-                    << input->GetClassName());
-      }
     return 0;
-    }
+  }
 
   integrate->ProcessRequest(request, inputVector, outputVector);
 
-  if (hdInput)
-    {
+  if (hdInput) {
     inInfo->Set(vtkDataObject::DATA_OBJECT(), hdInput);
-    }
-  else if (dsInput)
-    {
+  } else if (dsInput) {
     inInfo->Set(vtkDataObject::DATA_OBJECT(), dsInput);
-    }
+  }
 
-  vtkDataArray* flow = output->GetPointData()->GetArray("Perpendicular Scale");
-  if (flow)
-    {
+  vtkDataArray *flow = output->GetPointData()->GetArray("Perpendicular Scale");
+  if (flow) {
     flow->SetName("Surface Flow");
-    }
+  }
 
   integrate->Delete();
   integrate = 0;
@@ -215,29 +195,26 @@ int vtkSVIntegrateFlowThroughSurface::RequestData(
 // ----------------------
 // CreateDefaultExecutive
 // ----------------------
-vtkExecutive* vtkSVIntegrateFlowThroughSurface::CreateDefaultExecutive()
-{
+vtkExecutive *vtkSVIntegrateFlowThroughSurface::CreateDefaultExecutive() {
   return vtkCompositeDataPipeline::New();
 }
 
 // ----------------------
 // PrintSelf
 // ----------------------
-void vtkSVIntegrateFlowThroughSurface::PrintSelf(ostream& os, vtkIndent indent)
-{
-  this->Superclass::PrintSelf(os,indent);
+void vtkSVIntegrateFlowThroughSurface::PrintSelf(ostream &os,
+                                                 vtkIndent indent) {
+  this->Superclass::PrintSelf(os, indent);
 }
 
 // ----------------------
 // FillInputPortInformation
 // ----------------------
 int vtkSVIntegrateFlowThroughSurface::FillInputPortInformation(
-  int port, vtkInformation* info)
-{
-  if(!this->Superclass::FillInputPortInformation(port, info))
-    {
+    int port, vtkInformation *info) {
+  if (!this->Superclass::FillInputPortInformation(port, info)) {
     return 0;
-    }
+  }
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkDataObject");
   return 1;
 }

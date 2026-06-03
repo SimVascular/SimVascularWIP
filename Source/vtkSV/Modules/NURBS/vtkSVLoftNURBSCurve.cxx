@@ -45,9 +45,9 @@
 #include "vtkSVNURBSCurve.h"
 #include "vtkSVNURBSUtils.h"
 
-#include <string>
-#include <sstream>
 #include <iostream>
+#include <sstream>
+#include <string>
 
 // ----------------------
 // StandardNewMacro
@@ -57,15 +57,13 @@ vtkStandardNewMacro(vtkSVLoftNURBSCurve);
 // ----------------------
 // Constructor
 // ----------------------
-vtkSVLoftNURBSCurve::vtkSVLoftNURBSCurve()
-{
+vtkSVLoftNURBSCurve::vtkSVLoftNURBSCurve() {
   this->SetNumberOfInputPorts(1);
 
   this->Degree = 2;
   this->PolyDataSpacing = 0.1;
   double neg[3];
-  for (int i=0; i<3; i++)
-  {
+  for (int i = 0; i < 3; i++) {
     neg[i] = -1.0;
   }
   this->SetStartDerivative(neg);
@@ -73,17 +71,15 @@ vtkSVLoftNURBSCurve::vtkSVLoftNURBSCurve()
 
   this->Curve = vtkSVNURBSCurve::New();
 
-  this->KnotSpanType       = nullptr;
+  this->KnotSpanType = nullptr;
   this->ParametricSpanType = nullptr;
 }
 
 // ----------------------
 // Destructor
 // ----------------------
-vtkSVLoftNURBSCurve::~vtkSVLoftNURBSCurve()
-{
-  if (this->Curve != nullptr)
-  {
+vtkSVLoftNURBSCurve::~vtkSVLoftNURBSCurve() {
+  if (this->Curve != nullptr) {
     this->Curve->Delete();
   }
 }
@@ -91,32 +87,27 @@ vtkSVLoftNURBSCurve::~vtkSVLoftNURBSCurve()
 // ----------------------
 // RequestData
 // ----------------------
-int vtkSVLoftNURBSCurve::RequestData(
-    vtkInformation *vtkNotUsed(request),
-    vtkInformationVector **inputVector,
-    vtkInformationVector *outputVector)
-{
+int vtkSVLoftNURBSCurve::RequestData(vtkInformation *vtkNotUsed(request),
+                                     vtkInformationVector **inputVector,
+                                     vtkInformationVector *outputVector) {
   // get the info object
   // get the ouptut
   vtkPolyData *input = vtkPolyData::GetData(inputVector[0], 0);
   vtkPolyData *output = vtkPolyData::GetData(outputVector, 0);
 
-  if (this->KnotSpanType == nullptr)
-  {
+  if (this->KnotSpanType == nullptr) {
     vtkErrorMacro("Need to provide knot span type");
     this->SetErrorCode(vtkErrorCode::UserError + 1);
     return SV_ERROR;
   }
 
-  if (this->ParametricSpanType == nullptr)
-  {
+  if (this->ParametricSpanType == nullptr) {
     vtkErrorMacro("Need to provide parametric span type");
     this->SetErrorCode(vtkErrorCode::UserError + 2);
     return SV_ERROR;
   }
 
-  if (this->LoftNURBS(input, output) != SV_OK)
-  {
+  if (this->LoftNURBS(input, output) != SV_OK) {
     vtkErrorMacro("Lofting failed!");
     this->SetErrorCode(vtkErrorCode::UserError + 3);
     return SV_ERROR;
@@ -128,13 +119,12 @@ int vtkSVLoftNURBSCurve::RequestData(
 // ----------------------
 // PrintSelf
 // ----------------------
-void vtkSVLoftNURBSCurve::PrintSelf(ostream& os,
-    vtkIndent indent)
-{
-  this->Superclass::PrintSelf(os,indent);
+void vtkSVLoftNURBSCurve::PrintSelf(ostream &os, vtkIndent indent) {
+  this->Superclass::PrintSelf(os, indent);
   os << indent << "Degree: " << this->Degree << "\n";
   os << indent << "Knot span type: " << this->KnotSpanType << "\n";
-  os << indent << "Parametric values span type: " << this->ParametricSpanType << "\n";
+  os << indent << "Parametric values span type: " << this->ParametricSpanType
+     << "\n";
   os << indent << "Start Derivative: " << this->StartDerivative[0] << " ";
   os << this->StartDerivative[1] << " " << this->StartDerivative[2] << "\n";
   os << indent << "End Derivative: " << this->EndDerivative[0] << " ";
@@ -144,24 +134,21 @@ void vtkSVLoftNURBSCurve::PrintSelf(ostream& os,
 // ----------------------
 // FillInputPortInformation
 // ----------------------
-int vtkSVLoftNURBSCurve::FillInputPortInformation(
-    int port, vtkInformation *info)
-{
-  if (!this->Superclass::FillInputPortInformation(port, info))
-    {
+int vtkSVLoftNURBSCurve::FillInputPortInformation(int port,
+                                                  vtkInformation *info) {
+  if (!this->Superclass::FillInputPortInformation(port, info)) {
     return SV_ERROR;
-    }
+  }
   return SV_OK;
 }
 
 // ----------------------
 // LoftNURBS
 // ----------------------
-int vtkSVLoftNURBSCurve::LoftNURBS(vtkPolyData *input, vtkPolyData *outputPD)
-{
+int vtkSVLoftNURBSCurve::LoftNURBS(vtkPolyData *input, vtkPolyData *outputPD) {
   // Get number of control points and degree of surface
   int nCon = input->GetNumberOfPoints();
-  int p    = this->Degree;
+  int p = this->Degree;
 
   // Get the span types
   std::string ktype = this->KnotSpanType;
@@ -174,8 +161,7 @@ int vtkSVLoftNURBSCurve::LoftNURBS(vtkPolyData *input, vtkPolyData *outputPD)
 
   // Get the knots
   vtkNew(vtkDoubleArray, knots);
-  if (vtkSVNURBSUtils::GetKnots(U, p, ktype, knots) != SV_OK)
-  {
+  if (vtkSVNURBSUtils::GetKnots(U, p, ktype, knots) != SV_OK) {
     vtkErrorMacro("Error getting knots");
     return SV_ERROR;
   }
@@ -183,15 +169,13 @@ int vtkSVLoftNURBSCurve::LoftNURBS(vtkPolyData *input, vtkPolyData *outputPD)
   // Set weigths to equal weighting
   vtkNew(vtkDoubleArray, weights);
   weights->SetNumberOfTuples(nCon);
-  weights->FillComponent(0 , 1.0);
+  weights->FillComponent(0, 1.0);
 
   // If using derivatives, set the right format for derivatives
   double D0[3], DN[3];
-  if (!strncmp(ktype.c_str(), "derivative", 10))
-  {
+  if (!strncmp(ktype.c_str(), "derivative", 10)) {
     int neg = 0;
-    for (int i=0; i<3; i++)
-    {
+    for (int i = 0; i < 3; i++) {
       D0[i] = this->StartDerivative[i];
       DN[i] = this->EndDerivative[i];
       if (D0[i] == -1 || DN[i] == -1)
@@ -205,8 +189,8 @@ int vtkSVLoftNURBSCurve::LoftNURBS(vtkPolyData *input, vtkPolyData *outputPD)
   // Get the control points, lengthy operation in vtkNURBSUtils
   vtkNew(vtkPoints, cpoints);
   if (vtkSVNURBSUtils::GetControlPointsOfCurve(input->GetPoints(), U, weights,
-                                             knots, p, ktype, D0, DN, cpoints) != SV_OK)
-  {
+                                               knots, p, ktype, D0, DN,
+                                               cpoints) != SV_OK) {
     return SV_ERROR;
   }
 
@@ -224,8 +208,8 @@ int vtkSVLoftNURBSCurve::LoftNURBS(vtkPolyData *input, vtkPolyData *outputPD)
 // ----------------------
 // LoftNURBS
 // ----------------------
-int vtkSVLoftNURBSCurve::GetDefaultDerivatives(vtkPoints *points, double D0[3], double DN[3])
-{
+int vtkSVLoftNURBSCurve::GetDefaultDerivatives(vtkPoints *points, double D0[3],
+                                               double DN[3]) {
   // Get number of points
   int n = points->GetNumberOfPoints();
   double p0[3];
@@ -236,12 +220,11 @@ int vtkSVLoftNURBSCurve::GetDefaultDerivatives(vtkPoints *points, double D0[3], 
   // Get points
   points->GetPoint(0, p0);
   points->GetPoint(1, p1);
-  points->GetPoint(n-1,pnm1);
-  points->GetPoint(n-2,pnm2);
+  points->GetPoint(n - 1, pnm1);
+  points->GetPoint(n - 2, pnm2);
 
   // Get vectors between beginning and end points
-  for (int i=0; i<3; i++)
-  {
+  for (int i = 0; i < 3; i++) {
     D0[i] = p1[i] - p0[i];
     DN[i] = pnm1[i] - pnm2[i];
   }

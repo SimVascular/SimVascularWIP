@@ -36,29 +36,41 @@
 
 #include "sv4guiModuleCommonExports.h"
 
+#include <mitkPlaneGeometry.h>
 #include <mitkPoint.h>
 #include <mitkVector.h>
-#include <mitkPlaneGeometry.h>
 
-class SV4GUIMODULECOMMON_EXPORT sv4guiMath3
-{
+class SV4GUIMODULECOMMON_EXPORT sv4guiMath3 {
 public:
+  static std::vector<mitk::Point3D>
+  CreateSmoothedCurve(std::vector<mitk::Point3D> points, bool closed,
+                      int numModes = 12, int sampleRate = 1,
+                      int outputNumPts = 0);
 
-    static std::vector<mitk::Point3D> CreateSmoothedCurve(std::vector<mitk::Point3D> points, bool closed, int numModes = 12, int sampleRate = 1, int outputNumPts = 0);
+  static int GetInsertintIndexByDistance(std::vector<mitk::Point3D> points,
+                                         mitk::Point3D point,
+                                         bool insertOnlyIfDifferent = true,
+                                         bool useDistanceSum = true);
 
-    static int GetInsertintIndexByDistance( std::vector<mitk::Point3D> points, mitk::Point3D point, bool insertOnlyIfDifferent = true, bool useDistanceSum = true);
+  static int GetInsertintIndexByDistanceSum(std::vector<mitk::Point3D> points,
+                                            mitk::Point3D point,
+                                            bool insertOnlyIfDifferent = true);
 
-    static int GetInsertintIndexByDistanceSum( std::vector<mitk::Point3D> points, mitk::Point3D point, bool insertOnlyIfDifferent = true);
+  static int
+  GetInsertintIndexByProjectedDistance(std::vector<mitk::Point3D> points,
+                                       mitk::Point3D point,
+                                       bool insertOnlyIfDifferent = true);
 
-    static int GetInsertintIndexByProjectedDistance( std::vector<mitk::Point3D> points, mitk::Point3D point, bool insertOnlyIfDifferent = true);
+  static bool InsideBounds(mitk::Point3D point, double bounds[6]);
 
-    static bool InsideBounds(mitk::Point3D point, double bounds[6]);
+  static bool GetIntersectionPoint(mitk::PlaneGeometry *plane,
+                                   mitk::Point3D point,
+                                   mitk::Vector3D direction,
+                                   mitk::Point3D &interPoint);
 
-    static bool GetIntersectionPoint(mitk::PlaneGeometry* plane, mitk::Point3D point, mitk::Vector3D direction,mitk::Point3D& interPoint);
+  static double GetMachineEpsilon();
 
-    static double GetMachineEpsilon();
-
-    static mitk::Vector3D GetPerpendicularNormalVector(mitk::Vector3D vec);
+  static mitk::Vector3D GetPerpendicularNormalVector(mitk::Vector3D vec);
 };
 
 #endif // SV4GUI_MATH3_H

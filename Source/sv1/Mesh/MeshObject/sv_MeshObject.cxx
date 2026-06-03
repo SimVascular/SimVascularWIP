@@ -35,52 +35,43 @@
 #include "sv_misc_utils.h"
 #include <string.h>
 
-// Set the key names used to store face information. 
-const std::string cvMeshObject::ModelFaceInfo::ID = "id"; 
-const std::string cvMeshObject::ModelFaceInfo::NAME = "name"; 
-const std::string cvMeshObject::ModelFaceInfo::MODEL_ID = "modelID"; 
+// Set the key names used to store face information.
+const std::string cvMeshObject::ModelFaceInfo::ID = "id";
+const std::string cvMeshObject::ModelFaceInfo::NAME = "name";
+const std::string cvMeshObject::ModelFaceInfo::MODEL_ID = "modelID";
 
 // -------------
 // cvMeshObject
 // -------------
 
-cvMeshObject::cvMeshObject() : cvRepositoryData( MESH_T )
-{
-
-}
-
+cvMeshObject::cvMeshObject() : cvRepositoryData(MESH_T) {}
 
 // --------------
 // ~cvMeshObject
 // --------------
 
-cvMeshObject::~cvMeshObject()
-{
-  ;
-}
-
+cvMeshObject::~cvMeshObject() { ; }
 
 // Caller should deallocate the returned string.
 
-char *cvMeshObject::GetKernelName( cvMeshObject::KernelType kernel )
-{
+char *cvMeshObject::GetKernelName(cvMeshObject::KernelType kernel) {
   char *result;
 
   result = new char[100];
-  result[0]='\0';
+  result[0] = '\0';
   switch (kernel) {
   case KERNEL_MESHSIM:
-    strcpy( result, "MeshSim" );
+    strcpy(result, "MeshSim");
     break;
   case KERNEL_GMSH:
-    strcpy( result, "GMsh" );
+    strcpy(result, "GMsh");
     break;
   case KERNEL_TETGEN:
-    strcpy( result, "TetGen" );
+    strcpy(result, "TetGen");
     break;
   default:
-    strcpy( result, "Invalid kernel name; must be one of "
-	    "{ MeshSim, GMsh,TetGen }" );
+    strcpy(result, "Invalid kernel name; must be one of "
+                   "{ MeshSim, GMsh,TetGen }");
     return nullptr;
     break;
   }
@@ -88,8 +79,7 @@ char *cvMeshObject::GetKernelName( cvMeshObject::KernelType kernel )
   return result;
 }
 
-cvMeshObject::KernelType cvMeshObject::GetKernelType( const char* kernel_name )
-{
+cvMeshObject::KernelType cvMeshObject::GetKernelType(const char *kernel_name) {
   if (strcmp(kernel_name, "MeshSim") == 0)
     return cvMeshObject::KERNEL_MESHSIM;
   else if (strcmp(kernel_name, "GMsh") == 0)
@@ -100,26 +90,25 @@ cvMeshObject::KernelType cvMeshObject::GetKernelType( const char* kernel_name )
   return cvMeshObject::KERNEL_INVALID;
 }
 
-
-int cvMeshObject::openOutputFile(char* filename) {
+int cvMeshObject::openOutputFile(char *filename) {
   fp_ = nullptr;
-  // open the output file
-  #ifdef SV_USE_ZLIB
+// open the output file
+#ifdef SV_USE_ZLIB
   char filenamegz[MAXPATHLEN];
-  filenamegz[0]='\0';
-  sprintf (filenamegz, "%s.gz", filename);
-  fp_ = gzopen (filenamegz, "wb");
+  filenamegz[0] = '\0';
+  sprintf(filenamegz, "%s.gz", filename);
+  fp_ = gzopen(filenamegz, "wb");
   if (fp_ == nullptr) {
-      fprintf(stderr,"Error: Could not open output file %s.\n",filenamegz);
-      return SV_ERROR;
+    fprintf(stderr, "Error: Could not open output file %s.\n", filenamegz);
+    return SV_ERROR;
   }
-  #else
-  fp_ = gzopen (filename, "wb");
+#else
+  fp_ = gzopen(filename, "wb");
   if (fp_ == nullptr) {
-      fprintf(stderr,"Error: Could not open output file %s.\n",filename);
-      return SV_ERROR;
+    fprintf(stderr, "Error: Could not open output file %s.\n", filename);
+    return SV_ERROR;
   }
-  #endif
+#endif
   return SV_OK;
 }
 
@@ -127,5 +116,3 @@ int cvMeshObject::closeOutputFile() {
   gzclose(fp_);
   return SV_OK;
 }
-
-

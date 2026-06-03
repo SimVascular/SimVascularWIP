@@ -31,60 +31,57 @@
 
 #include "sv4gui_ImageProcessingUtils.h"
 
-
-#include <itkVTKImageToImageFilter.h>
-#include <itkThresholdImageFilter.h>
 #include <itkCastImageFilter.h>
+#include <itkThresholdImageFilter.h>
+#include <itkVTKImageToImageFilter.h>
 
 #include <itkImageToVTKImageFilter.h>
 #include <itkVTKImageToImageFilter.h>
 
-#include <itkMetaImageIO.h>
-#include <itkImageFileWriter.h>
-#include "itkGradientMagnitudeRecursiveGaussianImageFilter.h"
-#include "itkRescaleIntensityImageFilter.h"
-#include "itkGeodesicActiveContourLevelSetImageFilter.h"
-#include "itkRecursiveGaussianImageFilter.h"
-#include "itkGradientAnisotropicDiffusionImageFilter.h"
+#include "itkAddImageFilter.h"
+#include "itkBSplineInterpolateImageFunction.h"
+#include "itkBinaryBallStructuringElement.h"
 #include "itkBinaryFillholeImageFilter.h"
 #include "itkBinaryThresholdImageFilter.h"
-#include <itkConnectedThresholdImageFilter.h>
-#include "itkImageDuplicator.h"
-#include "itkRegionOfInterestImageFilter.h"
-#include "itkResampleImageFilter.h"
-#include "itkBSplineInterpolateImageFunction.h"
-#include "itkIdentityTransform.h"
-#include "itkMultiplyImageFilter.h"
-#include "itkAddImageFilter.h"
+#include "itkGeodesicActiveContourLevelSetImageFilter.h"
+#include "itkGradientAnisotropicDiffusionImageFilter.h"
+#include "itkGradientMagnitudeRecursiveGaussianImageFilter.h"
 #include "itkGrayscaleDilateImageFilter.h"
 #include "itkGrayscaleErodeImageFilter.h"
-#include "itkBinaryBallStructuringElement.h"
-#include <itkThresholdImageFilter.h>
-#include <itkRescaleIntensityImageFilter.h>
+#include "itkIdentityTransform.h"
+#include "itkImageDuplicator.h"
+#include "itkMultiplyImageFilter.h"
+#include "itkRecursiveGaussianImageFilter.h"
+#include "itkRegionOfInterestImageFilter.h"
+#include "itkResampleImageFilter.h"
+#include "itkRescaleIntensityImageFilter.h"
 #include <itkCollidingFrontsImageFilter.h>
+#include <itkConnectedThresholdImageFilter.h>
+#include <itkImageFileWriter.h>
+#include <itkMetaImageIO.h>
 #include <itkMinimumImageFilter.h>
+#include <itkRescaleIntensityImageFilter.h>
+#include <itkThresholdImageFilter.h>
 
-#include <vtkMarchingCubes.h>
-#include <vtkImageCast.h>
-#include "vtkPolyDataConnectivityFilter.h"
 #include "vtkCellLocator.h"
+#include "vtkPolyDataConnectivityFilter.h"
+#include <vtkImageCast.h>
+#include <vtkMarchingCubes.h>
 #include <vtkMetaImageWriter.h>
 
-sv4guiImageProcessingUtils::sv4guiImageProcessingUtils(){
+sv4guiImageProcessingUtils::sv4guiImageProcessingUtils() {}
 
-}
+sv4guiImageProcessingUtils::~sv4guiImageProcessingUtils() {}
 
-sv4guiImageProcessingUtils::~sv4guiImageProcessingUtils(){
-
-}
-
-sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::vtkImageToItkImage(vtkImageData* imageData){
+sv4guiImageProcessingUtils::itkImPoint
+sv4guiImageProcessingUtils::vtkImageToItkImage(vtkImageData *imageData) {
   auto caster = vtkSmartPointer<vtkImageCast>::New();
   caster->SetInputData(imageData);
   caster->SetOutputScalarTypeToFloat();
   caster->Update();
 
-  auto VTK2ITK = itk::VTKImageToImageFilter<sv4guiImageProcessingUtils::itkImageType>::New();
+  auto VTK2ITK = itk::VTKImageToImageFilter<
+      sv4guiImageProcessingUtils::itkImageType>::New();
   VTK2ITK->SetInput(caster->GetOutput());
   VTK2ITK->Update();
 
@@ -92,8 +89,10 @@ sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::vtkImageToItk
   return itkImage;
 }
 
-vtkSmartPointer<vtkImageData> sv4guiImageProcessingUtils::itkImageToVtkImage(sv4guiImageProcessingUtils::itkImPoint image){
-  auto ITK2VTK = itk::ImageToVTKImageFilter<sv4guiImageProcessingUtils::itkImageType>::New();
+vtkSmartPointer<vtkImageData> sv4guiImageProcessingUtils::itkImageToVtkImage(
+    sv4guiImageProcessingUtils::itkImPoint image) {
+  auto ITK2VTK = itk::ImageToVTKImageFilter<
+      sv4guiImageProcessingUtils::itkImageType>::New();
   ITK2VTK->SetInput(image);
   ITK2VTK->Update();
 
@@ -101,31 +100,32 @@ vtkSmartPointer<vtkImageData> sv4guiImageProcessingUtils::itkImageToVtkImage(sv4
   return vtkImage;
 }
 
-vtkSmartPointer<vtkPolyData> sv4guiImageProcessingUtils::marchingCubes(vtkImageData* imageData, double isovalue, bool largest_cc){
+vtkSmartPointer<vtkPolyData>
+sv4guiImageProcessingUtils::marchingCubes(vtkImageData *imageData,
+                                          double isovalue, bool largest_cc) {
   auto MC = vtkSmartPointer<vtkMarchingCubes>::New();
   MC->SetInputData(imageData);
-  MC->SetValue(0,isovalue);
+  MC->SetValue(0, isovalue);
   MC->Update();
 
-  if (!largest_cc){
+  if (!largest_cc) {
     auto pd = MC->GetOutput();
     return pd;
-  }else{
+  } else {
     vtkSmartPointer<vtkPolyDataConnectivityFilter> connectivityFilter =
-      vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
+        vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
     connectivityFilter->SetInputConnection(MC->GetOutputPort());
     connectivityFilter->SetExtractionModeToLargestRegion();
     connectivityFilter->Update();
     return connectivityFilter->GetOutput();
   }
-
 }
 
-vtkSmartPointer<vtkPolyData> sv4guiImageProcessingUtils::seedMarchingCubes(vtkImageData* imageData, double isovalue,
-double px, double py, double pz){
+vtkSmartPointer<vtkPolyData> sv4guiImageProcessingUtils::seedMarchingCubes(
+    vtkImageData *imageData, double isovalue, double px, double py, double pz) {
   auto MC = vtkSmartPointer<vtkMarchingCubes>::New();
   MC->SetInputData(imageData);
-  MC->SetValue(0,isovalue);
+  MC->SetValue(0, isovalue);
   MC->Update();
 
   auto cellLocator = vtkSmartPointer<vtkCellLocator>::New();
@@ -138,11 +138,12 @@ double px, double py, double pz){
   vtkIdType cellId;
   int subId;
 
-  cellLocator->FindClosestPoint(testPoint, closestPoint, cellId, subId, closestPointDistance);
+  cellLocator->FindClosestPoint(testPoint, closestPoint, cellId, subId,
+                                closestPointDistance);
 
   std::cout << "Vtk connectivity filter\n";
-  vtkSmartPointer<vtkPolyDataConnectivityFilter> polyDataConnectivityFilter
-  = vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
+  vtkSmartPointer<vtkPolyDataConnectivityFilter> polyDataConnectivityFilter =
+      vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
   polyDataConnectivityFilter->SetExtractionModeToCellSeededRegions();
   polyDataConnectivityFilter->SetInputData(MC->GetOutput());
   polyDataConnectivityFilter->InitializeSeedList();
@@ -155,30 +156,38 @@ double px, double py, double pz){
   return pd;
 }
 
-sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::copyImage(sv4guiImageProcessingUtils::itkImPoint image){
-  auto dup = itk::ImageDuplicator<sv4guiImageProcessingUtils::itkImageType>::New();
+sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::copyImage(
+    sv4guiImageProcessingUtils::itkImPoint image) {
+  auto dup =
+      itk::ImageDuplicator<sv4guiImageProcessingUtils::itkImageType>::New();
 
   dup->SetInputImage(image);
   dup->Update();
   return dup->GetOutput();
 }
 
-sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::elementwiseMinimum(sv4guiImageProcessingUtils::itkImPoint image1,
-  sv4guiImageProcessingUtils::itkImPoint image2){
+sv4guiImageProcessingUtils::itkImPoint
+sv4guiImageProcessingUtils::elementwiseMinimum(
+    sv4guiImageProcessingUtils::itkImPoint image1,
+    sv4guiImageProcessingUtils::itkImPoint image2) {
 
-    auto min = itk::MinimumImageFilter<sv4guiImageProcessingUtils::itkImageType,
-      sv4guiImageProcessingUtils::itkImageType, sv4guiImageProcessingUtils::itkImageType>::New();
+  auto min =
+      itk::MinimumImageFilter<sv4guiImageProcessingUtils::itkImageType,
+                              sv4guiImageProcessingUtils::itkImageType,
+                              sv4guiImageProcessingUtils::itkImageType>::New();
 
-    min->SetInput(0, image1);
-    min->SetInput(1, image2);
-    min->Update();
-    return min->GetOutput();
+  min->SetInput(0, image1);
+  min->SetInput(1, image2);
+  min->Update();
+  return min->GetOutput();
 }
 
-sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::threshold(sv4guiImageProcessingUtils::itkImPoint image,
-  double lowerThreshold, double upperThreshold){
+sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::threshold(
+    sv4guiImageProcessingUtils::itkImPoint image, double lowerThreshold,
+    double upperThreshold) {
 
-  auto thresh = itk::ThresholdImageFilter<sv4guiImageProcessingUtils::itkImageType>::New();
+  auto thresh = itk::ThresholdImageFilter<
+      sv4guiImageProcessingUtils::itkImageType>::New();
   thresh->SetInput(image);
   thresh->ThresholdOutside(lowerThreshold, upperThreshold);
   thresh->SetOutsideValue(0.0);
@@ -187,10 +196,14 @@ sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::threshold(sv4
   return itkImage;
 }
 
-sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::binaryThreshold(sv4guiImageProcessingUtils::itkImPoint image,
-  double lowerThreshold, double upperThreshold, double insideValue, double outsideValue){
+sv4guiImageProcessingUtils::itkImPoint
+sv4guiImageProcessingUtils::binaryThreshold(
+    sv4guiImageProcessingUtils::itkImPoint image, double lowerThreshold,
+    double upperThreshold, double insideValue, double outsideValue) {
 
-  auto thresh = itk::BinaryThresholdImageFilter<sv4guiImageProcessingUtils::itkImageType, sv4guiImageProcessingUtils::itkImageType>::New();
+  auto thresh = itk::BinaryThresholdImageFilter<
+      sv4guiImageProcessingUtils::itkImageType,
+      sv4guiImageProcessingUtils::itkImageType>::New();
   thresh->SetInput(image);
   thresh->SetLowerThreshold(lowerThreshold);
   thresh->SetUpperThreshold(upperThreshold);
@@ -201,16 +214,22 @@ sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::binaryThresho
   return itkImage;
 }
 
-sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::zeroLevel(sv4guiImageProcessingUtils::itkImPoint image,
-  double pixelValue){
+sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::zeroLevel(
+    sv4guiImageProcessingUtils::itkImPoint image, double pixelValue) {
 
-  auto multiply = itk::MultiplyImageFilter<sv4guiImageProcessingUtils::itkImageType, sv4guiImageProcessingUtils::itkImageType, sv4guiImageProcessingUtils::itkImageType>::New();
+  auto multiply =
+      itk::MultiplyImageFilter<sv4guiImageProcessingUtils::itkImageType,
+                               sv4guiImageProcessingUtils::itkImageType,
+                               sv4guiImageProcessingUtils::itkImageType>::New();
 
   multiply->SetInput(image);
   multiply->SetConstant(-1.0);
   multiply->Update();
 
-  auto add = itk::AddImageFilter<sv4guiImageProcessingUtils::itkImageType, sv4guiImageProcessingUtils::itkImageType, sv4guiImageProcessingUtils::itkImageType>::New();
+  auto add =
+      itk::AddImageFilter<sv4guiImageProcessingUtils::itkImageType,
+                          sv4guiImageProcessingUtils::itkImageType,
+                          sv4guiImageProcessingUtils::itkImageType>::New();
 
   add->SetInput(multiply->GetOutput());
   add->SetConstant2(pixelValue);
@@ -220,30 +239,35 @@ sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::zeroLevel(sv4
   return itkImage;
 }
 
-sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::connectedThreshold(sv4guiImageProcessingUtils::itkImPoint image,
-  double lowerThreshold, double upperThreshold, double insideValue,
-  std::vector<std::vector<int>> seeds){
+sv4guiImageProcessingUtils::itkImPoint
+sv4guiImageProcessingUtils::connectedThreshold(
+    sv4guiImageProcessingUtils::itkImPoint image, double lowerThreshold,
+    double upperThreshold, double insideValue,
+    std::vector<std::vector<int>> seeds) {
 
-  auto thresh = itk::ConnectedThresholdImageFilter<sv4guiImageProcessingUtils::itkImageType, sv4guiImageProcessingUtils::itkImageType>::New();
+  auto thresh = itk::ConnectedThresholdImageFilter<
+      sv4guiImageProcessingUtils::itkImageType,
+      sv4guiImageProcessingUtils::itkImageType>::New();
   thresh->SetInput(image);
   thresh->SetLower(lowerThreshold);
   thresh->SetUpper(upperThreshold);
   thresh->SetReplaceValue(insideValue);
 
-  for (int i = 0; i < seeds.size(); i++){
+  for (int i = 0; i < seeds.size(); i++) {
     auto v = seeds[i];
-    sv4guiImageProcessingUtils::itkImageType::IndexType index = {{v[0],v[1],v[2]}};
+    sv4guiImageProcessingUtils::itkImageType::IndexType index = {
+        {v[0], v[1], v[2]}};
     thresh->AddSeed(index);
   }
-
 
   thresh->Update();
   auto itkImage = thresh->GetOutput();
   return itkImage;
 }
 
-std::vector<int> sv4guiImageProcessingUtils::physicalPointToIndex(sv4guiImageProcessingUtils::itkImPoint image,
-  double x, double y, double z){
+std::vector<int> sv4guiImageProcessingUtils::physicalPointToIndex(
+    sv4guiImageProcessingUtils::itkImPoint image, double x, double y,
+    double z) {
 
   sv4guiImageProcessingUtils::itkImageType::PointType p;
   p[0] = x;
@@ -252,7 +276,7 @@ std::vector<int> sv4guiImageProcessingUtils::physicalPointToIndex(sv4guiImagePro
 
   sv4guiImageProcessingUtils::itkImageType::IndexType index;
 
-  image->TransformPhysicalPointToIndex(p,index);
+  image->TransformPhysicalPointToIndex(p, index);
 
   auto v = std::vector<int>();
   v.push_back(index[0]);
@@ -261,36 +285,39 @@ std::vector<int> sv4guiImageProcessingUtils::physicalPointToIndex(sv4guiImagePro
   return v;
 }
 
-sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::collidingFronts(sv4guiImageProcessingUtils::itkImPoint image,
-  int x1, int y1, int z1, int x2, int y2, int z2,
-    double lowerThreshold, double upperThreshold){
+sv4guiImageProcessingUtils::itkImPoint
+sv4guiImageProcessingUtils::collidingFronts(
+    sv4guiImageProcessingUtils::itkImPoint image, int x1, int y1, int z1,
+    int x2, int y2, int z2, double lowerThreshold, double upperThreshold) {
 
   typedef sv4guiImageProcessingUtils::itkImageType CFImageType;
 
   auto thresh = itk::ThresholdImageFilter<CFImageType>::New();
 
   thresh->SetInput(image);
-  thresh->ThresholdOutside(lowerThreshold,upperThreshold);
+  thresh->ThresholdOutside(lowerThreshold, upperThreshold);
   thresh->SetOutsideValue(0.0);
   thresh->Update();
 
-  //finally CF needs pixel values to be between 0 and 1, so we rescale the image
-  auto scaler = itk::RescaleIntensityImageFilter<CFImageType,CFImageType>::New();
+  // finally CF needs pixel values to be between 0 and 1, so we rescale the
+  // image
+  auto scaler =
+      itk::RescaleIntensityImageFilter<CFImageType, CFImageType>::New();
   scaler->SetInput(thresh->GetOutput());
   scaler->SetOutputMinimum(0.0);
   scaler->SetOutputMaximum(1.0);
   scaler->Update();
 
-  //now construct collidingfronts filter
-  typedef itk::CollidingFrontsImageFilter<CFImageType,CFImageType> CFType;
+  // now construct collidingfronts filter
+  typedef itk::CollidingFrontsImageFilter<CFImageType, CFImageType> CFType;
   auto CF = CFType::New();
 
-  //Colliding fronts expects seeds as level set nodes in a node container,
-  //so we convert the input seed vectors to this type
+  // Colliding fronts expects seeds as level set nodes in a node container,
+  // so we convert the input seed vectors to this type
   typedef CFType::NodeContainer NodeContainer;
   typedef CFType::NodeType NodeType;
 
-  //create node container for starting seed points
+  // create node container for starting seed points
   auto seedContainer1 = NodeContainer::New();
   seedContainer1->Initialize();
 
@@ -303,9 +330,9 @@ sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::collidingFron
   NodeType n;
   n.SetIndex(index);
   n.SetValue(0.0);
-  seedContainer1->InsertElement(0,n);
+  seedContainer1->InsertElement(0, n);
 
-  //create node container for end seed points
+  // create node container for end seed points
   auto seedContainer2 = NodeContainer::New();
   seedContainer2->Initialize();
 
@@ -318,9 +345,9 @@ sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::collidingFron
   NodeType n2;
   n2.SetIndex(index2);
   n2.SetValue(0.0);
-  seedContainer2->InsertElement(0,n2);
+  seedContainer2->InsertElement(0, n2);
 
-  //now set the inputs for the colliding fronts filter
+  // now set the inputs for the colliding fronts filter
   CF->SetInput(scaler->GetOutput());
   CF->SetSeedPoints1(seedContainer1);
   CF->SetSeedPoints2(seedContainer2);
@@ -337,19 +364,25 @@ sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::collidingFron
   return itkImage;
 }
 
-sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::openClose(sv4guiImageProcessingUtils::itkImPoint image,
-   int radius){
+sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::openClose(
+    sv4guiImageProcessingUtils::itkImPoint image, int radius) {
 
   sv4guiImageProcessingUtils::StructElType structuringElement;
   structuringElement.SetRadius(radius);
   structuringElement.CreateStructuringElement();
 
-  auto erode = itk::GrayscaleErodeImageFilter<sv4guiImageProcessingUtils::itkImageType, sv4guiImageProcessingUtils::itkImageType, sv4guiImageProcessingUtils::StructElType>::New();
+  auto erode = itk::GrayscaleErodeImageFilter<
+      sv4guiImageProcessingUtils::itkImageType,
+      sv4guiImageProcessingUtils::itkImageType,
+      sv4guiImageProcessingUtils::StructElType>::New();
   erode->SetInput(image);
   erode->SetKernel(structuringElement);
   erode->Update();
 
-  auto dilate = itk::GrayscaleDilateImageFilter<sv4guiImageProcessingUtils::itkImageType, sv4guiImageProcessingUtils::itkImageType, sv4guiImageProcessingUtils::StructElType>::New();
+  auto dilate = itk::GrayscaleDilateImageFilter<
+      sv4guiImageProcessingUtils::itkImageType,
+      sv4guiImageProcessingUtils::itkImageType,
+      sv4guiImageProcessingUtils::StructElType>::New();
   dilate->SetInput(erode->GetOutput());
   dilate->SetKernel(structuringElement);
   dilate->Update();
@@ -358,25 +391,27 @@ sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::openClose(sv4
   return itkImage;
 }
 
-sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::editImage(sv4guiImageProcessingUtils::itkImPoint image,
-  int ox, int oy, int oz, int l, int w, int h, double replaceValue){
+sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::editImage(
+    sv4guiImageProcessingUtils::itkImPoint image, int ox, int oy, int oz, int l,
+    int w, int h, double replaceValue) {
 
-  auto duplicator = itk::ImageDuplicator<sv4guiImageProcessingUtils::itkImageType>::New();
+  auto duplicator =
+      itk::ImageDuplicator<sv4guiImageProcessingUtils::itkImageType>::New();
   duplicator->SetInputImage(image);
   duplicator->Update();
   auto clonedImage = duplicator->GetOutput();
 
-  int x1 = ox - l/2;
-  int y1 = oy - w/2;
-  int z1 = oz - h/2;
+  int x1 = ox - l / 2;
+  int y1 = oy - w / 2;
+  int z1 = oz - h / 2;
 
-  int x2 = ox + l/2;
-  int y2 = oy + w/2;
-  int z2 = oz + h/2;
+  int x2 = ox + l / 2;
+  int y2 = oy + w / 2;
+  int z2 = oz + h / 2;
 
-  for (int i = x1; i < x2; i++){
-    for (int j = y1; j < y2; j++){
-      for (int k = z1; k < z2; k++){
+  for (int i = x1; i < x2; i++) {
+    for (int j = y1; j < y2; j++) {
+      for (int k = z1; k < z2; k++) {
         sv4guiImageProcessingUtils::itkImageType::IndexType Index;
         Index[0] = i;
         Index[1] = j;
@@ -390,14 +425,17 @@ sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::editImage(sv4
   return clonedImage;
 }
 
-sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::cropImage(sv4guiImageProcessingUtils::itkImPoint image,
-  int ox, int oy, int oz, int l, int w, int h){
+sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::cropImage(
+    sv4guiImageProcessingUtils::itkImPoint image, int ox, int oy, int oz, int l,
+    int w, int h) {
 
-  auto crop = itk::RegionOfInterestImageFilter<sv4guiImageProcessingUtils::itkImageType, itkImageType>::New();
+  auto crop =
+      itk::RegionOfInterestImageFilter<sv4guiImageProcessingUtils::itkImageType,
+                                       itkImageType>::New();
 
-  int x1 = ox - l/2;
-  int y1 = oy - w/2;
-  int z1 = oz - h/2;
+  int x1 = ox - l / 2;
+  int y1 = oy - w / 2;
+  int z1 = oz - h / 2;
 
   sv4guiImageProcessingUtils::itkImageType::IndexType start;
   start[0] = x1;
@@ -419,18 +457,22 @@ sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::cropImage(sv4
   return crop->GetOutput();
 }
 
-sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::resampleImage(sv4guiImageProcessingUtils::itkImPoint
-  image, double space_x, double space_y, double space_z){
+sv4guiImageProcessingUtils::itkImPoint
+sv4guiImageProcessingUtils::resampleImage(
+    sv4guiImageProcessingUtils::itkImPoint image, double space_x,
+    double space_y, double space_z) {
 
-  auto resample = itk::ResampleImageFilter<sv4guiImageProcessingUtils::itkImageType, sv4guiImageProcessingUtils::itkImageType>::New();
+  auto resample =
+      itk::ResampleImageFilter<sv4guiImageProcessingUtils::itkImageType,
+                               sv4guiImageProcessingUtils::itkImageType>::New();
 
-  auto interpolator = itk::BSplineInterpolateImageFunction<sv4guiImageProcessingUtils::itkImageType, double, double>::New();
+  auto interpolator = itk::BSplineInterpolateImageFunction<
+      sv4guiImageProcessingUtils::itkImageType, double, double>::New();
 
   auto identity = itk::IdentityTransform<double, 3>::New();
   identity->SetIdentity();
 
-
-  //get required image information for resample
+  // get required image information for resample
   auto origin = image->GetOrigin();
 
   double outputSpacing[3] = {space_x, space_y, space_z};
@@ -441,11 +483,11 @@ sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::resampleImage
   auto inputSize = inputRegion.GetSize();
 
   itk::Size<3> outputSize;
-  outputSize[0] = (int)(inputSize[0]*inputSpacing[0]/outputSpacing[0]);
-  outputSize[1] = (int)(inputSize[1]*inputSpacing[1]/outputSpacing[1]);
-  outputSize[2] = (int)(inputSize[2]*inputSpacing[2]/outputSpacing[2]);
+  outputSize[0] = (int)(inputSize[0] * inputSpacing[0] / outputSpacing[0]);
+  outputSize[1] = (int)(inputSize[1] * inputSpacing[1] / outputSpacing[1]);
+  outputSize[2] = (int)(inputSize[2] * inputSpacing[2] / outputSpacing[2]);
 
-  //set resample stuff
+  // set resample stuff
   resample->SetTransform(identity);
   resample->SetInterpolator(interpolator);
   resample->SetOutputOrigin(origin);
@@ -457,10 +499,11 @@ sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::resampleImage
   return resample->GetOutput();
 }
 
-sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::fillHoles(sv4guiImageProcessingUtils::itkImPoint image,
-  double foregroundValue){
+sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::fillHoles(
+    sv4guiImageProcessingUtils::itkImPoint image, double foregroundValue) {
 
-  auto fill = itk::BinaryFillholeImageFilter<sv4guiImageProcessingUtils::itkImageType>::New();
+  auto fill = itk::BinaryFillholeImageFilter<
+      sv4guiImageProcessingUtils::itkImageType>::New();
   fill->SetInput(image);
   fill->SetForegroundValue(foregroundValue);
   fill->Update();
@@ -473,22 +516,28 @@ sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::fillHoles(sv4
 //-------------------
 // Computes the magnitude of the image gradient.
 //
-// The computational process is equivalent to first smoothing the image by convolving 
-// it with a Gaussian kernel for the given 'sigma' and then applying a differential operator.
+// The computational process is equivalent to first smoothing the image by
+// convolving it with a Gaussian kernel for the given 'sigma' and then applying
+// a differential operator.
 //
-// After the gradient is computed the image intensities are transformed to be between 0.0 and 1.0. 
+// After the gradient is computed the image intensities are transformed to be
+// between 0.0 and 1.0.
 //
-sv4guiImageProcessingUtils::itkImPoint 
-sv4guiImageProcessingUtils::gradientMagnitude(sv4guiImageProcessingUtils::itkImPoint image, double sigma)
-{
+sv4guiImageProcessingUtils::itkImPoint
+sv4guiImageProcessingUtils::gradientMagnitude(
+    sv4guiImageProcessingUtils::itkImPoint image, double sigma) {
   // Compute the magnitude of the image gradient.
-  auto gradientFilter = itk::GradientMagnitudeRecursiveGaussianImageFilter<sv4guiImageProcessingUtils::itkImageType, sv4guiImageProcessingUtils::itkImageType>::New();
+  auto gradientFilter = itk::GradientMagnitudeRecursiveGaussianImageFilter<
+      sv4guiImageProcessingUtils::itkImageType,
+      sv4guiImageProcessingUtils::itkImageType>::New();
   gradientFilter->SetSigma(sigma);
   gradientFilter->SetInput(image);
   gradientFilter->Update();
 
-  // Transformation image intensities to be between 0.0 and 1.0 
-  auto rescaleFilter = itk::RescaleIntensityImageFilter<sv4guiImageProcessingUtils::itkImageType,sv4guiImageProcessingUtils::itkImageType>::New();
+  // Transformation image intensities to be between 0.0 and 1.0
+  auto rescaleFilter = itk::RescaleIntensityImageFilter<
+      sv4guiImageProcessingUtils::itkImageType,
+      sv4guiImageProcessingUtils::itkImageType>::New();
   rescaleFilter->SetInput(gradientFilter->GetOutput());
   rescaleFilter->SetOutputMinimum(0.0);
   rescaleFilter->SetOutputMaximum(1.0);
@@ -497,8 +546,12 @@ sv4guiImageProcessingUtils::gradientMagnitude(sv4guiImageProcessingUtils::itkImP
   return itkImage;
 }
 
-sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::smooth(sv4guiImageProcessingUtils::itkImPoint image, double sigma){
-  auto smooth = itk::RecursiveGaussianImageFilter<sv4guiImageProcessingUtils::itkImageType, sv4guiImageProcessingUtils::itkImageType>::New();
+sv4guiImageProcessingUtils::itkImPoint
+sv4guiImageProcessingUtils::smooth(sv4guiImageProcessingUtils::itkImPoint image,
+                                   double sigma) {
+  auto smooth = itk::RecursiveGaussianImageFilter<
+      sv4guiImageProcessingUtils::itkImageType,
+      sv4guiImageProcessingUtils::itkImageType>::New();
 
   smooth->SetSigma(sigma);
   smooth->SetInput(image);
@@ -508,10 +561,13 @@ sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::smooth(sv4gui
   return itkImage;
 }
 
-sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::anisotropicSmooth(sv4guiImageProcessingUtils::itkImPoint image,
-  int iterations, double timeStep, double conductance){
-  auto smooth = itk::GradientAnisotropicDiffusionImageFilter<sv4guiImageProcessingUtils::itkImageType,
-    sv4guiImageProcessingUtils::itkImageType>::New();
+sv4guiImageProcessingUtils::itkImPoint
+sv4guiImageProcessingUtils::anisotropicSmooth(
+    sv4guiImageProcessingUtils::itkImPoint image, int iterations,
+    double timeStep, double conductance) {
+  auto smooth = itk::GradientAnisotropicDiffusionImageFilter<
+      sv4guiImageProcessingUtils::itkImageType,
+      sv4guiImageProcessingUtils::itkImageType>::New();
 
   smooth->SetNumberOfIterations(iterations);
   smooth->SetTimeStep(timeStep);
@@ -527,12 +583,14 @@ sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::anisotropicSm
 // geodesicLevelSet
 //------------------
 //
-sv4guiImageProcessingUtils::itkImPoint 
-sv4guiImageProcessingUtils::geodesicLevelSet(sv4guiImageProcessingUtils::itkImPoint initialization, 
-    sv4guiImageProcessingUtils::itkImPoint edgeImage, double propagation, double advection, double curvature, 
-    int numIterations)
-{
-  auto levelSetFilter = itk::GeodesicActiveContourLevelSetImageFilter<sv4guiImageProcessingUtils::itkImageType, sv4guiImageProcessingUtils::itkImageType>::New();
+sv4guiImageProcessingUtils::itkImPoint
+sv4guiImageProcessingUtils::geodesicLevelSet(
+    sv4guiImageProcessingUtils::itkImPoint initialization,
+    sv4guiImageProcessingUtils::itkImPoint edgeImage, double propagation,
+    double advection, double curvature, int numIterations) {
+  auto levelSetFilter = itk::GeodesicActiveContourLevelSetImageFilter<
+      sv4guiImageProcessingUtils::itkImageType,
+      sv4guiImageProcessingUtils::itkImageType>::New();
   levelSetFilter->SetPropagationScaling(propagation);
   levelSetFilter->SetAdvectionScaling(advection);
   levelSetFilter->SetCurvatureScaling(curvature);
@@ -546,19 +604,22 @@ sv4guiImageProcessingUtils::geodesicLevelSet(sv4guiImageProcessingUtils::itkImPo
   return itkImage;
 }
 
-void sv4guiImageProcessingUtils::writeMHA(sv4guiImageProcessingUtils::itkImPoint image, std::string filename){
-  auto writer = itk::ImageFileWriter<sv4guiImageProcessingUtils::itkImageType>::New();
+void sv4guiImageProcessingUtils::writeMHA(
+    sv4guiImageProcessingUtils::itkImPoint image, std::string filename) {
+  auto writer =
+      itk::ImageFileWriter<sv4guiImageProcessingUtils::itkImageType>::New();
   itk::MetaImageIO::Pointer metaWriter = itk::MetaImageIO::New();
-  writer->SetImageIO( metaWriter );
+  writer->SetImageIO(metaWriter);
 
-  metaWriter->SetDataFileName( "LOCAL" );
-  writer->SetFileName( filename );
-  writer->SetInput( image );
+  metaWriter->SetDataFileName("LOCAL");
+  writer->SetFileName(filename);
+  writer->SetInput(image);
 
   writer->Write();
 }
 
-void sv4guiImageProcessingUtils::writeVtkMHA(vtkImageData* vtkImage, std::string filename){
+void sv4guiImageProcessingUtils::writeVtkMHA(vtkImageData *vtkImage,
+                                             std::string filename) {
   auto writer = vtkMetaImageWriter::New();
   writer->SetInputData(vtkImage);
   writer->SetFileName(filename.c_str());

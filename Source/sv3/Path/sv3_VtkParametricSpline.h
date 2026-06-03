@@ -39,19 +39,15 @@
 #include "vtkParametricSpline.h"
 namespace sv3 {
 
-class SV_EXPORT_PATH VtkParametricSpline : public vtkParametricSpline
-{
+class SV_EXPORT_PATH VtkParametricSpline : public vtkParametricSpline {
 public:
+  VtkParametricSpline();
 
-    VtkParametricSpline();
+  ~VtkParametricSpline();
 
-    ~VtkParametricSpline();
+  void Evaluate(double t, double Pt[3]);
 
-    void Evaluate(double t, double Pt[3]);
-
-    void EvaluateByLengthFactor(double t, double Pt[3]);
-
-
+  void EvaluateByLengthFactor(double t, double Pt[3]);
 };
-}
+} // namespace sv3
 #endif // SV3_VTKPARAMETRICSPLINE_H

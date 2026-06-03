@@ -49,16 +49,15 @@
 
 #include "vtkSVNURBSModule.h"
 
-class VTKSVNURBS_EXPORT vtkSVControlGrid : public vtkStructuredGrid
-{
+class VTKSVNURBS_EXPORT vtkSVControlGrid : public vtkStructuredGrid {
 public:
   static vtkSVControlGrid *New();
 
-  vtkTypeMacro(vtkSVControlGrid,vtkStructuredGrid);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  vtkTypeMacro(vtkSVControlGrid, vtkStructuredGrid);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
-
-  /// \brief Copy the geometric and topological structure of an input poly data object.
+  /// \brief Copy the geometric and topological structure of an input poly data
+  /// object.
   void CopyStructure(vtkDataSet *ds) override;
 
   /// \brief Initialize to empty structured grid
@@ -68,7 +67,8 @@ public:
    *  and SetControlPoint(. */
   int SetNumberOfControlPoints(const int numPoints);
 
-  /** \brief Set a control point using i, j, k location. Space must be pre-allocated with Allocate.
+  /** \brief Set a control point using i, j, k location. Space must be
+   * pre-allocated with Allocate.
    *  \param i location in first axis of structured grid.
    *  \param j location in second axis of structured grid.
    *  \param k location in third axis of structured grid.
@@ -76,22 +76,28 @@ public:
    *  \param p1 y 3d location to set control point to.
    *  \param p2 z 3d location to set control point to.
    *  \param w weight to associate with control point. */
-  int SetControlPoint(const int i, const int j, const int k, const double p0, const double p1, const double p2, const double w);
+  int SetControlPoint(const int i, const int j, const int k, const double p0,
+                      const double p1, const double p2, const double w);
 
-  /** \brief Set a control point using i, j, k location. Space must be pre-allocated with Allocate.
+  /** \brief Set a control point using i, j, k location. Space must be
+   * pre-allocated with Allocate.
    *  \param i location in first axis of structured grid.
    *  \param j location in second axis of structured grid.
    *  \param k location in third axis of structured grid.
    *  \param p 3d location to set control point to.
    *  \param w weight to associate with control point. */
-  int SetControlPoint(const int i, const int j, const int k, const double p[3], const double w);
+  int SetControlPoint(const int i, const int j, const int k, const double p[3],
+                      const double w);
 
-  /** \brief Set a control point using i, j, k location. Space must be pre-allocated with Allocate.
+  /** \brief Set a control point using i, j, k location. Space must be
+   * pre-allocated with Allocate.
    *  \param i location in first axis of structured grid.
    *  \param j location in second axis of structured grid.
    *  \param k location in third axis of structured grid.
-   *  \param pw 3d location to set control point to, fourth index in double is weight. */
-  int SetControlPoint(const int i, const int j, const int k, const double pw[4]);
+   *  \param pw 3d location to set control point to, fourth index in double is
+   * weight. */
+  int SetControlPoint(const int i, const int j, const int k,
+                      const double pw[4]);
 
   /** \brief Insert a control point using i, j, k location.
    *  \param i location in first axis of structured grid.
@@ -99,14 +105,17 @@ public:
    *  \param k location in third axis of structured grid.
    *  \param p 3d location to set control point to.
    *  \param w weight to associate with control point. */
-  int InsertControlPoint(const int i, const int j, const int k, const double p[3], const double w);
+  int InsertControlPoint(const int i, const int j, const int k,
+                         const double p[3], const double w);
 
   /** \brief Insert a control point using i, j, k location.
    *  \param i location in first axis of structured grid.
    *  \param j location in second axis of structured grid.
    *  \param k location in third axis of structured grid.
-   *  \param pw 3d location to set control point to, fourth index in double is weight. */
-  int InsertControlPoint(const int i, const int j, const int k, const double pw[4]);
+   *  \param pw 3d location to set control point to, fourth index in double is
+   * weight. */
+  int InsertControlPoint(const int i, const int j, const int k,
+                         const double pw[4]);
 
   /** \brief Get a control point at given location
    *  \param i location in first axis of structured grid.
@@ -114,7 +123,8 @@ public:
    *  \param k location in third axis of structured grid.
    *  \param p 3d location of control point.
    *  \param w weight associated with control point. */
-  int GetControlPoint(const int i, const int j, const int k, double p[3], double &weight);
+  int GetControlPoint(const int i, const int j, const int k, double p[3],
+                      double &weight);
 
   /** \brief Get a control point at given location
    *  \param i location in first axis of structured grid.
@@ -143,25 +153,31 @@ public:
 
   //@{
   /// \brief Get dimensions of this structured points dataset.
-  virtual int *GetDimensions () override {return vtkStructuredGrid::GetDimensions();}
-  virtual void GetDimensions (int dim[3]) override {vtkStructuredGrid::GetDimensions(dim);}
+  virtual int *GetDimensions() override {
+    return vtkStructuredGrid::GetDimensions();
+  }
+  virtual void GetDimensions(int dim[3]) override {
+    vtkStructuredGrid::GetDimensions(dim);
+  }
   //@}
 
   //@{
   /// \brief Retrieve an instance of this class from an information object.
-  static vtkSVControlGrid* GetData(vtkInformation* info);
-  static vtkSVControlGrid* GetData(vtkInformationVector* v, int i=0);
+  static vtkSVControlGrid *GetData(vtkInformation *info);
+  static vtkSVControlGrid *GetData(vtkInformationVector *v, int i = 0);
   //@}
 
 protected:
   vtkSVControlGrid();
   virtual ~vtkSVControlGrid();
 
-  virtual void ComputeScalarRange() override {vtkStructuredGrid::GetScalarRange();}
+  virtual void ComputeScalarRange() override {
+    vtkStructuredGrid::GetScalarRange();
+  }
 
 private:
-  vtkSVControlGrid(const vtkSVControlGrid&);  // Not implemented.
-  void operator=(const vtkSVControlGrid&);  // Not implemented.
+  vtkSVControlGrid(const vtkSVControlGrid &); // Not implemented.
+  void operator=(const vtkSVControlGrid &);   // Not implemented.
 };
 
 #endif

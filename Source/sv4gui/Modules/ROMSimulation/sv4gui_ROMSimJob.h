@@ -34,96 +34,95 @@
 
 #include <sv4guiModuleROMSimulationExports.h>
 
+#include <iostream>
 #include <map>
 #include <sstream>
-#include <iostream>
 #include <string>
 
-class SV4GUIMODULEROMSIMULATION_EXPORT sv4guiROMSimJob
-{
+class SV4GUIMODULEROMSIMULATION_EXPORT sv4guiROMSimJob {
 
 public:
+  sv4guiROMSimJob();
 
-    sv4guiROMSimJob();
+  sv4guiROMSimJob(const sv4guiROMSimJob &other);
 
-    sv4guiROMSimJob(const sv4guiROMSimJob &other);
+  virtual ~sv4guiROMSimJob();
 
-    virtual ~sv4guiROMSimJob();
+  virtual sv4guiROMSimJob *Clone();
 
-    virtual sv4guiROMSimJob* Clone();
+  void SetModelProps(std::map<std::string, std::string> modelProps);
+  std::map<std::string, std::string> GetModelProps();
+  void SetModelProp(const std::string &key, std::string value);
+  std::string GetModelProp(const std::string &key);
 
-    void SetModelProps(std::map<std::string,std::string> modelProps);
-    std::map<std::string,std::string> GetModelProps();
-    void SetModelProp(const std::string& key, std::string value);
-    std::string GetModelProp(const std::string& key);
+  void SetBasicProps(std::map<std::string, std::string> basicProps);
+  std::map<std::string, std::string> GetBasicProps();
+  void SetBasicProp(const std::string &key, std::string value);
+  std::string GetBasicProp(const std::string &key);
 
-    void SetBasicProps(std::map<std::string,std::string> basicProps);
-    std::map<std::string,std::string> GetBasicProps();
-    void SetBasicProp(const std::string& key, std::string value);
-    std::string GetBasicProp(const std::string& key);
+  void SetConvertResultsProps(std::map<std::string, std::string> basicProps);
+  std::map<std::string, std::string> GetConvertResultsProps();
+  void SetConvertResultsProp(const std::string &key, std::string value);
+  std::string GetConvertResultsProp(const std::string &key);
 
-    void SetConvertResultsProps(std::map<std::string,std::string> basicProps);
-    std::map<std::string,std::string> GetConvertResultsProps();
-    void SetConvertResultsProp(const std::string& key, std::string value);
-    std::string GetConvertResultsProp(const std::string& key);
+  void SetCapProps(
+      std::map<std::string, std::map<std::string, std::string>> capProps);
+  std::map<std::string, std::map<std::string, std::string>> GetCapProps() const;
+  void SetCapProp(const std::string &capName, const std::string &key,
+                  std::string value);
+  std::string GetCapProp(const std::string &capName, const std::string &key);
 
-    void SetCapProps(std::map<std::string,std::map<std::string,std::string> > capProps);
-    std::map<std::string,std::map<std::string,std::string> > GetCapProps() const;
-    void SetCapProp(const std::string& capName, const std::string& key, std::string value);
-    std::string GetCapProp(const std::string& capName, const std::string& key);
+  void SetMeshProps(std::map<std::string, std::string> meshProps);
+  std::map<std::string, std::string> GetMeshProps();
+  void SetMeshProp(const std::string &key, std::string value);
+  std::string GetMeshProp(const std::string &key);
 
-    void SetMeshProps(std::map<std::string,std::string> meshProps);
-    std::map<std::string,std::string> GetMeshProps();
-    void SetMeshProp(const std::string& key, std::string value);
-    std::string GetMeshProp(const std::string& key);
+  void SetWallProps(std::map<std::string, std::string> wallProps);
+  std::map<std::string, std::string> GetWallProps();
+  void SetWallProp(const std::string &key, std::string value);
+  std::string GetWallProp(const std::string &key);
 
-    void SetWallProps(std::map<std::string,std::string> wallProps);
-    std::map<std::string,std::string> GetWallProps();
-    void SetWallProp(const std::string& key, std::string value);
-    std::string GetWallProp(const std::string& key);
+  void SetVarProps(
+      std::map<std::string, std::map<std::string, std::string>> varProps);
+  std::map<std::string, std::map<std::string, std::string>> GetVarProps();
+  void SetVarProp(const std::string &faceName, const std::string &key,
+                  std::string value);
+  std::string GetVarProp(const std::string &faceName, const std::string &key);
 
-    void SetVarProps(std::map<std::string,std::map<std::string,std::string> > varProps);
-    std::map<std::string,std::map<std::string,std::string> > GetVarProps();
-    void SetVarProp(const std::string& faceName, const std::string& key, std::string value);
-    std::string GetVarProp(const std::string& faceName, const std::string& key);
+  void SetSolverProps(std::map<std::string, std::string> solverProps);
+  std::map<std::string, std::string> GetSolverProps();
+  void SetSolverProp(const std::string &key, std::string value);
+  std::string GetSolverProp(const std::string &key);
 
-    void SetSolverProps(std::map<std::string,std::string> solverProps);
-    std::map<std::string,std::string> GetSolverProps();
-    void SetSolverProp(const std::string& key, std::string value);
-    std::string GetSolverProp(const std::string& key);
+  void SetRunProps(std::map<std::string, std::string> runProps);
+  std::map<std::string, std::string> GetRunProps();
+  void SetRunProp(const std::string &key, std::string value);
+  std::string GetRunProp(const std::string &key);
 
-    void SetRunProps(std::map<std::string,std::string> runProps);
-    std::map<std::string,std::string> GetRunProps();
-    void SetRunProp(const std::string& key, std::string value);
-    std::string GetRunProp(const std::string& key);
+  void SetIDs(std::map<std::string, int> IDs);
+  std::map<std::string, int> GetIDs();
 
-    void SetIDs(std::map<std::string,int> IDs);
-    std::map<std::string,int> GetIDs();
+  void SetVelocityCapNumber(int number);
+  int GetVelocityCapNumber();
 
-    void SetVelocityCapNumber(int number);
-    int GetVelocityCapNumber();
+  void SetPressureCapNumber(int number);
+  int GetPressureCapNumber();
 
-    void SetPressureCapNumber(int number);
-    int GetPressureCapNumber();
+protected:
+  std::map<std::string, std::string> m_ModelProps;
+  std::map<std::string, std::string> m_BasicProps;
+  std::map<std::string, std::string> m_ConvertResultsProps;
+  std::map<std::string, std::map<std::string, std::string>> m_CapProps;
+  std::map<std::string, std::string> m_MeshProps;
+  std::map<std::string, std::string> m_WallProps;
+  std::map<std::string, std::map<std::string, std::string>> m_VarProps;
+  std::map<std::string, std::string> m_SolverProps;
+  std::map<std::string, std::string> m_RunProps;
 
-  protected:
+  std::map<std::string, int> m_IDs;
 
-    std::map<std::string,std::string> m_ModelProps;
-    std::map<std::string,std::string> m_BasicProps;
-    std::map<std::string,std::string> m_ConvertResultsProps;
-    std::map<std::string,std::map<std::string,std::string> > m_CapProps;
-    std::map<std::string,std::string> m_MeshProps;
-    std::map<std::string,std::string> m_WallProps;
-    std::map<std::string,std::map<std::string,std::string> > m_VarProps;
-    std::map<std::string,std::string> m_SolverProps;
-    std::map<std::string,std::string> m_RunProps;
-
-    std::map<std::string,int> m_IDs;
-
-    int m_VelocityCapNumber; //for caps with prescribed velosities
-    int m_PressureCapNumber; //for caps with prescribed velosities
-
-  };
-
+  int m_VelocityCapNumber; // for caps with prescribed velosities
+  int m_PressureCapNumber; // for caps with prescribed velosities
+};
 
 #endif // SV4GUI_ROMSIMJOB_H

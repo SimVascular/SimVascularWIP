@@ -30,15 +30,15 @@
  */
 
 #include "SimVascular.h"
-#include "sv_misc_utils.h"
-#include <stdio.h>
-#include <math.h>
 #include "sv_VTK.h"
-#include "sv_spline.h"
 
-int sys_geom_splinePtsToPathPlan (vtkPolyData *pd,int numOutputPts,
-                                  char *filename, int flag)
-{
+#include "sv_spline.h"
+#include "sv_misc_utils.h"
+#include <math.h>
+#include <stdio.h>
+
+int sys_geom_splinePtsToPathPlan(vtkPolyData *pd, int numOutputPts,
+                                 char *filename, int flag) {
   SplinePoints *x;
   SplinePoints *y;
   int i, j;
@@ -49,53 +49,59 @@ int sys_geom_splinePtsToPathPlan (vtkPolyData *pd,int numOutputPts,
   FILE *outfile;
 
   // Get points for each path
-  for (j = 0; j < numPaths; j++)
-    {
-      // get number of points from vtkPolyData file
-      numInputPts = pd->GetNumberOfPoints();
+  for (j = 0; j < numPaths; j++) {
+    // get number of points from vtkPolyData file
+    numInputPts = pd->GetNumberOfPoints();
 
-      x = sys_geom_SplinePointsInit(numInputPts, 3);
-      y = sys_geom_SplinePointsInit(numOutputPts, 3);
+    x = sys_geom_SplinePointsInit(numInputPts, 3);
+    y = sys_geom_SplinePointsInit(numOutputPts, 3);
 
-      // Remaining lines are coordinates of points
-      for (i = 0; i < numInputPts; i++) {
-         pt = pd->GetPoint(i);
-         x->pts[i * 3] = pt[0];
-         x->pts[i * 3 + 1] = pt[1];
-         x->pts[i * 3 + 2] = pt[2];
-      }
+    // Remaining lines are coordinates of points
+    for (i = 0; i < numInputPts; i++) {
+      pt = pd->GetPoint(i);
+      x->pts[i * 3] = pt[0];
+      x->pts[i * 3 + 1] = pt[1];
+      x->pts[i * 3 + 2] = pt[2];
+    }
 
-      if (sys_geom_SplinePath(x, 1, numOutputPts, flag, y) == SV_ERROR) {
-        sys_geom_SplinePointsDelete(x);
-        sys_geom_SplinePointsDelete(y);
-        return SV_ERROR;
-      }
-
-      num = y->numPts;
-      dimensions = y->dim;
-
-      // if filename is nullptr, then do not generate an output file
-      if (filename != nullptr) {
-        outfile = fopen(filename, "w");
-        fprintf(outfile, "pointcount=%d\nviewinterval=1.00000\nviewwindow=25.00000\nviewcount=%d\n", numOutputPts, numOutputPts);
-
-
-        for (i = 0; i < num; i++) {
-	  fprintf(outfile, "p=(%f,%f,%f) t=(%f,%f,%f) tx=(%f,%f,%f)\n", y->pts[dimensions * i], y->pts[dimensions * i + 1], y->pts[dimensions * i + 2], y->tangents[dimensions * i], y->tangents[dimensions * i + 1], y->tangents[dimensions * i + 2], y->rotVectors[dimensions * i], y->rotVectors[dimensions * i + 1], y->rotVectors[dimensions * i  + 2]);
-        }
-        fclose(outfile);
-      }
-
+    if (sys_geom_SplinePath(x, 1, numOutputPts, flag, y) == SV_ERROR) {
       sys_geom_SplinePointsDelete(x);
       sys_geom_SplinePointsDelete(y);
+      return SV_ERROR;
     }
+
+    num = y->numPts;
+    dimensions = y->dim;
+
+    // if filename is nullptr, then do not generate an output file
+    if (filename != nullptr) {
+      outfile = fopen(filename, "w");
+      fprintf(outfile,
+              "pointcount=%d\nviewinterval=1.00000\nviewwindow=25."
+              "00000\nviewcount=%d\n",
+              numOutputPts, numOutputPts);
+
+      for (i = 0; i < num; i++) {
+        fprintf(outfile, "p=(%f,%f,%f) t=(%f,%f,%f) tx=(%f,%f,%f)\n",
+                y->pts[dimensions * i], y->pts[dimensions * i + 1],
+                y->pts[dimensions * i + 2], y->tangents[dimensions * i],
+                y->tangents[dimensions * i + 1],
+                y->tangents[dimensions * i + 2], y->rotVectors[dimensions * i],
+                y->rotVectors[dimensions * i + 1],
+                y->rotVectors[dimensions * i + 2]);
+      }
+      fclose(outfile);
+    }
+
+    sys_geom_SplinePointsDelete(x);
+    sys_geom_SplinePointsDelete(y);
+  }
 
   return SV_OK;
 }
 #ifdef SV_USE_PYTHON
-int pysys_geom_splinePtsToPathPlan (vtkPolyData *pd,int numOutputPts,
-                                  char *filename, int flag, char** output)
-{
+int pysys_geom_splinePtsToPathPlan(vtkPolyData *pd, int numOutputPts,
+                                   char *filename, int flag, char **output) {
   SplinePoints *x;
   SplinePoints *y;
   int i, j;
@@ -106,46 +112,53 @@ int pysys_geom_splinePtsToPathPlan (vtkPolyData *pd,int numOutputPts,
   FILE *outfile;
 
   // Get points for each path
-  for (j = 0; j < numPaths; j++)
-    {
-      // get number of points from vtkPolyData file
-      numInputPts = pd->GetNumberOfPoints();
+  for (j = 0; j < numPaths; j++) {
+    // get number of points from vtkPolyData file
+    numInputPts = pd->GetNumberOfPoints();
 
-      x = sys_geom_SplinePointsInit(numInputPts, 3);
-      y = sys_geom_SplinePointsInit(numOutputPts, 3);
+    x = sys_geom_SplinePointsInit(numInputPts, 3);
+    y = sys_geom_SplinePointsInit(numOutputPts, 3);
 
-      // Remaining lines are coordinates of points
-      for (i = 0; i < numInputPts; i++) {
-         pt = pd->GetPoint(i);
-         x->pts[i * 3] = pt[0];
-         x->pts[i * 3 + 1] = pt[1];
-         x->pts[i * 3 + 2] = pt[2];
-      }
+    // Remaining lines are coordinates of points
+    for (i = 0; i < numInputPts; i++) {
+      pt = pd->GetPoint(i);
+      x->pts[i * 3] = pt[0];
+      x->pts[i * 3 + 1] = pt[1];
+      x->pts[i * 3 + 2] = pt[2];
+    }
 
-      if (sys_geom_SplinePath(x, 1, numOutputPts, flag, y) == SV_ERROR) {
-        sys_geom_SplinePointsDelete(x);
-        sys_geom_SplinePointsDelete(y);
-        return SV_ERROR;
-      }
-
-      num = y->numPts;
-      dimensions = y->dim;
-
-      // if filename is nullptr, then do not generate an output file
-      if (filename != nullptr) {
-        outfile = fopen(filename, "w");
-        fprintf(outfile, "pointcount=%d\nviewinterval=1.00000\nviewwindow=25.00000\nviewcount=%d\n", numOutputPts, numOutputPts);
-
-
-        for (i = 0; i < num; i++) {
-	  fprintf(outfile, "p=(%f,%f,%f) t=(%f,%f,%f) tx=(%f,%f,%f)\n", y->pts[dimensions * i], y->pts[dimensions * i + 1], y->pts[dimensions * i + 2], y->tangents[dimensions * i], y->tangents[dimensions * i + 1], y->tangents[dimensions * i + 2], y->rotVectors[dimensions * i], y->rotVectors[dimensions * i + 1], y->rotVectors[dimensions * i  + 2]);
-        }
-        fclose(outfile);
-      }
-
+    if (sys_geom_SplinePath(x, 1, numOutputPts, flag, y) == SV_ERROR) {
       sys_geom_SplinePointsDelete(x);
       sys_geom_SplinePointsDelete(y);
+      return SV_ERROR;
     }
+
+    num = y->numPts;
+    dimensions = y->dim;
+
+    // if filename is nullptr, then do not generate an output file
+    if (filename != nullptr) {
+      outfile = fopen(filename, "w");
+      fprintf(outfile,
+              "pointcount=%d\nviewinterval=1.00000\nviewwindow=25."
+              "00000\nviewcount=%d\n",
+              numOutputPts, numOutputPts);
+
+      for (i = 0; i < num; i++) {
+        fprintf(outfile, "p=(%f,%f,%f) t=(%f,%f,%f) tx=(%f,%f,%f)\n",
+                y->pts[dimensions * i], y->pts[dimensions * i + 1],
+                y->pts[dimensions * i + 2], y->tangents[dimensions * i],
+                y->tangents[dimensions * i + 1],
+                y->tangents[dimensions * i + 2], y->rotVectors[dimensions * i],
+                y->rotVectors[dimensions * i + 1],
+                y->rotVectors[dimensions * i + 2]);
+      }
+      fclose(outfile);
+    }
+
+    sys_geom_SplinePointsDelete(x);
+    sys_geom_SplinePointsDelete(y);
+  }
 
   return SV_OK;
 }
@@ -159,11 +172,9 @@ int pysys_geom_splinePtsToPathPlan (vtkPolyData *pd,int numOutputPts,
  *                                                                     *
  ***********************************************************************/
 
-SplinePoints *sys_geom_SplinePointsInit(int numPts, int dimensions)
-{
+SplinePoints *sys_geom_SplinePointsInit(int numPts, int dimensions) {
   SplinePoints *sp;
   int i;
-
 
   sp = new SplinePoints;
   sp->pts = new vtkFloatingPointType[numPts * dimensions];
@@ -172,16 +183,14 @@ SplinePoints *sys_geom_SplinePointsInit(int numPts, int dimensions)
   sp->numPts = numPts;
   sp->dim = dimensions;
 
-  for (i = 0; i < (numPts * dimensions); i++)
-    {
-      sp->pts[i] = 0;
-      sp->tangents[i] = 0;
-      sp->rotVectors[i] = 0;
-    }
+  for (i = 0; i < (numPts * dimensions); i++) {
+    sp->pts[i] = 0;
+    sp->tangents[i] = 0;
+    sp->rotVectors[i] = 0;
+  }
 
-  return(sp);
+  return (sp);
 }
-
 
 /***********************************************************************
  *                                                                     *
@@ -191,8 +200,7 @@ SplinePoints *sys_geom_SplinePointsInit(int numPts, int dimensions)
  *                                                                     *
  ***********************************************************************/
 
-void sys_geom_SplinePointsDelete(SplinePoints *sp)
-{
+void sys_geom_SplinePointsDelete(SplinePoints *sp) {
   delete[] sp->pts;
   delete[] sp->tangents;
   delete[] sp->rotVectors;
@@ -209,8 +217,9 @@ void sys_geom_SplinePointsDelete(SplinePoints *sp)
  *               to input data.                                        *
  ***********************************************************************/
 
-void sys_geom_SplineInterpolate(SplinePoints *input, int type, int numberOfOutputPoints, SplinePoints *output)
-{
+void sys_geom_SplineInterpolate(SplinePoints *input, int type,
+                                int numberOfOutputPoints,
+                                SplinePoints *output) {
 
   vtkSpline *spline;
   int i, j, k;
@@ -221,63 +230,58 @@ void sys_geom_SplineInterpolate(SplinePoints *input, int type, int numberOfOutpu
    *     body      *
    *****************/
 
-  switch (type)
-    {
-    case 1:  /* Cardinal basis */
-      spline = (vtkSpline *)vtkCardinalSpline::New();
-      break;
+  switch (type) {
+  case 1: /* Cardinal basis */
+    spline = (vtkSpline *)vtkCardinalSpline::New();
+    break;
 
-    case 2:  /* Kochanek basis */
-      spline = (vtkSpline *)vtkKochanekSpline::New();
-      break;
+  case 2: /* Kochanek basis */
+    spline = (vtkSpline *)vtkKochanekSpline::New();
+    break;
 
-    default:
-      cerr << "   ERROR >>>> In sys_geom_SplineInterpolate(...)" << endl;
-      cerr << "              Unknown interpolation method requested." << endl;
-      return;
-    }
-
+  default:
+    cerr << "   ERROR >>>> In sys_geom_SplineInterpolate(...)" << endl;
+    cerr << "              Unknown interpolation method requested." << endl;
+    return;
+  }
 
   dimensions = input->dim;
 
-  if ((dimensions > MAX_DIM) || (dimensions < 1))
-    {
-      cerr << "   ERROR >>>> In sys_geom_SplineInterpolate(...)" << endl;
-      cerr << "              Invalid number of dimensions." << endl;
-      return;
+  if ((dimensions > MAX_DIM) || (dimensions < 1)) {
+    cerr << "   ERROR >>>> In sys_geom_SplineInterpolate(...)" << endl;
+    cerr << "              Invalid number of dimensions." << endl;
+    return;
+  }
+
+  for (i = 0; i < dimensions; i++) {
+    spline->RemoveAllPoints();
+
+    /* Add points to spline object */
+    for (j = 0; j < (input->numPts); j++)
+      spline->AddPoint(j, input->pts[dimensions * j + i]);
+
+    /* Set spline parameters */
+    spline->ClampValueOff();
+    spline->ClosedOff();
+    spline->Modified();
+
+    /* Evaluate spline */
+    for (k = 0; k < numberOfOutputPoints; k++) {
+      t = ((input->numPts - 1.0) / (numberOfOutputPoints - 1)) * k;
+
+      switch (type) {
+      case 1:
+        output->pts[dimensions * k + i] =
+            ((vtkCardinalSpline *)spline)->Evaluate(t);
+        break;
+
+      case 2:
+        output->pts[dimensions * k + i] =
+            ((vtkKochanekSpline *)spline)->Evaluate(t);
+        break;
+      }
     }
-
-  for (i = 0; i < dimensions; i++)
-    {
-      spline->RemoveAllPoints();
-
-      /* Add points to spline object */
-      for (j = 0; j < (input->numPts); j++)
-	  spline->AddPoint(j, input->pts[dimensions * j + i]);
-
-      /* Set spline parameters */
-      spline->ClampValueOff();
-      spline->ClosedOff();
-      spline->Modified();
-
-      /* Evaluate spline */
-      for (k = 0; k < numberOfOutputPoints; k++)
-	{
-	  t = ((input->numPts - 1.0) / (numberOfOutputPoints - 1)) * k;
-
-	  switch (type)
-	    {
-	    case 1:
-	      output->pts[dimensions * k + i] = ((vtkCardinalSpline *)spline)->Evaluate(t);
-	      break;
-
-	    case 2:
-	      output->pts[dimensions * k + i] = ((vtkKochanekSpline *)spline)->Evaluate(t);
-	      break;
-	    }
-	}
-
-    }
+  }
 
   output->numPts = numberOfOutputPoints;
   output->dim = dimensions;
@@ -285,7 +289,6 @@ void sys_geom_SplineInterpolate(SplinePoints *input, int type, int numberOfOutpu
   /* Clean up */
   spline->Delete();
 }
-
 
 /***********************************************************************
  *                                                                     *
@@ -299,8 +302,9 @@ void sys_geom_SplineInterpolate(SplinePoints *input, int type, int numberOfOutpu
  * the tangent using a finite difference.                              *
  ***********************************************************************/
 
-int sys_geom_SplineGetTangents(SplinePoints *input, int type, int numberOfOutputPoints, int matchEndPoints, SplinePoints *output)
-{
+int sys_geom_SplineGetTangents(SplinePoints *input, int type,
+                               int numberOfOutputPoints, int matchEndPoints,
+                               SplinePoints *output) {
 
   SplinePoints *tmpSpline;
   int numberOfTangentPoints;
@@ -308,110 +312,102 @@ int sys_geom_SplineGetTangents(SplinePoints *input, int type, int numberOfOutput
   int interval;
   int dimensions;
   vtkFloatingPointType coordinate;
-  vtkFloatingPointType *tmpTangent = new vtkFloatingPointType [MAX_DIM];
-  vtkFloatingPointType *tmpNormTangent = new vtkFloatingPointType [MAX_DIM];
+  vtkFloatingPointType *tmpTangent = new vtkFloatingPointType[MAX_DIM];
+  vtkFloatingPointType *tmpNormTangent = new vtkFloatingPointType[MAX_DIM];
   int err;
 
   /*****************
    *     body      *
    *****************/
 
-
-  /* Want a minimum of 500 points...this number was pulled out of my magical hat. */
+  /* Want a minimum of 500 points...this number was pulled out of my magical
+   * hat. */
   if (numberOfOutputPoints < 50)
-    numberOfTangentPoints = (ceil(500.0 / numberOfOutputPoints)) * numberOfOutputPoints;
+    numberOfTangentPoints =
+        (ceil(500.0 / numberOfOutputPoints)) * numberOfOutputPoints;
   else
     numberOfTangentPoints = 10 * numberOfOutputPoints;
-
 
   tmpSpline = sys_geom_SplinePointsInit(numberOfTangentPoints, input->dim);
   sys_geom_SplineInterpolate(input, type, numberOfTangentPoints, tmpSpline);
 
   if (matchEndPoints != 0)
-    interval = floor(1.0*numberOfTangentPoints / (numberOfOutputPoints - 1));
+    interval = floor(1.0 * numberOfTangentPoints / (numberOfOutputPoints - 1));
   else
-    interval = floor(1.0*numberOfTangentPoints / numberOfOutputPoints);
+    interval = floor(1.0 * numberOfTangentPoints / numberOfOutputPoints);
 
   /* Assume input and output have same dimensions */
   dimensions = output->dim;
 
-
-  for (i = 0; i < (numberOfOutputPoints - 1); i++)
-    {
-      for (j = 0; j < MAX_DIM; j++)
-	{
-	  tmpTangent[j] = 0.0;   /* Reset */
-	  tmpNormTangent[j] = 0.0;
-	}
-
-      for (j = 0; j < dimensions; j++)
-	{
-	  coordinate  = tmpSpline->pts[dimensions * i * interval + j];
-
-	  /* Copy point coordinates */
-	  output->pts[dimensions * i + j] = coordinate;
-
-	  /* Compute forward difference */
-	  tmpTangent[j] = tmpSpline->pts[dimensions * (i * interval + 1) + j] - coordinate;
-	}
-
-
-      /* Normalize tangent */
-
-      err = sys_geom_NormalizeVector(tmpTangent, tmpNormTangent, MAX_DIM);
-      if (err == 0)
-	{
-	  fprintf(stderr,"Subdivision too small for computing tangents.  Decrease number of output points requested.\n");
-	  return SV_ERROR;
-	}
-
-      for (j = 0; j < dimensions; j++)
-	output->tangents[dimensions * i + j] = tmpNormTangent[j];
+  for (i = 0; i < (numberOfOutputPoints - 1); i++) {
+    for (j = 0; j < MAX_DIM; j++) {
+      tmpTangent[j] = 0.0; /* Reset */
+      tmpNormTangent[j] = 0.0;
     }
 
+    for (j = 0; j < dimensions; j++) {
+      coordinate = tmpSpline->pts[dimensions * i * interval + j];
+
+      /* Copy point coordinates */
+      output->pts[dimensions * i + j] = coordinate;
+
+      /* Compute forward difference */
+      tmpTangent[j] =
+          tmpSpline->pts[dimensions * (i * interval + 1) + j] - coordinate;
+    }
+
+    /* Normalize tangent */
+
+    err = sys_geom_NormalizeVector(tmpTangent, tmpNormTangent, MAX_DIM);
+    if (err == 0) {
+      fprintf(stderr, "Subdivision too small for computing tangents.  Decrease "
+                      "number of output points requested.\n");
+      return SV_ERROR;
+    }
+
+    for (j = 0; j < dimensions; j++)
+      output->tangents[dimensions * i + j] = tmpNormTangent[j];
+  }
 
   /*
    * The last point just gets copied over and the tangent is based on the
    * backwards difference.
    */
-  for (j = 0; j < MAX_DIM; j++)
-    {
-      tmpTangent[j] = 0.0;   /* Reset */
-      tmpNormTangent[j] = 0.0;
-    }
+  for (j = 0; j < MAX_DIM; j++) {
+    tmpTangent[j] = 0.0; /* Reset */
+    tmpNormTangent[j] = 0.0;
+  }
 
+  for (j = 0; j < dimensions; j++) {
 
-  for (j = 0; j < dimensions; j++)
-    {
+    if (matchEndPoints == 0)
+      coordinate = tmpSpline->pts[dimensions * (numberOfTangentPoints - 1) + j];
+    else
+      coordinate = input->pts[dimensions * (input->numPts - 1) + j];
 
-      if (matchEndPoints == 0)
-	coordinate = tmpSpline->pts[dimensions * (numberOfTangentPoints - 1) + j];
-      else
-	coordinate = input->pts[dimensions * (input->numPts - 1) + j];
+    output->pts[dimensions * (numberOfOutputPoints - 1) + j] = coordinate;
 
-
-      output->pts[dimensions * (numberOfOutputPoints - 1) + j] = coordinate;
-
-      tmpTangent[j] = coordinate - tmpSpline->pts[tmpSpline->dim * (tmpSpline->numPts - 2) + j];
-
-    }
+    tmpTangent[j] =
+        coordinate -
+        tmpSpline->pts[tmpSpline->dim * (tmpSpline->numPts - 2) + j];
+  }
 
   /* Normalize tangent */
   err = sys_geom_NormalizeVector(tmpTangent, tmpNormTangent, MAX_DIM);
-  if (err == 0)
-    {
-      fprintf(stderr,"Subdivision too small for computing tangents.  Decrease number of output points requested.\n");
-      return SV_ERROR;
-    }
+  if (err == 0) {
+    fprintf(stderr, "Subdivision too small for computing tangents.  Decrease "
+                    "number of output points requested.\n");
+    return SV_ERROR;
+  }
 
   for (j = 0; j < dimensions; j++)
-    output->tangents[dimensions * (numberOfOutputPoints - 1) + j] = tmpNormTangent[j];
+    output->tangents[dimensions * (numberOfOutputPoints - 1) + j] =
+        tmpNormTangent[j];
 
   /* End code for handling last point */
 
   output->numPts = numberOfOutputPoints;
   output->dim = dimensions;
-
 
   /* Clean up */
   sys_geom_SplinePointsDelete(tmpSpline);
@@ -419,10 +415,7 @@ int sys_geom_SplineGetTangents(SplinePoints *input, int type, int numberOfOutput
   delete[] tmpNormTangent;
 
   return SV_OK;
-
 }
-
-
 
 /***********************************************************************
  *                                                                     *
@@ -440,8 +433,7 @@ int sys_geom_SplineGetTangents(SplinePoints *input, int type, int numberOfOutput
  * calculated.                                                         *
  ***********************************************************************/
 
-void sys_geom_SplineGetRotVectors(SplinePoints *input)
-{
+void sys_geom_SplineGetRotVectors(SplinePoints *input) {
   int i, j;
   int dimensions;
   vtkFloatingPointType *tmpRotVector = new vtkFloatingPointType[MAX_DIM];
@@ -454,47 +446,46 @@ void sys_geom_SplineGetRotVectors(SplinePoints *input)
 
   dimensions = input->dim;
 
-  for (i = 0; i < input->numPts; i++)
-    {
+  for (i = 0; i < input->numPts; i++) {
 
-      /* Reset */
-      for (j = 0; j < MAX_DIM; j++)
-	tmpRotVector[j] = 0;
+    /* Reset */
+    for (j = 0; j < MAX_DIM; j++)
+      tmpRotVector[j] = 0;
 
-      int replaceComp;
+    int replaceComp;
 
-      if (fabs(input->tangents[dimensions * i + 2]) > 0.0001) {
-	  tmpRotVector[1] = 1;
-          replaceComp = 2;
-      } else if (fabs(input->tangents[dimensions * i + 1]) > 0.0001)  {
-	  tmpRotVector[0] = 1;
-          replaceComp = 1;
-      } else {
-          tmpRotVector[2] = 1;
-          replaceComp = 0;
-      }
-
-      dotProduct = 0;
-
-      for (j = 0; j < (dimensions - 1); j++)
-	dotProduct = dotProduct + (input->tangents[dimensions * i + j] * tmpRotVector[j]);
-
-      tmpRotVector[replaceComp] = -dotProduct / input->tangents[dimensions * i + replaceComp];
-
-      /* Now normalize vector */
-      sys_geom_NormalizeVector(tmpRotVector, tmpNormRotVector, MAX_DIM);
-
-
-      /* Copy vector to input */
-      for (j = 0; j < dimensions; j++)
-	input->rotVectors[dimensions * i + j] = tmpNormRotVector[j];
+    if (fabs(input->tangents[dimensions * i + 2]) > 0.0001) {
+      tmpRotVector[1] = 1;
+      replaceComp = 2;
+    } else if (fabs(input->tangents[dimensions * i + 1]) > 0.0001) {
+      tmpRotVector[0] = 1;
+      replaceComp = 1;
+    } else {
+      tmpRotVector[2] = 1;
+      replaceComp = 0;
     }
+
+    dotProduct = 0;
+
+    for (j = 0; j < (dimensions - 1); j++)
+      dotProduct =
+          dotProduct + (input->tangents[dimensions * i + j] * tmpRotVector[j]);
+
+    tmpRotVector[replaceComp] =
+        -dotProduct / input->tangents[dimensions * i + replaceComp];
+
+    /* Now normalize vector */
+    sys_geom_NormalizeVector(tmpRotVector, tmpNormRotVector, MAX_DIM);
+
+    /* Copy vector to input */
+    for (j = 0; j < dimensions; j++)
+      input->rotVectors[dimensions * i + j] = tmpNormRotVector[j];
+  }
 
   /* Clean up */
   delete[] tmpRotVector;
   delete[] tmpNormRotVector;
 }
-
 
 /***********************************************************************
  *                                                                     *
@@ -503,8 +494,8 @@ void sys_geom_SplineGetRotVectors(SplinePoints *input)
  * Returns the normalized vector.                                      *
  ***********************************************************************/
 
-int sys_geom_NormalizeVector(vtkFloatingPointType *input, vtkFloatingPointType *output, int sizeVector)
-{
+int sys_geom_NormalizeVector(vtkFloatingPointType *input,
+                             vtkFloatingPointType *output, int sizeVector) {
   vtkFloatingPointType magnitude;
   int j;
 
@@ -519,18 +510,16 @@ int sys_geom_NormalizeVector(vtkFloatingPointType *input, vtkFloatingPointType *
 
   magnitude = sqrt(magnitude);
 
-  if (magnitude == 0)
-    {
-      fprintf(stderr, "Vector cannot be normalized.  Magnitude of 0.\n");
-      return SV_ERROR;
-    }
+  if (magnitude == 0) {
+    fprintf(stderr, "Vector cannot be normalized.  Magnitude of 0.\n");
+    return SV_ERROR;
+  }
 
   for (j = 0; j < sizeVector; j++)
     output[j] = input[j] / magnitude;
 
   return SV_OK;
 }
-
 
 /***********************************************************************
  *                                                                     *
@@ -543,11 +532,12 @@ int sys_geom_NormalizeVector(vtkFloatingPointType *input, vtkFloatingPointType *
  *               to input data.                                        *
  ***********************************************************************/
 
-int sys_geom_SplinePath (SplinePoints *input, int type, int numOutputPts, int matchEndPoints, SplinePoints *output)
-{
+int sys_geom_SplinePath(SplinePoints *input, int type, int numOutputPts,
+                        int matchEndPoints, SplinePoints *output) {
 
-  if (sys_geom_SplineGetTangents(input, type, numOutputPts, matchEndPoints, output) == SV_ERROR) {
-        return SV_ERROR;
+  if (sys_geom_SplineGetTangents(input, type, numOutputPts, matchEndPoints,
+                                 output) == SV_ERROR) {
+    return SV_ERROR;
   }
 
   sys_geom_SplineGetRotVectors(output);

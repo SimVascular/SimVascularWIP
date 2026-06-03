@@ -47,41 +47,41 @@
 
 #include "vtkIdList.h"
 #include "vtkMatrix4x4.h"
-#include "vtkPolyDataAlgorithm.h"
 #include "vtkPolyData.h"
+#include "vtkPolyDataAlgorithm.h"
 #include "vtkStructuredGrid.h"
 #include "vtkUnstructuredGrid.h"
 
 #include "vtkSVGlobals.h"
 
-class VTKSVPARAMETERIZATION_EXPORT vtkSVParameterizeSurfaceOnPolycube : public vtkPolyDataAlgorithm
-{
+class VTKSVPARAMETERIZATION_EXPORT vtkSVParameterizeSurfaceOnPolycube
+    : public vtkPolyDataAlgorithm {
 public:
-  vtkTypeMacro(vtkSVParameterizeSurfaceOnPolycube,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  vtkTypeMacro(vtkSVParameterizeSurfaceOnPolycube, vtkPolyDataAlgorithm);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   static vtkSVParameterizeSurfaceOnPolycube *New();
 
   //@{
   /// \brief Get/Set macro for surface polycube
-  vtkSetObjectMacro(PolycubePd,vtkPolyData);
-  vtkGetObjectMacro(PolycubePd,vtkPolyData);
+  vtkSetObjectMacro(PolycubePd, vtkPolyData);
+  vtkGetObjectMacro(PolycubePd, vtkPolyData);
   //@}
 
   //@{
   /// \brief Get/Set macro for surface polycube
-  vtkGetObjectMacro(PolycubeOnSurfacePd,vtkPolyData);
+  vtkGetObjectMacro(PolycubeOnSurfacePd, vtkPolyData);
   //@}
 
   //@{
   /// \brief Get/Set temporary
-  vtkGetObjectMacro(NURBSSurfaceRepresentationPd,vtkPolyData);
+  vtkGetObjectMacro(NURBSSurfaceRepresentationPd, vtkPolyData);
   //@}
 
   //@{
   /// \brief Get/Set macro for surface polycube
-  vtkSetObjectMacro(PolycubeUg,vtkUnstructuredGrid);
-  vtkGetObjectMacro(PolycubeUg,vtkUnstructuredGrid);
+  vtkSetObjectMacro(PolycubeUg, vtkUnstructuredGrid);
+  vtkGetObjectMacro(PolycubeUg, vtkUnstructuredGrid);
   //@}
 
   //@{
@@ -117,27 +117,22 @@ protected:
   ~vtkSVParameterizeSurfaceOnPolycube();
 
   // Usual data generation method
-  virtual int RequestData(vtkInformation *,
-                          vtkInformationVector **,
+  virtual int RequestData(vtkInformation *, vtkInformationVector **,
                           vtkInformationVector *) override;
 
-  int RotateGroupToGlobalAxis(vtkPolyData *pd,
-                              const int thresholdId,
-                              std::string arrayName,
-                              vtkPolyData *rotPd,
+  int RotateGroupToGlobalAxis(vtkPolyData *pd, const int thresholdId,
+                              std::string arrayName, vtkPolyData *rotPd,
                               vtkMatrix4x4 *rotMatrix0,
                               vtkMatrix4x4 *rotMatrix1);
-  int InterpolateMapOntoTarget(vtkPolyData *sourceBasePd,
-                               vtkPolyData *targetPd,
-                               vtkPolyData *targetBasePd,
-                               vtkPolyData *mappedPd,
+  int InterpolateMapOntoTarget(vtkPolyData *sourceBasePd, vtkPolyData *targetPd,
+                               vtkPolyData *targetBasePd, vtkPolyData *mappedPd,
                                std::string dataMatchingArrayName);
 
   int GetInteriorPointMaps(vtkPolyData *pdWithAllInterior,
                            vtkPolyData *pdWithCleanInterior,
                            vtkPolyData *pdWithoutInterior,
                            std::vector<int> &ptMap,
-                           std::vector<std::vector<int> > &invPtMap);
+                           std::vector<std::vector<int>> &invPtMap);
   int RemoveInteriorCells(vtkPolyData *quadMesh);
 
   vtkPolyData *WorkPd;
@@ -149,7 +144,7 @@ protected:
   vtkUnstructuredGrid *PolycubeUg;
 
   int PrepFilter(); // Prep work.
-  int RunFilter(); // Run filter operations.
+  int RunFilter();  // Run filter operations.
 
   int FormNURBSSurface();
 
@@ -160,8 +155,10 @@ protected:
   int EnforcePolycubeConnectivity;
 
 private:
-  vtkSVParameterizeSurfaceOnPolycube(const vtkSVParameterizeSurfaceOnPolycube&);  // Not implemented.
-  void operator=(const vtkSVParameterizeSurfaceOnPolycube&);  // Not implemented.
+  vtkSVParameterizeSurfaceOnPolycube(
+      const vtkSVParameterizeSurfaceOnPolycube &); // Not implemented.
+  void
+  operator=(const vtkSVParameterizeSurfaceOnPolycube &); // Not implemented.
 };
 
 #endif

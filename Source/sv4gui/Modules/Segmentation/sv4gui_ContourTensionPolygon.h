@@ -38,38 +38,34 @@
 
 #include "sv4gui_ContourPolygon.h"
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourTensionPolygon : public sv4guiContourPolygon
-{
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourTensionPolygon
+    : public sv4guiContourPolygon {
 
 public:
+  sv4guiContourTensionPolygon();
 
-    sv4guiContourTensionPolygon();
+  sv4guiContourTensionPolygon(const sv4guiContourTensionPolygon &other);
 
-    sv4guiContourTensionPolygon(const sv4guiContourTensionPolygon &other);
+  virtual ~sv4guiContourTensionPolygon();
 
-    virtual ~sv4guiContourTensionPolygon();
+  virtual sv4guiContourTensionPolygon *Clone() override;
 
-    virtual sv4guiContourTensionPolygon* Clone() override;
+  virtual std::string GetClassName() override;
 
-    virtual std::string GetClassName() override;
+  int GetSubdivisionRounds();
 
-    int GetSubdivisionRounds();
+  void SetSubdivisionRounds(int rounds);
 
-    void SetSubdivisionRounds(int rounds);
+  double GetTensionParameter();
 
-    double GetTensionParameter();
+  void SetTensionParameter(double parameter);
 
-    void SetTensionParameter(double parameter);
+  virtual void CreateContourPoints() override;
 
-    virtual void CreateContourPoints() override;
+protected:
+  int m_SubdivisionRounds;
 
-  protected:
-
-    int m_SubdivisionRounds;
-
-    double m_TensionParameter;
-
-  };
-
+  double m_TensionParameter;
+};
 
 #endif // SV4GUI_CONTOURTENSIONPOLYGON_H

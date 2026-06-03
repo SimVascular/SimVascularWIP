@@ -45,37 +45,37 @@
 #include "vtkSVGeometryModule.h" // for export
 
 #include "vtkIntArray.h"
-#include "vtkPolyData.h"
 #include "vtkPointData.h"
 #include "vtkPoints.h"
+#include "vtkPolyData.h"
 
 #include "vtkSVLocalInterpolatingSubdivisionFilter.h"
 
-class VTKSVGEOMETRY_EXPORT vtkSVLocalLinearSubdivisionFilter : public vtkSVLocalInterpolatingSubdivisionFilter
-{
+class VTKSVGEOMETRY_EXPORT vtkSVLocalLinearSubdivisionFilter
+    : public vtkSVLocalInterpolatingSubdivisionFilter {
 public:
   // Description:
   // Construct object with NumberOfSubdivisions set to 1.
   static vtkSVLocalLinearSubdivisionFilter *New();
-  vtkTypeMacro(vtkSVLocalLinearSubdivisionFilter,vtkSVLocalInterpolatingSubdivisionFilter);
+  vtkTypeMacro(vtkSVLocalLinearSubdivisionFilter,
+               vtkSVLocalInterpolatingSubdivisionFilter);
 
 protected:
-  vtkSVLocalLinearSubdivisionFilter () {}
-  ~vtkSVLocalLinearSubdivisionFilter () {}
+  vtkSVLocalLinearSubdivisionFilter() {}
+  ~vtkSVLocalLinearSubdivisionFilter() {}
 
-  int GenerateSubdivisionPoints (vtkPolyData *inputDS,
-                                 vtkIntArray *edgeData,
-                                 vtkPoints *outputPts,
-                                 vtkPointData *outputPD) override;
+  int GenerateSubdivisionPoints(vtkPolyData *inputDS, vtkIntArray *edgeData,
+                                vtkPoints *outputPts,
+                                vtkPointData *outputPD) override;
 
-  int SetFixedCells(vtkPolyData *pd,int *noSubdivideCell);
+  int SetFixedCells(vtkPolyData *pd, int *noSubdivideCell);
 
 private:
-  vtkSVLocalLinearSubdivisionFilter(const vtkSVLocalLinearSubdivisionFilter&);  // Not implemented.
-  void operator=(const vtkSVLocalLinearSubdivisionFilter&);  // Not implemented.
+  vtkSVLocalLinearSubdivisionFilter(
+      const vtkSVLocalLinearSubdivisionFilter &);            // Not implemented.
+  void operator=(const vtkSVLocalLinearSubdivisionFilter &); // Not implemented.
 };
 
 #endif
-
 
 // VTK-HeaderTest-Exclude: vtkSVLocalLinearSubdivisionFilter.h

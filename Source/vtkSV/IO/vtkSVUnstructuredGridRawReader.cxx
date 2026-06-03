@@ -42,9 +42,9 @@
 #include "vtkLine.h"
 #include "vtkMergePoints.h"
 #include "vtkObjectFactory.h"
+#include "vtkSVGlobals.h"
 #include "vtkSmartPointer.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
-#include "vtkSVGlobals.h"
 #include "vtkUnstructuredGrid.h"
 
 #include <algorithm>
@@ -60,13 +60,13 @@ vtkStandardNewMacro(vtkSVUnstructuredGridRawReader);
 // ----------------------
 // SetObjectMacro
 // ----------------------
-vtkCxxSetObjectMacro(vtkSVUnstructuredGridRawReader, Locator, vtkIncrementalPointLocator);
+vtkCxxSetObjectMacro(vtkSVUnstructuredGridRawReader, Locator,
+                     vtkIncrementalPointLocator);
 
 // ----------------------
 // Constructor
 // ----------------------
-vtkSVUnstructuredGridRawReader::vtkSVUnstructuredGridRawReader()
-{
+vtkSVUnstructuredGridRawReader::vtkSVUnstructuredGridRawReader() {
   this->FileName = nullptr;
   this->Merging = 0;
   this->Locator = nullptr;
@@ -77,8 +77,7 @@ vtkSVUnstructuredGridRawReader::vtkSVUnstructuredGridRawReader()
 // ----------------------
 // Destructor
 // ----------------------
-vtkSVUnstructuredGridRawReader::~vtkSVUnstructuredGridRawReader()
-{
+vtkSVUnstructuredGridRawReader::~vtkSVUnstructuredGridRawReader() {
   this->SetFileName(0);
   this->SetLocator(0);
 }
@@ -87,31 +86,28 @@ vtkSVUnstructuredGridRawReader::~vtkSVUnstructuredGridRawReader()
 // RequestData
 // ----------------------
 int vtkSVUnstructuredGridRawReader::RequestData(
-  vtkInformation *vtkNotUsed(request),
-  vtkInformationVector **vtkNotUsed(inputVector),
-  vtkInformationVector *outputVector)
-{
+    vtkInformation *vtkNotUsed(request),
+    vtkInformationVector **vtkNotUsed(inputVector),
+    vtkInformationVector *outputVector) {
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
   vtkUnstructuredGrid *output = vtkUnstructuredGrid::SafeDownCast(
-    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+      outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
   // All of the data in the first piece.
-  if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) > 0)
-  {
+  if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) >
+      0) {
     return 0;
   }
 
-  if (!this->FileName || *this->FileName == 0)
-  {
-    vtkErrorMacro(<<"A FileName must be specified.");
+  if (!this->FileName || *this->FileName == 0) {
+    vtkErrorMacro(<< "A FileName must be specified.");
     this->SetErrorCode(vtkErrorCode::NoFileNameError);
     return 0;
   }
 
   // Initialize
   FILE *fp = fopen(this->FileName, "r");
-  if (fp == nullptr)
-  {
+  if (fp == nullptr) {
     vtkErrorMacro(<< "File " << this->FileName << " not found");
     this->SetErrorCode(vtkErrorCode::CannotOpenFileError);
     return 0;
@@ -122,31 +118,27 @@ int vtkSVUnstructuredGridRawReader::RequestData(
 
   newPts->Allocate(5000);
   newCells->Allocate(10000);
-  if (!this->ReadRawFile(fp, newPts, newCells))
-  {
+  if (!this->ReadRawFile(fp, newPts, newCells)) {
     fclose(fp);
     return 0;
   }
 
-  vtkDebugMacro(<< "Read: "
-    << newPts->GetNumberOfPoints() << " points, "
-    << newCells->GetNumberOfCells() << " hexes");
+  vtkDebugMacro(<< "Read: " << newPts->GetNumberOfPoints() << " points, "
+                << newCells->GetNumberOfCells() << " hexes");
 
   fclose(fp);
 
   // If merging is on, create hash table and merge points/hexes.
   vtkPoints *mergedPts = newPts;
   vtkCellArray *mergedCells = newCells;
-  if (this->Merging)
-  {
+  if (this->Merging) {
     mergedPts = vtkPoints::New();
-    mergedPts->Allocate(newPts->GetNumberOfPoints() /2);
+    mergedPts->Allocate(newPts->GetNumberOfPoints() / 2);
     mergedCells = vtkCellArray::New();
     mergedCells->Allocate(newCells->GetSize());
 
     vtkSmartPointer<vtkIncrementalPointLocator> locator = this->Locator;
-    if (this->Locator == nullptr)
-    {
+    if (this->Locator == nullptr) {
       locator.TakeReference(this->NewDefaultLocator());
     }
     locator->InitPointInsertion(mergedPts, newPts->GetBounds());
@@ -154,20 +146,16 @@ int vtkSVUnstructuredGridRawReader::RequestData(
     int nextCell = 0;
     const vtkIdType *pts;
     vtkIdType npts;
-    for (newCells->InitTraversal(); newCells->GetNextCell(npts, pts);)
-    {
+    for (newCells->InitTraversal(); newCells->GetNextCell(npts, pts);) {
       vtkIdType nodes[3];
-      for (int i = 0; i < 3; i++)
-      {
+      for (int i = 0; i < 3; i++) {
         double x[3];
         newPts->GetPoint(pts[i], x);
         locator->InsertUniquePoint(x, nodes[i]);
       }
 
-      if (nodes[0] != nodes[1] &&
-        nodes[0] != nodes[2] &&
-        nodes[1] != nodes[2])
-      {
+      if (nodes[0] != nodes[1] && nodes[0] != nodes[2] &&
+          nodes[1] != nodes[2]) {
         mergedCells->InsertNextCell(3, nodes);
       }
       nextCell++;
@@ -176,9 +164,9 @@ int vtkSVUnstructuredGridRawReader::RequestData(
     newPts->Delete();
     newCells->Delete();
 
-    vtkDebugMacro(<< "Merged to: "
-      << mergedPts->GetNumberOfPoints() << " points, "
-      << mergedCells->GetNumberOfCells() << " hexes");
+    vtkDebugMacro(<< "Merged to: " << mergedPts->GetNumberOfPoints()
+                  << " points, " << mergedCells->GetNumberOfCells()
+                  << " hexes");
   }
 
   output->SetPoints(mergedPts);
@@ -187,9 +175,8 @@ int vtkSVUnstructuredGridRawReader::RequestData(
   output->SetCells(VTK_HEXAHEDRON, mergedCells);
   mergedCells->Delete();
 
-  if (this->Locator)
-  {
-    this->Locator->Initialize(); //free storage
+  if (this->Locator) {
+    this->Locator->Initialize(); // free storage
   }
 
   output->Squeeze();
@@ -201,71 +188,61 @@ int vtkSVUnstructuredGridRawReader::RequestData(
 // ReadRawFile
 // ----------------------
 int vtkSVUnstructuredGridRawReader::ReadRawFile(FILE *fp, vtkPoints *newPts,
-                                vtkCellArray *newCells)
-{
+                                                vtkCellArray *newCells) {
   vtkDebugMacro(<< "Reading Raw file");
 
-  char  line[256];
+  char line[256];
   float x[3];
-  int   top[2];
+  int top[2];
   vtkIdType hexpts[8];
 
   // header:
   int lineCount = 0;
-  if(fscanf(fp, "%d %d\n", top, top+1) != 2)
+  if (fscanf(fp, "%d %d\n", top, top + 1) != 2)
     throw std::runtime_error("unable to read Raw header");
   lineCount++;
   newPts->SetNumberOfPoints(top[0]);
 
-  try
-  {
+  try {
     // Go into loop, reading points
-    for (int i=0; i<top[0]; i++)
-    {
+    for (int i = 0; i < top[0]; i++) {
       if (!fgets(line, 255, fp))
         throw std::runtime_error("unable to read Raw vertex line.");
 
-      int numItems = sscanf(line, "%f %f %f\n", x, x+1, x+2);
-      if (numItems != 3)
-      {
-        fprintf(stderr,"%d items on vertex line.\n", numItems);
+      int numItems = sscanf(line, "%f %f %f\n", x, x + 1, x + 2);
+      if (numItems != 3) {
+        fprintf(stderr, "%d items on vertex line.\n", numItems);
         throw std::runtime_error("unable to read Raw vertex.");
       }
       lineCount++;
       newPts->SetPoint(i, x);
-
     }
 
     // Go into loop, reading cells
-    for (int i=0; i<top[1]; i++)
-    {
-      if (!fgets(line, 255, fp))
-      {
+    for (int i = 0; i < top[1]; i++) {
+      if (!fgets(line, 255, fp)) {
         throw std::runtime_error("unable to read Raw cell line.");
       }
 
-      int numItems = sscanf(line, "%lld %lld %lld %lld %lld %lld %lld %lld\n", hexpts, hexpts+1, hexpts+2, hexpts+3, hexpts+4, hexpts+5, hexpts+6, hexpts+7);
-      if (numItems == 8)
-      {
+      int numItems = sscanf(line, "%lld %lld %lld %lld %lld %lld %lld %lld\n",
+                            hexpts, hexpts + 1, hexpts + 2, hexpts + 3,
+                            hexpts + 4, hexpts + 5, hexpts + 6, hexpts + 7);
+      if (numItems == 8) {
         newCells->InsertNextCell(8, hexpts);
-      }
-      else
-      {
-        fprintf(stderr,"%d items on cell line.\n", numItems);
+      } else {
+        fprintf(stderr, "%d items on cell line.\n", numItems);
         throw std::runtime_error("unable to read Raw cell.");
       }
 
       lineCount++;
-      if ((newCells->GetNumberOfCells() % 5000) == 0)
-      {
-        this->UpdateProgress((newCells->GetNumberOfCells()%50000) / 50000.0);
+      if ((newCells->GetNumberOfCells() % 5000) == 0) {
+        this->UpdateProgress((newCells->GetNumberOfCells() % 50000) / 50000.0);
       }
     }
-  }
-  catch (const std::runtime_error &e)
-  {
-    vtkErrorMacro("RawReader: error while reading file " <<
-      this->FileName << " at line " << lineCount << ": " << e.what());
+  } catch (const std::runtime_error &e) {
+    vtkErrorMacro("RawReader: error while reading file "
+                  << this->FileName << " at line " << lineCount << ": "
+                  << e.what());
     return false;
   }
 
@@ -277,29 +254,25 @@ int vtkSVUnstructuredGridRawReader::ReadRawFile(FILE *fp, vtkPoints *newPts,
 // ----------------------
 /** \brief Specify a spatial locator for merging points. By
  * default an instance of vtkMergePoints is used. */
-vtkIncrementalPointLocator* vtkSVUnstructuredGridRawReader::NewDefaultLocator()
-{
+vtkIncrementalPointLocator *
+vtkSVUnstructuredGridRawReader::NewDefaultLocator() {
   return vtkMergePoints::New();
 }
 
 // ----------------------
 // PrintSelf
 // ----------------------
-void vtkSVUnstructuredGridRawReader::PrintSelf(ostream& os, vtkIndent indent)
-{
+void vtkSVUnstructuredGridRawReader::PrintSelf(ostream &os, vtkIndent indent) {
   this->Superclass::PrintSelf(os, indent);
 
-  os << indent << "File Name: "
-     <<(this->FileName ? this->FileName : "(none)") << "\n";
+  os << indent << "File Name: " << (this->FileName ? this->FileName : "(none)")
+     << "\n";
 
-  os << indent << "Merging: " <<(this->Merging ? "On\n" : "Off\n");
+  os << indent << "Merging: " << (this->Merging ? "On\n" : "Off\n");
   os << indent << "Locator: ";
-  if (this->Locator)
-  {
+  if (this->Locator) {
     this->Locator->PrintSelf(os << endl, indent.GetNextIndent());
-  }
-  else
-  {
+  } else {
     os << "(none)\n";
   }
 }

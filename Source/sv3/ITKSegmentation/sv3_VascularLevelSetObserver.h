@@ -34,232 +34,209 @@
 
 #include "itkCommand.h"
 
-
-//Basic and IO Includes
+// Basic and IO Includes
+#include "itkCastImageFilter.h"
 #include "itkImage.h"
 #include "itkImageFileWriter.h"
 #include "itkTileImageFilter.h"
-#include "itkCastImageFilter.h"
 
-#include <iostream>
-#include <iomanip>
-#include <ostream>
 #include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <ostream>
 
-//#include "sv3_ITKLset_ExtraUtils.h"
+// #include "sv3_ITKLset_ExtraUtils.h"
 
 #include "itkImageRegionIterator.h"
 
-
-
 namespace itk {
-template<class TFilter>
-class VascularLevelSetObserver : public Command
-{
+template <class TFilter> class VascularLevelSetObserver : public Command {
 public:
-	typedef VascularLevelSetObserver   Self;
-	typedef itk::Command             Superclass;
-	typedef itk::SmartPointer<Self>  Pointer;
-	typedef typename TFilter::InputImageType ImageType;
-	typedef typename TFilter::CurrentImageType CurrentImageType;
-	typedef typename CurrentImageType::Pointer CurrentImageTypePointer;
-	typedef Image<typename CurrentImageType::PixelType,3> OutputImageType;
-	typedef unsigned char UCPixelType;
-	typedef itk::Image<UCPixelType,2> UCImageType;
-	typedef itk::RGBPixel<UCPixelType> RGBPixelType;
-	typedef itk::Image<RGBPixelType> RGBImageType;
-	typedef itk::TileImageFilter< CurrentImageType, OutputImageType > TilerType;
-	typedef itk::CastImageFilter<CurrentImageType,CurrentImageType> CastType;
-	//typedef itk::VascularPhaseTwoLevelSetImageFilter<ImageType,ImageType> VascTwoType;
-	//typedef typename VascTwoType::VascularPhaseTwoLevelSetFunctionType::InfoGlobalDataStruct InfoGlobalDataStruct;
+  typedef VascularLevelSetObserver Self;
+  typedef itk::Command Superclass;
+  typedef itk::SmartPointer<Self> Pointer;
+  typedef typename TFilter::InputImageType ImageType;
+  typedef typename TFilter::CurrentImageType CurrentImageType;
+  typedef typename CurrentImageType::Pointer CurrentImageTypePointer;
+  typedef Image<typename CurrentImageType::PixelType, 3> OutputImageType;
+  typedef unsigned char UCPixelType;
+  typedef itk::Image<UCPixelType, 2> UCImageType;
+  typedef itk::RGBPixel<UCPixelType> RGBPixelType;
+  typedef itk::Image<RGBPixelType> RGBImageType;
+  typedef itk::TileImageFilter<CurrentImageType, OutputImageType> TilerType;
+  typedef itk::CastImageFilter<CurrentImageType, CurrentImageType> CastType;
+  // typedef itk::VascularPhaseTwoLevelSetImageFilter<ImageType,ImageType>
+  // VascTwoType; typedef typename
+  // VascTwoType::VascularPhaseTwoLevelSetFunctionType::InfoGlobalDataStruct
+  // InfoGlobalDataStruct;
 
-	typedef itk::FixedArray< unsigned int, 3 > LayoutType;
+  typedef itk::FixedArray<unsigned int, 3> LayoutType;
 
-	typedef typename itk::ImageFileWriter<CurrentImageType> WriterType;
-	//typedef typename itk::RescaleIntensityImageFilter<CurrentImageType,CurrentImageType> RecasterType;
-	//typedef typename itk::BinaryThresholdImageFilter<ImageType,ImageType> ThresholdFilterType;
-	//typedef typename itk::BinaryContourImageFilter<ImageType,ImageType> ContourFilterType;
+  typedef typename itk::ImageFileWriter<CurrentImageType> WriterType;
+  // typedef typename
+  // itk::RescaleIntensityImageFilter<CurrentImageType,CurrentImageType>
+  // RecasterType; typedef typename
+  // itk::BinaryThresholdImageFilter<ImageType,ImageType> ThresholdFilterType;
+  // typedef typename itk::BinaryContourImageFilter<ImageType,ImageType>
+  // ContourFilterType;
 
-	itkNewMacro( Self );
-	itkTypeMacro(CommandLevelSetObserver,Superclass);
+  itkNewMacro(Self);
+  itkTypeMacro(CommandLevelSetObserver, Superclass);
 
-	unsigned int GetCurrentIteration(){
-		return m_ImageNumber;
-	}
+  unsigned int GetCurrentIteration() { return m_ImageNumber; }
 
-	void SetMod(unsigned int v)
-	{m_Mod = v;}
-	void ToggleWrite()
-	{m_Write = !m_Write;}
+  void SetMod(unsigned int v) { m_Mod = v; }
+  void ToggleWrite() { m_Write = !m_Write; }
 
-	void WriteEnd(){
-		std::cout << "ENDed!!" << std::endl;
-		std::cout << m_ImageNumber << std::endl;
-	}
+  void WriteEnd() {
+    std::cout << "ENDed!!" << std::endl;
+    std::cout << m_ImageNumber << std::endl;
+  }
 
-	typename TilerType::Pointer GetTiler() const
-	{m_Tiler->Update();
-	return m_Tiler;}
+  typename TilerType::Pointer GetTiler() const {
+    m_Tiler->Update();
+    return m_Tiler;
+  }
 
 private:
-	unsigned int m_Mod;
-	std::ofstream oss;
-	std::string m_FilenameCBase;
-	std::string m_FilenameABase;
-	std::string m_FilenameUBase;
-	std::string m_FilenameExt;
-	typename WriterType::Pointer m_Writer;
-	//typename RecasterType::Pointer m_Recaster;
-	//typename ThresholdFilterType::Pointer m_Thresholder;
-	typename CastType::Pointer m_Cast;
-	typename TilerType::Pointer m_Tiler;
+  unsigned int m_Mod;
+  std::ofstream oss;
+  std::string m_FilenameCBase;
+  std::string m_FilenameABase;
+  std::string m_FilenameUBase;
+  std::string m_FilenameExt;
+  typename WriterType::Pointer m_Writer;
+  // typename RecasterType::Pointer m_Recaster;
+  // typename ThresholdFilterType::Pointer m_Thresholder;
+  typename CastType::Pointer m_Cast;
+  typename TilerType::Pointer m_Tiler;
 
-	bool m_Write;
+  bool m_Write;
 
-	unsigned int m_ImageNumber;
-	std::vector<unsigned int> m_Iterations;
-	LayoutType m_Layout;
-
-
-
-
-
+  unsigned int m_ImageNumber;
+  std::vector<unsigned int> m_Iterations;
+  LayoutType m_Layout;
 
 protected:
-	VascularLevelSetObserver() {
-		m_Layout[0] = 1;
-		m_Layout[1] = 1;
-		m_Layout[2] = 0;
-		m_Mod = 25;
-		m_FilenameCBase = "Curvature";
-		m_FilenameABase = "Curvature";
-		m_FilenameUBase = "Curvature";
-		m_FilenameExt = ".tiff";
-		m_ImageNumber = 0;
-		m_Writer = WriterType::New();
-		m_Tiler = TilerType::New();
-		m_Tiler->SetLayout(m_Layout);
-		m_Cast = CastType::New();
-		m_Write = false;
-		//oss = std::cout;
-	};
-	/*
+  VascularLevelSetObserver() {
+    m_Layout[0] = 1;
+    m_Layout[1] = 1;
+    m_Layout[2] = 0;
+    m_Mod = 25;
+    m_FilenameCBase = "Curvature";
+    m_FilenameABase = "Curvature";
+    m_FilenameUBase = "Curvature";
+    m_FilenameExt = ".tiff";
+    m_ImageNumber = 0;
+    m_Writer = WriterType::New();
+    m_Tiler = TilerType::New();
+    m_Tiler->SetLayout(m_Layout);
+    m_Cast = CastType::New();
+    m_Write = false;
+    // oss = std::cout;
+  };
+  /*
 
 
-	 */
+   */
 public:
-	std::string GetFilenameCBase(){return m_FilenameCBase;}
-	void SetFilenameCBase(std::string value){m_FilenameCBase = value;}
+  std::string GetFilenameCBase() { return m_FilenameCBase; }
+  void SetFilenameCBase(std::string value) { m_FilenameCBase = value; }
 
-	std::string GetFilenameABase(){return m_FilenameABase;}
-	void SetFilenameABase(std::string value){m_FilenameABase = value;}
+  std::string GetFilenameABase() { return m_FilenameABase; }
+  void SetFilenameABase(std::string value) { m_FilenameABase = value; }
 
-	std::string GetFilenameUBase(){return m_FilenameUBase;}
-	void SetFilenameUBase(std::string value){m_FilenameUBase = value;}
+  std::string GetFilenameUBase() { return m_FilenameUBase; }
+  void SetFilenameUBase(std::string value) { m_FilenameUBase = value; }
 
-	std::string GetFilenameExt(){return m_FilenameExt;}
-	void SetFilenameExt(std::string value){m_FilenameExt = value;}
-	int GetMod(){return m_Mod;}
-	void GetMod(int value){m_Mod = value;}
+  std::string GetFilenameExt() { return m_FilenameExt; }
+  void SetFilenameExt(std::string value) { m_FilenameExt = value; }
+  int GetMod() { return m_Mod; }
+  void GetMod(int value) { m_Mod = value; }
 
-	//void GetOSS(std::ofstream value){oss.swap(value);}
+  // void GetOSS(std::ofstream value){oss.swap(value);}
 
-	void Execute(itk::Object *caller, const itk::EventObject & event)
-	{
+  void Execute(itk::Object *caller, const itk::EventObject &event) {
 #ifndef __VTK_WRAP__
-		TFilter * filter =
-				dynamic_cast<  TFilter * >( caller );
-		if( typeid( event ) != typeid( itk::IterationEvent ) )
-		{ return; }
+    TFilter *filter = dynamic_cast<TFilter *>(caller);
+    if (typeid(event) != typeid(itk::IterationEvent)) {
+      return;
+    }
 
+    int iterations = (unsigned int)filter->GetElapsedIterations();
+    m_Iterations.push_back(iterations);
+    // std::cout << iterations << std::endl;
 
+    if (iterations % m_Mod == 0 || iterations < 2) {
 
-		int iterations = (unsigned int)filter->GetElapsedIterations();
-		m_Iterations.push_back(iterations);
-		//std::cout << iterations << std::endl;
+      try {
 
+        SaveWriteImage(filter->GetCurrentCurvatureImage(),
+                       this->GetFilenameCBase());
+        SaveWriteImage(filter->GetCurrentAdvectionImage(),
+                       this->GetFilenameABase());
+        // SaveWriteImage(filter->GetCurrentUpdateImage(),this->GetFilenameUBase());
+        SaveWriteImage(filter->GetCurrentOutputImage(),
+                       this->GetFilenameUBase());
+        m_ImageNumber++;
 
-		if(iterations % m_Mod == 0||iterations < 2){
+        // filter->ClearCurrentCurvatureImage();
 
+      } catch (itk::ExceptionObject &ex) {
+        std::cerr << ex << std::endl;
+      }
+    }
 
-			try{
-
-				SaveWriteImage(filter->GetCurrentCurvatureImage(),this->GetFilenameCBase());
-				SaveWriteImage(filter->GetCurrentAdvectionImage(),this->GetFilenameABase());
-				//SaveWriteImage(filter->GetCurrentUpdateImage(),this->GetFilenameUBase());
-				SaveWriteImage(filter->GetCurrentOutputImage(),this->GetFilenameUBase());
-				m_ImageNumber++;
-
-				//filter->ClearCurrentCurvatureImage();
-
-			}
-			catch(itk::ExceptionObject& ex)
-			{
-				std::cerr << ex <<std::endl;
-			}
-		}
-
-
-		// std::cout << filter->GetCurrentParameters() << std::endl;
-		//		Execute( (const itk::Object *) caller, event);
+    // std::cout << filter->GetCurrentParameters() << std::endl;
+    //		Execute( (const itk::Object *) caller, event);
 #endif
-	}
-	void Execute(const itk::Object * object, const itk::EventObject & event)
-	{
+  }
+  void Execute(const itk::Object *object, const itk::EventObject &event) {}
 
-	}
+  static void DeepCopy(const CurrentImageType *input,
+                       CurrentImageTypePointer output) {
 
-	static void DeepCopy(const CurrentImageType* input,CurrentImageTypePointer output)
-	{
+    output->SetRegions(input->GetLargestPossibleRegion());
+    output->Allocate();
 
-		output->SetRegions(input->GetLargestPossibleRegion());
-			output->Allocate();
+    itk::ImageRegionConstIterator<CurrentImageType> inputIterator(
+        input, input->GetLargestPossibleRegion());
+    itk::ImageRegionIterator<CurrentImageType> outputIterator(
+        output, output->GetLargestPossibleRegion());
 
-			itk::ImageRegionConstIterator<CurrentImageType> inputIterator(input, input->GetLargestPossibleRegion());
-			itk::ImageRegionIterator<CurrentImageType> outputIterator(output, output->GetLargestPossibleRegion());
-
-			while(!inputIterator.IsAtEnd())
-			{
-				outputIterator.Set(inputIterator.Get());
-				++inputIterator;
-				++outputIterator;
-			}
-	}
+    while (!inputIterator.IsAtEnd()) {
+      outputIterator.Set(inputIterator.Get());
+      ++inputIterator;
+      ++outputIterator;
+    }
+  }
 
 private:
-	void	SaveWriteImage(const CurrentImageType * image,std::string FilenameBase)
-	{
-		std::stringstream sstm;
-		sstm  << FilenameBase;
-		sstm << std::setw(5) << std::setfill('0') << m_ImageNumber ;
-		sstm<< m_FilenameExt;
+  void SaveWriteImage(const CurrentImageType *image, std::string FilenameBase) {
+    std::stringstream sstm;
+    sstm << FilenameBase;
+    sstm << std::setw(5) << std::setfill('0') << m_ImageNumber;
+    sstm << m_FilenameExt;
 
+    m_Writer->SetFileName(sstm.str());
 
-		m_Writer->SetFileName(sstm.str());
+    // std::cout << sstm.str() << std::endl;
+    ///				filter->GetCurrentCurvatureImage()->UpdateLargestPossibleRegion();
+    // inputImageTile = ;
+    typename CurrentImageType::Pointer inputImageTile = CurrentImageType::New();
 
+    this->DeepCopy(image, inputImageTile);
+    inputImageTile->DisconnectPipeline();
+    m_Writer->SetInput(inputImageTile);
 
+    m_Tiler->SetInput(m_ImageNumber, image);
+    // m_Tiler->Update();
 
-		//std::cout << sstm.str() << std::endl;
-		///				filter->GetCurrentCurvatureImage()->UpdateLargestPossibleRegion();
-		//inputImageTile = ;
-		typename CurrentImageType::Pointer inputImageTile =
-				CurrentImageType::New();
-
-		this->DeepCopy(image,inputImageTile);
-		inputImageTile->DisconnectPipeline();
-		m_Writer->SetInput(inputImageTile);
-
-		m_Tiler->SetInput(m_ImageNumber,image);
-		//m_Tiler->Update();
-
-		if(m_Write)
-			m_Writer->Update();
-	}
-
-
+    if (m_Write)
+      m_Writer->Update();
+  }
 };
 
-
-};
+}; // namespace itk
 
 #endif

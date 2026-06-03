@@ -35,8 +35,8 @@
 #include "SimVascular.h"
 #include "sv4guiModuleMachineLearningExports.h"
 
-//needed because clash between QT slots keyword and python stuff
-//see https://stackoverflow.com/questions/23068700/embedding-python3-in-qt-5
+// needed because clash between QT slots keyword and python stuff
+// see https://stackoverflow.com/questions/23068700/embedding-python3-in-qt-5
 #pragma push_macro("slots")
 #undef slots
 #include "Python.h"
@@ -45,34 +45,32 @@
 #include "SimVascular.h"
 #include <string>
 
-#include "sv4gui_Path.h"
 #include "sv4gui_ContourGroup.h"
+#include "sv4gui_Path.h"
 
-class SV4GUIMODULEMACHINELEARNING_EXPORT sv4gui_MachineLearningUtils
-{
+class SV4GUIMODULEMACHINELEARNING_EXPORT sv4gui_MachineLearningUtils {
 
 public:
+  static sv4gui_MachineLearningUtils *getInstance(std::string network_type);
 
-    static sv4gui_MachineLearningUtils* getInstance(std::string network_type);
+  virtual ~sv4gui_MachineLearningUtils();
 
-    virtual ~sv4gui_MachineLearningUtils();
+  std::string setImage(std::string image_path);
 
-    std::string setImage(std::string image_path);
+  std::vector<std::vector<double>>
+  segmentPathPoint(sv4guiPathElement::sv4guiPathPoint path_point);
 
-    std::vector<std::vector<double>> segmentPathPoint(sv4guiPathElement::sv4guiPathPoint path_point);
-
-    void sampleNetwork();
+  void sampleNetwork();
 
 private:
   sv4gui_MachineLearningUtils(std::string network_type);
 
-  static sv4gui_MachineLearningUtils* instance;
+  static sv4gui_MachineLearningUtils *instance;
 
 protected:
-
-  PyObject* py_wrapper_mod;
-  PyObject* py_wrapper_class;
-  PyObject* py_wrapper_inst;
+  PyObject *py_wrapper_mod;
+  PyObject *py_wrapper_class;
+  PyObject *py_wrapper_inst;
 };
 
 #endif /* SV4GUIMACHINELEARNINGUTILS_H */

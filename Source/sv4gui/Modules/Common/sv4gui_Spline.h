@@ -40,42 +40,38 @@
 #include <mitkPoint.h>
 #include <mitkVector.h>
 
-class SV4GUIMODULECOMMON_EXPORT sv4guiSpline : public sv3::Spline
-{
+class SV4GUIMODULECOMMON_EXPORT sv4guiSpline : public sv3::Spline {
 public:
+  struct sv4guiSplinePoint {
+    int id;
+    mitk::Point3D pos;
+    mitk::Vector3D tangent;
+    mitk::Vector3D rotation;
+  };
 
-    struct sv4guiSplinePoint
-    {
-        int id;
-        mitk::Point3D pos;
-        mitk::Vector3D tangent;
-        mitk::Vector3D rotation;
-    };
+  sv4guiSpline();
 
-    sv4guiSpline();
+  sv4guiSpline(bool closed, CalculationMethod method,
+               int furtherSubdivionNumber = 10);
 
-    sv4guiSpline(bool closed, CalculationMethod method, int  furtherSubdivionNumber = 10);
+  virtual ~sv4guiSpline();
 
-    virtual ~sv4guiSpline();
+  void SetInputPoints(std::vector<mitk::Point3D> inputPonits);
 
-    void SetInputPoints(std::vector<mitk::Point3D> inputPonits);
+  std::vector<mitk::Point3D> GetInputPoints();
 
-    std::vector<mitk::Point3D>  GetInputPoints();
+  std::vector<sv4guiSplinePoint> GetSplinePoints();
 
-    std::vector<sv4guiSplinePoint> GetSplinePoints();
+  std::vector<mitk::Point3D> GetSplinePosPoints();
 
-    std::vector<mitk::Point3D> GetSplinePosPoints();
+  void Update();
 
-    void Update();
-
-    mitk::Point3D GetPoint(sv3::VtkParametricSpline* svpp, double idx);
+  mitk::Point3D GetPoint(sv3::VtkParametricSpline *svpp, double idx);
 
 protected:
+  std::vector<mitk::Point3D> m_InputPoints;
 
-    std::vector<mitk::Point3D> m_InputPoints;
-
-    std::vector<sv4guiSplinePoint> m_SplinePoints;
-
+  std::vector<sv4guiSplinePoint> m_SplinePoints;
 };
 
 #endif // SV4GUI_SPLINE_H

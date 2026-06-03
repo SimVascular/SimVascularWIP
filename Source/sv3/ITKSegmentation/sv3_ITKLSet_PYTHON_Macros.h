@@ -36,61 +36,52 @@
  */
 
 #ifndef CVPYTHONMACROS_H_
-#define CVPYTHONMACROS_H_															\
+#define CVPYTHONMACROS_H_
 
-#define CVPYTHONRepositoryExistsMacro(obj,PyRunTimeErr) 										\
-		if ( gRepository->Exists( obj ) ) {                                         \
-            char temp[2048];                                                        \
-			PyErr_SetString(PyRunTimeErr, "object already exists"); 											\
-		}																		\
+#define CVPYTHONRepositoryExistsMacro(obj, PyRunTimeErr)                       \
+  if (gRepository->Exists(obj)) {                                              \
+    char temp[2048];                                                           \
+    PyErr_SetString(PyRunTimeErr, "object already exists");                    \
+  }
 
-#define CVPYTHONRepositoryRegisterMacro(objName,obj,PyRunTimeErr) 								\
-		if ( !(gRepository->Register( objName, obj )) ) { 						\
-			PyErr_SetString(PyRunTimeErr, "error registering obj in repository");\
-					delete obj; 												\
-		} 																		\
-																	\
+#define CVPYTHONRepositoryRegisterMacro(objName, obj, PyRunTimeErr)            \
+  if (!(gRepository->Register(objName, obj))) {                                \
+    PyErr_SetString(PyRunTimeErr, "error registering obj in repository");      \
+    delete obj;                                                                \
+  }
 
 #define CXX_PYTHON_STDARGS PyObject *self, PyObject *args
 
-#define CVPYTHONMtdDeclareMacro(objname,name) 										\
-		static PyObject* objname##_##name##Mtd( CXX_PYTHON_STDARGS )						\
+#define CVPYTHONMtdDeclareMacro(objname, name)                                 \
+  static PyObject *objname##_##name##Mtd(CXX_PYTHON_STDARGS)
 
-#define CVPYTHONObjMemberSetPropertyMacro(pythonName,objname,property,type,cv_type,PyRunTimeErr) 	\
-		CVPYTHONMtdDeclareMacro(pythonName,Set##property) 							\
-		{																		\
-			objname *ls; 								\
-			type input; 														\
-            if(!PyArg_ParseTuple(args,cv_type,&input))                          \
-            {                                                                   \
-                PyErr_SetString(PyRunTimeErr, "Could not import cv_type");      \
-            }																	 \
-			ls->Set##property(input); 											\
-		    return SV_PYTHON_OK;	\
-		}																		\
+#define CVPYTHONObjMemberSetPropertyMacro(pythonName, objname, property, type, \
+                                          cv_type, PyRunTimeErr)               \
+  CVPYTHONMtdDeclareMacro(pythonName, Set##property) {                         \
+    objname *ls;                                                               \
+    type input;                                                                \
+    if (!PyArg_ParseTuple(args, cv_type, &input)) {                            \
+      PyErr_SetString(PyRunTimeErr, "Could not import cv_type");               \
+    }                                                                          \
+    ls->Set##property(input);                                                  \
+    return SV_PYTHON_OK;                                                       \
+  }
 
-
-#define CVPYTHONObjMemberGetObjPropertyMacro(pythonName,objname,property,type,PyRunTimeErr) 		\
-		CVPYTHONMtdDeclareMacro(pythonName,Get##property) 							\
-		{																		\
-			objname *ls; 								                        \
-			type* cvObj;														\
-			char * objName;														\
-            if(!PyArg_ParseTuple(args,"s",&objName))                            \
-            {                                                                   \
-                PyErr_SetString(PyRunTimeErr, "Could not import cv_type");      \
-            }																	\
-			cvObj = ls->Get##property (); 										\
-			if ( cvObj == NULL ) { 												\
-				PyErr_SetString(PyRunTimeErr, "error, obj is null" ); 		    \
-			}																	\
-			CVPYTHONRepositoryRegisterMacro(objName,cvObj,PyRunTimeErr);						\
-			return Py_BuildValue("s",cvObj->GetName());							\
-		}																		\
-
-
-
+#define CVPYTHONObjMemberGetObjPropertyMacro(pythonName, objname, property,    \
+                                             type, PyRunTimeErr)               \
+  CVPYTHONMtdDeclareMacro(pythonName, Get##property) {                         \
+    objname *ls;                                                               \
+    type *cvObj;                                                               \
+    char *objName;                                                             \
+    if (!PyArg_ParseTuple(args, "s", &objName)) {                              \
+      PyErr_SetString(PyRunTimeErr, "Could not import cv_type");               \
+    }                                                                          \
+    cvObj = ls->Get##property();                                               \
+    if (cvObj == NULL) {                                                       \
+      PyErr_SetString(PyRunTimeErr, "error, obj is null");                     \
+    }                                                                          \
+    CVPYTHONRepositoryRegisterMacro(objName, cvObj, PyRunTimeErr);             \
+    return Py_BuildValue("s", cvObj->GetName());                               \
+  }
 
 #endif /* CVITKMACROS_H_ */
-
-

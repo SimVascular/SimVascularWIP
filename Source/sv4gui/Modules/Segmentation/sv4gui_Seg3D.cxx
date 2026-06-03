@@ -31,44 +31,26 @@
 
 #include "sv4gui_Seg3D.h"
 
-sv4guiSeg3D::sv4guiSeg3D()
-    : m_Vpd(nullptr)
-{
-}
+sv4guiSeg3D::sv4guiSeg3D() : m_Vpd(nullptr) {}
 
 sv4guiSeg3D::sv4guiSeg3D(const sv4guiSeg3D &other, bool copyVpd)
-    : m_Param(other.m_Param)
-    , m_Vpd(nullptr)
-{
-    if(copyVpd && other.m_Vpd!=nullptr)
-    {
-        m_Vpd=vtkSmartPointer<vtkPolyData>::New();
-        m_Vpd->DeepCopy(other.m_Vpd);
-    }
+    : m_Param(other.m_Param), m_Vpd(nullptr) {
+  if (copyVpd && other.m_Vpd != nullptr) {
+    m_Vpd = vtkSmartPointer<vtkPolyData>::New();
+    m_Vpd->DeepCopy(other.m_Vpd);
+  }
 }
 
-sv4guiSeg3D::~sv4guiSeg3D()
-{
-}
+sv4guiSeg3D::~sv4guiSeg3D() {}
 
-sv4guiSeg3D* sv4guiSeg3D::Clone()
-{
-    return new sv4guiSeg3D(*this);
-}
+sv4guiSeg3D *sv4guiSeg3D::Clone() { return new sv4guiSeg3D(*this); }
 
-sv4guiSeg3DParam& sv4guiSeg3D::GetParam()
-{
-    return m_Param;
-}
+sv4guiSeg3DParam &sv4guiSeg3D::GetParam() { return m_Param; }
 
-sv4guiSeg3DParam& sv4guiSeg3D::GetInnerParam()
-{
-    return m_InnerParam;
-}
+sv4guiSeg3DParam &sv4guiSeg3D::GetInnerParam() { return m_InnerParam; }
 
-void sv4guiSeg3D::SetParam(sv4guiSeg3DParam param, bool copyToInner)
-{
-    m_Param=param;
-    if(copyToInner)
-        m_InnerParam=param;
+void sv4guiSeg3D::SetParam(sv4guiSeg3DParam param, bool copyToInner) {
+  m_Param = param;
+  if (copyToInner)
+    m_InnerParam = param;
 }

@@ -39,14 +39,14 @@
 #include "vtkInformation.h"
 #include "vtkObjectFactory.h"
 #include "vtkPolyData.h"
+#include "vtkSVGlobals.h"
 #include "vtkTriangle.h"
 #include "vtkTriangleStrip.h"
-#include "vtkSVGlobals.h"
 
 #if !defined(_WIN32) || defined(__CYGWIN__)
-# include <unistd.h> /* unlink */
+#include <unistd.h> /* unlink */
 #else
-# include <io.h> /* unlink */
+#include <io.h> /* unlink */
 #endif
 
 // ----------------------
@@ -54,60 +54,52 @@
 // ----------------------
 vtkStandardNewMacro(vtkSVRawWriter);
 
-static char header[]="Visualization Toolkit generated SLA File                                        ";
+static char header[] = "Visualization Toolkit generated SLA File               "
+                       "                         ";
 
 // ----------------------
 // Constructor
 // ----------------------
-vtkSVRawWriter::vtkSVRawWriter()
-{
-  this->FileName = nullptr;
-}
+vtkSVRawWriter::vtkSVRawWriter() { this->FileName = nullptr; }
 
 // ----------------------
 // WriteData
 // ----------------------
-void vtkSVRawWriter::WriteData()
-{
+void vtkSVRawWriter::WriteData() {
   vtkPoints *pts;
   vtkCellArray *cells;
   vtkPolyData *input = this->GetInput();
 
   vtkIdType npts;
-  const vtkIdType* index;
+  const vtkIdType *index;
   input->BuildLinks();
   input->GetCellPoints(0, npts, index);
   if (npts == 2)
     cells = input->GetLines();
   else if (npts == 3)
     cells = input->GetPolys();
-  else
-  {
-    vtkErrorMacro(<<"Raw file only supports triangles and lines");
+  else {
+    vtkErrorMacro(<< "Raw file only supports triangles and lines");
     this->SetErrorCode(vtkErrorCode::FileFormatError);
     return;
   }
 
   pts = input->GetPoints();
-  if (pts == nullptr || cells == nullptr)
-  {
-    vtkErrorMacro(<<"No data to write!");
+  if (pts == nullptr || cells == nullptr) {
+    vtkErrorMacro(<< "No data to write!");
     this->SetErrorCode(vtkErrorCode::UnknownError);
     return;
   }
 
-  if (this->FileName == nullptr)
-  {
+  if (this->FileName == nullptr) {
     vtkErrorMacro(<< "Please specify FileName to write");
     this->SetErrorCode(vtkErrorCode::NoFileNameError);
     return;
   }
 
-  this->WriteRawFile(pts,cells);
-  if (this->ErrorCode == vtkErrorCode::OutOfDiskSpaceError)
-  {
-    vtkErrorMacro("Ran out of disk space; deleting file: "
-                  << this->FileName);
+  this->WriteRawFile(pts, cells);
+  if (this->ErrorCode == vtkErrorCode::OutOfDiskSpaceError) {
+    vtkErrorMacro("Ran out of disk space; deleting file: " << this->FileName);
     unlink(this->FileName);
   }
 }
@@ -115,105 +107,91 @@ void vtkSVRawWriter::WriteData()
 // ----------------------
 // WriteRawFile
 // ----------------------
-void vtkSVRawWriter::WriteRawFile(
-  vtkPoints *pts, vtkCellArray *cells)
-{
+void vtkSVRawWriter::WriteRawFile(vtkPoints *pts, vtkCellArray *cells) {
   FILE *fp;
   double v[3];
   int top[2];
   vtkIdType npts = 0;
-  const vtkIdType* indx;
+  const vtkIdType *indx;
 
-  if ((fp = fopen(this->FileName, "w")) == nullptr)
-  {
+  if ((fp = fopen(this->FileName, "w")) == nullptr) {
     vtkErrorMacro(<< "Couldn't open file: " << this->FileName);
     this->SetErrorCode(vtkErrorCode::CannotOpenFileError);
     return;
   }
-//
-//  Write header
-//
+  //
+  //  Write header
+  //
   vtkDebugMacro("Writing ASCII raw file");
 
   top[0] = pts->GetNumberOfPoints();
   top[1] = cells->GetNumberOfCells();
-  fprintf (fp, "%d %d\n", top[0], top[1]);
+  fprintf(fp, "%d %d\n", top[0], top[1]);
 
   //  Write out triangle polygons.  If not a triangle polygon, report
   //  an error
   vtkNew(vtkIdList, testCell);
   cells->GetCell(0, testCell);
-  for (int i=0; i<top[0]; i++)
-  {
+  for (int i = 0; i < top[0]; i++) {
     pts->GetPoint(i, v);
     if (testCell->GetNumberOfIds() == 2)
-      fprintf (fp, "%.6f %.6f %.6f %d\n", v[0], v[1], v[2], 0);
+      fprintf(fp, "%.6f %.6f %.6f %d\n", v[0], v[1], v[2], 0);
     else
-      fprintf (fp, "%.6f %.6f %.6f\n", v[0], v[1], v[2]);
+      fprintf(fp, "%.6f %.6f %.6f\n", v[0], v[1], v[2]);
   }
-  for (cells->InitTraversal(); cells->GetNextCell(npts,indx); )
-  {
-    if (npts > 3)
-    {
+  for (cells->InitTraversal(); cells->GetNextCell(npts, indx);) {
+    if (npts > 3) {
       fclose(fp);
-      vtkErrorMacro(<<"Raw file only supports triangles and lines");
+      vtkErrorMacro(<< "Raw file only supports triangles and lines");
       this->SetErrorCode(vtkErrorCode::FileFormatError);
       return;
     }
 
-    if (npts == 3)
-    {
-      fprintf (fp, "%lld %lld %lld\n", indx[0], indx[1], indx[2]);
-    }
-    else if (npts == 2)
-    {
-      fprintf (fp, "%lld %lld\n", indx[0], indx[1]);
+    if (npts == 3) {
+      fprintf(fp, "%lld %lld %lld\n", indx[0], indx[1], indx[2]);
+    } else if (npts == 2) {
+      fprintf(fp, "%lld %lld\n", indx[0], indx[1]);
     }
   }
 
-  if(fflush(fp))
-  {
+  if (fflush(fp)) {
     fclose(fp);
     this->SetErrorCode(vtkErrorCode::OutOfDiskSpaceError);
     return;
   }
-  fclose (fp);
+  fclose(fp);
 }
 
 // ----------------------
 // PrintSelf
 // ----------------------
-void vtkSVRawWriter::PrintSelf(ostream& os, vtkIndent indent)
-{
-  this->Superclass::PrintSelf(os,indent);
+void vtkSVRawWriter::PrintSelf(ostream &os, vtkIndent indent) {
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "FileName: "
-     << ((this->GetFileName() == nullptr) ?
-         "(none)" : this->GetFileName()) << std::endl;
+     << ((this->GetFileName() == nullptr) ? "(none)" : this->GetFileName())
+     << std::endl;
   os << indent << "Input: " << this->GetInput() << std::endl;
 }
 
 // ----------------------
 // GetInput
 // ----------------------
-vtkPolyData* vtkSVRawWriter::GetInput()
-{
+vtkPolyData *vtkSVRawWriter::GetInput() {
   return vtkPolyData::SafeDownCast(this->GetInput(0));
 }
 
 // ----------------------
 // GetInput
 // ----------------------
-vtkPolyData* vtkSVRawWriter::GetInput(int port)
-{
+vtkPolyData *vtkSVRawWriter::GetInput(int port) {
   return vtkPolyData::SafeDownCast(this->Superclass::GetInput(port));
 }
 
 // ----------------------
 // FillInputPortInformation
 // ----------------------
-int vtkSVRawWriter::FillInputPortInformation(int, vtkInformation *info)
-{
+int vtkSVRawWriter::FillInputPortInformation(int, vtkInformation *info) {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkPolyData");
   return 1;
 }

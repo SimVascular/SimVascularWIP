@@ -37,19 +37,17 @@
 
 #include "sv_VTK.h"
 
-#include "sv_RepositoryData.h"
 #include "sv_DataObject.h"
+#include "sv_RepositoryData.h"
 
 class SV_EXPORT_REPOSITORY cvDataSet : public cvDataObject {
 
 public:
-  cvDataSet( RepositoryDataT type );
+  cvDataSet(RepositoryDataT type);
   ~cvDataSet();
 
 protected:
-  void ShallowCopy( vtkDataSet *src );
-
+  void ShallowCopy(vtkDataSet *src);
 };
-
 
 #endif // __CVDATASET_H

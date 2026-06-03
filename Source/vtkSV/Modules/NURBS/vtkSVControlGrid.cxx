@@ -45,8 +45,7 @@ vtkStandardNewMacro(vtkSVControlGrid);
 // ----------------------
 // Constructor
 // ----------------------
-vtkSVControlGrid::vtkSVControlGrid()
-{
+vtkSVControlGrid::vtkSVControlGrid() {
   vtkNew(vtkPoints, internalPoints);
   this->SetPoints(internalPoints);
 
@@ -58,59 +57,48 @@ vtkSVControlGrid::vtkSVControlGrid()
 // ----------------------
 // Destructor
 // ----------------------
-vtkSVControlGrid::~vtkSVControlGrid()
-{
-}
+vtkSVControlGrid::~vtkSVControlGrid() {}
 
 // ----------------------
 // PrintSelf
 // ----------------------
-void vtkSVControlGrid::PrintSelf(ostream& os, vtkIndent indent)
-{
+void vtkSVControlGrid::PrintSelf(ostream &os, vtkIndent indent) {
   this->Superclass::PrintSelf(os, indent);
 }
 
 // ----------------------
 // CopyStructure
 // ----------------------
-void vtkSVControlGrid::CopyStructure(vtkDataSet *ds)
-{
+void vtkSVControlGrid::CopyStructure(vtkDataSet *ds) {
   this->Superclass::CopyStructure(ds);
 }
 
 // ----------------------
 // Initialize
 // ----------------------
-void vtkSVControlGrid::Initialize()
-{
-  this->Superclass::Initialize();
+void vtkSVControlGrid::Initialize() { this->Superclass::Initialize(); }
+
+// ----------------------
+// GetData
+// ----------------------
+vtkSVControlGrid *vtkSVControlGrid::GetData(vtkInformation *info) {
+  return info ? vtkSVControlGrid::SafeDownCast(info->Get(DATA_OBJECT())) : 0;
 }
 
 // ----------------------
 // GetData
 // ----------------------
-vtkSVControlGrid* vtkSVControlGrid::GetData(vtkInformation* info)
-{
-  return info? vtkSVControlGrid::SafeDownCast(info->Get(DATA_OBJECT())) : 0;
-}
-
-// ----------------------
-// GetData
-// ----------------------
-vtkSVControlGrid* vtkSVControlGrid::GetData(vtkInformationVector* v, int i)
-{
+vtkSVControlGrid *vtkSVControlGrid::GetData(vtkInformationVector *v, int i) {
   return vtkSVControlGrid::GetData(v->GetInformationObject(i));
 }
 
 // ----------------------
 // SetNumberOfControlPoints
 // ----------------------
-int vtkSVControlGrid::SetNumberOfControlPoints(const int numPoints)
-{
+int vtkSVControlGrid::SetNumberOfControlPoints(const int numPoints) {
   this->GetPoints()->SetNumberOfPoints(numPoints);
   vtkDataArray *weights = this->GetPointData()->GetArray("Weights");
-  if (weights == nullptr)
-  {
+  if (weights == nullptr) {
     vtkErrorMacro("No weigths on surface");
     return SV_ERROR;
   }
@@ -123,10 +111,14 @@ int vtkSVControlGrid::SetNumberOfControlPoints(const int numPoints)
 // ----------------------
 // SetControlPoint
 // ----------------------
-int vtkSVControlGrid::SetControlPoint(const int i, const int j, const int k, const double p0, const double p1, const double p2, const double w)
-{
+int vtkSVControlGrid::SetControlPoint(const int i, const int j, const int k,
+                                      const double p0, const double p1,
+                                      const double p2, const double w) {
   int ptId;
-  double pt[3]; pt[0] = p0; pt[1] = p1; pt[2] = p2;
+  double pt[3];
+  pt[0] = p0;
+  pt[1] = p1;
+  pt[2] = p2;
   this->GetPointId(i, j, k, ptId);
   this->GetPoints()->SetPoint(ptId, pt);
   this->GetPointData()->GetArray("Weights")->InsertTuple1(ptId, w);
@@ -134,12 +126,11 @@ int vtkSVControlGrid::SetControlPoint(const int i, const int j, const int k, con
   return SV_OK;
 }
 
-
 // ----------------------
 // SetControlPoint
 // ----------------------
-int vtkSVControlGrid::SetControlPoint(const int i, const int j, const int k, const double p[3], const double w)
-{
+int vtkSVControlGrid::SetControlPoint(const int i, const int j, const int k,
+                                      const double p[3], const double w) {
   int ptId;
   this->GetPointId(i, j, k, ptId);
   this->GetPoints()->SetPoint(ptId, p);
@@ -151,11 +142,10 @@ int vtkSVControlGrid::SetControlPoint(const int i, const int j, const int k, con
 // ----------------------
 // SetControlPoint
 // ----------------------
-int vtkSVControlGrid::SetControlPoint(const int i, const int j, const int k, const double pw[4])
-{
+int vtkSVControlGrid::SetControlPoint(const int i, const int j, const int k,
+                                      const double pw[4]) {
   double onlyp[3];
-  for (int l=0; l<3; l++)
-  {
+  for (int l = 0; l < 3; l++) {
     onlyp[l] = pw[l];
   }
   double w = pw[3];
@@ -168,24 +158,21 @@ int vtkSVControlGrid::SetControlPoint(const int i, const int j, const int k, con
 // ----------------------
 // InsertControlPoint
 // ----------------------
-int vtkSVControlGrid::InsertControlPoint(const int i, const int j, const int k, const double p[3], const double w)
-{
+int vtkSVControlGrid::InsertControlPoint(const int i, const int j, const int k,
+                                         const double p[3], const double w) {
   int dim[3];
   this->GetDimensions(dim);
-  if (i >= dim[0])
-  {
+  if (i >= dim[0]) {
     dim[0] = i + 1;
   }
-  if (j >= dim[1])
-  {
+  if (j >= dim[1]) {
     dim[1] = j + 1;
   }
-  if (k >= dim[2])
-  {
+  if (k >= dim[2]) {
     dim[2] = k + 1;
   }
   this->SetDimensions(dim);
-  this->GetPoints()->SetNumberOfPoints((dim[0]*dim[1]*dim[2]));
+  this->GetPoints()->SetNumberOfPoints((dim[0] * dim[1] * dim[2]));
 
   this->SetControlPoint(i, j, k, p, w);
 
@@ -195,11 +182,10 @@ int vtkSVControlGrid::InsertControlPoint(const int i, const int j, const int k, 
 // ----------------------
 // InsertControlPoint
 // ----------------------
-int vtkSVControlGrid::InsertControlPoint(const int i, const int j, const int k, const double pw[4])
-{
+int vtkSVControlGrid::InsertControlPoint(const int i, const int j, const int k,
+                                         const double pw[4]) {
   double onlyp[3];
-  for (int l=0; l<3; l++)
-  {
+  for (int l = 0; l < 3; l++) {
     onlyp[l] = pw[l];
   }
   double w = pw[3];
@@ -212,11 +198,10 @@ int vtkSVControlGrid::InsertControlPoint(const int i, const int j, const int k, 
 // ----------------------
 // GetControlPoint
 // ----------------------
-int vtkSVControlGrid::GetControlPoint(const int i, const int j, const int k, double p[3], double &weight)
-{
+int vtkSVControlGrid::GetControlPoint(const int i, const int j, const int k,
+                                      double p[3], double &weight) {
   int ptId;
-  if (this->GetPointId(i, j, k, ptId) != SV_OK)
-  {
+  if (this->GetPointId(i, j, k, ptId) != SV_OK) {
     vtkErrorMacro("Point not retrieved successfully");
     return SV_ERROR;
   }
@@ -229,15 +214,15 @@ int vtkSVControlGrid::GetControlPoint(const int i, const int j, const int k, dou
 // ----------------------
 // GetControlPoint
 // ----------------------
-int vtkSVControlGrid::GetControlPoint(const int i, const int j, const int k, double pw[4])
-{
+int vtkSVControlGrid::GetControlPoint(const int i, const int j, const int k,
+                                      double pw[4]) {
   double onlyp[3];
   double weight;
 
   if (this->GetControlPoint(i, j, k, onlyp, weight) != SV_OK)
     vtkErrorMacro("Point not retrieved successfully");
 
-  for (int l=0; l<3; l++)
+  for (int l = 0; l < 3; l++)
     pw[l] = onlyp[l];
   pw[3] = weight;
 
@@ -247,18 +232,16 @@ int vtkSVControlGrid::GetControlPoint(const int i, const int j, const int k, dou
 // ----------------------
 // GetPointId
 // ----------------------
-int vtkSVControlGrid::GetPointId(const int i, const int j, const int k, int &ptId)
-{
+int vtkSVControlGrid::GetPointId(const int i, const int j, const int k,
+                                 int &ptId) {
   int extent[6];
   this->GetExtent(extent);
 
-  if(i < extent[0] || i > extent[1] ||
-     j < extent[2] || j > extent[3] ||
-     k < extent[4] || k > extent[5])
-    {
+  if (i < extent[0] || i > extent[1] || j < extent[2] || j > extent[3] ||
+      k < extent[4] || k > extent[5]) {
     vtkErrorMacro("ERROR: IJK coordinates are outside of grid extent!");
     return SV_ERROR; // out of bounds!
-    }
+  }
 
   int pos[3];
   pos[0] = i;
@@ -273,18 +256,15 @@ int vtkSVControlGrid::GetPointId(const int i, const int j, const int k, int &ptI
 // ----------------------
 // GetPointId
 // ----------------------
-int vtkSVControlGrid::GetPointId(const int i, const int j, const int k)
-{
+int vtkSVControlGrid::GetPointId(const int i, const int j, const int k) {
   int extent[6];
   this->GetExtent(extent);
 
-  if(i < extent[0] || i > extent[1] ||
-     j < extent[2] || j > extent[3] ||
-     k < extent[4] || k > extent[5])
-    {
+  if (i < extent[0] || i > extent[1] || j < extent[2] || j > extent[3] ||
+      k < extent[4] || k > extent[5]) {
     vtkErrorMacro("ERROR: IJK coordinates are outside of grid extent!");
     return SV_ERROR; // out of bounds!
-    }
+  }
 
   int pos[3];
   pos[0] = i;

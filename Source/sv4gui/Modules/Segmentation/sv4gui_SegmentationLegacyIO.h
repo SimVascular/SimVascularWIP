@@ -34,37 +34,40 @@
 
 #include "SimVascular.h"
 
-#include <sv4guiModuleSegmentationExports.h>
 #include "sv4gui_ContourGroup.h"
+#include <sv4guiModuleSegmentationExports.h>
 
 #include "mitkDataNode.h"
 #include "mitkDataStorage.h"
 #include "mitkImage.h"
 #include <QString>
 
-
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiSegmentationLegacyIO
-{
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiSegmentationLegacyIO {
 public:
+  sv4guiSegmentationLegacyIO() {}
+  virtual ~sv4guiSegmentationLegacyIO() {}
 
-  sv4guiSegmentationLegacyIO(){}
-  virtual ~sv4guiSegmentationLegacyIO(){}
+  static mitk::DataNode::Pointer ReadContourGroupFile(QString filePath);
 
-  static mitk::DataNode::Pointer ReadContourGroupFile(QString filePath) ;
-
-  static sv4guiContourGroup::Pointer CreateGroupFromFile(const std::string& fileName);
+  static sv4guiContourGroup::Pointer
+  CreateGroupFromFile(const std::string &fileName);
 
   static std::vector<mitk::DataNode::Pointer> ReadFiles(QString segDir);
 
-  static void WriteContourGroupFile(mitk::DataNode::Pointer node, QString filePath);
+  static void WriteContourGroupFile(mitk::DataNode::Pointer node,
+                                    QString filePath);
 
   static void WriteSeg3DFile(mitk::DataNode::Pointer node, QString filePath);
 
-  static void WriteTclFile(mitk::DataStorage::SetOfObjects::ConstPointer rsContourGroup, mitk::DataStorage::SetOfObjects::ConstPointer rsSeg3D, QString filePath);
+  static void
+  WriteTclFile(mitk::DataStorage::SetOfObjects::ConstPointer rsContourGroup,
+               mitk::DataStorage::SetOfObjects::ConstPointer rsSeg3D,
+               QString filePath);
 
-  static void WriteFiles(mitk::DataStorage::SetOfObjects::ConstPointer contoruGroupNodes, mitk::DataStorage::SetOfObjects::ConstPointer seg3DNodes, QString segDir);
-
-
+  static void
+  WriteFiles(mitk::DataStorage::SetOfObjects::ConstPointer contoruGroupNodes,
+             mitk::DataStorage::SetOfObjects::ConstPointer seg3DNodes,
+             QString segDir);
 };
 
 #endif // SV4GUI_SEGMENTATIONLEGACYIO_H

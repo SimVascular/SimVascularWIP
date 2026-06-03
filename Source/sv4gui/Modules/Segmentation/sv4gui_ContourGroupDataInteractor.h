@@ -41,179 +41,188 @@
 #include <itkEventObject.h>
 #include <mitkInteractionPositionEvent.h>
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourGroupDataInteractor : public mitk::DataInteractor
-{
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourGroupDataInteractor
+    : public mitk::DataInteractor {
 public:
-    mitkClassMacro(sv4guiContourGroupDataInteractor, mitk::DataInteractor);
-    itkFactorylessNewMacro(Self)
-    itkCloneMacro(Self)
+  mitkClassMacro(sv4guiContourGroupDataInteractor, mitk::DataInteractor);
+  itkFactorylessNewMacro(Self) itkCloneMacro(Self)
 
-    void SetSelectionAccuracy( mitk::ScalarType accuracy );
+      void SetSelectionAccuracy(mitk::ScalarType accuracy);
 
-    mitk::ScalarType GetSelectionAccuracy() const;
+  mitk::ScalarType GetSelectionAccuracy() const;
 
-    void SetMinimumPointDistance( mitk::ScalarType minimumDistance );
+  void SetMinimumPointDistance(mitk::ScalarType minimumDistance);
 
-    void SetInteraction3D(bool use3D);
+  void SetInteraction3D(bool use3D);
 
-    void SetPathPoints(std::vector<sv4guiPathElement::sv4guiPathPoint> pathPoints) {m_PathPoints=pathPoints;}
+  void
+  SetPathPoints(std::vector<sv4guiPathElement::sv4guiPathPoint> pathPoints) {
+    m_PathPoints = pathPoints;
+  }
 
-    void SetPathPoint(sv4guiPathElement::sv4guiPathPoint pathPoint) {m_PathPoint=pathPoint;}
+  void SetPathPoint(sv4guiPathElement::sv4guiPathPoint pathPoint) {
+    m_PathPoint = pathPoint;
+  }
 
-    sv4guiPathElement::sv4guiPathPoint GetPathPoint() {return m_PathPoint;}
+  sv4guiPathElement::sv4guiPathPoint GetPathPoint() { return m_PathPoint; }
 
-    void SetMethod(std::string method) {m_Method=method;}
+  void SetMethod(std::string method) { m_Method = method; }
 
-    std::string GetMethod() {return m_Method;}
+  std::string GetMethod() { return m_Method; }
 
-    void SetSubdivisionSpacing(double spacing) {m_SubdivisionSpacing=spacing;}
+  void SetSubdivisionSpacing(double spacing) { m_SubdivisionSpacing = spacing; }
 
-    double GetSubdivisionSpacing() {return m_SubdivisionSpacing;}
+  double GetSubdivisionSpacing() { return m_SubdivisionSpacing; }
 
-    int GetSelectedContourIndex() {return m_SelectedContourIndex;}
+  int GetSelectedContourIndex() { return m_SelectedContourIndex; }
 
 protected:
+  sv4guiContourGroupDataInteractor();
+  virtual ~sv4guiContourGroupDataInteractor();
 
-    sv4guiContourGroupDataInteractor();
-    virtual ~sv4guiContourGroupDataInteractor();
-
-    virtual void ConnectActionsAndFunctions() override;
+  virtual void ConnectActionsAndFunctions() override;
 
 public:
-    //  Conditions //
+  //  Conditions //
 
-    bool ContourExistsOnCurrentSlice( const mitk::InteractionEvent* interactionEvent );
+  bool
+  ContourExistsOnCurrentSlice(const mitk::InteractionEvent *interactionEvent);
 
-    bool CurrentContourHasControlPoints( const mitk::InteractionEvent* interactionEvent );
+  bool CurrentContourHasControlPoints(
+      const mitk::InteractionEvent *interactionEvent);
 
-    bool GroupHasUnplacedContour( const mitk::InteractionEvent* interactionEvent );
+  bool GroupHasUnplacedContour(const mitk::InteractionEvent *interactionEvent);
 
-    bool OnCurrentContourPlane( const mitk::InteractionEvent* interactionEvent );
+  bool OnCurrentContourPlane(const mitk::InteractionEvent *interactionEvent);
 
-    bool PointIsValid( const mitk::InteractionEvent* interactionEvent );
+  bool PointIsValid(const mitk::InteractionEvent *interactionEvent);
 
-    bool ContourIsFinished( const mitk::InteractionEvent* interactionEvent );
+  bool ContourIsFinished(const mitk::InteractionEvent *interactionEvent);
 
-    bool MinimalContourIsFinished( const mitk::InteractionEvent* interactionEvent );
+  bool MinimalContourIsFinished(const mitk::InteractionEvent *interactionEvent);
 
-    bool IsOverContour( const mitk::InteractionEvent* interactionEvent );
+  bool IsOverContour(const mitk::InteractionEvent *interactionEvent);
 
-    bool IsOverContour2( const mitk::InteractionEvent* interactionEvent );
+  bool IsOverContour2(const mitk::InteractionEvent *interactionEvent);
 
-    bool IsOverPoint( const mitk::InteractionEvent* interactionEvent );
+  bool IsOverPoint(const mitk::InteractionEvent *interactionEvent);
 
-    bool IsMethodSpecified( const mitk::InteractionEvent* interactionEvent );
+  bool IsMethodSpecified(const mitk::InteractionEvent *interactionEvent);
 
-    //  Actions //
+  //  Actions //
 
-    void AddInitialPoint(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
+  void AddInitialPoint(mitk::StateMachineAction *,
+                       mitk::InteractionEvent *interactionEvent);
 
-    void MoveCurrentPoint(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
+  void MoveCurrentPoint(mitk::StateMachineAction *,
+                        mitk::InteractionEvent *interactionEvent);
 
-    void FinalizeContour(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent );
+  void FinalizeContour(mitk::StateMachineAction *,
+                       mitk::InteractionEvent *interactionEvent);
 
-    void AppendPoint(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
+  void AppendPoint(mitk::StateMachineAction *,
+                   mitk::InteractionEvent *interactionEvent);
 
-    void SelectPoint(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent );
+  void SelectPoint(mitk::StateMachineAction *,
+                   mitk::InteractionEvent *interactionEvent);
 
-    void DeselectPoint(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent );
+  void DeselectPoint(mitk::StateMachineAction *,
+                     mitk::InteractionEvent *interactionEvent);
 
-    void DeleteContour(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent );
+  void DeleteContour(mitk::StateMachineAction *,
+                     mitk::InteractionEvent *interactionEvent);
 
-    void RemoveSelectedPoint(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
+  void RemoveSelectedPoint(mitk::StateMachineAction *,
+                           mitk::InteractionEvent *interactionEvent);
 
-    void InitMove(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
+  void InitMove(mitk::StateMachineAction *,
+                mitk::InteractionEvent *interactionEvent);
 
-    void FinishMove(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
+  void FinishMove(mitk::StateMachineAction *,
+                  mitk::InteractionEvent *interactionEvent);
 
-    void SetPreviewPoint( mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent );
+  void SetPreviewPoint(mitk::StateMachineAction *,
+                       mitk::InteractionEvent *interactionEvent);
 
-    void HidePreviewPoint( mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent );
+  void HidePreviewPoint(mitk::StateMachineAction *,
+                        mitk::InteractionEvent *interactionEvent);
 
-    void InsertPoint( mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent );
+  void InsertPoint(mitk::StateMachineAction *,
+                   mitk::InteractionEvent *interactionEvent);
 
-    bool IsPointNearLine(
-            const mitk::Point2D& point,
-            const mitk::Point2D& startPoint,
-            const mitk::Point2D& endPoint,
-            double seletionDistance
-            ) const;
+  bool IsPointNearLine(const mitk::Point2D &point,
+                       const mitk::Point2D &startPoint,
+                       const mitk::Point2D &endPoint,
+                       double seletionDistance) const;
 
-    bool IsPoint3DNearLine(
-            const mitk::Point3D& point,
-            const mitk::Point3D& startPoint,
-            const mitk::Point3D& endPoint,
-            double selectionDistance
-            ) const;
+  bool IsPoint3DNearLine(const mitk::Point3D &point,
+                         const mitk::Point3D &startPoint,
+                         const mitk::Point3D &endPoint,
+                         double selectionDistance) const;
 
-    int SearchCoutourPoint(
-            const mitk::InteractionPositionEvent *positionEvent
-            , sv4guiContour *contour
-            , mitk::BaseRenderer *renderer
-            ) const;
+  int SearchCoutourPoint(const mitk::InteractionPositionEvent *positionEvent,
+                         sv4guiContour *contour,
+                         mitk::BaseRenderer *renderer) const;
 
-    int SearchCoutourPoint3D(
-            const mitk::InteractionPositionEvent *positionEvent
-            , sv4guiContour *contour
-            ) const;
+  int SearchCoutourPoint3D(const mitk::InteractionPositionEvent *positionEvent,
+                           sv4guiContour *contour) const;
 
-    int SearchControlPoint(
-            const mitk::InteractionPositionEvent* positionEvent,
-            sv4guiContour* contour,
-            mitk::BaseRenderer *renderer
-            ) const;
+  int SearchControlPoint(const mitk::InteractionPositionEvent *positionEvent,
+                         sv4guiContour *contour,
+                         mitk::BaseRenderer *renderer) const;
 
-    bool IsOn2DView(const mitk::InteractionEvent* interactionEvent) const;
+  bool IsOn2DView(const mitk::InteractionEvent *interactionEvent) const;
 
-    void InsertContour(sv4guiContourGroup* group, sv4guiContour* contour, int contourIndex, int timeStep = 0);
+  void InsertContour(sv4guiContourGroup *group, sv4guiContour *contour,
+                     int contourIndex, int timeStep = 0);
 
-    void SetContour(sv4guiContourGroup* group, int contourIndex, sv4guiContour* newContour, int timeStep = 0);
+  void SetContour(sv4guiContourGroup *group, int contourIndex,
+                  sv4guiContour *newContour, int timeStep = 0);
 
 private:
+  mitk::ScalarType m_SelectionAccuracy;
 
-    mitk::ScalarType m_SelectionAccuracy;
+  mitk::ScalarType m_MinimumPointDistance;
 
-    mitk::ScalarType m_MinimumPointDistance;
+  bool m_IsHovering;
 
-    bool m_IsHovering;
+  bool m_LastPointWasValid;
 
-    bool m_LastPointWasValid;
+  sv4guiContour *m_Contour;
 
-    sv4guiContour* m_Contour;
+  int m_ContourIndex;
 
-    int m_ContourIndex;
+  int m_TimeStep;
 
-    int m_TimeStep;
+  mitk::Point3D m_LastPoint;
 
-    mitk::Point3D m_LastPoint;
+  mitk::Point3D m_PreviousLocation;
 
-    mitk::Point3D m_PreviousLocation;
+  mitk::Vector3D m_SumVec;
 
-    mitk::Vector3D m_SumVec;
+  bool m_Interaction3D;
 
-    bool m_Interaction3D;
+  std::vector<sv4guiPathElement::sv4guiPathPoint> m_PathPoints;
 
-    std::vector<sv4guiPathElement::sv4guiPathPoint> m_PathPoints;
+  sv4guiPathElement::sv4guiPathPoint m_PathPoint;
 
-    sv4guiPathElement::sv4guiPathPoint m_PathPoint;
+  std::string m_Method;
 
-    std::string m_Method;
+  double m_SubdivisionSpacing;
 
-    double m_SubdivisionSpacing;
-
-    int m_SelectedContourIndex;
+  int m_SelectedContourIndex;
 };
 
-itkEventMacro( StartPlacementContourEvent, sv4guiContourEvent );
-itkEventMacro( EndPlacementContourEvent, sv4guiContourEvent );
-itkEventMacro( StartChangingContourEvent, itk::AnyEvent );
-itkEventMacro( EndChangingContourEvent, itk::AnyEvent );
-itkEventMacro( SelectContourEvent, sv4guiContourEvent );
-itkEventMacro( StartInteractionContourEvent, sv4guiContourEvent );
-itkEventMacro( EndInteractionContourEvent, sv4guiContourEvent );
-itkEventMacro( StartHoverContourEvent, sv4guiContourEvent );
-itkEventMacro( EndHoverContourEvent, sv4guiContourEvent );
+itkEventMacro(StartPlacementContourEvent, sv4guiContourEvent);
+itkEventMacro(EndPlacementContourEvent, sv4guiContourEvent);
+itkEventMacro(StartChangingContourEvent, itk::AnyEvent);
+itkEventMacro(EndChangingContourEvent, itk::AnyEvent);
+itkEventMacro(SelectContourEvent, sv4guiContourEvent);
+itkEventMacro(StartInteractionContourEvent, sv4guiContourEvent);
+itkEventMacro(EndInteractionContourEvent, sv4guiContourEvent);
+itkEventMacro(StartHoverContourEvent, sv4guiContourEvent);
+itkEventMacro(EndHoverContourEvent, sv4guiContourEvent);
 
-itkEventMacro( StartLoftContourGroupEvent, sv4guiContourGroupEvent );
+itkEventMacro(StartLoftContourGroupEvent, sv4guiContourGroupEvent);
 
 #endif // SV4GUI_CONTOURGROUPDATAINTERACTOR_H

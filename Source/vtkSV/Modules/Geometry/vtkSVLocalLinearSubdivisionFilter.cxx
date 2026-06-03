@@ -35,10 +35,10 @@
 #include "vtkEdgeTable.h"
 #include "vtkIdList.h"
 #include "vtkObjectFactory.h"
-#include "vtkPolyData.h"
 #include "vtkPointData.h"
-#include "vtkSmartPointer.h"
+#include "vtkPolyData.h"
 #include "vtkSVGlobals.h"
+#include "vtkSmartPointer.h"
 
 // ----------------------
 // StandardNewMacro
@@ -48,24 +48,27 @@ vtkStandardNewMacro(vtkSVLocalLinearSubdivisionFilter);
 // ----------------------
 // GenerateSubdivisionPoints
 // ----------------------
-int vtkSVLocalLinearSubdivisionFilter::GenerateSubdivisionPoints(vtkPolyData *inputDS, vtkIntArray *edgeData, 
-    vtkPoints *outputPts, vtkPointData *outputPD)
-{
-  #ifdef debug_GenerateSubdivisionPoints
-  std::string msg("[vtkSVLocalLinearSubdivisionFilter::GenerateSubdivisionPoints] ");
+int vtkSVLocalLinearSubdivisionFilter::GenerateSubdivisionPoints(
+    vtkPolyData *inputDS, vtkIntArray *edgeData, vtkPoints *outputPts,
+    vtkPointData *outputPD) {
+#ifdef debug_GenerateSubdivisionPoints
+  std::string msg(
+      "[vtkSVLocalLinearSubdivisionFilter::GenerateSubdivisionPoints] ");
   std::cout << msg << std::endl;
-  std::cout << msg << "========== GenerateSubdivisionPoints =========" << std::endl;
+  std::cout << msg
+            << "========== GenerateSubdivisionPoints =========" << std::endl;
   std::cout << msg << "inputDS: " << inputDS << std::endl;
   if (inputDS != nullptr) {
-    std::cout << msg << "inputDS #points: " << inputDS->GetNumberOfPoints() << std::endl;
+    std::cout << msg << "inputDS #points: " << inputDS->GetNumberOfPoints()
+              << std::endl;
   }
-  #endif
+#endif
 
   const vtkIdType *pts;
   int edgeId;
   vtkIdType npts, cellId, newId;
   vtkIdType p1, p2;
-  vtkCellArray *inputPolys=inputDS->GetPolys();
+  vtkCellArray *inputPolys = inputDS->GetPolys();
   vtkEdgeTable *edgeTable;
   vtkIdList *cellIds = vtkIdList::New();
   vtkIdList *pointIds = vtkIdList::New();
@@ -81,12 +84,12 @@ int vtkSVLocalLinearSubdivisionFilter::GenerateSubdivisionPoints(vtkPolyData *in
   pointIds->SetNumberOfIds(2);
   int total = inputPolys->GetNumberOfCells();
   double curr = 0;
-  #ifdef debug_GenerateSubdivisionPoints
+#ifdef debug_GenerateSubdivisionPoints
   std::cout << msg << "total: " << total << std::endl;
-  #endif
+#endif
 
   int *noSubdivideCell = new int[total];
-  for (int i=0;i<total;i++)
+  for (int i = 0; i < total; i++)
     noSubdivideCell[i] = 0;
 
   this->SetFixedCells(inputDS, noSubdivideCell);
@@ -95,76 +98,76 @@ int vtkSVLocalLinearSubdivisionFilter::GenerateSubdivisionPoints(vtkPolyData *in
 
   // Generate new points for subdivisions surface
 
-  for (cellId=0, inputPolys->InitTraversal(); inputPolys->GetNextCell(npts, pts); cellId++) {
+  for (cellId = 0, inputPolys->InitTraversal();
+       inputPolys->GetNextCell(npts, pts); cellId++) {
 
-    if ( inputDS->GetCellType(cellId) != VTK_TRIANGLE ) {
+    if (inputDS->GetCellType(cellId) != VTK_TRIANGLE) {
       continue;
     }
 
     p1 = pts[2];
     p2 = pts[0];
 
-    for (edgeId=0; edgeId < 3; edgeId++) {
-      isLocalBoundary=0;
+    for (edgeId = 0; edgeId < 3; edgeId++) {
+      isLocalBoundary = 0;
       inputDS->GetCellEdgeNeighbors(cellId, p1, p2, edgeNeighbor);
 
       if (edgeNeighbor->GetNumberOfIds() > 1) {
-        vtkErrorMacro ("Dataset is non-manifold and cannot be subdivided.");
-        #ifdef debug_GenerateSubdivisionPoints
-        std::cout << msg << "**** ERROR: Dataset is non-manifold and cannot be subdivided" << std::endl;
+        vtkErrorMacro("Dataset is non-manifold and cannot be subdivided.");
+#ifdef debug_GenerateSubdivisionPoints
+        std::cout
+            << msg
+            << "**** ERROR: Dataset is non-manifold and cannot be subdivided"
+            << std::endl;
         std::cout << msg << "            cellId " << cellId << std::endl;
-        #endif
-        delete [] noSubdivideCell;
+#endif
+        delete[] noSubdivideCell;
         return 0;
-        }
+      }
 
       if (noSubdivideCell[edgeNeighbor->GetId(0)] || noSubdivideCell[cellId])
         isLocalBoundary = 1;
 
-      outputPD->CopyData (inputPD, p1, p1);
-      outputPD->CopyData (inputPD, p2, p2);
+      outputPD->CopyData(inputPD, p1, p1);
+      outputPD->CopyData(inputPD, p2, p2);
 
       // Do we need to create a point on this edge?
 
-      if (edgeTable->IsEdge (p1, p2) == -1 && isLocalBoundary == 0) {
-        edgeTable->InsertEdge (p1, p2);
+      if (edgeTable->IsEdge(p1, p2) == -1 && isLocalBoundary == 0) {
+        edgeTable->InsertEdge(p1, p2);
         // Compute Position andnew PointData using the same subdivision scheme
-        pointIds->SetId(0,p1);
-        pointIds->SetId(1,p2);
-        newId = this->InterpolatePosition (inputPts, outputPts, pointIds, weights);
-        outputPD->InterpolatePoint (inputPD, newId, pointIds, weights);
-        }
-      else if (isLocalBoundary == 0) // we have already created a point on this edge. find it
-        {
-        newId = this->FindEdge (inputDS, cellId, p1, p2, edgeData, cellIds);
-        }
-      else
-        {
+        pointIds->SetId(0, p1);
+        pointIds->SetId(1, p2);
+        newId =
+            this->InterpolatePosition(inputPts, outputPts, pointIds, weights);
+        outputPD->InterpolatePoint(inputPD, newId, pointIds, weights);
+      } else if (isLocalBoundary ==
+                 0) // we have already created a point on this edge. find it
+      {
+        newId = this->FindEdge(inputDS, cellId, p1, p2, edgeData, cellIds);
+      } else {
         newId = -1;
-        if (edgeTable->IsEdge (p1, p2) == -1)
-          {
-          outputPD->CopyData (inputPD, p1, p1);
-          outputPD->CopyData (inputPD, p2, p2);
-          edgeTable->InsertEdge (p1, p2);
-          }
-        else
-          {
-          inputDS->GetCellEdgeNeighbors (-1, p1, p2, cellIds);
-          //newId = this->FindEdge (inputDS, cellId, p1, p2, edgeData, cellIds);
-          }
+        if (edgeTable->IsEdge(p1, p2) == -1) {
+          outputPD->CopyData(inputPD, p1, p1);
+          outputPD->CopyData(inputPD, p2, p2);
+          edgeTable->InsertEdge(p1, p2);
+        } else {
+          inputDS->GetCellEdgeNeighbors(-1, p1, p2, cellIds);
+          // newId = this->FindEdge (inputDS, cellId, p1, p2, edgeData,
+          // cellIds);
         }
-      edgeData->InsertComponent(cellId,edgeId,newId);
+      }
+      edgeData->InsertComponent(cellId, edgeId, newId);
       p1 = p2;
-      if (edgeId < 2)
-        {
+      if (edgeId < 2) {
         p2 = pts[edgeId + 1];
-        }
-      } // each edge
+      }
+    } // each edge
     this->UpdateProgress(curr / total);
     curr += 1;
-    } // each cell
+  } // each cell
 
-  delete [] noSubdivideCell;
+  delete[] noSubdivideCell;
   edgeTable->Delete();
   cellIds->Delete();
   pointIds->Delete();
@@ -175,14 +178,12 @@ int vtkSVLocalLinearSubdivisionFilter::GenerateSubdivisionPoints(vtkPolyData *in
 // ----------------------
 // SetFixedCells
 // ----------------------
-int vtkSVLocalLinearSubdivisionFilter::SetFixedCells(vtkPolyData *pd, int *noSubdivideCell)
-{
+int vtkSVLocalLinearSubdivisionFilter::SetFixedCells(vtkPolyData *pd,
+                                                     int *noSubdivideCell) {
   int numCells = pd->GetNumberOfPolys();
 
-  if (this->UseCellArray)
-  {
-    for (vtkIdType cellId=0;cellId < numCells;cellId++)
-    {
+  if (this->UseCellArray) {
+    for (vtkIdType cellId = 0; cellId < numCells; cellId++) {
       if (this->SubdivideCellArray->GetValue(cellId) != 1)
         noSubdivideCell[cellId] = 1;
     }
@@ -192,20 +193,16 @@ int vtkSVLocalLinearSubdivisionFilter::SetFixedCells(vtkPolyData *pd, int *noSub
   vtkIdType npts;
   const vtkIdType *pts;
 
-  if (this->UsePointArray)
-  {
-    for (vtkIdType cellId=0;cellId < numCells;cellId++)
-    {
+  if (this->UsePointArray) {
+    for (vtkIdType cellId = 0; cellId < numCells; cellId++) {
       int fixedPts = 0;
-      pd->GetCellPoints(cellId,npts,pts);
-      for (int i=0;i<npts;i++)
-      {
-        vtkIdType pointId= pts[i];
+      pd->GetCellPoints(cellId, npts, pts);
+      for (int i = 0; i < npts; i++) {
+        vtkIdType pointId = pts[i];
         if (this->SubdividePointArray->GetValue(pointId) != 1)
           fixedPts++;
       }
-      if (fixedPts == npts)
-      {
+      if (fixedPts == npts) {
         noSubdivideCell[cellId] = 1;
       }
     }
@@ -213,4 +210,3 @@ int vtkSVLocalLinearSubdivisionFilter::SetFixedCells(vtkPolyData *pd, int *noSub
 
   return 1;
 }
-

@@ -34,25 +34,23 @@
 
 const int CV_MAX_FACTORY_METHOD_PTRS = 10;
 
-typedef void* (*FactoryMethodPtr)();
+typedef void *(*FactoryMethodPtr)();
 
 #include "SimVascular.h"
 #include "svUtilsExports.h" // For exports
 
-class SV_EXPORT_UTILS cvFactoryRegistrar
-{
+class SV_EXPORT_UTILS cvFactoryRegistrar {
 public:
   cvFactoryRegistrar();
 
-	FactoryMethodPtr GetFactoryMethodPtr( int factory_type );
-	void SetFactoryMethodPtr( int factory_type, FactoryMethodPtr factory_ptr );
+  FactoryMethodPtr GetFactoryMethodPtr(int factory_type);
+  void SetFactoryMethodPtr(int factory_type, FactoryMethodPtr factory_ptr);
 
-	// Returns a pointer to whatever you've created with a factory
-	void* UseFactoryMethod( int factory_type );
+  // Returns a pointer to whatever you've created with a factory
+  void *UseFactoryMethod(int factory_type);
 
 protected:
-	FactoryMethodPtr factoryMethodPtrs[CV_MAX_FACTORY_METHOD_PTRS];
-
+  FactoryMethodPtr factoryMethodPtrs[CV_MAX_FACTORY_METHOD_PTRS];
 };
 
 #endif //__CVFACTORYREGISTRAR_H

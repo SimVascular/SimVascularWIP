@@ -39,67 +39,58 @@
 #include "vtkInformation.h"
 #include "vtkObjectFactory.h"
 #include "vtkPolyData.h"
-#include "vtkTriangle.h"
-#include "vtkTriangleStrip.h"
 #include "vtkSVGlobals.h"
 #include "vtkSVNURBSVolume.h"
+#include "vtkTriangle.h"
+#include "vtkTriangleStrip.h"
 
 #if !defined(_WIN32) || defined(__CYGWIN__)
-# include <unistd.h> /* unlink */
+#include <unistd.h> /* unlink */
 #else
-# include <io.h> /* unlink */
+#include <io.h> /* unlink */
 #endif
 
 vtkStandardNewMacro(vtkSVMUPFESNURBSWriter);
 
-static char header[]="Visualization Toolkit generated SLA File                                        ";
+static char header[] = "Visualization Toolkit generated SLA File               "
+                       "                         ";
 
-vtkSVMUPFESNURBSWriter::vtkSVMUPFESNURBSWriter()
-{
-  this->FileName = nullptr;
-}
+vtkSVMUPFESNURBSWriter::vtkSVMUPFESNURBSWriter() { this->FileName = nullptr; }
 
-void vtkSVMUPFESNURBSWriter::WriteData()
-{
+void vtkSVMUPFESNURBSWriter::WriteData() {
   vtkSVNURBSObject *input = this->GetInput();
 
-  if (this->FileName == nullptr)
-  {
+  if (this->FileName == nullptr) {
     vtkErrorMacro(<< "Please specify FileName to write");
     this->SetErrorCode(vtkErrorCode::NoFileNameError);
     return;
   }
 
   this->WriteMUPFESFile(input);
-  if (this->ErrorCode == vtkErrorCode::OutOfDiskSpaceError)
-  {
-    vtkErrorMacro("Ran out of disk space; deleting file: "
-                  << this->FileName);
+  if (this->ErrorCode == vtkErrorCode::OutOfDiskSpaceError) {
+    vtkErrorMacro("Ran out of disk space; deleting file: " << this->FileName);
     unlink(this->FileName);
   }
 }
 
-void vtkSVMUPFESNURBSWriter::WriteMUPFESFile(vtkSVNURBSObject *object)
-{
+void vtkSVMUPFESNURBSWriter::WriteMUPFESFile(vtkSVNURBSObject *object) {
   FILE *fp;
   double v[3];
   int top[2];
   vtkIdType npts = 0;
   vtkIdType *indx = 0;
 
-  if (!strncmp(object->GetType().c_str(),"Volume",6))
-  {
+  if (!strncmp(object->GetType().c_str(), "Volume", 6)) {
     vtkSVNURBSVolume *volume = vtkSVNURBSVolume::SafeDownCast(object);
 
-    if ((fp = fopen(this->FileName, "w")) == nullptr)
-    {
+    if ((fp = fopen(this->FileName, "w")) == nullptr) {
       vtkErrorMacro(<< "Couldn't open file: " << this->FileName);
       this->SetErrorCode(vtkErrorCode::CannotOpenFileError);
       return;
     }
-  //
-  //  Write header
-  //
+    //
+    //  Write header
+    //
     vtkDebugMacro("Writing ASCII MUPFES file");
 
     vtkDoubleArray *uKnots = volume->GetUKnotVector();
@@ -117,65 +108,58 @@ void vtkSVMUPFESNURBSWriter::WriteMUPFESFile(vtkSVNURBSObject *object)
     int mp = dims[1];
     int lp = dims[2];
 
-    fprintf(fp,"#knotV %d\n", nuk);
-    for (int i=0; i<nuk; i++)
-      fprintf(fp,"%.6f\n", uKnots->GetTuple1(i));
-    fprintf(fp,"#knotV %d\n", nvk);
-    for (int i=0; i<nvk; i++)
-      fprintf(fp,"%.6f\n", vKnots->GetTuple1(i));
-    fprintf(fp,"#knotV %d\n", nwk);
-    for (int i=0; i<nwk; i++)
-      fprintf(fp,"%.6f\n", wKnots->GetTuple1(i));
-    fprintf(fp,"#ctrlPts %d\n", np*mp*lp);
-    for (int i=0;i<np; i++)
-    {
-      for (int j=0; j<mp; j++)
-      {
-        for (int k=0; k<lp; k++)
-        {
+    fprintf(fp, "#knotV %d\n", nuk);
+    for (int i = 0; i < nuk; i++)
+      fprintf(fp, "%.6f\n", uKnots->GetTuple1(i));
+    fprintf(fp, "#knotV %d\n", nvk);
+    for (int i = 0; i < nvk; i++)
+      fprintf(fp, "%.6f\n", vKnots->GetTuple1(i));
+    fprintf(fp, "#knotV %d\n", nwk);
+    for (int i = 0; i < nwk; i++)
+      fprintf(fp, "%.6f\n", wKnots->GetTuple1(i));
+    fprintf(fp, "#ctrlPts %d\n", np * mp * lp);
+    for (int i = 0; i < np; i++) {
+      for (int j = 0; j < mp; j++) {
+        for (int k = 0; k < lp; k++) {
           double pw[4];
           controlPoints->GetControlPoint(i, j, k, pw);
-          fprintf(fp,"%.6f %.6f %.6f %.6f\n", pw[0], pw[1], pw[2], pw[3]);
+          fprintf(fp, "%.6f %.6f %.6f %.6f\n", pw[0], pw[1], pw[2], pw[3]);
         }
       }
     }
 
-    if(fflush(fp))
-    {
+    if (fflush(fp)) {
       fclose(fp);
       this->SetErrorCode(vtkErrorCode::OutOfDiskSpaceError);
       return;
     }
-    fclose (fp);
+    fclose(fp);
   }
 }
 
 //----------------------------------------------------------------------------
-void vtkSVMUPFESNURBSWriter::PrintSelf(ostream& os, vtkIndent indent)
-{
-  this->Superclass::PrintSelf(os,indent);
+void vtkSVMUPFESNURBSWriter::PrintSelf(ostream &os, vtkIndent indent) {
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "FileName: "
-     << ((this->GetFileName() == nullptr) ?
-         "(none)" : this->GetFileName()) << std::endl;
+     << ((this->GetFileName() == nullptr) ? "(none)" : this->GetFileName())
+     << std::endl;
   os << indent << "Input: " << this->GetInput() << std::endl;
 }
 
 //----------------------------------------------------------------------------
-vtkSVNURBSObject* vtkSVMUPFESNURBSWriter::GetInput()
-{
+vtkSVNURBSObject *vtkSVMUPFESNURBSWriter::GetInput() {
   return vtkSVNURBSObject::SafeDownCast(this->GetInput(0));
 }
 
 //----------------------------------------------------------------------------
-vtkSVNURBSObject* vtkSVMUPFESNURBSWriter::GetInput(int port)
-{
+vtkSVNURBSObject *vtkSVMUPFESNURBSWriter::GetInput(int port) {
   return vtkSVNURBSObject::SafeDownCast(this->Superclass::GetInput(port));
 }
 
 //----------------------------------------------------------------------------
-int vtkSVMUPFESNURBSWriter::FillInputPortInformation(int, vtkInformation *info)
-{
+int vtkSVMUPFESNURBSWriter::FillInputPortInformation(int,
+                                                     vtkInformation *info) {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkSVNURBSObject");
   return 1;
 }

@@ -35,113 +35,92 @@
 #include "sv4gui_PathVtkMapper2D.h"
 #include "sv4gui_PathVtkMapper3D.h"
 
-#include "mitkProperties.h"
 #include "mitkBaseRenderer.h"
-#include "mitkDataNode.h"
 #include "mitkCoreObjectFactory.h"
+#include "mitkDataNode.h"
+#include "mitkProperties.h"
 
 sv4guiPathObjectFactory::sv4guiPathObjectFactory()
-  : mitk::CoreObjectFactoryBase()
-{
+    : mitk::CoreObjectFactoryBase() {
   static bool alreadyDone = false;
-  if (!alreadyDone)
-  {
+  if (!alreadyDone) {
     MITK_DEBUG << "sv4guiPathObjectFactory c'tor" << std::endl;
 
     alreadyDone = true;
   }
 }
 
-sv4guiPathObjectFactory::~sv4guiPathObjectFactory()
-{
-}
+sv4guiPathObjectFactory::~sv4guiPathObjectFactory() {}
 
-mitk::Mapper::Pointer sv4guiPathObjectFactory::CreateMapper(mitk::DataNode* node, MapperSlotId id)
-{
-  mitk::Mapper::Pointer newMapper=nullptr;
+mitk::Mapper::Pointer
+sv4guiPathObjectFactory::CreateMapper(mitk::DataNode *node, MapperSlotId id) {
+  mitk::Mapper::Pointer newMapper = nullptr;
 
-  if ( id == mitk::BaseRenderer::Standard2D )
-  {
-    if( dynamic_cast<sv4guiPath*>(node->GetData())!=nullptr )
-    {
+  if (id == mitk::BaseRenderer::Standard2D) {
+    if (dynamic_cast<sv4guiPath *>(node->GetData()) != nullptr) {
       newMapper = sv4guiPathVtkMapper2D::New();
       newMapper->SetDataNode(node);
     }
-  }
-  else if ( id == mitk::BaseRenderer::Standard3D )
-  {
-    if( dynamic_cast<sv4guiPath*>(node->GetData())!=nullptr )
-    {
+  } else if (id == mitk::BaseRenderer::Standard3D) {
+    if (dynamic_cast<sv4guiPath *>(node->GetData()) != nullptr) {
       newMapper = sv4guiPathVtkMapper3D::New();
       newMapper->SetDataNode(node);
     }
-
   }
   return newMapper;
 }
 
-void sv4guiPathObjectFactory::SetDefaultProperties(mitk::DataNode* node)
-{
+void sv4guiPathObjectFactory::SetDefaultProperties(mitk::DataNode *node) {
 
-  if(node==nullptr)
+  if (node == nullptr)
     return;
 
   mitk::DataNode::Pointer nodePointer = node;
 
-  if(node->GetData() ==nullptr)
+  if (node->GetData() == nullptr)
     return;
 
-  if( dynamic_cast<sv4guiPath*>(node->GetData())!=nullptr )
-  {
+  if (dynamic_cast<sv4guiPath *>(node->GetData()) != nullptr) {
     sv4guiPathVtkMapper2D::SetDefaultProperties(node);
     sv4guiPathVtkMapper3D::SetDefaultProperties(node);
   }
-
 }
 
-std::string sv4guiPathObjectFactory::GetFileExtensions()
-{
+std::string sv4guiPathObjectFactory::GetFileExtensions() {
   std::string fileExtension;
   this->CreateFileExtensions(m_FileExtensionsMap, fileExtension);
   return fileExtension.c_str();
 }
 
-mitk::CoreObjectFactoryBase::MultimapType sv4guiPathObjectFactory::GetFileExtensionsMap()
-{
+mitk::CoreObjectFactoryBase::MultimapType
+sv4guiPathObjectFactory::GetFileExtensionsMap() {
   return m_FileExtensionsMap;
 }
 
-mitk::CoreObjectFactoryBase::MultimapType sv4guiPathObjectFactory::GetSaveFileExtensionsMap()
-{
+mitk::CoreObjectFactoryBase::MultimapType
+sv4guiPathObjectFactory::GetSaveFileExtensionsMap() {
   return m_SaveFileExtensionsMap;
 }
 
-void sv4guiPathObjectFactory::CreateFileExtensionsMap()
-{
-}
+void sv4guiPathObjectFactory::CreateFileExtensionsMap() {}
 
-std::string sv4guiPathObjectFactory::GetSaveFileExtensions()
-{
+std::string sv4guiPathObjectFactory::GetSaveFileExtensions() {
   std::string fileExtension;
   this->CreateFileExtensions(m_SaveFileExtensionsMap, fileExtension);
   return fileExtension.c_str();
 }
 
-void sv4guiPathObjectFactory::RegisterIOFactories()
-{
-}
+void sv4guiPathObjectFactory::RegisterIOFactories() {}
 
 Registersv4guiPathObjectFactory::Registersv4guiPathObjectFactory()
-    : m_Factory( sv4guiPathObjectFactory::New() )
-  {
-    mitk::CoreObjectFactory::GetInstance()->RegisterExtraFactory( m_Factory );
-    m_sv4guiPathIO=new sv4guiPathIO();
-  }
+    : m_Factory(sv4guiPathObjectFactory::New()) {
+  mitk::CoreObjectFactory::GetInstance()->RegisterExtraFactory(m_Factory);
+  m_sv4guiPathIO = new sv4guiPathIO();
+}
 
-Registersv4guiPathObjectFactory::~Registersv4guiPathObjectFactory()
-{
-  mitk::CoreObjectFactory::GetInstance()->UnRegisterExtraFactory( m_Factory );
+Registersv4guiPathObjectFactory::~Registersv4guiPathObjectFactory() {
+  mitk::CoreObjectFactory::GetInstance()->UnRegisterExtraFactory(m_Factory);
   delete m_sv4guiPathIO;
 }
 
-//static Registersv4guiPathObjectFactory registersv4guiPathObjectFactory;
+// static Registersv4guiPathObjectFactory registersv4guiPathObjectFactory;

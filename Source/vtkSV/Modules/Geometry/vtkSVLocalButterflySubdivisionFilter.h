@@ -30,33 +30,34 @@
  */
 
 /**
-  * \class vtkSVLocalButterflySubdivisionFilter - generate a subdivision surface using the Butterfly Scheme
-  * \section Description
-  * vtkSVLocalButterflySubdivisionFilter is an interpolating subdivision scheme
-  * that creates four new triangles for each triangle in the mesh. The
-  * user can specify the NumberOfSubdivisions. This filter implements the
-  * 8-point butterfly scheme described in: Zorin, D., Schroder, P., and
-  * Sweldens, W., "Interpolating Subdivisions for Meshes with Arbitrary
-  * Topology," Computer Graphics Proceedings, Annual Conference Series,
-  * 1996, ACM SIGGRAPH, pp.189-192. This scheme improves previous
-  * butterfly subdivisions with special treatment of vertices with valence
-  * other than 6.
-  *
-  * Currently, the filter only operates on triangles. Users should use the
-  * vtkTriangleFilter to triangulate meshes that contain polygons or
-  * triangle strips.
-  *
-  * The filter interpolates point data using the same scheme. New
-  * triangles created at a subdivision step will have the cell data of
-  * their parent cell.
-  *
-  * \section Thanks
-  * This work was supported by PHS Research Grant No. 1 P41 RR13218-01
-  * from the National Center for Research Resources.
-  *
-  * \section See Also
-  * vtkInterpolatingSubdivisionFilter vtkLinearSubdivisionFilter
-  */
+ * \class vtkSVLocalButterflySubdivisionFilter - generate a subdivision surface
+ * using the Butterfly Scheme
+ * \section Description
+ * vtkSVLocalButterflySubdivisionFilter is an interpolating subdivision scheme
+ * that creates four new triangles for each triangle in the mesh. The
+ * user can specify the NumberOfSubdivisions. This filter implements the
+ * 8-point butterfly scheme described in: Zorin, D., Schroder, P., and
+ * Sweldens, W., "Interpolating Subdivisions for Meshes with Arbitrary
+ * Topology," Computer Graphics Proceedings, Annual Conference Series,
+ * 1996, ACM SIGGRAPH, pp.189-192. This scheme improves previous
+ * butterfly subdivisions with special treatment of vertices with valence
+ * other than 6.
+ *
+ * Currently, the filter only operates on triangles. Users should use the
+ * vtkTriangleFilter to triangulate meshes that contain polygons or
+ * triangle strips.
+ *
+ * The filter interpolates point data using the same scheme. New
+ * triangles created at a subdivision step will have the cell data of
+ * their parent cell.
+ *
+ * \section Thanks
+ * This work was supported by PHS Research Grant No. 1 P41 RR13218-01
+ * from the National Center for Research Resources.
+ *
+ * \section See Also
+ * vtkInterpolatingSubdivisionFilter vtkLinearSubdivisionFilter
+ */
 
 #ifndef vtkSVLocalButterflySubdivisionFilter_h
 #define vtkSVLocalButterflySubdivisionFilter_h
@@ -69,21 +70,23 @@
 
 #include "vtkSVLocalInterpolatingSubdivisionFilter.h"
 
-class VTKSVGEOMETRY_EXPORT vtkSVLocalButterflySubdivisionFilter : public vtkSVLocalInterpolatingSubdivisionFilter
-{
+class VTKSVGEOMETRY_EXPORT vtkSVLocalButterflySubdivisionFilter
+    : public vtkSVLocalInterpolatingSubdivisionFilter {
 public:
   // Description:
   // Construct object with NumberOfSubdivisions set to 1.
   static vtkSVLocalButterflySubdivisionFilter *New();
-  vtkTypeMacro(vtkSVLocalButterflySubdivisionFilter,vtkSVLocalInterpolatingSubdivisionFilter);
+  vtkTypeMacro(vtkSVLocalButterflySubdivisionFilter,
+               vtkSVLocalInterpolatingSubdivisionFilter);
 
 protected:
-  vtkSVLocalButterflySubdivisionFilter () {}
-  ~vtkSVLocalButterflySubdivisionFilter () {}
+  vtkSVLocalButterflySubdivisionFilter() {}
+  ~vtkSVLocalButterflySubdivisionFilter() {}
 
 private:
   int GenerateSubdivisionPoints(vtkPolyData *inputDS, vtkIntArray *edgeData,
-                                vtkPoints *outputPts, vtkPointData *outputPD) override;
+                                vtkPoints *outputPts,
+                                vtkPointData *outputPD) override;
   void GenerateButterflyStencil(vtkIdType p1, vtkIdType p2, vtkPolyData *polys,
                                 vtkIdList *stencilIds, double *weights);
   void GenerateLoopStencil(vtkIdType p1, vtkIdType p2, vtkPolyData *polys,
@@ -91,14 +94,15 @@ private:
   void GenerateBoundaryStencil(vtkIdType p1, vtkIdType p2, vtkPolyData *polys,
                                vtkIdList *stencilIds, double *weights);
 
-  int SetFixedCells(vtkPolyData *pd,int *noSubdivideCell);
+  int SetFixedCells(vtkPolyData *pd, int *noSubdivideCell);
 
 private:
-  vtkSVLocalButterflySubdivisionFilter(const vtkSVLocalButterflySubdivisionFilter&);  // Not implemented.
-  void operator=(const vtkSVLocalButterflySubdivisionFilter&);  // Not implemented.
+  vtkSVLocalButterflySubdivisionFilter(
+      const vtkSVLocalButterflySubdivisionFilter &); // Not implemented.
+  void
+  operator=(const vtkSVLocalButterflySubdivisionFilter &); // Not implemented.
 };
 
 #endif
-
 
 // VTK-HeaderTest-Exclude: vtkSVLocalButterflySubdivisionFilter.h

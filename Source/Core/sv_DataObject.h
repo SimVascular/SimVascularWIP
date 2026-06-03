@@ -41,7 +41,7 @@
 class SV_EXPORT_REPOSITORY cvDataObject : public cvRepositoryData {
 
 public:
-  cvDataObject( RepositoryDataT type );
+  cvDataObject(RepositoryDataT type);
   virtual ~cvDataObject();
 
   vtkDataObject *GetVtkPtr() { return data_; };
@@ -49,8 +49,6 @@ public:
 
 protected:
   vtkDataObject *data_;
-
 };
-
 
 #endif // __CVDATA_OBJ_H

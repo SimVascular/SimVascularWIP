@@ -38,50 +38,45 @@
 #include "sv3_Contour.h"
 #include "sv3_PathElement.h"
 
+#include "vtkImageData.h"
 #include "vtkPolyData.h"
 #include "vtkSmartPointer.h"
-#include "vtkImageData.h"
-//#include "vtkPlane.h"
+// #include "vtkPlane.h"
 
 // somehow GetClassName is getting set to GetClassNameA on Windows
 #ifdef GetClassName
 #undef GetClassName
 #endif
 
-namespace sv3{
-class SV_EXPORT_SEGMENTATION levelSetContour : public Contour
-{
+namespace sv3 {
+class SV_EXPORT_SEGMENTATION levelSetContour : public Contour {
 
 public:
+  levelSetContour();
 
-    
-    levelSetContour();
-    
-    levelSetContour(const levelSetContour &other);
-    
-    ~levelSetContour();
-    
-    levelSetContour* Clone();
-    
-    std::string GetClassName();
-    
-    void CreateContourPoints();
-    
-    void SetControlPointByRadius(double radius, double* point){return;};
-    
-    void SetLevelSetParas(svLSParam* paras);
-    
-    svLSParam* GetLevelSetParas();
-    
-    levelSetContour* CreateSmoothedContour(int fourierNumber);
+  levelSetContour(const levelSetContour &other);
 
-  protected:
+  ~levelSetContour();
 
-    svLSParam* m_paras;
-    
-    bool m_forceClosed;
+  levelSetContour *Clone();
 
-  };
+  std::string GetClassName();
 
-}
+  void CreateContourPoints();
+
+  void SetControlPointByRadius(double radius, double *point) { return; };
+
+  void SetLevelSetParas(svLSParam *paras);
+
+  svLSParam *GetLevelSetParas();
+
+  levelSetContour *CreateSmoothedContour(int fourierNumber);
+
+protected:
+  svLSParam *m_paras;
+
+  bool m_forceClosed;
+};
+
+} // namespace sv3
 #endif // SV3_LEVELSETCONTOUR_H

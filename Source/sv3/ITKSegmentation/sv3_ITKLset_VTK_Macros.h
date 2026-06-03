@@ -32,8 +32,7 @@
 #ifndef CVVTKMACROS_H_
 #define CVVTKMACROS_H_
 
-
-#define cvVTKNewMacro(type,name)															\
-		vtkSmartPointer< type > name = vtkSmartPointer< type >::New();							\
+#define cvVTKNewMacro(type, name)                                              \
+  vtkSmartPointer<type> name = vtkSmartPointer<type>::New();
 
 #endif /* CVVTKMACROS_H_ */

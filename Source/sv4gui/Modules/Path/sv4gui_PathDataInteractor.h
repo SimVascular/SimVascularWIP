@@ -43,67 +43,67 @@
 #include <mitkInteractionPositionEvent.h>
 
 #include <itkObject.h>
-#include <itkSmartPointer.h>
 #include <itkObjectFactory.h>
+#include <itkSmartPointer.h>
 
-class SV4GUIMODULEPATH_EXPORT sv4guiPathDataInteractor: public mitk::DataInteractor
-{
+class SV4GUIMODULEPATH_EXPORT sv4guiPathDataInteractor
+    : public mitk::DataInteractor {
 
 public:
-    mitkClassMacro(sv4guiPathDataInteractor, mitk::DataInteractor)
-    itkFactorylessNewMacro(Self)
-    itkCloneMacro(Self)
+  mitkClassMacro(sv4guiPathDataInteractor, mitk::DataInteractor)
+      itkFactorylessNewMacro(Self) itkCloneMacro(Self)
 
-    void SetAccuracy(double accuracy);
+          void SetAccuracy(double accuracy);
 
-    double GetAccuracy(const mitk::InteractionPositionEvent* positionEvent) const;
+  double GetAccuracy(const mitk::InteractionPositionEvent *positionEvent) const;
 
 protected:
-    sv4guiPathDataInteractor();
-    virtual ~sv4guiPathDataInteractor();
+  sv4guiPathDataInteractor();
+  virtual ~sv4guiPathDataInteractor();
 
-    virtual void ConnectActionsAndFunctions() override;
+  virtual void ConnectActionsAndFunctions() override;
 
-    virtual void DataNodeChanged() override;
+  virtual void DataNodeChanged() override;
 
-    virtual bool IsOverPoint( const mitk::InteractionEvent* interactionEvent );
+  virtual bool IsOverPoint(const mitk::InteractionEvent *interactionEvent);
 
-    virtual void AddPoint(mitk::StateMachineAction*, mitk::InteractionEvent* event);
+  virtual void AddPoint(mitk::StateMachineAction *,
+                        mitk::InteractionEvent *event);
 
-    virtual void RemovePoint(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
+  virtual void RemovePoint(mitk::StateMachineAction *,
+                           mitk::InteractionEvent *interactionEvent);
 
-    virtual void InitMove(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
+  virtual void InitMove(mitk::StateMachineAction *,
+                        mitk::InteractionEvent *interactionEvent);
 
-    virtual void MovePoint(mitk::StateMachineAction*, mitk::InteractionEvent*);
+  virtual void MovePoint(mitk::StateMachineAction *, mitk::InteractionEvent *);
 
-    virtual void FinishMove(mitk::StateMachineAction*, mitk::InteractionEvent*);
+  virtual void FinishMove(mitk::StateMachineAction *, mitk::InteractionEvent *);
 
-    virtual void SelectPoint(mitk::StateMachineAction*, mitk::InteractionEvent*);
+  virtual void SelectPoint(mitk::StateMachineAction *,
+                           mitk::InteractionEvent *);
 
-    virtual void UnSelectAll(mitk::StateMachineAction*, mitk::InteractionEvent*);
+  virtual void UnSelectAll(mitk::StateMachineAction *,
+                           mitk::InteractionEvent *);
 
-    virtual void Abort(mitk::StateMachineAction*, mitk::InteractionEvent*);
+  virtual void Abort(mitk::StateMachineAction *, mitk::InteractionEvent *);
 
-    int SearchControlPoint(
-            const mitk::InteractionPositionEvent* positionEvent,
-            sv4guiPathElement* pathElement
-            ) const;
+  int SearchControlPoint(const mitk::InteractionPositionEvent *positionEvent,
+                         sv4guiPathElement *pathElement) const;
 
-    bool IsOn2DView(const mitk::InteractionEvent* interactionEvent) const;
+  bool IsOn2DView(const mitk::InteractionEvent *interactionEvent) const;
 
-    mitk::Point3D m_LastPoint;
+  mitk::Point3D m_LastPoint;
 
-    mitk::Vector3D m_SumVec;
+  mitk::Vector3D m_SumVec;
 
-    sv4guiPath* m_Path;
+  sv4guiPath *m_Path;
 
-    sv4guiPathElement* m_PathElement;
+  sv4guiPathElement *m_PathElement;
 
-//    double m_SelectionAccuracy; // accuracy that's needed to select a point
-
+  //    double m_SelectionAccuracy; // accuracy that's needed to select a point
 };
 
-itkEventMacro( sv4guiPathFinishMovePointEvent, sv4guiPathEvent );
-
+itkEventMacro(sv4guiPathFinishMovePointEvent, sv4guiPathEvent);
 
 #endif // SV4GUI_PATHDATAINTERACTOR_H

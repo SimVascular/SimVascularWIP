@@ -164,11 +164,10 @@ class vtkPointSet;
 #define VTK_SET_TRANSFORM_PLANE 1
 #define VTK_BEST_FITTING_PLANE 2
 
-class VTKSVBOOLEAN_EXPORT vtkDelaunay2D_60 : public vtkPolyDataAlgorithm
-{
+class VTKSVBOOLEAN_EXPORT vtkDelaunay2D_60 : public vtkPolyDataAlgorithm {
 public:
-  vtkTypeMacro(vtkDelaunay2D_60,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  vtkTypeMacro(vtkDelaunay2D_60, vtkPolyDataAlgorithm);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   // Description:
   // Construct object with Alpha = 0.0; Tolerance = 0.001; Offset = 1.25;
@@ -202,30 +201,30 @@ public:
   // For a non-zero alpha value, only edges or triangles contained within
   // a sphere centered at mesh vertices will be output. Otherwise, only
   // triangles will be output.
-  vtkSetClampMacro(Alpha,double,0.0,VTK_DOUBLE_MAX);
-  vtkGetMacro(Alpha,double);
+  vtkSetClampMacro(Alpha, double, 0.0, VTK_DOUBLE_MAX);
+  vtkGetMacro(Alpha, double);
 
   // Description:
   // Specify a tolerance to control discarding of closely spaced points.
   // This tolerance is specified as a fraction of the diagonal length of
   // the bounding box of the points.
-  vtkSetClampMacro(Tolerance,double,0.0,1.0);
-  vtkGetMacro(Tolerance,double);
+  vtkSetClampMacro(Tolerance, double, 0.0, 1.0);
+  vtkGetMacro(Tolerance, double);
 
   // Description:
   // Specify a multiplier to control the size of the initial, bounding
   // Delaunay triangulation.
-  vtkSetClampMacro(Offset,double,0.75,VTK_DOUBLE_MAX);
-  vtkGetMacro(Offset,double);
+  vtkSetClampMacro(Offset, double, 0.75, VTK_DOUBLE_MAX);
+  vtkGetMacro(Offset, double);
 
   // Description:
   // Boolean controls whether bounding triangulation points (and associated
   // triangles) are included in the output. (These are introduced as an
   // initial triangulation to begin the triangulation process. This feature
   // is nice for debugging output.)
-  vtkSetMacro(BoundingTriangulation,int);
-  vtkGetMacro(BoundingTriangulation,int);
-  vtkBooleanMacro(BoundingTriangulation,int);
+  vtkSetMacro(BoundingTriangulation, int);
+  vtkGetMacro(BoundingTriangulation, int);
+  vtkBooleanMacro(BoundingTriangulation, int);
 
   // Description:
   // Set / get the transform which is applied to points to generate a
@@ -236,22 +235,23 @@ public:
   // original (untransformed) points.  The transform can be any
   // subclass of vtkAbstractTransform (thus it does not need to be a
   // linear or invertible transform).
-  virtual void SetTransform(vtkAbstractTransform*);
+  virtual void SetTransform(vtkAbstractTransform *);
   vtkGetObjectMacro(Transform, vtkAbstractTransform);
 
   // Description:
   // Define
-  vtkSetClampMacro(ProjectionPlaneMode,int,
-                   VTK_DELAUNAY_XY_PLANE,VTK_BEST_FITTING_PLANE);
-  vtkGetMacro(ProjectionPlaneMode,int);
+  vtkSetClampMacro(ProjectionPlaneMode, int, VTK_DELAUNAY_XY_PLANE,
+                   VTK_BEST_FITTING_PLANE);
+  vtkGetMacro(ProjectionPlaneMode, int);
 
 protected:
   vtkDelaunay2D_60();
   ~vtkDelaunay2D_60();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **,
+                          vtkInformationVector *) override;
 
-  vtkAbstractTransform * ComputeBestFittingPlane(vtkPointSet *input);
+  vtkAbstractTransform *ComputeBestFittingPlane(vtkPointSet *input);
 
   double Alpha;
   double Tolerance;
@@ -260,24 +260,25 @@ protected:
 
   vtkAbstractTransform *Transform;
 
-  int ProjectionPlaneMode; //selects the plane in 3D where the Delaunay triangulation will be computed.
+  int ProjectionPlaneMode; // selects the plane in 3D where the Delaunay
+                           // triangulation will be computed.
 
 private:
-  vtkPolyData *Mesh; //the created mesh
-  double *Points;    //the raw points in double precision
-  void SetPoint(vtkIdType id, double *x)
-    {vtkIdType idx=3*id;
+  vtkPolyData *Mesh; // the created mesh
+  double *Points;    // the raw points in double precision
+  void SetPoint(vtkIdType id, double *x) {
+    vtkIdType idx = 3 * id;
     this->Points[idx] = x[0];
-    this->Points[idx+1] = x[1];
-    this->Points[idx+2] = x[2];
-    }
+    this->Points[idx + 1] = x[1];
+    this->Points[idx + 2] = x[2];
+  }
 
-  void GetPoint(vtkIdType id, double x[3])
-    {double *ptr = this->Points + 3*id;
+  void GetPoint(vtkIdType id, double x[3]) {
+    double *ptr = this->Points + 3 * id;
     x[0] = *ptr++;
     x[1] = *ptr++;
     x[2] = *ptr;
-    }
+  }
 
   int NumberOfDuplicatePoints;
   int NumberOfDegeneracies;
@@ -286,17 +287,17 @@ private:
   int RecoverEdge(vtkIdType p1, vtkIdType p2);
   void FillPolygons(vtkCellArray *polys, int *triUse);
 
-  int InCircle (double x[3], double x1[3], double x2[3], double x3[3]);
+  int InCircle(double x[3], double x1[3], double x2[3], double x3[3]);
   vtkIdType FindTriangle(double x[3], vtkIdType ptIds[3], vtkIdType tri,
                          double tol, vtkIdType nei[3], vtkIdList *neighbors);
   void CheckEdge(vtkIdType ptId, double x[3], vtkIdType p1, vtkIdType p2,
                  vtkIdType tri);
 
-  virtual int FillInputPortInformation(int, vtkInformation*) override;
+  virtual int FillInputPortInformation(int, vtkInformation *) override;
 
 private:
-  vtkDelaunay2D_60(const vtkDelaunay2D_60&);  // Not implemented.
-  void operator=(const vtkDelaunay2D_60&);  // Not implemented.
+  vtkDelaunay2D_60(const vtkDelaunay2D_60 &); // Not implemented.
+  void operator=(const vtkDelaunay2D_60 &);   // Not implemented.
 };
 
 #endif

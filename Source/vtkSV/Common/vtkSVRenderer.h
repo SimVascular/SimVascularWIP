@@ -44,31 +44,29 @@
 #ifndef vtkSVRenderer_h
 #define vtkSVRenderer_h
 
-#include "vtkDataObject.h"
-#include "vtkRenderer.h"
 #include "vtkCallbackCommand.h"
+#include "vtkDataObject.h"
+#include "vtkInteractorStyleTrackballCamera.h"
 #include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
-#include "vtkInteractorStyleTrackballCamera.h"
-#include "vtkTextActor.h"
+#include "vtkRenderer.h"
 #include "vtkSVCommonModule.h" // For exports
+#include "vtkTextActor.h"
 
 #include <vector>
 
-struct Binding
-{
+struct Binding {
   std::string key;
   std::string text;
   vtkCallbackCommand *callback = nullptr;
   std::string group;
 };
 
-class VTKSVCOMMON_EXPORT vtkSVRenderer : public vtkDataObject
-{
+class VTKSVCOMMON_EXPORT vtkSVRenderer : public vtkDataObject {
 public:
-  static vtkSVRenderer* New();
+  static vtkSVRenderer *New();
 
-  vtkTypeMacro(vtkSVRenderer,vtkDataObject);
+  vtkTypeMacro(vtkSVRenderer, vtkDataObject);
 
   //@{
   /** \brief Get and set the renderer  */
@@ -89,8 +87,8 @@ public:
   //@}
 
   //@{
-  /** \brief Get and set the text to show up on the window that asks the user for
-   *  input. Follow with UpdateTextInput() */
+  /** \brief Get and set the text to show up on the window that asks the user
+   * for input. Follow with UpdateTextInput() */
   vtkSetStringMacro(TextInputQuery);
   vtkGetStringMacro(TextInputQuery);
   //@}
@@ -103,12 +101,13 @@ public:
 
   //@{
   /** \brief Indicate whether window should be interactive */
-  int Render(int interactive=1);
+  int Render(int interactive = 1);
   //@}
 
   //@{
-  /** \brief Add a binding to a key. Must provide the key, the text for what the binding does,
-   *  the callback command to be performed upon keypress and an organization string group */
+  /** \brief Add a binding to a key. Must provide the key, the text for what the
+   * binding does, the callback command to be performed upon keypress and an
+   * organization string group */
   int AddKeyBinding(std::string key, std::string text,
                     vtkCallbackCommand *callback, std::string group);
   //@}
@@ -125,7 +124,7 @@ public:
 
   //@{
   /** \brief Enter text input mode with or without interaction */
-  int EnterTextInputMode(int interactive=1);
+  int EnterTextInputMode(int interactive = 1);
   //@}
 
   //@{
@@ -145,27 +144,36 @@ public:
 
   //@{
   /** \brief Reset the camera */
-  static void ResetCameraCallback( vtkObject* caller, long unsigned int vtkNotUsed(eventId), void* clientData, void* vtkNotUsed(callData) );
+  static void ResetCameraCallback(vtkObject *caller,
+                                  long unsigned int vtkNotUsed(eventId),
+                                  void *clientData, void *vtkNotUsed(callData));
   //@}
 
   //@{
   /** \brief Quit the renderer callback */
-  static void QuitRendererCallback( vtkObject* caller, long unsigned int vtkNotUsed(eventId), void* clientData, void* vtkNotUsed(callData) );
+  static void QuitRendererCallback(vtkObject *caller,
+                                   long unsigned int vtkNotUsed(eventId),
+                                   void *clientData,
+                                   void *vtkNotUsed(callData));
   //@}
 
   //@{
   /** \brief Formulate the keypress callback */
-  static void KeyPressCallback( vtkObject* caller, long unsigned int eventId, void* clientData, void* callData );
+  static void KeyPressCallback(vtkObject *caller, long unsigned int eventId,
+                               void *clientData, void *callData);
   //@}
 
   //@{
   /** \brief Formulate the char callback */
-  static void CharCallback( vtkObject* caller, long unsigned int vtkNotUsed(eventId), void* vtkNotUsed(clientData), void* vtkNotUsed(callData) );
+  static void CharCallback(vtkObject *caller,
+                           long unsigned int vtkNotUsed(eventId),
+                           void *vtkNotUsed(clientData),
+                           void *vtkNotUsed(callData));
   //@}
 
   //@{
   /** \brief Print */
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(ostream &os, vtkIndent indent) override;
   //@}
 
 protected:
@@ -207,15 +215,15 @@ protected:
   double Position[2];
 
   // Char member data
-  char* TextInputQuery;
-  char* CurrentTextInput;
+  char *TextInputQuery;
+  char *CurrentTextInput;
 
   // Bindings
   std::vector<Binding> KeyBindings;
 
 private:
-  vtkSVRenderer(const vtkSVRenderer&);  // Not implemented.
-  void operator=(const vtkSVRenderer&);  // Not implemented.
+  vtkSVRenderer(const vtkSVRenderer &);  // Not implemented.
+  void operator=(const vtkSVRenderer &); // Not implemented.
 };
 
 #endif

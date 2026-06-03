@@ -53,17 +53,22 @@
 #include "vtkSVNURBSCollection.h"
 #include "vtkSVNURBSObject.h"
 
-class VTKSVNURBS_EXPORT vtkSVNURBSSurface : public vtkSVNURBSObject
-{
+class VTKSVNURBS_EXPORT vtkSVNURBSSurface : public vtkSVNURBSObject {
 public:
   static vtkSVNURBSSurface *New();
 
   // Constructor
-  vtkSVNURBSSurface(int m, vtkPoints *controlPoints, int n, vtkDoubleArray *knotPoints, int deg) {;}
-  vtkSVNURBSSurface(int m, vtkPoints *controlPoints, vtkDoubleArray *knotPoints, vtkIntArray *knotMultiplicity, int deg) {;}
+  vtkSVNURBSSurface(int m, vtkPoints *controlPoints, int n,
+                    vtkDoubleArray *knotPoints, int deg) {
+    ;
+  }
+  vtkSVNURBSSurface(int m, vtkPoints *controlPoints, vtkDoubleArray *knotPoints,
+                    vtkIntArray *knotMultiplicity, int deg) {
+    ;
+  }
 
-  vtkTypeMacro(vtkSVNURBSSurface,vtkSVNURBSObject);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  vtkTypeMacro(vtkSVNURBSSurface, vtkSVNURBSObject);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
   /// \brief Get and set the number of control points for curve
@@ -109,18 +114,21 @@ public:
   // Initialize
   void Initialize() override;
 
-  //PolyData representation functions
-  /** \brief Function to generate polydata representation of nurbs surface. Stored
-   *  in SurfaceRepresentation.
-   *  \param uSpacing Sets the spacing to sample the NURBS at in the u parameter direction.
-   *  \param vSpacing Sets the spacing to sample the NURBS at in the v parameter direction. */
-  int GeneratePolyDataRepresentation(const double uSpacing, const double vSpacing);
+  // PolyData representation functions
+  /** \brief Function to generate polydata representation of nurbs surface.
+   * Stored in SurfaceRepresentation.
+   *  \param uSpacing Sets the spacing to sample the NURBS at in the u parameter
+   * direction.
+   *  \param vSpacing Sets the spacing to sample the NURBS at in the v parameter
+   * direction. */
+  int GeneratePolyDataRepresentation(const double uSpacing,
+                                     const double vSpacing);
 
-  //Functions to set control points/knots/etc.
+  // Functions to set control points/knots/etc.
   void SetControlPoints(vtkStructuredGrid *points2d);
   void SetKnotVector(vtkDoubleArray *knotVector, const int dim);
 
-  //Functions to manipulate the geometry
+  // Functions to manipulate the geometry
   void UpdateSurface() {} /**< \brief Unimplemented */
 
   /** \brief Increase the degree of the surface a specified number of times. */
@@ -134,45 +142,86 @@ public:
   int SetVKnotVector(vtkDoubleArray *knots);
 
   /** \brief Insert a knot certain number of times. */
-  int InsertKnot(const double newKnot, const int dim, const int numberOfInserts);
-  /** \brief insert multiple knots at the same time; should be an increasing knot
-   *  span that is within the bound of the current knots. Make sure this is
+  int InsertKnot(const double newKnot, const int dim,
+                 const int numberOfInserts);
+  /** \brief insert multiple knots at the same time; should be an increasing
+   * knot span that is within the bound of the current knots. Make sure this is
    *  done as this is not checked. */
   int InsertKnots(vtkDoubleArray *newKnots, const int dim);
 
   /** \brief Remove a knot a certain number of times.*/
-  int RemoveKnot(const double removeKnot, const int dim, const int numberOfRemovals, const double tolerance);
+  int RemoveKnot(const double removeKnot, const int dim,
+                 const int numberOfRemovals, const double tolerance);
 
   /** \brief Remove a knot at a specified location in the knot span. */
-  int RemoveKnotAtIndex(const int index, const int dim, const int numberOfRemovals, const double tolerance);
+  int RemoveKnotAtIndex(const int index, const int dim,
+                        const int numberOfRemovals, const double tolerance);
 
-  int SetKnot(const int index, const int dim, const double newKnot) {return 0;} /**< \brief Unimplemented */
-  int SetKnots(vtkIntArray *indices, const int dim, vtkDoubleArray *newKnots) {return 0;} /**< \brief Unimplemented */
-  int GetKnot(const int index, const int dim, double &knotVal) {return 0;} /**< \brief Unimplemented */
-  int GetKnots(const int indices, const int dim, vtkDoubleArray *knotVals) {return 0;} /**< \brief Unimplemented */
+  int SetKnot(const int index, const int dim, const double newKnot) {
+    return 0;
+  } /**< \brief Unimplemented */
+  int SetKnots(vtkIntArray *indices, const int dim, vtkDoubleArray *newKnots) {
+    return 0;
+  } /**< \brief Unimplemented */
+  int GetKnot(const int index, const int dim, double &knotVal) {
+    return 0;
+  } /**< \brief Unimplemented */
+  int GetKnots(const int indices, const int dim, vtkDoubleArray *knotVals) {
+    return 0;
+  } /**< \brief Unimplemented */
 
   int SetControlPointGrid(vtkSVControlGrid *controlPoints);
 
-  int SetControlPoint(const int index, const int dim, const double coordinate[3], const double weight) {return 0;} /**< \brief Unimplemented */
-  int SetControlPoints(vtkIntArray *indices, const int dim, vtkPoints *coordinates, vtkDoubleArray *weights); /**< \brief Unimplemented */
-  int GetControlPoint(const int index, const int dim, double coordinates[3], double &weight) {return 0;} /**< \brief Unimplemented */
-  int GetControlPoints(vtkIntArray *indices, const int dim, vtkPoints *coordinates, vtkDoubleArray *weights) {return 0;} /**< \brief Unimplemented */
+  int SetControlPoint(const int index, const int dim,
+                      const double coordinate[3], const double weight) {
+    return 0;
+  } /**< \brief Unimplemented */
+  int SetControlPoints(vtkIntArray *indices, const int dim,
+                       vtkPoints *coordinates,
+                       vtkDoubleArray *weights); /**< \brief Unimplemented */
+  int GetControlPoint(const int index, const int dim, double coordinates[3],
+                      double &weight) {
+    return 0;
+  } /**< \brief Unimplemented */
+  int GetControlPoints(vtkIntArray *indices, const int dim,
+                       vtkPoints *coordinates, vtkDoubleArray *weights) {
+    return 0;
+  } /**< \brief Unimplemented */
 
-  int SetUWeights(vtkDoubleArray *uWeights) {return 0;} /**< \brief Unimplemented */
-  int GetUWeights(vtkDoubleArray *uWeights) {return 0;} /**< \brief Unimplemented */
-  int SetVWeights(vtkDoubleArray *vWeights) {return 0;} /**< \brief Unimplemented */
-  int GetVWeights(vtkDoubleArray *vWeights) {return 0;} /**< \brief Unimplemented */
-  int SetWeight(const int index, const int dim, const double weight) {return 0;} /**< \brief Unimplemented */
-  int GetWeight(const int index, const int dim, double &weight) {return 0;} /**< \brief Unimplemented */
+  int SetUWeights(vtkDoubleArray *uWeights) {
+    return 0;
+  } /**< \brief Unimplemented */
+  int GetUWeights(vtkDoubleArray *uWeights) {
+    return 0;
+  } /**< \brief Unimplemented */
+  int SetVWeights(vtkDoubleArray *vWeights) {
+    return 0;
+  } /**< \brief Unimplemented */
+  int GetVWeights(vtkDoubleArray *vWeights) {
+    return 0;
+  } /**< \brief Unimplemented */
+  int SetWeight(const int index, const int dim, const double weight) {
+    return 0;
+  } /**< \brief Unimplemented */
+  int GetWeight(const int index, const int dim, double &weight) {
+    return 0;
+  } /**< \brief Unimplemented */
 
-  void SetClosed(const int closed, const int dim) {;} /**< \brief Unimplemented */
-  void SetClamped(const int clamped, const int dim) {;} /**< \brief Unimplemented */
-  int MakePeriodic(const int continuity, const int dim) {return 0;} /**< \brief Unimplemented */
+  void SetClosed(const int closed, const int dim) {
+    ;
+  } /**< \brief Unimplemented */
+  void SetClamped(const int clamped, const int dim) {
+    ;
+  } /**< \brief Unimplemented */
+  int MakePeriodic(const int continuity, const int dim) {
+    return 0;
+  } /**< \brief Unimplemented */
 
   /** \brief get the knot vector multiplicity. */
   int GetUMultiplicity(vtkIntArray *multiplicity, vtkDoubleArray *singleKnots);
   int GetVMultiplicity(vtkIntArray *multiplicity, vtkDoubleArray *singleKnots);
-  int GetMultiplicity(const int dim, vtkIntArray *multiplicity, vtkDoubleArray *singleKnots);
+  int GetMultiplicity(const int dim, vtkIntArray *multiplicity,
+                      vtkDoubleArray *singleKnots);
 
   //@{
   /** \brief functions to extract bezier portions of the surface */
@@ -181,17 +230,19 @@ public:
   //@}
 
   /** \brief Get structured grid connectivity.
-   *  \param connectivity empty cell array to be filled with a structured grid connectivity. */
-  int GetStructuredGridConnectivity(const int numXPoints, const int numYPoints, vtkCellArray *connectivity);
+   *  \param connectivity empty cell array to be filled with a structured grid
+   * connectivity. */
+  int GetStructuredGridConnectivity(const int numXPoints, const int numYPoints,
+                                    vtkCellArray *connectivity);
 
   // Description:
   // Retrieve an instance of this class from an information object.
-  static vtkSVNURBSSurface* GetData(vtkInformation* info);
-  static vtkSVNURBSSurface* GetData(vtkInformationVector* v, int i=0);
+  static vtkSVNURBSSurface *GetData(vtkInformation *info);
+  static vtkSVNURBSSurface *GetData(vtkInformationVector *v, int i = 0);
 
   virtual void DeepCopy(vtkSVNURBSSurface *src);
 
-  virtual std::string GetType() override {return "Surface";}
+  virtual std::string GetType() override { return "Surface"; }
 
 protected:
   vtkSVNURBSSurface();
@@ -216,8 +267,8 @@ protected:
   vtkPolyData *SurfaceRepresentation;
 
 private:
-  vtkSVNURBSSurface(const vtkSVNURBSSurface&);  // Not implemented.
-  void operator=(const vtkSVNURBSSurface&);  // Not implemented.
+  vtkSVNURBSSurface(const vtkSVNURBSSurface &); // Not implemented.
+  void operator=(const vtkSVNURBSSurface &);    // Not implemented.
 };
 
 #endif

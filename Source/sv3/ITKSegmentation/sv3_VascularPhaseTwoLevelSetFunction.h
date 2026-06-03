@@ -34,153 +34,133 @@
 
 #include "sv3_VascularLevelSetFunction.h"
 
-namespace itk
-{
+namespace itk {
 
-template< typename TImageType, typename TFeatureImageType = TImageType >
-class VascularPhaseTwoLevelSetFunction:
-		public VascularLevelSetFunction< TImageType, TFeatureImageType >
-{
+template <typename TImageType, typename TFeatureImageType = TImageType>
+class VascularPhaseTwoLevelSetFunction
+    : public VascularLevelSetFunction<TImageType, TFeatureImageType> {
 public:
-	typedef VascularPhaseTwoLevelSetFunction Self;
-	typedef VascularLevelSetFunction< TImageType, TFeatureImageType >
-	Superclass;
-	typedef SmartPointer< Self >       Pointer;
-	typedef SmartPointer< const Self > ConstPointer;
-	typedef TFeatureImageType          FeatureImageType;
+  typedef VascularPhaseTwoLevelSetFunction Self;
+  typedef VascularLevelSetFunction<TImageType, TFeatureImageType> Superclass;
+  typedef SmartPointer<Self> Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
+  typedef TFeatureImageType FeatureImageType;
 
-	/** Method for creation through the object factory. */
-	itkNewMacro(Self);
+  /** Method for creation through the object factory. */
+  itkNewMacro(Self);
 
-	/** Run-time type information (and related methods) */
-	itkTypeMacro(VascularPhaseTwoLevelSetFunction, VascularLevelSetFunction);
+  /** Run-time type information (and related methods) */
+  itkTypeMacro(VascularPhaseTwoLevelSetFunction, VascularLevelSetFunction);
 
-	/** Extract some parameters from the superclass. */
-	typedef typename Superclass::ImageType         ImageType;
-	typedef typename Superclass::PixelType         PixelType;
-	typedef typename Superclass::NeighborhoodType  NeighborhoodType;
-	typedef typename Superclass::NeighborhoodScalesType  NeighborhoodScalesType;
-	typedef typename Superclass::ScalarValueType   ScalarValueType;
-	typedef typename Superclass::FeatureScalarType FeatureScalarType;
-	typedef typename Superclass::RadiusType        RadiusType;
-	typedef typename Superclass::FloatOffsetType   FloatOffsetType;
-	typedef typename Superclass::VectorType   	   VectorType;
-	typedef typename Superclass::VectorImageType   VectorImageType;
-	typedef typename Superclass::GlobalDataStruct  GlobalDataStruct;
-	typedef typename Superclass::VectorInterpolatorType VectorInterpolatorType;
-	typedef typename Superclass::TimeStepType TimeStepType;
-	typedef typename Superclass::IndexType IndexType;
+  /** Extract some parameters from the superclass. */
+  typedef typename Superclass::ImageType ImageType;
+  typedef typename Superclass::PixelType PixelType;
+  typedef typename Superclass::NeighborhoodType NeighborhoodType;
+  typedef typename Superclass::NeighborhoodScalesType NeighborhoodScalesType;
+  typedef typename Superclass::ScalarValueType ScalarValueType;
+  typedef typename Superclass::FeatureScalarType FeatureScalarType;
+  typedef typename Superclass::RadiusType RadiusType;
+  typedef typename Superclass::FloatOffsetType FloatOffsetType;
+  typedef typename Superclass::VectorType VectorType;
+  typedef typename Superclass::VectorImageType VectorImageType;
+  typedef typename Superclass::GlobalDataStruct GlobalDataStruct;
+  typedef typename Superclass::VectorInterpolatorType VectorInterpolatorType;
+  typedef typename Superclass::TimeStepType TimeStepType;
+  typedef typename Superclass::IndexType IndexType;
 
-	/** Extract some parameters from the superclass. */
-	itkStaticConstMacro(ImageDimension, unsigned int,
-			Superclass::ImageDimension);
+  /** Extract some parameters from the superclass. */
+  itkStaticConstMacro(ImageDimension, unsigned int, Superclass::ImageDimension);
 
+  typedef itk::Vector<ScalarValueType, ImageDimension> NormalVectorType;
+  typedef typename NeighborhoodType::SizeValueType NeighborhoodSizeValueType;
 
-	typedef itk::Vector<ScalarValueType,ImageDimension> NormalVectorType;
-	typedef typename NeighborhoodType::SizeValueType    NeighborhoodSizeValueType;
+  /** Compute speed image from feature image.*/
+  virtual void CalculateSpeedImage();
 
+  /** Compute the advection field from feature image.*/
+  virtual void CalculateAdvectionImage();
 
-	/** Compute speed image from feature image.*/
-	virtual void CalculateSpeedImage();
+  // void GenerateGImageFromFeature(typename
+  // ExpNegativeImageFilter<FeatureImageType,FeatureImageType>::Pointer
+  // filter,double sigma,double expfactor);
 
-	/** Compute the advection field from feature image.*/
-	virtual void CalculateAdvectionImage();
+  virtual ScalarValueType CurvatureSpeed(const NeighborhoodType &neighborhood,
+                                         const FloatOffsetType &offset,
+                                         GlobalDataStruct *gd) const {
+    return this->PropagationSpeed(neighborhood, offset,
+                                  gd); // TODO: Change this?
+  }
 
-	//void GenerateGImageFromFeature(typename ExpNegativeImageFilter<FeatureImageType,FeatureImageType>::Pointer filter,double sigma,double expfactor);
+  virtual void Initialize(const RadiusType &r) {
+    Superclass::Initialize(r);
 
+    this->SetAdvectionWeight(NumericTraits<ScalarValueType>::One);
+    this->SetPropagationWeight(NumericTraits<ScalarValueType>::One);
+    this->SetCurvatureWeight(NumericTraits<ScalarValueType>::One);
+  }
 
-	virtual ScalarValueType CurvatureSpeed(const NeighborhoodType & neighborhood,
-			const FloatOffsetType & offset, GlobalDataStruct *gd) const
-	{
-		return this->PropagationSpeed(neighborhood, offset, gd);//TODO: Change this?
-	}
+  /* Getters and setters */
+  void SetAdvectionDerivativeSigma(const double v) {
+    m_AdvectionDerivativeSigma = v;
+  }
+  double GetAdvectionDerivativeSigma() { return m_AdvectionDerivativeSigma; }
 
+  void SetSpeedDerivativeSigma(const double v) { m_SpeedDerivativeSigma = v; }
+  double GetSpeedDerivativeSigma() { return m_SpeedDerivativeSigma; }
 
-	virtual void Initialize(const RadiusType & r)
-	{
-		Superclass::Initialize(r);
+  void SetCurvataureLowerThreshold(const double v) {
+    m_CurvataureLowerThreshold = v;
+  }
+  double GetCurvataureLowerThreshold() { return m_CurvataureLowerThreshold; }
 
-		this->SetAdvectionWeight(NumericTraits< ScalarValueType >::One);
-		this->SetPropagationWeight(NumericTraits< ScalarValueType >::One);
-		this->SetCurvatureWeight(NumericTraits< ScalarValueType >::One);
-	}
-
-
-	/* Getters and setters */
-	void SetAdvectionDerivativeSigma(const double v)
-	{ m_AdvectionDerivativeSigma = v; }
-	double GetAdvectionDerivativeSigma()
-	{ return m_AdvectionDerivativeSigma; }
-
-	void SetSpeedDerivativeSigma(const double v)
-	{ m_SpeedDerivativeSigma = v; }
-	double GetSpeedDerivativeSigma()
-	{ return m_SpeedDerivativeSigma; }
-
-	void SetCurvataureLowerThreshold(const double v)
-	{ m_CurvataureLowerThreshold = v; }
-	double GetCurvataureLowerThreshold()
-	{ return m_CurvataureLowerThreshold; }
-
-	void SetCurvataureUpperThreshold(const double v)
-	{ m_CurvataureUpperThreshold = v; }
-	double GetCurvataureUpperThreshold()
-	{ return m_CurvataureUpperThreshold; }
-
+  void SetCurvataureUpperThreshold(const double v) {
+    m_CurvataureUpperThreshold = v;
+  }
+  double GetCurvataureUpperThreshold() { return m_CurvataureUpperThreshold; }
 
 protected:
+  VascularPhaseTwoLevelSetFunction() {
+    this->SetAdvectionWeight(NumericTraits<ScalarValueType>::One);
+    this->SetPropagationWeight(NumericTraits<ScalarValueType>::One);
+    this->SetCurvatureWeight(NumericTraits<ScalarValueType>::One);
 
-	VascularPhaseTwoLevelSetFunction()
-{
-		this->SetAdvectionWeight(NumericTraits< ScalarValueType >::One);
-		this->SetPropagationWeight(NumericTraits< ScalarValueType >::One);
-		this->SetCurvatureWeight(NumericTraits< ScalarValueType >::One);
+    this->SetUseMinimalCurvature(false);
 
-		this->SetUseMinimalCurvature(false);
+    m_AdvectionDerivativeSigma = 1.0;
+    m_SpeedDerivativeSigma = 1.0;
+    m_CurvataureLowerThreshold = 0.0;
+    m_CurvataureUpperThreshold = 1;
+  }
+  virtual ~VascularPhaseTwoLevelSetFunction() {}
+  VascularPhaseTwoLevelSetFunction(const Self &); // purposely not
+  // implemented
+  void operator=(const Self &); // purposely not
+  // implemented
 
-		m_AdvectionDerivativeSigma = 1.0;
-		m_SpeedDerivativeSigma = 1.0;
-		m_CurvataureLowerThreshold = 0.0;
-		m_CurvataureUpperThreshold = 1;
-}
-	virtual ~VascularPhaseTwoLevelSetFunction() {}
-	VascularPhaseTwoLevelSetFunction(const Self &); //purposely not
-	// implemented
-	void operator=(const Self &);                        //purposely not
-	// implemented
+  void PrintSelf(std::ostream &os, Indent indent) const {
 
-	void PrintSelf(std::ostream & os, Indent indent) const
-	{
-
-		Superclass::PrintSelf(os, indent);
-		//this->PrintShort(os);
-
-	}
-
+    Superclass::PrintSelf(os, indent);
+    // this->PrintShort(os);
+  }
 
 private:
-	float m_AdvectionDerivativeSigma;
-	float m_SpeedDerivativeSigma;
-	float m_CurvataureLowerThreshold;
-	float m_CurvataureUpperThreshold;
+  float m_AdvectionDerivativeSigma;
+  float m_SpeedDerivativeSigma;
+  float m_CurvataureLowerThreshold;
+  float m_CurvataureUpperThreshold;
 
-
-	//Functions that need to be overloaded.
+  // Functions that need to be overloaded.
 public:
+  virtual PixelType ComputeUpdate(const NeighborhoodType &it, void *globalData,
+                                  const FloatOffsetType &offset);
 
-	virtual PixelType ComputeUpdate(const NeighborhoodType & it, void *globalData,
-			const FloatOffsetType & offset);
+  virtual ScalarValueType ComputeCurvatureTerm(const NeighborhoodType &,
+                                               const FloatOffsetType &,
+                                               GlobalDataStruct *gd = 0);
 
-	virtual ScalarValueType ComputeCurvatureTerm(const NeighborhoodType &,
-			const FloatOffsetType &,
-			GlobalDataStruct *gd = 0
-	);
-
-	virtual TimeStepType ComputeGlobalTimeStep(void *GlobalData) const;
-
+  virtual TimeStepType ComputeGlobalTimeStep(void *GlobalData) const;
 };
-}
-
+} // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "sv3_VascularPhaseTwoLevelSetFunction.hxx"

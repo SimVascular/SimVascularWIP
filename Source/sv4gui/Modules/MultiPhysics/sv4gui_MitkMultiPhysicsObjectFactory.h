@@ -38,38 +38,40 @@
 
 #include <mitkCoreObjectFactoryBase.h>
 
-class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMitkMultiPhysicsObjectFactory : public mitk::CoreObjectFactoryBase
-{
+class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMitkMultiPhysicsObjectFactory
+    : public mitk::CoreObjectFactoryBase {
 public:
-    mitkClassMacro(sv4guiMitkMultiPhysicsObjectFactory,mitk::CoreObjectFactoryBase);
-    itkFactorylessNewMacro(Self)
-    itkCloneMacro(Self)
-    virtual mitk::Mapper::Pointer CreateMapper(mitk::DataNode* node, MapperSlotId slotId) override;
-    virtual void SetDefaultProperties(mitk::DataNode* node) override;
-    virtual std::string GetFileExtensions() override;
-    virtual mitk::CoreObjectFactoryBase::MultimapType GetFileExtensionsMap() override;
-    virtual std::string GetSaveFileExtensions() override;
-    virtual mitk::CoreObjectFactoryBase::MultimapType GetSaveFileExtensionsMap() override;
+  mitkClassMacro(sv4guiMitkMultiPhysicsObjectFactory,
+                 mitk::CoreObjectFactoryBase);
+  itkFactorylessNewMacro(Self) itkCloneMacro(Self) virtual mitk::Mapper::Pointer
+      CreateMapper(mitk::DataNode *node, MapperSlotId slotId) override;
+  virtual void SetDefaultProperties(mitk::DataNode *node) override;
+  virtual std::string GetFileExtensions() override;
+  virtual mitk::CoreObjectFactoryBase::MultimapType
+  GetFileExtensionsMap() override;
+  virtual std::string GetSaveFileExtensions() override;
+  virtual mitk::CoreObjectFactoryBase::MultimapType
+  GetSaveFileExtensionsMap() override;
 
-    void RegisterIOFactories(); //deprecatedSince{2013_09}
+  void RegisterIOFactories(); // deprecatedSince{2013_09}
 protected:
-    sv4guiMitkMultiPhysicsObjectFactory();
-    ~sv4guiMitkMultiPhysicsObjectFactory();
-    void CreateFileExtensionsMap();
-    MultimapType m_FileExtensionsMap;
-    MultimapType m_SaveFileExtensionsMap;
+  sv4guiMitkMultiPhysicsObjectFactory();
+  ~sv4guiMitkMultiPhysicsObjectFactory();
+  void CreateFileExtensionsMap();
+  MultimapType m_FileExtensionsMap;
+  MultimapType m_SaveFileExtensionsMap;
 
 private:
-
 };
 
-struct SV4GUIMODULEMULTIPHYSICS_EXPORT Registersv4guiMitkMultiPhysicsObjectFactory{
+struct SV4GUIMODULEMULTIPHYSICS_EXPORT
+    Registersv4guiMitkMultiPhysicsObjectFactory {
   Registersv4guiMitkMultiPhysicsObjectFactory();
 
   virtual ~Registersv4guiMitkMultiPhysicsObjectFactory();
 
   sv4guiMitkMultiPhysicsObjectFactory::Pointer m_Factory;
-  sv4guiMitkMultiPhysicsJobIO* m_MitkSimJobIO;
+  sv4guiMitkMultiPhysicsJobIO *m_MitkSimJobIO;
 };
 
 #endif // sv4guiMitkMultiPhysicsOBJECTFACTORY_H

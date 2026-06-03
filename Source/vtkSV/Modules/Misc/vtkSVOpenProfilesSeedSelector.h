@@ -32,9 +32,9 @@
 /**
  * \class vtkSVOpenProfilesSeedSelector
  *
- * \brief This is a c++ replication of the python code for an open profiles seed selector
- * in vmtk. It finds open profiles and renders points in the open profiles with ids
- * for the user to select.
+ * \brief This is a c++ replication of the python code for an open profiles seed
+ * selector in vmtk. It finds open profiles and renders points in the open
+ * profiles with ids for the user to select.
  *
  * \author Adam Updegrove
  * \author updega2@gmail.com
@@ -48,37 +48,39 @@
 
 #include "vtkDataArray.h"
 #include "vtkIdList.h"
-#include "vtkPolyData.h"
 #include "vtkPoints.h"
+#include "vtkPolyData.h"
 #include "vtkUnstructuredGrid.h"
 
 #include "vtkSVRenderer.h"
 #include "vtkSVSeedSelector.h"
 
-class VTKSVMISC_EXPORT vtkSVOpenProfilesSeedSelector : public vtkSVSeedSelector
-{
-  public:
-  vtkTypeMacro(vtkSVOpenProfilesSeedSelector,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+class VTKSVMISC_EXPORT vtkSVOpenProfilesSeedSelector
+    : public vtkSVSeedSelector {
+public:
+  vtkTypeMacro(vtkSVOpenProfilesSeedSelector, vtkPolyDataAlgorithm);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   vtkSetObjectMacro(SeedIds, vtkIdList);
   vtkGetObjectMacro(SeedIds, vtkIdList);
 
   static vtkSVOpenProfilesSeedSelector *New();
 
-  protected:
+protected:
   vtkSVOpenProfilesSeedSelector();
   ~vtkSVOpenProfilesSeedSelector();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **,
+                          vtkInformationVector *) override;
 
-  vtkIdList* SeedIds;
+  vtkIdList *SeedIds;
 
   vtkSVRenderer *SVRenderer;
 
-  private:
-  vtkSVOpenProfilesSeedSelector(const vtkSVOpenProfilesSeedSelector&);  // Not implemented.
-  void operator=(const vtkSVOpenProfilesSeedSelector&);  // Not implemented.
+private:
+  vtkSVOpenProfilesSeedSelector(
+      const vtkSVOpenProfilesSeedSelector &);            // Not implemented.
+  void operator=(const vtkSVOpenProfilesSeedSelector &); // Not implemented.
 };
 
 #endif

@@ -47,37 +47,37 @@
 
 #include "vtkIdList.h"
 #include "vtkMatrix4x4.h"
-#include "vtkUnstructuredGridAlgorithm.h"
 #include "vtkPolyData.h"
 #include "vtkStructuredGrid.h"
 #include "vtkUnstructuredGrid.h"
+#include "vtkUnstructuredGridAlgorithm.h"
 
 #include "vtkSVGlobals.h"
 
-class VTKSVPARAMETERIZATION_EXPORT vtkSVParameterizeVolumeOnPolycube : public vtkUnstructuredGridAlgorithm
-{
+class VTKSVPARAMETERIZATION_EXPORT vtkSVParameterizeVolumeOnPolycube
+    : public vtkUnstructuredGridAlgorithm {
 public:
-  vtkTypeMacro(vtkSVParameterizeVolumeOnPolycube,vtkUnstructuredGridAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  vtkTypeMacro(vtkSVParameterizeVolumeOnPolycube, vtkUnstructuredGridAlgorithm);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   static vtkSVParameterizeVolumeOnPolycube *New();
 
   //@{
   /// \brief Get/Set macro for surface polycube
-  vtkSetObjectMacro(SurfaceOnPolycubePd,vtkPolyData);
-  vtkGetObjectMacro(SurfaceOnPolycubePd,vtkPolyData);
+  vtkSetObjectMacro(SurfaceOnPolycubePd, vtkPolyData);
+  vtkGetObjectMacro(SurfaceOnPolycubePd, vtkPolyData);
   //@}
 
   //@{
   /// \brief Get/Set macro for surface polycube
-  vtkSetObjectMacro(FinalHexMesh,vtkUnstructuredGrid);
-  vtkGetObjectMacro(FinalHexMesh,vtkUnstructuredGrid);
+  vtkSetObjectMacro(FinalHexMesh, vtkUnstructuredGrid);
+  vtkGetObjectMacro(FinalHexMesh, vtkUnstructuredGrid);
   //@}
 
   //@{
   /// \brief Get/Set macro for surface polycube
-  vtkSetObjectMacro(PolycubeUg,vtkUnstructuredGrid);
-  vtkGetObjectMacro(PolycubeUg,vtkUnstructuredGrid);
+  vtkSetObjectMacro(PolycubeUg, vtkUnstructuredGrid);
+  vtkGetObjectMacro(PolycubeUg, vtkUnstructuredGrid);
   //@}
 
   //@{
@@ -99,47 +99,40 @@ protected:
   ~vtkSVParameterizeVolumeOnPolycube();
 
   // Usual data generation method
-  virtual int RequestData(vtkInformation *,
-                          vtkInformationVector **,
+  virtual int RequestData(vtkInformation *, vtkInformationVector **,
                           vtkInformationVector *) override;
   virtual int FillInputPortInformation(int, vtkInformation *) override;
 
-  int InterpolateMapOntoTarget(vtkPolyData *sourceBasePd,
-                               vtkPolyData *targetPd,
-                               vtkPolyData *targetBasePd,
-                               vtkPolyData *mappedPd,
+  int InterpolateMapOntoTarget(vtkPolyData *sourceBasePd, vtkPolyData *targetPd,
+                               vtkPolyData *targetBasePd, vtkPolyData *mappedPd,
                                std::string dataMatchingArrayName);
 
   int GetInteriorPointMaps(vtkPolyData *pdWithAllInterior,
                            vtkPolyData *pdWithCleanInterior,
                            vtkPolyData *pdWithoutInterior,
                            std::vector<int> &ptMap,
-                           std::vector<std::vector<int> > &invPtMap);
+                           std::vector<std::vector<int>> &invPtMap);
   int GetVolumePointMaps(vtkUnstructuredGrid *ugAll,
-                         vtkUnstructuredGrid *ugClean,
-                         std::vector<int> &ptMap,
-                         std::vector<std::vector<int> > &invPtMap);
+                         vtkUnstructuredGrid *ugClean, std::vector<int> &ptMap,
+                         std::vector<std::vector<int>> &invPtMap);
   int MapInteriorBoundary(vtkStructuredGrid *paraHexVolume,
                           vtkPolyData *mappedSurface,
                           const std::vector<int> ptMap);
   int FixInteriorBoundary(vtkPolyData *mappedSurface,
-                          const std::vector<std::vector<int> > invPtMap);
+                          const std::vector<std::vector<int>> invPtMap);
   int FixVolume(vtkUnstructuredGrid *mappedVolume,
-                vtkUnstructuredGrid *cleanVolume,
-                const std::vector<int> ptMap);
+                vtkUnstructuredGrid *cleanVolume, const std::vector<int> ptMap);
   int SetControlMeshBoundaries(vtkUnstructuredGrid *mappedVolume,
                                vtkUnstructuredGrid *cleanVolume,
                                const std::vector<int> ptMap,
-                               const std::vector<std::vector<int> > invPtMap);
-  int MapVolume(vtkStructuredGrid *paraHexVolume,
-                vtkPolyData *mappedSurface,
+                               const std::vector<std::vector<int>> invPtMap);
+  int MapVolume(vtkStructuredGrid *paraHexVolume, vtkPolyData *mappedSurface,
                 vtkStructuredGrid *mappedVolume);
-  int ConvertUGToSG(vtkUnstructuredGrid *ug,
-                    vtkStructuredGrid *sg,
-                    std::string pointArrayName,
-                    const int w_div, const int h_div, const int l_div);
+  int ConvertUGToSG(vtkUnstructuredGrid *ug, vtkStructuredGrid *sg,
+                    std::string pointArrayName, const int w_div,
+                    const int h_div, const int l_div);
   int GetPointConnectivity(vtkUnstructuredGrid *hexMesh,
-                           std::vector<std::vector<int> > &ptEdgeNeighbors);
+                           std::vector<std::vector<int>> &ptEdgeNeighbors);
   int SmoothStructuredGrid(vtkStructuredGrid *hexMesh, const int iters);
   int SmoothUnstructuredGrid(vtkUnstructuredGrid *hexMesh, const int iters,
                              std::string fixedPointsArrayName);
@@ -152,14 +145,15 @@ protected:
   vtkUnstructuredGrid *FinalHexMesh;
 
   int PrepFilter(); // Prep work.
-  int RunFilter(); // Run filter operations.
+  int RunFilter();  // Run filter operations.
 
   char *GroupIdsArrayName;
   char *GridIdsArrayName;
 
 private:
-  vtkSVParameterizeVolumeOnPolycube(const vtkSVParameterizeVolumeOnPolycube&);  // Not implemented.
-  void operator=(const vtkSVParameterizeVolumeOnPolycube&);  // Not implemented.
+  vtkSVParameterizeVolumeOnPolycube(
+      const vtkSVParameterizeVolumeOnPolycube &);            // Not implemented.
+  void operator=(const vtkSVParameterizeVolumeOnPolycube &); // Not implemented.
 };
 
 #endif

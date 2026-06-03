@@ -29,7 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The 'sv4guiMultiPhysicsbcClass' class is used to store data for an initial condition.
+// The 'sv4guiMultiPhysicsbcClass' class is used to store data for an initial
+// condition.
 
 #ifndef SV4GUI_MULTIPHYSICSBCCLASS_H
 #define SV4GUI_MULTIPHYSICSBCCLASS_H
@@ -38,36 +39,35 @@
 
 #define maxOutput 10
 #define maxProp 10
-#include <map>
 #include <QStringList>
+#include <map>
 
-class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMultiPhysicsbcClass 
-{
-  public:
-    QString faceName;
+class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMultiPhysicsbcClass {
+public:
+  QString faceName;
 
-    QString bcGrp;
-    QString bcType;
-    QString tDep;
-    QString profile;
-    int eDrn;
-    int cplBCPtr;
-    int faIn;
-    double r;
-    double g;
-    QString gxFile;
-    QString gmFile;
-    QString gtFile;
-    bool zperm;
-    bool flux;
+  QString bcGrp;
+  QString bcType;
+  QString tDep;
+  QString profile;
+  int eDrn;
+  int cplBCPtr;
+  int faIn;
+  double r;
+  double g;
+  QString gxFile;
+  QString gmFile;
+  QString gtFile;
+  bool zperm;
+  bool flux;
 
-    QString projectionFaceName;
+  QString projectionFaceName;
 
-    bool imposeIntegral;
-    QString effectiveDirection;
+  bool imposeIntegral;
+  QString effectiveDirection;
 
-    sv4guiMultiPhysicsbcClass();
-    ~sv4guiMultiPhysicsbcClass();
+  sv4guiMultiPhysicsbcClass();
+  ~sv4guiMultiPhysicsbcClass();
 };
 
 #endif // SV4GUI_MULTIPHYSICSBCCLASS_H

@@ -40,39 +40,39 @@
 
 #include "mitkCoreObjectFactoryBase.h"
 
-class SV4GUIMODULEPATH_EXPORT sv4guiPathObjectFactory : public mitk::CoreObjectFactoryBase
-{
+class SV4GUIMODULEPATH_EXPORT sv4guiPathObjectFactory
+    : public mitk::CoreObjectFactoryBase {
 public:
-    mitkClassMacro(sv4guiPathObjectFactory,mitk::CoreObjectFactoryBase);
-    itkFactorylessNewMacro(Self)
-    itkCloneMacro(Self)
-    virtual mitk::Mapper::Pointer CreateMapper(mitk::DataNode* node, MapperSlotId slotId) override;
-    virtual void SetDefaultProperties(mitk::DataNode* node) override;
-    virtual std::string GetFileExtensions() override;
-    virtual mitk::CoreObjectFactoryBase::MultimapType GetFileExtensionsMap() override;
-    virtual std::string GetSaveFileExtensions() override;
-    virtual mitk::CoreObjectFactoryBase::MultimapType GetSaveFileExtensionsMap() override;
+  mitkClassMacro(sv4guiPathObjectFactory, mitk::CoreObjectFactoryBase);
+  itkFactorylessNewMacro(Self) itkCloneMacro(Self) virtual mitk::Mapper::Pointer
+      CreateMapper(mitk::DataNode *node, MapperSlotId slotId) override;
+  virtual void SetDefaultProperties(mitk::DataNode *node) override;
+  virtual std::string GetFileExtensions() override;
+  virtual mitk::CoreObjectFactoryBase::MultimapType
+  GetFileExtensionsMap() override;
+  virtual std::string GetSaveFileExtensions() override;
+  virtual mitk::CoreObjectFactoryBase::MultimapType
+  GetSaveFileExtensionsMap() override;
 
-    void RegisterIOFactories(); //deprecatedSince{2013_09}
+  void RegisterIOFactories(); // deprecatedSince{2013_09}
 protected:
-    sv4guiPathObjectFactory();
-    ~sv4guiPathObjectFactory();
-    void CreateFileExtensionsMap();
-    MultimapType m_FileExtensionsMap;
-    MultimapType m_SaveFileExtensionsMap;
+  sv4guiPathObjectFactory();
+  ~sv4guiPathObjectFactory();
+  void CreateFileExtensionsMap();
+  MultimapType m_FileExtensionsMap;
+  MultimapType m_SaveFileExtensionsMap;
 
 private:
-
 };
 
-struct SV4GUIMODULEPATH_EXPORT Registersv4guiPathObjectFactory{
+struct SV4GUIMODULEPATH_EXPORT Registersv4guiPathObjectFactory {
 
-    Registersv4guiPathObjectFactory();
+  Registersv4guiPathObjectFactory();
 
-    virtual ~Registersv4guiPathObjectFactory();
+  virtual ~Registersv4guiPathObjectFactory();
 
-    sv4guiPathObjectFactory::Pointer m_Factory;
-    sv4guiPathIO* m_sv4guiPathIO;
+  sv4guiPathObjectFactory::Pointer m_Factory;
+  sv4guiPathIO *m_sv4guiPathIO;
 };
 
 #endif // SV4GUI_PATHOBJECTFACTORY_H

@@ -40,20 +40,14 @@
 // cvStrPts
 // ------
 
-cvStrPts::cvStrPts( vtkStructuredPoints *sp )
-  : cvDataSet( STRUCTURED_PTS_T )
-{
+cvStrPts::cvStrPts(vtkStructuredPoints *sp) : cvDataSet(STRUCTURED_PTS_T) {
   data_ = vtkStructuredPoints::New();
-  ShallowCopy( sp );
+  ShallowCopy(sp);
 }
-
 
 // -------
 // ~cvStrPts
 // -------
 // Delete called by the virtual destructor in class cvDataObject.
 
-cvStrPts::~cvStrPts()
-{
-  ;
-}
+cvStrPts::~cvStrPts() { ; }

@@ -31,58 +31,46 @@
 
 #include "sv4gui_SegmentationObjectFactory.h"
 
-#include "sv4gui_ContourModelVtkMapper2D.h"
 #include "sv4gui_ContourGroupVtkMapper2D.h"
 #include "sv4gui_ContourGroupVtkMapper3D.h"
+#include "sv4gui_ContourModelVtkMapper2D.h"
 #include "sv4gui_MitkSeg3DVtkMapper3D.h"
 
-#include "mitkCoreObjectFactory.h"
-#include "mitkProperties.h"
 #include "mitkBaseRenderer.h"
+#include "mitkCoreObjectFactory.h"
 #include "mitkDataNode.h"
+#include "mitkProperties.h"
 
 sv4guiSegmentationObjectFactory::sv4guiSegmentationObjectFactory()
-  : mitk::CoreObjectFactoryBase()
-{
+    : mitk::CoreObjectFactoryBase() {
   static bool alreadyDone = false;
-  if (!alreadyDone)
-  {
+  if (!alreadyDone) {
     MITK_DEBUG << "sv4guiSegmentationObjectFactory c'tor" << std::endl;
 
     alreadyDone = true;
   }
 }
 
-sv4guiSegmentationObjectFactory::~sv4guiSegmentationObjectFactory()
-{
-}
+sv4guiSegmentationObjectFactory::~sv4guiSegmentationObjectFactory() {}
 
-mitk::Mapper::Pointer sv4guiSegmentationObjectFactory::CreateMapper(mitk::DataNode* node, MapperSlotId id)
-{
-  mitk::Mapper::Pointer newMapper=nullptr;
+mitk::Mapper::Pointer
+sv4guiSegmentationObjectFactory::CreateMapper(mitk::DataNode *node,
+                                              MapperSlotId id) {
+  mitk::Mapper::Pointer newMapper = nullptr;
 
-  if ( id == mitk::BaseRenderer::Standard2D )
-  {
-    if( dynamic_cast<sv4guiContourModel*>(node->GetData())!=nullptr )
-    {
+  if (id == mitk::BaseRenderer::Standard2D) {
+    if (dynamic_cast<sv4guiContourModel *>(node->GetData()) != nullptr) {
       newMapper = sv4guiContourModelVtkMapper2D::New();
       newMapper->SetDataNode(node);
-    }
-    else if( dynamic_cast<sv4guiContourGroup*>(node->GetData())!=nullptr )
-    {
+    } else if (dynamic_cast<sv4guiContourGroup *>(node->GetData()) != nullptr) {
       newMapper = sv4guiContourGroupVtkMapper2D::New();
       newMapper->SetDataNode(node);
     }
-  }
-  else if ( id == mitk::BaseRenderer::Standard3D )
-  {
-    if( dynamic_cast<sv4guiContourGroup*>(node->GetData())!=nullptr )
-    {
+  } else if (id == mitk::BaseRenderer::Standard3D) {
+    if (dynamic_cast<sv4guiContourGroup *>(node->GetData()) != nullptr) {
       newMapper = sv4guiContourGroupVtkMapper3D::New();
       newMapper->SetDataNode(node);
-    }
-    else if( dynamic_cast<sv4guiMitkSeg3D*>(node->GetData())!=nullptr )
-    {
+    } else if (dynamic_cast<sv4guiMitkSeg3D *>(node->GetData()) != nullptr) {
       newMapper = sv4guiMitkSeg3DVtkMapper3D::New();
       newMapper->SetDataNode(node);
     }
@@ -90,77 +78,69 @@ mitk::Mapper::Pointer sv4guiSegmentationObjectFactory::CreateMapper(mitk::DataNo
   return newMapper;
 }
 
-void sv4guiSegmentationObjectFactory::SetDefaultProperties(mitk::DataNode* node)
-{
+void sv4guiSegmentationObjectFactory::SetDefaultProperties(
+    mitk::DataNode *node) {
 
-  if(node==nullptr)
+  if (node == nullptr)
     return;
 
   mitk::DataNode::Pointer nodePointer = node;
 
-  if(node->GetData() ==nullptr)
+  if (node->GetData() == nullptr)
     return;
 
-  if( dynamic_cast<sv4guiContourModel*>(node->GetData())!=nullptr )
-  {
+  if (dynamic_cast<sv4guiContourModel *>(node->GetData()) != nullptr) {
     sv4guiContourModelVtkMapper2D::SetDefaultProperties(node);
   }
-  if( dynamic_cast<sv4guiContourGroup*>(node->GetData())!=nullptr )
-  {
-      sv4guiContourGroupVtkMapper2D::SetDefaultProperties(node);
-      sv4guiContourGroupVtkMapper3D::SetDefaultProperties(node);
+  if (dynamic_cast<sv4guiContourGroup *>(node->GetData()) != nullptr) {
+    sv4guiContourGroupVtkMapper2D::SetDefaultProperties(node);
+    sv4guiContourGroupVtkMapper3D::SetDefaultProperties(node);
   }
-  if( dynamic_cast<sv4guiMitkSeg3D*>(node->GetData())!=nullptr )
-  {
+  if (dynamic_cast<sv4guiMitkSeg3D *>(node->GetData()) != nullptr) {
     sv4guiMitkSeg3DVtkMapper3D::SetDefaultProperties(node);
   }
 }
 
-std::string sv4guiSegmentationObjectFactory::GetFileExtensions()
-{
+std::string sv4guiSegmentationObjectFactory::GetFileExtensions() {
   std::string fileExtension;
   this->CreateFileExtensions(m_FileExtensionsMap, fileExtension);
   return fileExtension.c_str();
 }
 
-mitk::CoreObjectFactoryBase::MultimapType sv4guiSegmentationObjectFactory::GetFileExtensionsMap()
-{
+mitk::CoreObjectFactoryBase::MultimapType
+sv4guiSegmentationObjectFactory::GetFileExtensionsMap() {
   return m_FileExtensionsMap;
 }
 
-mitk::CoreObjectFactoryBase::MultimapType sv4guiSegmentationObjectFactory::GetSaveFileExtensionsMap()
-{
+mitk::CoreObjectFactoryBase::MultimapType
+sv4guiSegmentationObjectFactory::GetSaveFileExtensionsMap() {
   return m_SaveFileExtensionsMap;
 }
 
-void sv4guiSegmentationObjectFactory::CreateFileExtensionsMap()
-{
-}
+void sv4guiSegmentationObjectFactory::CreateFileExtensionsMap() {}
 
-std::string sv4guiSegmentationObjectFactory::GetSaveFileExtensions()
-{
+std::string sv4guiSegmentationObjectFactory::GetSaveFileExtensions() {
   std::string fileExtension;
   this->CreateFileExtensions(m_SaveFileExtensionsMap, fileExtension);
   return fileExtension.c_str();
 }
 
-void sv4guiSegmentationObjectFactory::RegisterIOFactories()
-{
+void sv4guiSegmentationObjectFactory::RegisterIOFactories() {}
+
+Registersv4guiSegmentationObjectFactory::
+    Registersv4guiSegmentationObjectFactory()
+    : m_Factory(sv4guiSegmentationObjectFactory::New()) {
+  mitk::CoreObjectFactory::GetInstance()->RegisterExtraFactory(m_Factory);
+  m_ContourGroupIO = new sv4guiContourGroupIO();
+  m_Seg3DIO = new sv4guiMitkSeg3DIO();
 }
 
-Registersv4guiSegmentationObjectFactory::Registersv4guiSegmentationObjectFactory()
-    : m_Factory( sv4guiSegmentationObjectFactory::New() )
-{
-    mitk::CoreObjectFactory::GetInstance()->RegisterExtraFactory( m_Factory );
-    m_ContourGroupIO=new sv4guiContourGroupIO();
-    m_Seg3DIO=new sv4guiMitkSeg3DIO();
+Registersv4guiSegmentationObjectFactory::
+    ~Registersv4guiSegmentationObjectFactory() {
+  mitk::CoreObjectFactory::GetInstance()->UnRegisterExtraFactory(m_Factory);
+  delete m_ContourGroupIO;
+  delete m_Seg3DIO;
 }
 
-Registersv4guiSegmentationObjectFactory::~Registersv4guiSegmentationObjectFactory()
-{
-    mitk::CoreObjectFactory::GetInstance()->UnRegisterExtraFactory( m_Factory );
-    delete m_ContourGroupIO;
-    delete m_Seg3DIO;
-}
-
-//static Registersv4guiSegmentationObjectFactory registersv4guiSegmentationObjectFactory;
+// static Registersv4guiSegmentationObjectFactory
+// registersv4guiSegmentationObjectFactory;

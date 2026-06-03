@@ -49,13 +49,12 @@
 
 #include "vtkSVNURBSSurface.h"
 
-class VTKSVNURBS_EXPORT vtkSVLoftNURBSSurface : public vtkPolyDataAlgorithm
-{
+class VTKSVNURBS_EXPORT vtkSVLoftNURBSSurface : public vtkPolyDataAlgorithm {
 public:
   static vtkSVLoftNURBSSurface *New();
 
-  vtkTypeMacro(vtkSVLoftNURBSSurface,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  vtkTypeMacro(vtkSVLoftNURBSSurface, vtkPolyDataAlgorithm);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
   /// \brief Get and set macro for degree of output surface
@@ -97,7 +96,8 @@ public:
   //@}
 
   //@{
-  /// \brief Get and set object macros for the start derivatives. Should have the
+  /// \brief Get and set object macros for the start derivatives. Should have
+  /// the
   // same number of values as the input point data in respective direction
   vtkSetObjectMacro(StartUDerivatives, vtkDoubleArray);
   vtkGetObjectMacro(StartUDerivatives, vtkDoubleArray);
@@ -118,18 +118,18 @@ public:
    *  and a knot span type of derivative is given. */
   int GetDefaultDerivatives(vtkStructuredGrid *input, const int comp,
                             vtkDoubleArray *D0out, vtkDoubleArray *DNout);
-//ETX
+  // ETX
 protected:
   vtkSVLoftNURBSSurface();
   ~vtkSVLoftNURBSSurface();
 
   // Usual data generation method
-  virtual int RequestData(vtkInformation *,
-                          vtkInformationVector **, vtkInformationVector *) override;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **,
+                          vtkInformationVector *) override;
   virtual int FillInputPortInformation(int, vtkInformation *) override;
 
- private:
-  //Function to run the intersection on intersecting polydatas
+private:
+  // Function to run the intersection on intersecting polydatas
   int LoftNURBS(vtkStructuredGrid *input, vtkPolyData *outputPD);
 
   char *UKnotSpanType;
@@ -152,8 +152,8 @@ protected:
   vtkDoubleArray *EndVDerivatives;
 
 private:
-  vtkSVLoftNURBSSurface(const vtkSVLoftNURBSSurface&);  // Not implemented.
-  void operator=(const vtkSVLoftNURBSSurface&);  // Not implemented.
+  vtkSVLoftNURBSSurface(const vtkSVLoftNURBSSurface &); // Not implemented.
+  void operator=(const vtkSVLoftNURBSSurface &);        // Not implemented.
 };
 
 #endif

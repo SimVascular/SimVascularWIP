@@ -32,17 +32,18 @@
 /**
  *  \class vtkSVSurfaceMapper
  *  \brief This is a filter to map a polydata to a target polydata given
- *  a paramterization of the target polydata is given and on the same base domain
- *  of the source polydata.
+ *  a paramterization of the target polydata is given and on the same base
+ * domain of the source polydata.
  *  \details If we have two polydatas that occupy the same region in space;
- *  say the surface of a sphere, or the same planar domain, but they are triangulated
- *  differently, we can compute where each point of the source polydata lies
- *  in the target polydata using barycentric coordinates. This is useful when
- *  we would like to map a parameterization on a base domain to a surface. If the target
- *  polydata has been parameterized in some based domain, then we can take an arbitrary
- *  representation of the same domain, and using the computed barycentric coordinates,
- *  map it to the target surface. The target polydata and the parameterization of the
- *  target polydata must be the same point set with the same connectivity.
+ *  say the surface of a sphere, or the same planar domain, but they are
+ * triangulated differently, we can compute where each point of the source
+ * polydata lies in the target polydata using barycentric coordinates. This is
+ * useful when we would like to map a parameterization on a base domain to a
+ * surface. If the target polydata has been parameterized in some based domain,
+ * then we can take an arbitrary representation of the same domain, and using
+ * the computed barycentric coordinates, map it to the target surface. The
+ * target polydata and the parameterization of the target polydata must be the
+ * same point set with the same connectivity.
  *
  *  \author Adam Updegrove
  *  \author updega2@gmail.com
@@ -61,12 +62,11 @@
 #include <complex>
 #include <vector>
 
-class VTKSVMISC_EXPORT vtkSVSurfaceMapper : public vtkPolyDataAlgorithm
-{
+class VTKSVMISC_EXPORT vtkSVSurfaceMapper : public vtkPolyDataAlgorithm {
 public:
-  static vtkSVSurfaceMapper* New();
-  //vtkTypeRevisionMacro(vtkSVSurfaceMapper, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  static vtkSVSurfaceMapper *New();
+  // vtkTypeRevisionMacro(vtkSVSurfaceMapper, vtkPolyDataAlgorithm);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
   /// \brief Number of subdivision of source polydata before mapping to
@@ -76,7 +76,8 @@ public:
   //@}
 
   //@{
-  /// \brief Enable checking of data. With the array given by DataMatchingArrayName,
+  /// \brief Enable checking of data. With the array given by
+  /// DataMatchingArrayName,
   // the source and target base domains are checked to make sure the data
   // matches
   vtkGetMacro(EnableDataMatching, int);
@@ -105,12 +106,9 @@ public:
                         vtkPolyData *sourceOnTargetPd);
   //@}
 
-  int DeleteCellAndRefind(vtkPolyData *targetBaseDomainPd,
-                          double findPt[3],
-                          const int closeCellId,
-                          int &newCellId,
-                          vtkIdList *pointCellsValues,
-                          int &iter);
+  int DeleteCellAndRefind(vtkPolyData *targetBaseDomainPd, double findPt[3],
+                          const int closeCellId, int &newCellId,
+                          vtkIdList *pointCellsValues, int &iter);
 
   // Setup and Check Functions
 protected:
@@ -123,12 +121,12 @@ protected:
    *  2. The target domain.
    *  3. The target domain that has been paramterized on the base domain. */
   int RequestData(vtkInformation *vtkNotUsed(request),
-		  vtkInformationVector **inputVector,
-		  vtkInformationVector *outputVector) override;
+                  vtkInformationVector **inputVector,
+                  vtkInformationVector *outputVector) override;
 
   // Main functions in filter
   int PrepFilter(); // Prep work.
-  int RunFilter(); // Run filter operations.
+  int RunFilter();  // Run filter operations.
 
   /** \brief Run at the end of filter to make sure boundaries batch. */
   int MatchBoundaries();
@@ -149,28 +147,33 @@ protected:
 
   /** \brief Gets the number of and ids of boundary points on the cell.
    *  \param targCellId Id of cell to get boundaryPts on.
-   *  \param boundaryPts empty list that will contain the list of boundary point ids.
+   *  \param boundaryPts empty list that will contain the list of boundary point
+   * ids.
    *  \param vtkIntArray isBoundary The boolean array telling which points are
    *  boundary or not. Must be given! Retrieved with FindBoundary function. */
-  int BoundaryPointsOnCell(vtkPolyData *pd, int targCellId, vtkIdList *boundaryPts, vtkIntArray *isBoundary);
+  int BoundaryPointsOnCell(vtkPolyData *pd, int targCellId,
+                           vtkIdList *boundaryPts, vtkIntArray *isBoundary);
 
   /** \brief Projects a point that is not on the boundary onto the boundary.
    *  \param pt0 first point that is on the boundary.
    *  \param pt1 second point that is on the boundary.
-   *  \param projPt point that we would like to project to line made by pt0 and pt1.
+   *  \param projPt point that we would like to project to line made by pt0 and
+   * pt1.
    *  \param returnPt 3d location of the new projected point. */
-  int GetProjectedPoint(double pt0[], double pt1[], double projPt[], double returnPt[]);
+  int GetProjectedPoint(double pt0[], double pt1[], double projPt[],
+                        double returnPt[]);
 
   /** \brief Function to find the two closest points on the target boundary.
    *  \param projPt given 3d location to find closest points to.
    *  \param boundaryPts list of three point ids to get closest two from.
    *  \param ptId0 empty int to contain pt id of first closest point.
    *  \param ptId1 empty int to contain pt id of second closest point. */
-  int GetClosestTwoPoints(vtkPolyData *pd, double projPt[], vtkIdList *boundaryPts, int &ptId0, int &ptId1);
+  int GetClosestTwoPoints(vtkPolyData *pd, double projPt[],
+                          vtkIdList *boundaryPts, int &ptId0, int &ptId1);
 
 private:
-  vtkSVSurfaceMapper(const vtkSVSurfaceMapper&);  // Not implemented.
-  void operator=(const vtkSVSurfaceMapper&);  // Not implemented.
+  vtkSVSurfaceMapper(const vtkSVSurfaceMapper &); // Not implemented.
+  void operator=(const vtkSVSurfaceMapper &);     // Not implemented.
 
   vtkPolyData *SourceBaseDomainPd;
   vtkPolyData *TargetPd;
@@ -187,9 +190,6 @@ private:
 
   char *DataMatchingArrayName;
   char *InternalIdsArrayName;
-
 };
 
 #endif
-
-

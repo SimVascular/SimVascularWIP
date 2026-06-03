@@ -36,13 +36,12 @@
 #include "svImageExports.h" // For exports
 #include "sv_VTK.h"
 
-SV_EXPORT_IMAGE int mr_decode (vtkStructuredPoints *phase,
-               double venc,double vencscale,
-               vtkStructuredPoints **vel);
+SV_EXPORT_IMAGE int mr_decode(vtkStructuredPoints *phase, double venc,
+                              double vencscale, vtkStructuredPoints **vel);
 
-SV_EXPORT_IMAGE int mr_decode_masked (vtkStructuredPoints *mag,
-               vtkStructuredPoints *phase,
-               double venc,double vencscale,
-               vtkStructuredPoints **vel);
+SV_EXPORT_IMAGE int mr_decode_masked(vtkStructuredPoints *mag,
+                                     vtkStructuredPoints *phase, double venc,
+                                     double vencscale,
+                                     vtkStructuredPoints **vel);
 
 #endif

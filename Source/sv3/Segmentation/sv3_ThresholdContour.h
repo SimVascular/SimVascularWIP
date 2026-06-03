@@ -38,54 +38,49 @@
 #include "sv3_Contour.h"
 #include "sv3_PathElement.h"
 
+#include "vtkImageData.h"
 #include "vtkPolyData.h"
 #include "vtkSmartPointer.h"
-#include "vtkImageData.h"
-//#include "vtkPlane.h"
+// #include "vtkPlane.h"
 
 // somehow GetClassName is getting set to GetClassNameA on Windows
 #ifdef GetClassName
 #undef GetClassName
 #endif
 
-namespace sv3{
-class SV_EXPORT_SEGMENTATION thresholdContour : public Contour
-{
+namespace sv3 {
+class SV_EXPORT_SEGMENTATION thresholdContour : public Contour {
 
 public:
+  thresholdContour();
 
-    
-    thresholdContour();
-    
-    thresholdContour(const thresholdContour &other);
-    
-    ~thresholdContour();
-    
-    thresholdContour* Clone();
-    
-    std::string GetClassName();
-    
-    void CreateContourPoints();
-    
-    void SetControlPointByRadius(double radius, double* point){return;};
-    
-    void SetLevelSetParas(svLSParam* paras){return;};
-    
-    svLSParam* GetLevelSetParas(){return nullptr;};
-    
-    virtual void SetThresholdValue(double thresholdValue) override;
-    
-    virtual double GetThresholdValue() override;
-    
-    thresholdContour* CreateSmoothedContour(int fourierNumber);
+  thresholdContour(const thresholdContour &other);
 
-  protected:
-  
-    double m_thresholdValue;
-    
-    bool m_forceClosed;
+  ~thresholdContour();
 
-  };
+  thresholdContour *Clone();
 
-}
+  std::string GetClassName();
+
+  void CreateContourPoints();
+
+  void SetControlPointByRadius(double radius, double *point) { return; };
+
+  void SetLevelSetParas(svLSParam *paras) { return; };
+
+  svLSParam *GetLevelSetParas() { return nullptr; };
+
+  virtual void SetThresholdValue(double thresholdValue) override;
+
+  virtual double GetThresholdValue() override;
+
+  thresholdContour *CreateSmoothedContour(int fourierNumber);
+
+protected:
+  double m_thresholdValue;
+
+  bool m_forceClosed;
+};
+
+} // namespace sv3
 #endif // SV3_THRESHOLDCONTOUR_H

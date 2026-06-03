@@ -37,8 +37,9 @@
 #include "sv_PolyData.h"
 #include "sv_VTK.h"
 
-SV_EXPORT_IMAGE int img_threshold (vtkStructuredPoints *image, vtkFloatingPointType thrMin, vtkFloatingPointType thrMax,
-                   int max_num_pts, cvPolyData **pd);
+SV_EXPORT_IMAGE int img_threshold(vtkStructuredPoints *image,
+                                  vtkFloatingPointType thrMin,
+                                  vtkFloatingPointType thrMax, int max_num_pts,
+                                  cvPolyData **pd);
 
 #endif
-

@@ -46,16 +46,16 @@
 
 #include "vtkPolyDataAlgorithm.h"
 
-class VTKSVGEOMETRY_EXPORT vtkSVLocalInterpolatingSubdivisionFilter : public vtkPolyDataAlgorithm
-{
+class VTKSVGEOMETRY_EXPORT vtkSVLocalInterpolatingSubdivisionFilter
+    : public vtkPolyDataAlgorithm {
 public:
-  vtkTypeMacro(vtkSVLocalInterpolatingSubdivisionFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  vtkTypeMacro(vtkSVLocalInterpolatingSubdivisionFilter, vtkPolyDataAlgorithm);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   // Description:
   // Set/get the number of subdivisions.
-  vtkSetMacro(NumberOfSubdivisions,int);
-  vtkGetMacro(NumberOfSubdivisions,int);
+  vtkSetMacro(NumberOfSubdivisions, int);
+  vtkGetMacro(NumberOfSubdivisions, int);
 
   vtkSetStringMacro(SubdivideCellArrayName);
   vtkGetStringMacro(SubdivideCellArrayName);
@@ -73,30 +73,37 @@ protected:
   vtkSVLocalInterpolatingSubdivisionFilter();
   ~vtkSVLocalInterpolatingSubdivisionFilter();
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
-  virtual int GenerateSubdivisionPoints (vtkPolyData *inputDS, vtkIntArray *edgeData, vtkPoints *outputPts, vtkPointData *outputPD) = 0;
-  virtual void GenerateSubdivisionCells (vtkPolyData *inputDS, vtkIntArray *edgeData, vtkCellArray *outputPolys, vtkCellData *outputCD);
-  int FindEdge (vtkPolyData *mesh, vtkIdType cellId, vtkIdType p1,
-                vtkIdType p2, vtkIntArray *edgeData, vtkIdList *cellIds);
-  vtkIdType InterpolatePosition (vtkPoints *inputPts, vtkPoints *outputPts,
-                                 vtkIdList *stencil, double *weights);
+  int RequestData(vtkInformation *, vtkInformationVector **,
+                  vtkInformationVector *) override;
+  virtual int GenerateSubdivisionPoints(vtkPolyData *inputDS,
+                                        vtkIntArray *edgeData,
+                                        vtkPoints *outputPts,
+                                        vtkPointData *outputPD) = 0;
+  virtual void GenerateSubdivisionCells(vtkPolyData *inputDS,
+                                        vtkIntArray *edgeData,
+                                        vtkCellArray *outputPolys,
+                                        vtkCellData *outputCD);
+  int FindEdge(vtkPolyData *mesh, vtkIdType cellId, vtkIdType p1, vtkIdType p2,
+               vtkIntArray *edgeData, vtkIdList *cellIds);
+  vtkIdType InterpolatePosition(vtkPoints *inputPts, vtkPoints *outputPts,
+                                vtkIdList *stencil, double *weights);
 
-  int GetSubdivideArrays(vtkPolyData *object,int type);
-  vtkIntArray 	   *SubdivideCellArray;
-  vtkIntArray      *SubdividePointArray;
+  int GetSubdivideArrays(vtkPolyData *object, int type);
+  vtkIntArray *SubdivideCellArray;
+  vtkIntArray *SubdividePointArray;
 
-  char* SubdivideCellArrayName;
-  char* SubdividePointArrayName;
+  char *SubdivideCellArrayName;
+  char *SubdividePointArrayName;
   int UseCellArray;
   int UsePointArray;
 
   int NumberOfSubdivisions;
 
 private:
-  vtkSVLocalInterpolatingSubdivisionFilter(const vtkSVLocalInterpolatingSubdivisionFilter&);  // Not implemented.
-  void operator=(const vtkSVLocalInterpolatingSubdivisionFilter&);  // Not implemented.
+  vtkSVLocalInterpolatingSubdivisionFilter(
+      const vtkSVLocalInterpolatingSubdivisionFilter &); // Not implemented.
+  void operator=(
+      const vtkSVLocalInterpolatingSubdivisionFilter &); // Not implemented.
 };
 
 #endif
-
-

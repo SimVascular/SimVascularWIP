@@ -32,7 +32,7 @@
 /**
  * \class   vtkSVRawWriter
  * \brief   write ASCII raw file
-*/
+ */
 
 #ifndef vtkSVRawWriter_h
 #define vtkSVRawWriter_h
@@ -44,19 +44,18 @@ class vtkCellArray;
 class vtkPoints;
 class vtkPolyData;
 
-class VTKSVIO_EXPORT vtkSVRawWriter : public vtkWriter
-{
+class VTKSVIO_EXPORT vtkSVRawWriter : public vtkWriter {
 public:
   static vtkSVRawWriter *New();
-  vtkTypeMacro(vtkSVRawWriter,vtkWriter);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  vtkTypeMacro(vtkSVRawWriter, vtkWriter);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
   /**
    * Get the input to this writer.
    */
-  vtkPolyData* GetInput();
-  vtkPolyData* GetInput(int port);
+  vtkPolyData *GetInput();
+  vtkPolyData *GetInput(int port);
   //@}
 
   //@{
@@ -69,24 +68,19 @@ public:
 
 protected:
   vtkSVRawWriter();
-  ~vtkSVRawWriter()
-  {
-    delete[] this->FileName;
-  }
+  ~vtkSVRawWriter() { delete[] this->FileName; }
 
   void WriteData() override;
 
-  void WriteRawFile(
-    vtkPoints *pts, vtkCellArray *cells);
+  void WriteRawFile(vtkPoints *pts, vtkCellArray *cells);
 
-  char* FileName;
+  char *FileName;
 
   int FillInputPortInformation(int port, vtkInformation *info) override;
 
 private:
-  vtkSVRawWriter(const vtkSVRawWriter&);
-  void operator=(const vtkSVRawWriter&);
+  vtkSVRawWriter(const vtkSVRawWriter &);
+  void operator=(const vtkSVRawWriter &);
 };
 
 #endif
-

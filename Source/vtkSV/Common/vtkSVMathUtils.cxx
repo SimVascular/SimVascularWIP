@@ -33,8 +33,8 @@
 
 #include "vtkSVSparseMatrix.h"
 
-#include "vtkSmartPointer.h"
 #include "vtkSVGlobals.h"
+#include "vtkSmartPointer.h"
 #include <cmath>
 #include <cstdio>
 
@@ -46,22 +46,21 @@
 // ----------------------
 /// \details Multiply A^tA with b.
 void vtkSVMathUtils::Multiply_ATA_b(vtkSVSparseMatrix *a_trans,
-                                    vtkSVSparseMatrix *a,
-                                    const double *b, double *c)
-{
+                                    vtkSVSparseMatrix *a, const double *b,
+                                    double *c) {
   double *temp = new double[a->GetNumberOfRows()];
 
   a->MultiplyColumn(b, temp);
   a_trans->MultiplyColumn(temp, c);
 
-  delete [] temp;
+  delete[] temp;
 }
 
 // ----------------------
 // InnerProduct
 // ----------------------
-double vtkSVMathUtils::InnerProduct(const double a[], const double b[], int n, double &product)
-{
+double vtkSVMathUtils::InnerProduct(const double a[], const double b[], int n,
+                                    double &product) {
   product = 0.0;
   for (int c = 0; c < n; c++)
     product += a[c] * b[c];
@@ -71,8 +70,8 @@ double vtkSVMathUtils::InnerProduct(const double a[], const double b[], int n, d
 // ----------------------
 // Add
 // ----------------------
-void vtkSVMathUtils::Add(const double a[], const double alpha, const double b[], const double beta, const int n, double c[])
-{
+void vtkSVMathUtils::Add(const double a[], const double alpha, const double b[],
+                         const double beta, const int n, double c[]) {
   for (int i = 0; i < n; i++)
     c[i] = a[i] * alpha + b[i] * beta;
 }
@@ -80,8 +79,8 @@ void vtkSVMathUtils::Add(const double a[], const double alpha, const double b[],
 // ----------------------
 // Add
 // ----------------------
-void vtkSVMathUtils::Add(const double a[], const double b[], const double beta, const int n, double c[])
-{
+void vtkSVMathUtils::Add(const double a[], const double b[], const double beta,
+                         const int n, double c[]) {
   for (int i = 0; i < n; i++)
     c[i] = a[i] + b[i] * beta;
 }
@@ -89,10 +88,10 @@ void vtkSVMathUtils::Add(const double a[], const double b[], const double beta, 
 // ----------------------
 // Add
 // ----------------------
-int vtkSVMathUtils::Add(double a[], double b[], double result[], const int size)
-{
-  for (int i=0; i<size; i++)
-    result[i] = a[i]+b[i];
+int vtkSVMathUtils::Add(double a[], double b[], double result[],
+                        const int size) {
+  for (int i = 0; i < size; i++)
+    result[i] = a[i] + b[i];
 
   return SV_OK;
 }
@@ -100,10 +99,10 @@ int vtkSVMathUtils::Add(double a[], double b[], double result[], const int size)
 // ----------------------
 // Subtract
 // ----------------------
-int vtkSVMathUtils::Subtract(double a[], double b[], double result[], const int size)
-{
-  for (int i=0; i<size; i++)
-    result[i] = a[i]-b[i];
+int vtkSVMathUtils::Subtract(double a[], double b[], double result[],
+                             const int size) {
+  for (int i = 0; i < size; i++)
+    result[i] = a[i] - b[i];
 
   return SV_OK;
 }
@@ -111,10 +110,9 @@ int vtkSVMathUtils::Subtract(double a[], double b[], double result[], const int 
 // ----------------------
 // MultiplyScalar
 // ----------------------
-int vtkSVMathUtils::MultiplyScalar(double a[], double scalar, const int size)
-{
-  for (int i=0; i<size; i++)
-    a[i] = a[i]*scalar;
+int vtkSVMathUtils::MultiplyScalar(double a[], double scalar, const int size) {
+  for (int i = 0; i < size; i++)
+    a[i] = a[i] * scalar;
 
   return SV_OK;
 }
@@ -122,11 +120,9 @@ int vtkSVMathUtils::MultiplyScalar(double a[], double scalar, const int size)
 // ----------------------
 // ConjugateGradient
 // ----------------------
-int vtkSVMathUtils::ConjugateGradient(vtkSVSparseMatrix *a,
-                                       const double *b,
-                                       int num_iterations,
-                                       double *x, const double epsilon)
-{
+int vtkSVMathUtils::ConjugateGradient(vtkSVSparseMatrix *a, const double *b,
+                                      int num_iterations, double *x,
+                                      const double epsilon) {
   vtkNew(vtkSVSparseMatrix, a_trans);
   a->Transpose(a_trans);
 
@@ -153,25 +149,25 @@ int vtkSVMathUtils::ConjugateGradient(vtkSVSparseMatrix *a,
   vtkSVMathUtils::InnerProduct(r, r, a_trans->GetNumberOfRows(), rs_old);
 
   if (sqrt(rs_old) < epsilon) {
-    //printf("The initial solution is good.\n");
-    delete [] r;
-    delete [] p;
-    delete [] temp;
-    delete [] a_trans_b;
+    // printf("The initial solution is good.\n");
+    delete[] r;
+    delete[] p;
+    delete[] temp;
+    delete[] a_trans_b;
     return rs_old;
   }
 
   int iteration = 0;
   for (iteration = 0;
        iteration < num_iterations && iteration < a_trans->GetNumberOfRows();
-       iteration++)
-  {
+       iteration++) {
     // temp = A'A * p
     vtkSVMathUtils::Multiply_ATA_b(a_trans, a, p, temp);
 
     // alpha = rs_old / (p' * temp)
     double alpha_den = 0.0;
-    vtkSVMathUtils::InnerProduct(p, temp, a_trans->GetNumberOfRows(), alpha_den);
+    vtkSVMathUtils::InnerProduct(p, temp, a_trans->GetNumberOfRows(),
+                                 alpha_den);
     double alpha = rs_old / alpha_den;
 
     // x = x + alpha * p
@@ -185,10 +181,9 @@ int vtkSVMathUtils::ConjugateGradient(vtkSVSparseMatrix *a,
     vtkSVMathUtils::InnerProduct(r, r, a_trans->GetNumberOfRows(), rs_new);
 
     // Traditionally, if norm(rs_new) is small enough, the iteration can stop.
-    if (sqrt(rs_new) < epsilon)
-    {
+    if (sqrt(rs_new) < epsilon) {
       /// DEBUG ///
-      //printf("rs_new = %.20lf\n", rs_new);
+      // printf("rs_new = %.20lf\n", rs_new);
 
       break;
     }
@@ -200,17 +195,17 @@ int vtkSVMathUtils::ConjugateGradient(vtkSVSparseMatrix *a,
     rs_old = rs_new;
 
     /// DEBUG ///
-    //printf("  rs_old = %.20lf\n", rs_old);
+    // printf("  rs_old = %.20lf\n", rs_old);
   }
 
   /// DEBUG ///
-  //printf("rs_old = %.20lf\n", rs_old);
-  //printf("iterations = %d\n", iteration);
+  // printf("rs_old = %.20lf\n", rs_old);
+  // printf("iterations = %d\n", iteration);
 
-  delete [] r;
-  delete [] p;
-  delete [] temp;
-  delete [] a_trans_b;
+  delete[] r;
+  delete[] p;
+  delete[] temp;
+  delete[] a_trans_b;
 
   return rs_old;
 }
@@ -219,12 +214,11 @@ int vtkSVMathUtils::ConjugateGradient(vtkSVSparseMatrix *a,
 // ComputeTriangleArea
 // ----------------------
 double vtkSVMathUtils::ComputeTriangleArea(double pt0[3], double pt1[3],
-                                           double pt2[3])
-{
+                                           double pt2[3]) {
   double area = 0.0;
-  area += (pt0[0]*pt1[1])-(pt1[0]*pt0[1]);
-  area += (pt1[0]*pt2[1])-(pt2[0]*pt1[1]);
-  area += (pt2[0]*pt0[1])-(pt0[0]*pt2[1]);
+  area += (pt0[0] * pt1[1]) - (pt1[0] * pt0[1]);
+  area += (pt1[0] * pt2[1]) - (pt2[0] * pt1[1]);
+  area += (pt2[0] * pt0[1]) - (pt0[0] * pt2[1]);
   area *= 0.5;
 
   return area;
@@ -233,20 +227,18 @@ double vtkSVMathUtils::ComputeTriangleArea(double pt0[3], double pt1[3],
 // ----------------------
 // Distance
 // ----------------------
-double vtkSVMathUtils::Distance(const double pt0[3], const double pt1[3])
-{
-  return sqrt(pow(pt1[0] - pt0[0], 2.0) +
-              pow(pt1[1] - pt0[1], 2.0) +
+double vtkSVMathUtils::Distance(const double pt0[3], const double pt1[3]) {
+  return sqrt(pow(pt1[0] - pt0[0], 2.0) + pow(pt1[1] - pt0[1], 2.0) +
               pow(pt1[2] - pt0[2], 2.0));
 }
 
 // ----------------------
 // Distance
 // ----------------------
-double vtkSVMathUtils::Distance(const double pt0[3], const double pt1[3], const int size)
-{
+double vtkSVMathUtils::Distance(const double pt0[3], const double pt1[3],
+                                const int size) {
   double val = 0.0;
-  for (int i=0; i<size; i++)
+  for (int i = 0; i < size; i++)
     val += (pow(pt1[i] - pt0[i], 2.0));
   return sqrt(val);
 }
@@ -254,18 +246,17 @@ double vtkSVMathUtils::Distance(const double pt0[3], const double pt1[3], const 
 // ----------------------
 // VectorDotProduct
 // ----------------------
-int vtkSVMathUtils::VectorDotProduct(vtkDataArray *v0, vtkDataArray *v1, double product[], int numVals, int numComps)
-{
+int vtkSVMathUtils::VectorDotProduct(vtkDataArray *v0, vtkDataArray *v1,
+                                     double product[], int numVals,
+                                     int numComps) {
   // Initialize product to zero
-  for (int i=0; i<numComps; i++)
+  for (int i = 0; i < numComps; i++)
     product[i] = 0.0;
 
   // Loop through all tuples
-  for (int i=0; i<numVals; i++)
-  {
+  for (int i = 0; i < numVals; i++) {
     // Loop through all components
-    for (int j=0; j<numComps; j++)
-    {
+    for (int j = 0; j < numComps; j++) {
       double val0, val1;
       val0 = v0->GetComponent(i, j);
       val1 = v1->GetComponent(i, j);
@@ -279,14 +270,12 @@ int vtkSVMathUtils::VectorDotProduct(vtkDataArray *v0, vtkDataArray *v1, double 
 // ----------------------
 // VectorAdd
 // ----------------------
-int vtkSVMathUtils::VectorAdd(vtkDataArray *v0, vtkDataArray *v1, double scalar, vtkDataArray *result, int numVals, int numComps)
-{
+int vtkSVMathUtils::VectorAdd(vtkDataArray *v0, vtkDataArray *v1, double scalar,
+                              vtkDataArray *result, int numVals, int numComps) {
   // Loop through all tuples
-  for (int i=0; i<numVals; i++)
-  {
+  for (int i = 0; i < numVals; i++) {
     // Loop through all components
-    for (int j=0; j<numComps; j++)
-    {
+    for (int j = 0; j < numComps; j++) {
       double val0, val1;
       val0 = v0->GetComponent(i, j);
       val1 = v1->GetComponent(i, j);
@@ -301,18 +290,16 @@ int vtkSVMathUtils::VectorAdd(vtkDataArray *v0, vtkDataArray *v1, double scalar,
 // ----------------------
 // Binom
 // ----------------------
-double vtkSVMathUtils::Binom(const int n, const int k)
-{
-  if (n>=k)
-  {
-    int den=1;
-    int num=1;
-    for (int i=1; i<=k; i++)
-      den*=i;
-    for (int j=n-k+1; j<=n; j++)
-      num*=j;
+double vtkSVMathUtils::Binom(const int n, const int k) {
+  if (n >= k) {
+    int den = 1;
+    int num = 1;
+    for (int i = 1; i <= k; i++)
+      den *= i;
+    for (int j = n - k + 1; j <= n; j++)
+      num *= j;
 
-    return num/den;
+    return num / den;
   }
   return 0.0;
 }

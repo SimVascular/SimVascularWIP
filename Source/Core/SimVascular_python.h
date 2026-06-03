@@ -32,9 +32,7 @@
 #ifndef SIMVASCULAR_PYTHON_H
 
 #include "Python.h"
-#define SV_PYTHON_OK          Py_BuildValue("N",PyBool_FromLong(1))
-#define SV_PYTHON_ERROR       Py_BuildValue("N",PyBool_FromLong(0))
+#define SV_PYTHON_OK Py_BuildValue("N", PyBool_FromLong(1))
+#define SV_PYTHON_ERROR Py_BuildValue("N", PyBool_FromLong(0))
 
-
-#endif  /* SIMVASCULAR_PYTHON_H */
-
+#endif /* SIMVASCULAR_PYTHON_H */

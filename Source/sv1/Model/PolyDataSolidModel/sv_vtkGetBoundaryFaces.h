@@ -29,9 +29,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// .NAME vtkGetBoundaryFaces - Get Boundary Faces from poldata and label them with integers
-// .SECTION Description
-// vtkGetBoundaryFaces is a filter to extract the boundary surfaces of a model, separate the surace into multiple regions and number each region.
+// .NAME vtkGetBoundaryFaces - Get Boundary Faces from poldata and label them
+// with integers .SECTION Description vtkGetBoundaryFaces is a filter to extract
+// the boundary surfaces of a model, separate the surace into multiple regions
+// and number each region.
 
 // .SECTION Caveats
 // To see the coloring of the lines you may have to set the ScalarMode
@@ -66,20 +67,20 @@
 
 class vtkFeatureEdges;
 
-class SV_EXPORT_POLYDATASOLID vtkGetBoundaryFaces : public vtkPolyDataAlgorithm
-{
+class SV_EXPORT_POLYDATASOLID vtkGetBoundaryFaces
+    : public vtkPolyDataAlgorithm {
 public:
-  static vtkGetBoundaryFaces* New();
+  static vtkGetBoundaryFaces *New();
   vtkTypeMacro(vtkGetBoundaryFaces, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream &os, vtkIndent indent);
 
   // Description:
   // Specify the feature angle for extracting feature edges.
-  //vtkSetClampMacro(FeatureAngle,double,0.0,180.0);
-  vtkGetMacro(FeatureAngle,double);
-  vtkSetMacro(FeatureAngle,double);
+  // vtkSetClampMacro(FeatureAngle,double,0.0,180.0);
+  vtkGetMacro(FeatureAngle, double);
+  vtkSetMacro(FeatureAngle, double);
 
-  vtkGetMacro(NumberOfRegions,int);
+  vtkGetMacro(NumberOfRegions, int);
 
 protected:
   vtkGetBoundaryFaces();
@@ -89,10 +90,10 @@ protected:
   int NumberOfRegions;
   // Usual data generation method
   int RequestData(vtkInformation *vtkNotUsed(request),
-		  vtkInformationVector **inputVector,
-		  vtkInformationVector *outputVector);
+                  vtkInformationVector **inputVector,
+                  vtkInformationVector *outputVector);
 
-  vtkFeatureEdges* boundaries;
+  vtkFeatureEdges *boundaries;
   vtkIntArray *newScalars;
   vtkPolyData *mesh;
   vtkPolyData *boundaryLines;
@@ -107,15 +108,13 @@ protected:
   vtkIdType *checkedcarefully;
   vtkIdType *pointMapper;
 
-  void FindBoundaryRegion(int reg,int start);
+  void FindBoundaryRegion(int reg, int start);
   void FindBoundaryRegionTipToe(int reg);
   void SetBoundaryArrays();
 
 private:
-  vtkGetBoundaryFaces(const vtkGetBoundaryFaces&);  // Not implemented.
-  void operator=(const vtkGetBoundaryFaces&);  // Not implemented.
+  vtkGetBoundaryFaces(const vtkGetBoundaryFaces &); // Not implemented.
+  void operator=(const vtkGetBoundaryFaces &);      // Not implemented.
 };
 
 #endif
-
-

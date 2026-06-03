@@ -49,13 +49,13 @@
 
 #include "vtkSVNURBSVolume.h"
 
-class VTKSVNURBS_EXPORT vtkSVLoftNURBSVolume : public vtkUnstructuredGridAlgorithm
-{
+class VTKSVNURBS_EXPORT vtkSVLoftNURBSVolume
+    : public vtkUnstructuredGridAlgorithm {
 public:
   static vtkSVLoftNURBSVolume *New();
 
-  vtkTypeMacro(vtkSVLoftNURBSVolume,vtkUnstructuredGridAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  vtkTypeMacro(vtkSVLoftNURBSVolume, vtkUnstructuredGridAlgorithm);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
   /// \brief Get and set macro for degree of output surface
@@ -109,7 +109,8 @@ public:
   //@}
 
   //@{
-  /// \brief Get and set object macros for the start derivatives. Should have the
+  /// \brief Get and set object macros for the start derivatives. Should have
+  /// the
   // same number of values as the input point data in respective direction
   vtkSetObjectMacro(StartUDerivatives, vtkStructuredGrid);
   vtkGetObjectMacro(StartUDerivatives, vtkStructuredGrid);
@@ -135,18 +136,18 @@ public:
   int GetDefaultDerivatives(vtkStructuredGrid *input, const int comp,
                             vtkStructuredGrid *D0out, vtkStructuredGrid *DNout);
 
-//ETX
+  // ETX
 protected:
   vtkSVLoftNURBSVolume();
   ~vtkSVLoftNURBSVolume();
 
   // Usual data generation method
-  virtual int RequestData(vtkInformation *,
-                          vtkInformationVector **, vtkInformationVector *) override;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **,
+                          vtkInformationVector *) override;
   virtual int FillInputPortInformation(int, vtkInformation *) override;
 
- private:
-  //Function to run the intersection on intersecting polydatas
+private:
+  // Function to run the intersection on intersecting polydatas
   int LoftNURBS(vtkStructuredGrid *input, vtkUnstructuredGrid *outputUG);
 
   char *UKnotSpanType;
@@ -175,8 +176,8 @@ protected:
   vtkStructuredGrid *EndWDerivatives;
 
 private:
-  vtkSVLoftNURBSVolume(const vtkSVLoftNURBSVolume&);  // Not implemented.
-  void operator=(const vtkSVLoftNURBSVolume&);  // Not implemented.
+  vtkSVLoftNURBSVolume(const vtkSVLoftNURBSVolume &); // Not implemented.
+  void operator=(const vtkSVLoftNURBSVolume &);       // Not implemented.
 };
 
 #endif

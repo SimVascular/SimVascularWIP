@@ -37,21 +37,20 @@
 
 #include "sv_VTK.h"
 
-#include "sv_RepositoryData.h"
 #include "sv_DataSet.h"
+#include "sv_RepositoryData.h"
 
 class SV_EXPORT_REPOSITORY cvStrPts : public cvDataSet {
 
 public:
   cvStrPts();
-  cvStrPts( cvStrPts *sp);
-  cvStrPts( vtkStructuredPoints *sp );
+  cvStrPts(cvStrPts *sp);
+  cvStrPts(vtkStructuredPoints *sp);
   ~cvStrPts();
 
   vtkStructuredPoints *GetVtkStructuredPoints() {
-    return (vtkStructuredPoints*)data_; }
-
+    return (vtkStructuredPoints *)data_;
+  }
 };
-
 
 #endif // __STR_PTS_H

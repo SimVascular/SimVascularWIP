@@ -34,8 +34,8 @@
 
 #include "SimVascular.h"
 
-#include <sv3PathExports.h>
 #include "sv_RepositoryData.h"
+#include <sv3PathExports.h>
 
 #include "sv3_Spline.h"
 
@@ -46,105 +46,113 @@
 #include <vector>
 
 namespace sv3 {
-class SV_EXPORT_PATH PathElement : public cvRepositoryData
-{
+class SV_EXPORT_PATH PathElement : public cvRepositoryData {
 public:
+  enum CalculationMethod {
+    CONSTANT_TOTAL_NUMBER,
+    CONSTANT_SUBDIVISION_NUMBER,
+    CONSTANT_SPACING
+  };
 
-    enum CalculationMethod {CONSTANT_TOTAL_NUMBER, CONSTANT_SUBDIVISION_NUMBER, CONSTANT_SPACING};
-    
+  struct svControlPoint {
+    int id = -1;
+    bool selected = false;
+    std::array<double, 3> point;
+  };
 
-    struct svControlPoint
-    {
-        int id=-1;
-        bool selected=false;
-        std::array<double,3>  point;
-    };
+  typedef Spline::SplinePoint PathPoint;
 
-    typedef Spline::SplinePoint PathPoint;
+  PathElement();
 
-    PathElement();
+  PathElement(const PathElement &other);
 
-    PathElement(const PathElement &other);
+  virtual ~PathElement();
 
-    virtual ~PathElement();
+  PathElement *Clone();
 
-    PathElement* Clone();
+  int GetControlPointNumber();
 
-    int GetControlPointNumber();
+  std::vector<std::array<double, 3>> GetControlPoints() const;
 
-    std::vector<std::array<double,3> > GetControlPoints() const;
+  svControlPoint GetsvControlPoint(int index);
 
-    svControlPoint GetsvControlPoint(int index) ;
+  std::array<double, 3> GetControlPoint(int index);
 
-    std::array<double,3>  GetControlPoint(int index);
+  void InsertControlPoint(int index, std::array<double, 3> point);
 
-    void InsertControlPoint(int index, std::array<double,3>  point);
+  int GetInsertintIndexByDistance(std::array<double, 3> point);
 
-    int GetInsertintIndexByDistance( std::array<double,3>  point);
+  void RemoveControlPoint(int index);
 
-    void RemoveControlPoint(int index);
+  void SetControlPoint(int index, std::array<double, 3> point);
 
-    void SetControlPoint(int index, std::array<double,3>  point);
+  void SetControlPoints(std::vector<std::array<double, 3>> points,
+                        bool update = true);
 
-    void SetControlPoints(std::vector<std::array<double,3> > points, bool update = true);
+  void ControlPointsChanged();
 
-    void ControlPointsChanged();
+  bool IsControlPointSelected(int index);
 
-    bool IsControlPointSelected(int index) ;
+  void SetControlPointSelected(int index, bool selected);
 
-    void SetControlPointSelected( int index, bool selected);
+  void DeselectControlPoint();
 
-    void DeselectControlPoint();
+  int GetControlPointSelectedIndex();
 
-    int GetControlPointSelectedIndex();
+  int SearchControlPoint(std::array<double, 3> point, double distance);
 
-    int SearchControlPoint( std::array<double,3>  point, double distance);
+  PathElement *CreateSmoothedPathElement(
+      int sampleRate, int numModes,
+      bool controlPointsBased = true); // otherwise pathPointsBased
 
-    PathElement* CreateSmoothedPathElement(int sampleRate, int numModes, bool controlPointsBased = true ); //otherwise pathPointsBased
+  int GetPathPointNumber();
 
-    int GetPathPointNumber();
+  void SetSpacing(double spacing);
 
-    void SetSpacing(double spacing);
+  double GetSpacing();
 
-    double GetSpacing();
+  void SetMethod(CalculationMethod method = CONSTANT_TOTAL_NUMBER);
 
-    void SetMethod(CalculationMethod method = CONSTANT_TOTAL_NUMBER );
+  CalculationMethod GetMethod();
 
-    CalculationMethod GetMethod();
+  void SetCalculationNumber(int number);
 
-    void SetCalculationNumber(int number);
+  int GetCalculationNumber();
 
-    int GetCalculationNumber();
+  std::vector<PathPoint> GetPathPoints() const;
 
-    std::vector<PathPoint> GetPathPoints() const;
+  std::vector<std::array<double, 3>> GetPathPosPoints();
 
-    std::vector<std::array<double,3>> GetPathPosPoints();
+  PathPoint GetPathPoint(int index);
 
-    PathPoint GetPathPoint(int index) ;
+  std::array<double, 3> GetPathPosPoint(int index);
 
-    std::array<double,3>  GetPathPosPoint(int index) ;
+  void SetPathPoints(std::vector<PathElement::PathPoint> pathPoints);
 
-    void SetPathPoints(std::vector<PathElement::PathPoint> pathPoints);
+  void CreatePathPoints();
 
-    void CreatePathPoints() ;
+  void CalculateBoundingBox(double *bounds);
 
-    void CalculateBoundingBox(double *bounds);
+  std::vector<PathPoint> GetExtendedPathPoints(double realBounds[6],
+                                               double minSpacing,
+                                               int &startingIndex) {
+    std::vector<PathPoint> dummy;
+    return dummy;
+  };
 
-    std::vector<PathPoint> GetExtendedPathPoints(double realBounds[6], double minSpacing, int& startingIndex){ std::vector<PathPoint> dummy; return dummy;};
-
-   vtkSmartPointer<vtkPolyData> CreateVtkPolyDataFromPath(bool fromControlPoints);
+  vtkSmartPointer<vtkPolyData>
+  CreateVtkPolyDataFromPath(bool fromControlPoints);
 
 protected:
+  std::vector<svControlPoint> m_ControlPoints;
 
-    std::vector<svControlPoint> m_ControlPoints;
+  std::vector<PathPoint> m_PathPoints;
 
-    std::vector<PathPoint> m_PathPoints;
+  double m_Spacing;
 
-    double m_Spacing;
+  CalculationMethod m_Method;
 
-    CalculationMethod m_Method;
-
-    int m_CalculationNumber;
+  int m_CalculationNumber;
 };
-}
+} // namespace sv3
 #endif // __SV3_PATHELEMENT_H__

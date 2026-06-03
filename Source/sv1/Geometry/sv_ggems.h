@@ -32,30 +32,47 @@
 #ifndef __CVGGEMS_H
 #define __CVGGEMS_H
 
-#include "sv_misc_utils.h"
 #include "svGeometryExports.h" // For exports
+#include "sv_misc_utils.h"
 
 #define PI 3.141592653589793324
 #define ggemsGeoZeroVec(v) ((v).x = (v).y = (v).z = 0.0)
-#define ggemsGeoMultVec(a,b,c) do {(c).x = a*(b).x; (c).y = a*(b).y;	(c).z = a*(b).z; } while (0)
-#define ggemsGeo_Vet(a,b,c) do {(c).x = (b).x-(a).x; (c).y = (b).y-(a).y; (c).z = (b).z-(a).z;} while (0)
+#define ggemsGeoMultVec(a, b, c)                                               \
+  do {                                                                         \
+    (c).x = a * (b).x;                                                         \
+    (c).y = a * (b).y;                                                         \
+    (c).z = a * (b).z;                                                         \
+  } while (0)
+#define ggemsGeo_Vet(a, b, c)                                                  \
+  do {                                                                         \
+    (c).x = (b).x - (a).x;                                                     \
+    (c).y = (b).y - (a).y;                                                     \
+    (c).z = (b).z - (a).z;                                                     \
+  } while (0)
 
 typedef double Rdouble;
-typedef float  Rfloat;
-typedef struct _ggemsGeoPoint { Rfloat x, y, z; } ggemsGeoPoint;
+typedef float Rfloat;
+typedef struct _ggemsGeoPoint {
+  Rfloat x, y, z;
+} ggemsGeoPoint;
 
-/*=========================  ggemsGeometrical Procedures  ======================= */
+/*=========================  ggemsGeometrical Procedures =======================
+ */
 
-SV_EXPORT_SYSGEOM Rdouble ggemsGeoDotProd ( ggemsGeoPoint *vec0, ggemsGeoPoint *vec1 );
+SV_EXPORT_SYSGEOM Rdouble ggemsGeoDotProd(ggemsGeoPoint *vec0,
+                                          ggemsGeoPoint *vec1);
 
-SV_EXPORT_SYSGEOM void ggemsGeoCrossProd ( ggemsGeoPoint *in0, ggemsGeoPoint *in1, ggemsGeoPoint *out );
+SV_EXPORT_SYSGEOM void ggemsGeoCrossProd(ggemsGeoPoint *in0, ggemsGeoPoint *in1,
+                                         ggemsGeoPoint *out);
 
-SV_EXPORT_SYSGEOM Rdouble ggemsGeoTripleProd ( ggemsGeoPoint *vec0, ggemsGeoPoint *vec1, ggemsGeoPoint *vec2 );
+SV_EXPORT_SYSGEOM Rdouble ggemsGeoTripleProd(ggemsGeoPoint *vec0,
+                                             ggemsGeoPoint *vec1,
+                                             ggemsGeoPoint *vec2);
 
-SV_EXPORT_SYSGEOM Rdouble ggemsGeoVecLen ( ggemsGeoPoint *vec );
+SV_EXPORT_SYSGEOM Rdouble ggemsGeoVecLen(ggemsGeoPoint *vec);
 
-SV_EXPORT_SYSGEOM int ggemsGeoPolyNormal ( int	n_verts, ggemsGeoPoint *verts, ggemsGeoPoint *n );
-
+SV_EXPORT_SYSGEOM int ggemsGeoPolyNormal(int n_verts, ggemsGeoPoint *verts,
+                                         ggemsGeoPoint *n);
 
 /*=========================  ggemsgeo_solid_angle  =========================*/
 /*
@@ -63,12 +80,10 @@ SV_EXPORT_SYSGEOM int ggemsGeoPolyNormal ( int	n_verts, ggemsGeoPoint *verts, gg
   a 3D plane polygon
 */
 
-SV_EXPORT_SYSGEOM Rdouble ggemsgeo_solid_angle (
-        int      n_vert,  /* number of vertices */
-        ggemsGeoPoint *verts,  /* vertex coordinates list */
-        ggemsGeoPoint *p );    /* point to be tested */
-
-
+SV_EXPORT_SYSGEOM Rdouble
+ggemsgeo_solid_angle(int n_vert,           /* number of vertices */
+                     ggemsGeoPoint *verts, /* vertex coordinates list */
+                     ggemsGeoPoint *p);    /* point to be tested */
 
 /*=============  Eric Haines' point-in-polygon functions  =============*/
 
@@ -82,7 +97,7 @@ SV_EXPORT_SYSGEOM Rdouble ggemsgeo_solid_angle (
  * both of these are much better than the angle test.
  */
 
-SV_EXPORT_SYSGEOM int ggems_CrossingsMultiplyTest( double pgon[], int numverts,
-				 double point[] );
+SV_EXPORT_SYSGEOM int ggems_CrossingsMultiplyTest(double pgon[], int numverts,
+                                                  double point[]);
 
 #endif /* __GGEMS_H */

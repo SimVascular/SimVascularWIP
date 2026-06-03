@@ -32,84 +32,56 @@
 #include "sv4gui_PathOperation.h"
 
 sv4guiPathOperation::sv4guiPathOperation(mitk::OperationType operationType)
-    : mitk::Operation(operationType)
-{
-}
+    : mitk::Operation(operationType) {}
 
-sv4guiPathOperation::sv4guiPathOperation(mitk::OperationType operationType, unsigned int timeStep)
-    : mitk::Operation(operationType)
-    , m_TimeStep(timeStep)
-{
-}
+sv4guiPathOperation::sv4guiPathOperation(mitk::OperationType operationType,
+                                         unsigned int timeStep)
+    : mitk::Operation(operationType), m_TimeStep(timeStep) {}
 
-sv4guiPathOperation::sv4guiPathOperation(mitk::OperationType operationType, mitk::Point3D point, int index)
-    : mitk::Operation(operationType)
-    , m_Point(point)
-    , m_Index(index)
-{
-}
+sv4guiPathOperation::sv4guiPathOperation(mitk::OperationType operationType,
+                                         mitk::Point3D point, int index)
+    : mitk::Operation(operationType), m_Point(point), m_Index(index) {}
 
-sv4guiPathOperation::sv4guiPathOperation(mitk::OperationType operationType, unsigned int timeStep, mitk::Point3D point, int index)
-    : mitk::Operation(operationType)
-    , m_TimeStep(timeStep)
-    , m_Point(point)
-    , m_Index(index)
-{
-}
+sv4guiPathOperation::sv4guiPathOperation(mitk::OperationType operationType,
+                                         unsigned int timeStep,
+                                         mitk::Point3D point, int index)
+    : mitk::Operation(operationType), m_TimeStep(timeStep), m_Point(point),
+      m_Index(index) {}
 
-//sv4guiPathOperation::sv4guiPathOperation(mitk::OperationType operationType, int index,  bool selected)
-//    : mitk::Operation(operationType)
-//    , m_Index(index)
-//    , m_Selected(selected)
+// sv4guiPathOperation::sv4guiPathOperation(mitk::OperationType operationType,
+// int index,  bool selected)
+//     : mitk::Operation(operationType)
+//     , m_Index(index)
+//     , m_Selected(selected)
 //{
-//}
+// }
 
-sv4guiPathOperation::sv4guiPathOperation(mitk::OperationType operationType, unsigned int timeStep, int index, bool selected)
-    : mitk::Operation(operationType)
-    , m_TimeStep(timeStep)
-    , m_Index(index)
-    , m_Selected(selected)
-{
+sv4guiPathOperation::sv4guiPathOperation(mitk::OperationType operationType,
+                                         unsigned int timeStep, int index,
+                                         bool selected)
+    : mitk::Operation(operationType), m_TimeStep(timeStep), m_Index(index),
+      m_Selected(selected) {}
+
+sv4guiPathOperation::sv4guiPathOperation(mitk::OperationType operationType,
+                                         sv4guiPathElement *pathElement)
+    : mitk::Operation(operationType), m_PathElement(pathElement) {}
+
+sv4guiPathOperation::sv4guiPathOperation(mitk::OperationType operationType,
+                                         unsigned int timeStep,
+                                         sv4guiPathElement *pathElement)
+    : mitk::Operation(operationType), m_TimeStep(timeStep),
+      m_PathElement(pathElement) {}
+
+sv4guiPathOperation::~sv4guiPathOperation() {}
+
+mitk::Point3D sv4guiPathOperation::GetPoint() { return m_Point; }
+
+sv4guiPathElement *sv4guiPathOperation::GetPathElement() {
+  return m_PathElement;
 }
 
-sv4guiPathOperation::sv4guiPathOperation(mitk::OperationType operationType, sv4guiPathElement* pathElement)
-    : mitk::Operation(operationType)
-    , m_PathElement(pathElement)
-{
-}
+int sv4guiPathOperation::GetIndex() { return m_Index; }
 
-sv4guiPathOperation::sv4guiPathOperation(mitk::OperationType operationType, unsigned int timeStep, sv4guiPathElement* pathElement)
-    : mitk::Operation(operationType)
-    , m_TimeStep(timeStep)
-    , m_PathElement(pathElement)
-{
-}
+unsigned int sv4guiPathOperation::GetTimeStep() const { return m_TimeStep; }
 
-sv4guiPathOperation::~sv4guiPathOperation()
-{
-}
-
-mitk::Point3D sv4guiPathOperation::GetPoint()
-{
-    return m_Point;
-}
-
-sv4guiPathElement* sv4guiPathOperation::GetPathElement()
-{
-    return m_PathElement;
-}
-
-int sv4guiPathOperation::GetIndex()
-{
-    return m_Index;
-}
-
-unsigned int sv4guiPathOperation::GetTimeStep() const
-{
-    return m_TimeStep;
-}
-
-bool sv4guiPathOperation::GetSelected()
-{
-    return m_Selected;
-}
+bool sv4guiPathOperation::GetSelected() { return m_Selected; }

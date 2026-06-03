@@ -39,52 +39,63 @@
 #include "mitkOperation.h"
 #include "sv4gui_PathElement.h"
 
-class SV4GUIMODULEPATH_EXPORT sv4guiPathOperation : public mitk::Operation
-{
+class SV4GUIMODULEPATH_EXPORT sv4guiPathOperation : public mitk::Operation {
 public:
+  enum PathOperationType {
+    OpINSERTCONTROLPOINT,
+    OpREMOVECONTROLPOINT,
+    OpMOVECONTROLPOINT,
+    OpSELECTCONTROLPOINT,
+    OpDESELECTALL,
+    OpINSERTPATHELEMENT,
+    OpREMOVEPATHELEMENT,
+    OpSETPATHELEMENT
+  };
 
-    enum PathOperationType {OpINSERTCONTROLPOINT, OpREMOVECONTROLPOINT, OpMOVECONTROLPOINT, OpSELECTCONTROLPOINT, OpDESELECTALL, OpINSERTPATHELEMENT, OpREMOVEPATHELEMENT, OpSETPATHELEMENT};
+  sv4guiPathOperation(mitk::OperationType operationType);
 
-    sv4guiPathOperation(mitk::OperationType operationType);
+  sv4guiPathOperation(mitk::OperationType operationType, unsigned int timeStep);
 
-    sv4guiPathOperation(mitk::OperationType operationType, unsigned int timeStep);
+  sv4guiPathOperation(mitk::OperationType operationType, mitk::Point3D point,
+                      int index);
 
-    sv4guiPathOperation(mitk::OperationType operationType, mitk::Point3D point, int index);
+  sv4guiPathOperation(mitk::OperationType operationType, unsigned int timeStep,
+                      mitk::Point3D point, int index);
 
-    sv4guiPathOperation(mitk::OperationType operationType, unsigned int timeStep, mitk::Point3D point, int index);
+  //    sv4guiPathOperation(mitk::OperationType operationType, int index, bool
+  //    selected);
 
-//    sv4guiPathOperation(mitk::OperationType operationType, int index, bool selected);
+  sv4guiPathOperation(mitk::OperationType operationType, unsigned int timeStep,
+                      int index, bool selected);
 
-    sv4guiPathOperation(mitk::OperationType operationType, unsigned int timeStep, int index, bool selected);
+  sv4guiPathOperation(mitk::OperationType operationType,
+                      sv4guiPathElement *pathElement);
 
-    sv4guiPathOperation(mitk::OperationType operationType, sv4guiPathElement* pathElement);
+  sv4guiPathOperation(mitk::OperationType operationType, unsigned int timeStep,
+                      sv4guiPathElement *pathElement);
 
-    sv4guiPathOperation(mitk::OperationType operationType, unsigned int timeStep, sv4guiPathElement* pathElement);
+  virtual ~sv4guiPathOperation();
 
-    virtual ~sv4guiPathOperation();
+  mitk::Point3D GetPoint();
 
-    mitk::Point3D GetPoint();
+  sv4guiPathElement *GetPathElement();
 
-    sv4guiPathElement* GetPathElement();
+  int GetIndex();
 
-    int GetIndex();
+  unsigned int GetTimeStep() const;
 
-    unsigned int GetTimeStep() const;
-
-    bool GetSelected();
+  bool GetSelected();
 
 private:
+  mitk::Point3D m_Point;
 
-    mitk::Point3D m_Point;
+  sv4guiPathElement *m_PathElement;
 
-    sv4guiPathElement* m_PathElement;
+  int m_Index;
 
-    int m_Index;
+  unsigned int m_TimeStep;
 
-    unsigned int m_TimeStep;
-
-    bool m_Selected;
-
+  bool m_Selected;
 };
 
 #endif // SV4GUI_PATHOPERATION_H

@@ -50,24 +50,23 @@
 #include "vtkSVGeneralUtils.h"
 #include "vtkSVGlobals.h"
 
-#include <sstream>
 #include <map>
+#include <sstream>
 
 // ----------------------
 // Constructor
 // ----------------------
-vtkSVBoundaryMapper::vtkSVBoundaryMapper()
-{
+vtkSVBoundaryMapper::vtkSVBoundaryMapper() {
   this->RemoveInternalIds = 1;
 
-  this->InitialPd     = vtkPolyData::New();
-  this->BoundaryPd    = vtkPolyData::New();
-  this->EdgeTable     = nullptr;
+  this->InitialPd = vtkPolyData::New();
+  this->BoundaryPd = vtkPolyData::New();
+  this->EdgeTable = nullptr;
 
-  this->IsBoundary    = nullptr;
-  this->BoundaryIds   = nullptr;
-  this->Boundaries    = vtkPolyData::New();
-  this->BoundaryLoop  = vtkPolyData::New();
+  this->IsBoundary = nullptr;
+  this->BoundaryIds = nullptr;
+  this->Boundaries = vtkPolyData::New();
+  this->BoundaryLoop = vtkPolyData::New();
 
   this->InternalIdsArrayName = nullptr;
 
@@ -83,31 +82,24 @@ vtkSVBoundaryMapper::vtkSVBoundaryMapper()
 // ----------------------
 // Destructor
 // ----------------------
-vtkSVBoundaryMapper::~vtkSVBoundaryMapper()
-{
-  if (this->InitialPd != nullptr)
-  {
+vtkSVBoundaryMapper::~vtkSVBoundaryMapper() {
+  if (this->InitialPd != nullptr) {
     InitialPd->Delete();
   }
-  if (this->BoundaryPd != nullptr)
-  {
+  if (this->BoundaryPd != nullptr) {
     BoundaryPd->Delete();
   }
-  if (this->EdgeTable != nullptr)
-  {
+  if (this->EdgeTable != nullptr) {
     EdgeTable->Delete();
   }
-  if (this->Boundaries != nullptr)
-  {
+  if (this->Boundaries != nullptr) {
     this->Boundaries->Delete();
   }
-  if (this->BoundaryLoop != nullptr)
-  {
+  if (this->BoundaryLoop != nullptr) {
     this->BoundaryLoop->Delete();
   }
-  if (this->InternalIdsArrayName)
-  {
-    delete [] this->InternalIdsArrayName;
+  if (this->InternalIdsArrayName) {
+    delete[] this->InternalIdsArrayName;
     this->InternalIdsArrayName = nullptr;
   }
 }
@@ -116,32 +108,28 @@ vtkSVBoundaryMapper::~vtkSVBoundaryMapper()
 // RequestData
 // ----------------------
 int vtkSVBoundaryMapper::RequestData(vtkInformation *vtkNotUsed(request),
-                                   vtkInformationVector **inputVector,
-                                   vtkInformationVector *outputVector)
-{
+                                     vtkInformationVector **inputVector,
+                                     vtkInformationVector *outputVector) {
   // get the input and output
   vtkPolyData *input = vtkPolyData::GetData(inputVector[0]);
   vtkPolyData *output = vtkPolyData::GetData(outputVector);
 
-  //Copy the input to operate on
+  // Copy the input to operate on
   this->InitialPd->DeepCopy(input);
 
-  if (this->PrepFilter() != SV_OK)
-  {
+  if (this->PrepFilter() != SV_OK) {
     vtkErrorMacro("Error when mapping");
     this->SetErrorCode(vtkErrorCode::UserError + 1);
     return SV_ERROR;
   }
 
-  if (this->RunFilter() != SV_OK)
-  {
+  if (this->RunFilter() != SV_OK) {
     vtkErrorMacro("Error when mapping");
     this->SetErrorCode(vtkErrorCode::UserError + 2);
     return SV_ERROR;
   }
 
-  if (this->RemoveInternalIds)
-  {
+  if (this->RemoveInternalIds) {
     this->BoundaryPd->GetPointData()->RemoveArray(this->InternalIdsArrayName);
     this->BoundaryPd->GetCellData()->RemoveArray(this->InternalIdsArrayName);
   }
@@ -153,44 +141,38 @@ int vtkSVBoundaryMapper::RequestData(vtkInformation *vtkNotUsed(request),
 // ----------------------
 // PrepFilter
 // ----------------------
-int vtkSVBoundaryMapper::PrepFilter()
-{
+int vtkSVBoundaryMapper::PrepFilter() {
   vtkIdType numPolys = this->InitialPd->GetNumberOfPolys();
   vtkIdType numPoints = this->InitialPd->GetNumberOfPoints();
-  //Check the input to make sure it is there
-  if (numPolys < 1)
-  {
+  // Check the input to make sure it is there
+  if (numPolys < 1) {
     vtkErrorMacro("No input!");
     return SV_ERROR;
   }
 
-  //Check the input to make sure it is manifold and a triangulated surface
-  if (vtkSVGeneralUtils::CheckSurface(this->InitialPd) != SV_OK)
-  {
+  // Check the input to make sure it is manifold and a triangulated surface
+  if (vtkSVGeneralUtils::CheckSurface(this->InitialPd) != SV_OK) {
     vtkErrorMacro("Error when checking input surface");
     return SV_ERROR;
   }
 
   // Check if internal id array name is given
-  if (!this->InternalIdsArrayName)
-  {
+  if (!this->InternalIdsArrayName) {
     vtkDebugMacro("Internal Ids Array Name not given, setting to InternalIds");
     this->InternalIdsArrayName = new char[strlen("InternalIds") + 1];
     strcpy(this->InternalIdsArrayName, "InternalIds");
   }
   // Check if array internal ids is already on pd
-  if (vtkSVGeneralUtils::CheckArrayExists(this->InitialPd, 0, this->InternalIdsArrayName))
-  {
+  if (vtkSVGeneralUtils::CheckArrayExists(this->InitialPd, 0,
+                                          this->InternalIdsArrayName)) {
     this->RemoveInternalIds = 0;
-  }
-  else
+  } else
     vtkSVGeneralUtils::GiveIds(this->InitialPd, this->InternalIdsArrayName);
 
-  //Create the edge table for the input surface
+  // Create the edge table for the input surface
   this->InitialPd->BuildLinks();
 
-  if (this->EdgeTable->GetNumberOfEdges() == 0)
-  {
+  if (this->EdgeTable->GetNumberOfEdges() == 0) {
     vtkErrorMacro("No Edges! Use SetEdgeTable");
     return SV_ERROR;
   }
@@ -201,25 +183,21 @@ int vtkSVBoundaryMapper::PrepFilter()
 // ----------------------
 // RunFilter
 // ----------------------
-int vtkSVBoundaryMapper::RunFilter()
-{
+int vtkSVBoundaryMapper::RunFilter() {
   // Find all boundaries
-  if (this->FindBoundaries() != SV_OK)
-  {
+  if (this->FindBoundaries() != SV_OK) {
     vtkErrorMacro("Could not find boundaries");
     return SV_ERROR;
   }
 
   // Get the boundary loop to set
-  if (this->GetBoundaryLoop() != SV_OK)
-  {
+  if (this->GetBoundaryLoop() != SV_OK) {
     vtkErrorMacro("Error orienting boundary loop");
     return SV_ERROR;
   }
 
   // Set the boundaries!
-  if (this->SetBoundaries() != SV_OK)
-  {
+  if (this->SetBoundaries() != SV_OK) {
     vtkErrorMacro("Error in mapping");
     return SV_ERROR;
   }
@@ -229,15 +207,16 @@ int vtkSVBoundaryMapper::RunFilter()
 // ----------------------
 // GetBoundaryLoop
 // ----------------------
-int vtkSVBoundaryMapper::GetBoundaryLoop()
-{
+int vtkSVBoundaryMapper::GetBoundaryLoop() {
   // Initialize cell and cell ids
   vtkIdType nextCell;
   vtkNew(vtkIdList, cellIds);
 
   // Get point ids of boundary loop
-  vtkDataArray *pointIds = this->Boundaries->GetPointData()->GetArray(this->InternalIdsArrayName);
-  vtkDataArray *oPointIds = this->InitialPd->GetPointData()->GetArray(this->InternalIdsArrayName);
+  vtkDataArray *pointIds =
+      this->Boundaries->GetPointData()->GetArray(this->InternalIdsArrayName);
+  vtkDataArray *oPointIds =
+      this->InitialPd->GetPointData()->GetArray(this->InternalIdsArrayName);
 
   // Get number of points and cells on boundary
   int numInterPts = this->Boundaries->GetNumberOfPoints();
@@ -247,15 +226,16 @@ int vtkSVBoundaryMapper::GetBoundaryLoop()
   // Get value of start point
   int count = 0;
   vtkIdType startPt = pointIds->LookupValue(
-    oPointIds->GetTuple1(this->BoundaryIds->GetValue(0)));
-  vtkDebugMacro("Start Point is!: " <<this->BoundaryIds->GetValue(0));
+      oPointIds->GetTuple1(this->BoundaryIds->GetValue(0)));
+  vtkDebugMacro("Start Point is!: " << this->BoundaryIds->GetValue(0));
 
   // Set the boundary loop points and point data and allocate space for cells
   this->BoundaryLoop->SetPoints(this->Boundaries->GetPoints());
-  this->BoundaryLoop->GetPointData()->PassData(this->Boundaries->GetPointData());
+  this->BoundaryLoop->GetPointData()->PassData(
+      this->Boundaries->GetPointData());
   this->BoundaryLoop->Allocate(this->Boundaries->GetNumberOfCells(), 1000);
-  vtkDebugMacro("The value on this is!: " <<  startPt);
-  this->Boundaries->GetPointCells(startPt,cellIds);
+  vtkDebugMacro("The value on this is!: " << startPt);
+  this->Boundaries->GetPointCells(startPt, cellIds);
 
   // Get starting cell
   nextCell = cellIds->GetId(0);
@@ -263,22 +243,26 @@ int vtkSVBoundaryMapper::GetBoundaryLoop()
   // Get the list of boundary Ids
   vtkNew(vtkIdList, boundaryIds);
   boundaryIds->SetNumberOfIds(this->BoundaryIds->GetNumberOfTuples());
-  for (int i=0; i<this->BoundaryIds->GetNumberOfTuples(); i++)
-    boundaryIds->SetId(i, pointIds->LookupValue(this->BoundaryIds->GetTuple1(i)));
+  for (int i = 0; i < this->BoundaryIds->GetNumberOfTuples(); i++)
+    boundaryIds->SetId(i,
+                       pointIds->LookupValue(this->BoundaryIds->GetTuple1(i)));
 
   // Run loop find to get correct loop and see if actually correct
-  if (vtkSVGeneralUtils::RunLoopFind(this->Boundaries, startPt, nextCell, this->BoundaryLoop, boundaryIds) != SV_OK)
-  {
+  if (vtkSVGeneralUtils::RunLoopFind(this->Boundaries, startPt, nextCell,
+                                     this->BoundaryLoop,
+                                     boundaryIds) != SV_OK) {
     nextCell = cellIds->GetId(1);
     this->BoundaryLoop->DeleteCells();
     // If it failed, then try the other way!
-    if (vtkSVGeneralUtils::RunLoopFind(this->Boundaries, startPt, nextCell, this->BoundaryLoop, boundaryIds) != SV_OK)
-    {
+    if (vtkSVGeneralUtils::RunLoopFind(this->Boundaries, startPt, nextCell,
+                                       this->BoundaryLoop,
+                                       boundaryIds) != SV_OK) {
       vtkErrorMacro("Both directions didn't work!!");
       return SV_ERROR;
     }
   }
-  vtkDebugMacro("COMPARE: " << this->Boundaries->GetNumberOfPoints() << " " << this->BoundaryLoop->GetNumberOfPoints());
+  vtkDebugMacro("COMPARE: " << this->Boundaries->GetNumberOfPoints() << " "
+                            << this->BoundaryLoop->GetNumberOfPoints());
 
   return SV_OK;
 }
@@ -286,15 +270,14 @@ int vtkSVBoundaryMapper::GetBoundaryLoop()
 // ----------------------
 // FindBoundaries
 // ----------------------
-int vtkSVBoundaryMapper::FindBoundaries()
-{
+int vtkSVBoundaryMapper::FindBoundaries() {
   // Set up locators
   vtkIndent indenter;
   vtkNew(vtkPointLocator, locator);
   vtkNew(vtkFeatureEdges, finder);
   finder->SetInputData(this->InitialPd);
   finder->FeatureEdgesOff();
-  //finder->SetLocator(locator);
+  // finder->SetLocator(locator);
   finder->NonManifoldEdgesOff();
   finder->BoundaryEdgesOn();
   finder->Update();
@@ -314,8 +297,7 @@ int vtkSVBoundaryMapper::FindBoundaries()
   // Copy to the boundaries data
   this->Boundaries->DeepCopy(surfacer->GetOutput());
 
-  if (this->Boundaries->GetNumberOfCells() == 0)
-  {
+  if (this->Boundaries->GetNumberOfCells() == 0) {
     vtkErrorMacro("No boundaries on polydata");
     return SV_ERROR;
   }
@@ -326,14 +308,14 @@ int vtkSVBoundaryMapper::FindBoundaries()
 // ----------------------
 // PrintSelf
 // ----------------------
-void vtkSVBoundaryMapper::PrintSelf(ostream& os, vtkIndent indent)
-{
-  this->Superclass::PrintSelf(os,indent);
+void vtkSVBoundaryMapper::PrintSelf(ostream &os, vtkIndent indent) {
+  this->Superclass::PrintSelf(os, indent);
 
   if (this->InternalIdsArrayName != nullptr)
-    os << indent << "Internal Ids array name: " << this->InternalIdsArrayName << "\n";
-  os << indent << "Z axis: " <<
-    this->ObjectZAxis[0] << " " << this->ObjectZAxis[1] << " " << this->ObjectZAxis[2] << "\n";
-  os << indent << "X axis: " <<
-    this->ObjectXAxis[0] << " " << this->ObjectXAxis[1] << " " << this->ObjectXAxis[2] << "\n";
+    os << indent << "Internal Ids array name: " << this->InternalIdsArrayName
+       << "\n";
+  os << indent << "Z axis: " << this->ObjectZAxis[0] << " "
+     << this->ObjectZAxis[1] << " " << this->ObjectZAxis[2] << "\n";
+  os << indent << "X axis: " << this->ObjectXAxis[0] << " "
+     << this->ObjectXAxis[1] << " " << this->ObjectXAxis[2] << "\n";
 }

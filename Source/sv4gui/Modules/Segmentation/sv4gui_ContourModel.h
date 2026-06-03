@@ -41,83 +41,83 @@
 #include "mitkBaseData.h"
 #include "mitkPoint.h"
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourModel : public mitk::BaseData
-{
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourModel
+    : public mitk::BaseData {
 public:
+  mitkClassMacro(sv4guiContourModel, mitk::BaseData);
+  itkFactorylessNewMacro(Self) itkCloneMacro(Self)
 
-    mitkClassMacro(sv4guiContourModel, mitk::BaseData);
-    itkFactorylessNewMacro(Self)
-    itkCloneMacro(Self)
+      virtual void Expand(unsigned int timeSteps) override;
 
-    virtual void Expand( unsigned int timeSteps ) override;
+  virtual void ExecuteOperation(mitk::Operation *operation) override;
 
-    virtual void ExecuteOperation(mitk::Operation* operation) override;
+  virtual unsigned int GetTimeSize() const;
 
-    virtual unsigned int GetTimeSize() const;
+  virtual bool IsEmptyTimeStep(unsigned int t) const override;
 
-    virtual bool IsEmptyTimeStep(unsigned int t) const override;
+  void InsertControlPoint(int index, mitk::Point3D point, unsigned int t = 0);
 
-    void InsertControlPoint(int index, mitk::Point3D point, unsigned int t = 0 );
+  void RemoveControlPoint(int index, unsigned int t = 0);
 
-    void RemoveControlPoint(int index, unsigned int t = 0);
+  void SetControlPoint(int index, mitk::Point3D point, unsigned int t = 0);
 
-    void SetControlPoint(int index, mitk::Point3D point, unsigned int t = 0);
+  void SetControlPointSelectedIndex(int index, unsigned int t = 0);
 
-    void SetControlPointSelectedIndex(int index, unsigned int t = 0);
+  void DeselectControlPoint(unsigned int t = 0);
 
-    void DeselectControlPoint(unsigned int t = 0);
+  int GetControlPointSelectedIndex(unsigned int t = 0);
 
-    int GetControlPointSelectedIndex(unsigned int t = 0);
+  void SetContour(sv4guiContour *contour, unsigned int t = 0);
 
-    void SetContour(sv4guiContour* contour, unsigned int t = 0);
+  sv4guiContour *GetContour(unsigned int t = 0) const;
 
-    sv4guiContour* GetContour(unsigned int t = 0) const;
+  void SetContourSelected(bool selected = true, unsigned int t = 0);
 
-    void SetContourSelected(bool selected = true, unsigned int t = 0);
+  void ControlPointsChanged(unsigned int t = 0);
 
-    void ControlPointsChanged(unsigned int t = 0);
+  void ContoursChanged(unsigned int t = 0);
 
-    void ContoursChanged(unsigned int t = 0);
+  void CalculateBoundingBox(double *bounds, unsigned int t = 0);
 
-    void CalculateBoundingBox(double *bounds,unsigned int t = 0 );
+  virtual void UpdateOutputInformation() override;
+  virtual void SetRequestedRegionToLargestPossibleRegion() override;
+  virtual bool RequestedRegionIsOutsideOfTheBufferedRegion() override;
+  virtual bool VerifyRequestedRegion() override;
+  virtual void SetRequestedRegion(const itk::DataObject *data) override;
 
-    virtual void UpdateOutputInformation() override;
-    virtual void SetRequestedRegionToLargestPossibleRegion() override;
-    virtual bool RequestedRegionIsOutsideOfTheBufferedRegion() override;
-    virtual bool VerifyRequestedRegion() override;
-    virtual void SetRequestedRegion(const itk::DataObject *data) override;
+protected:
+  mitkCloneMacro(Self);
 
-  protected:
+  sv4guiContourModel();
+  sv4guiContourModel(const sv4guiContourModel &other);
+  virtual ~sv4guiContourModel();
 
-    mitkCloneMacro(Self);
+  virtual void PrintSelf(std::ostream &os, itk::Indent indent) const override;
+  virtual void ClearData() override;
 
-    sv4guiContourModel();
-    sv4guiContourModel(const sv4guiContourModel &other);
-    virtual ~sv4guiContourModel();
+  virtual void InitializeEmpty() override;
 
-    virtual void PrintSelf(std::ostream& os, itk::Indent indent) const override;
-    virtual void ClearData() override;
+  std::vector<sv4guiContour *> m_ContourSet;
 
-    virtual void InitializeEmpty() override;
+  bool m_CalculateBoundingBox;
+};
 
-    std::vector< sv4guiContour* > m_ContourSet;
+// bool Equal( const sv4guiContourModel* leftHandSide, const sv4guiContourModel*
+// rightHandSide, mitk::ScalarType eps, bool verbose ); bool Equal( const
+// sv4guiContourModel& leftHandSide, const sv4guiContourModel& rightHandSide,
+// mitk::ScalarType eps, bool verbose );
 
-    bool m_CalculateBoundingBox;
+itkEventMacro(sv4guiContourModelEvent, itk::AnyEvent);
 
-  };
+itkEventMacro(sv4guiContourModelExtendTimeRangeEvent, sv4guiContourModelEvent);
+itkEventMacro(sv4guiContourModelSetEvent, sv4guiContourModelEvent);
+itkEventMacro(sv4guiContourModelPointEvent, sv4guiContourModelEvent);
 
-//bool Equal( const sv4guiContourModel* leftHandSide, const sv4guiContourModel* rightHandSide, mitk::ScalarType eps, bool verbose );
-//bool Equal( const sv4guiContourModel& leftHandSide, const sv4guiContourModel& rightHandSide, mitk::ScalarType eps, bool verbose );
-
-itkEventMacro( sv4guiContourModelEvent, itk::AnyEvent );
-
-itkEventMacro( sv4guiContourModelExtendTimeRangeEvent, sv4guiContourModelEvent );
-itkEventMacro( sv4guiContourModelSetEvent, sv4guiContourModelEvent );
-itkEventMacro( sv4guiContourModelPointEvent, sv4guiContourModelEvent );
-
-itkEventMacro( sv4guiContourModelPointMoveEvent, sv4guiContourModelPointEvent );
-itkEventMacro( sv4guiContourModelSizeChangeEvent, sv4guiContourModelPointEvent );
-itkEventMacro( sv4guiContourModelPointInsertEvent, sv4guiContourModelSizeChangeEvent );
-itkEventMacro( sv4guiContourModelPointRemoveEvent, sv4guiContourModelSizeChangeEvent );
+itkEventMacro(sv4guiContourModelPointMoveEvent, sv4guiContourModelPointEvent);
+itkEventMacro(sv4guiContourModelSizeChangeEvent, sv4guiContourModelPointEvent);
+itkEventMacro(sv4guiContourModelPointInsertEvent,
+              sv4guiContourModelSizeChangeEvent);
+itkEventMacro(sv4guiContourModelPointRemoveEvent,
+              sv4guiContourModelSizeChangeEvent);
 
 #endif // SV4GUI_CONTOURMODEL_H

@@ -46,27 +46,24 @@
 
 vtkStandardNewMacro(vtkSVPolyDataSurfaceInspector);
 
-vtkSVPolyDataSurfaceInspector::vtkSVPolyDataSurfaceInspector()
-{
-  this->NumberOfElements  = 0;
-  this->NumberOfPoints    = 0;
-  this->NumberOfEdges     = 0;
+vtkSVPolyDataSurfaceInspector::vtkSVPolyDataSurfaceInspector() {
+  this->NumberOfElements = 0;
+  this->NumberOfPoints = 0;
+  this->NumberOfEdges = 0;
   this->NumberOfOpenEdges = 0;
   this->NumberOfNonTriangularElements = 0;
-  this->NumberOfNonManifoldEdges      = 0;
-  this->SurfaceGenus                  = 0;
-  this->NumberOfConnectedRegions      = 0;
-  this->NumberOfHoles        = 0;
+  this->NumberOfNonManifoldEdges = 0;
+  this->SurfaceGenus = 0;
+  this->NumberOfConnectedRegions = 0;
+  this->NumberOfHoles = 0;
 
   this->CheckNumberOfConnectedRegions = 0;
-  this->CheckNumberOfHoles            = 0;
+  this->CheckNumberOfHoles = 0;
 }
 
 int vtkSVPolyDataSurfaceInspector::RequestData(
-                                          vtkInformation *vtkNotUsed(request),
-    vtkInformationVector **inputVector,
-    vtkInformationVector *outputVector)
-{
+    vtkInformation *vtkNotUsed(request), vtkInformationVector **inputVector,
+    vtkInformationVector *outputVector) {
   // get the input and output
   vtkPolyData *input = vtkPolyData::GetData(inputVector[0]);
   vtkPolyData *output = vtkPolyData::GetData(outputVector);
@@ -90,40 +87,34 @@ int vtkSVPolyDataSurfaceInspector::RequestData(
   this->NumberOfOpenEdges = 0;
   this->NumberOfNonTriangularElements = 0;
   this->NumberOfNonManifoldEdges = 0;
-  for (int i=0; i<numPolys; i++)
-  {
+  for (int i = 0; i < numPolys; i++) {
     // get cell points
     vtkIdType npts;
     const vtkIdType *pts;
     input->GetCellPoints(i, npts, pts);
-    if (npts != 3)
-    {
+    if (npts != 3) {
       this->NumberOfNonTriangularElements++;
     }
-    for (int j=0; j<npts; j++)
-    {
+    for (int j = 0; j < npts; j++) {
       vtkIdType p0, p1;
       p0 = pts[j];
-      p1 = pts[(j+1)%npts];
+      p1 = pts[(j + 1) % npts];
 
       vtkNew(vtkIdList, edgeNeighbor);
       input->GetCellEdgeNeighbors(i, p0, p1, edgeNeighbor);
 
       // if there isn't a neighbor, we have an open edge
-      if (edgeNeighbor->GetNumberOfIds() == 0)
-      {
+      if (edgeNeighbor->GetNumberOfIds() == 0) {
         this->NumberOfOpenEdges++;
       }
       // if there is more than one neighbor, we have a non-manifold edge
-      if (edgeNeighbor->GetNumberOfIds() > 1)
-      {
+      if (edgeNeighbor->GetNumberOfIds() > 1) {
         this->NumberOfNonManifoldEdges++;
       }
 
       // Check to see if edge has already been inserted
       vtkIdType checkEdge = surfaceEdgeTable->IsEdge(p0, p1);
-      if (checkEdge == -1)
-      {
+      if (checkEdge == -1) {
         // Get new edge id and insert into table
         vtkIdType edgeId = surfaceEdgeTable->InsertEdge(p0, p1);
       }
@@ -137,10 +128,8 @@ int vtkSVPolyDataSurfaceInspector::RequestData(
 
   this->NumberOfEdges = ne;
 
-  if (this->NumberOfOpenEdges > 0)
-  {
-    if (this->NumberOfNonManifoldEdges == 0)
-    {
+  if (this->NumberOfOpenEdges > 0) {
+    if (this->NumberOfNonManifoldEdges == 0) {
       vtkNew(vtkFeatureEdges, featureEdges);
       featureEdges->SetInputData(input);
       featureEdges->BoundaryEdgesOn();
@@ -157,39 +146,32 @@ int vtkSVPolyDataSurfaceInspector::RequestData(
       int numHoles = connector->GetNumberOfExtractedRegions();
 
       int numBoundaryLines = featureEdges->GetOutput()->GetNumberOfLines();
-      if (numBoundaryLines != this->NumberOfOpenEdges)
-      {
-        vtkWarningMacro("Feature edges and manual processing detected different number of open edges");
+      if (numBoundaryLines != this->NumberOfOpenEdges) {
+        vtkWarningMacro("Feature edges and manual processing detected "
+                        "different number of open edges");
       }
 
-      // Use Euler characteristic modified by the number of open boundaries to get genus of surface
+      // Use Euler characteristic modified by the number of open boundaries to
+      // get genus of surface
       nv = nv + numHoles;
       nf = nf + numBoundaryLines;
       ne = ne + numBoundaryLines;
 
-      this->SurfaceGenus = ((ne - nv - nf)/2) + 1;
-    }
-    else
-    {
+      this->SurfaceGenus = ((ne - nv - nf) / 2) + 1;
+    } else {
       this->SurfaceGenus = -1;
     }
-  }
-  else
-  {
+  } else {
     // If water-tight surface, use Euler characteristic to get genus
-    if (this->NumberOfNonManifoldEdges == 0)
-    {
-      this->SurfaceGenus = ((ne - nv - nf)/2) + 1;
-    }
-    else
-    {
+    if (this->NumberOfNonManifoldEdges == 0) {
+      this->SurfaceGenus = ((ne - nv - nf) / 2) + 1;
+    } else {
       this->SurfaceGenus = -1;
     }
   }
 
   // Check the number of connected regions
-  if (this->CheckNumberOfConnectedRegions)
-  {
+  if (this->CheckNumberOfConnectedRegions) {
     vtkNew(vtkConnectivityFilter, connector);
     connector->SetInputData(input);
     connector->SetExtractionModeToAllRegions();
@@ -199,8 +181,7 @@ int vtkSVPolyDataSurfaceInspector::RequestData(
   }
 
   // Check the number of holes
-  if (this->CheckNumberOfHoles)
-  {
+  if (this->CheckNumberOfHoles) {
     vtkNew(vtkFeatureEdges, featureEdges);
     featureEdges->SetInputData(input);
     featureEdges->BoundaryEdgesOn();
@@ -223,23 +204,38 @@ int vtkSVPolyDataSurfaceInspector::RequestData(
 // ----------------------
 // PrintSelf
 // ----------------------
-void vtkSVPolyDataSurfaceInspector::PrintSelf(ostream& os, vtkIndent indent)
-{
-  this->Superclass::PrintSelf(os,indent);
+void vtkSVPolyDataSurfaceInspector::PrintSelf(ostream &os, vtkIndent indent) {
+  this->Superclass::PrintSelf(os, indent);
 
-  os << indent << "Number of elements                : " << this->NumberOfElements << endl;
-  os << indent << "Number of points                  :   " << this->NumberOfPoints << endl;
-  os << indent << "Number of edges                   : " << this->NumberOfEdges << endl;
+  os << indent
+     << "Number of elements                : " << this->NumberOfElements
+     << endl;
+  os << indent
+     << "Number of points                  :   " << this->NumberOfPoints
+     << endl;
+  os << indent << "Number of edges                   : " << this->NumberOfEdges
+     << endl;
 
-  os << indent << "Number of open edges              : " << this->NumberOfOpenEdges << endl;
-  os << indent << "Number of non-triangular elements : " << this->NumberOfNonTriangularElements << endl;
-  os << indent << "Number of non-manifold elements   : " << this->NumberOfNonManifoldEdges << endl;
+  os << indent
+     << "Number of open edges              : " << this->NumberOfOpenEdges
+     << endl;
+  os << indent << "Number of non-triangular elements : "
+     << this->NumberOfNonTriangularElements << endl;
+  os << indent
+     << "Number of non-manifold elements   : " << this->NumberOfNonManifoldEdges
+     << endl;
 
-  os << indent << "Surface genus                     : " << this->SurfaceGenus << endl;
-  os << indent << "Number of connected regions       : " << this->NumberOfConnectedRegions << endl;
-  os << indent << "Number of holes                   : " << this->NumberOfHoles << endl;
+  os << indent << "Surface genus                     : " << this->SurfaceGenus
+     << endl;
+  os << indent
+     << "Number of connected regions       : " << this->NumberOfConnectedRegions
+     << endl;
+  os << indent << "Number of holes                   : " << this->NumberOfHoles
+     << endl;
 
-  os << indent << "Check number of connected regions : " << this->CheckNumberOfConnectedRegions << endl;
-  os << indent << "Check number of holes             : " << this->CheckNumberOfHoles << endl;
-
+  os << indent << "Check number of connected regions : "
+     << this->CheckNumberOfConnectedRegions << endl;
+  os << indent
+     << "Check number of holes             : " << this->CheckNumberOfHoles
+     << endl;
 }

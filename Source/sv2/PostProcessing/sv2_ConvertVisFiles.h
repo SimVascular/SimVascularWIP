@@ -32,7 +32,7 @@
 #ifndef __CVCONVERTVIS_H
 #define __CVCONVERTVIS_H
 
-//#include "sys/param.h"
+// #include "sys/param.h"
 #define MAXPATHLEN 1024
 
 #define MAXVISLINELENGTH 4096
@@ -40,25 +40,25 @@
 #include "SimVascular.h"
 #include "svPostExports.h" // For exports
 
-#include "sv_UnstructuredGrid.h"
 #include "sv_PolyData.h"
+#include "sv_UnstructuredGrid.h"
 
 #ifdef SV_USE_ZLIB
-  #ifdef SV_USE_SYSTEM_ZLIB
-    #include <zlib.h>
-  #else
-    #include "simvascular_zlib.h"
-  #endif
+#ifdef SV_USE_SYSTEM_ZLIB
+#include <zlib.h>
 #else
-  #include <stdlib.h>
-  #define gzopen fopen
-  #define gzprintf fprintf
-  #define gzFile FILE*
-  #define gzclose fclose
-  #define Z_nullptr nullptr
-  #define gzeof feof
-  //gzgets requires different args than fgets
-  //#define gzgets fgets
+#include "simvascular_zlib.h"
+#endif
+#else
+#include <stdlib.h>
+#define gzopen fopen
+#define gzprintf fprintf
+#define gzFile FILE *
+#define gzclose fclose
+#define Z_nullptr nullptr
+#define gzeof feof
+// gzgets requires different args than fgets
+// #define gzgets fgets
 #endif
 
 #define NEXTLINE_EOF -1
@@ -71,78 +71,76 @@
 
 class SV_EXPORT_POST cvConvertVisFiles {
 
-  public:
+public:
+  cvConvertVisFiles();
+  ~cvConvertVisFiles();
 
-    cvConvertVisFiles();
-    ~cvConvertVisFiles();
+  // mesh
+  int ReadVisMesh(char *infilename);
+  cvUnstructuredGrid *GetGridObj();
+  void SetGrid(cvUnstructuredGrid *obj) {
+    grid_ = (vtkUnstructuredGrid *)(obj->GetVtkPtr());
+  }
+  void SetTractionNodes(int numnodes, int *nodes);
 
-    // mesh
-    int ReadVisMesh(char *infilename);
-    cvUnstructuredGrid* GetGridObj();
-    void SetGrid(cvUnstructuredGrid *obj) {grid_=(vtkUnstructuredGrid*)(obj->GetVtkPtr());}
-    void SetTractionNodes(int numnodes, int* nodes);
+  // results
+  int ReadVisRes(char *infilename);
+  cvPolyData *GetPressureObj();
+  cvPolyData *GetVelocityObj();
+  cvPolyData *GetResObj();
+  cvPolyData *GetStressObj();
+  cvPolyData *GetTransportObj();
+  cvPolyData *GetTractionObj();
+  cvPolyData *GetDisplacementObj();
+  cvPolyData *GetWSSObj();
 
-    // results
-    int ReadVisRes(char *infilename);
-    cvPolyData* GetPressureObj();
-    cvPolyData* GetVelocityObj();
-    cvPolyData* GetResObj();
-    cvPolyData* GetStressObj();
-    cvPolyData* GetTransportObj();
-    cvPolyData* GetTractionObj();
-    cvPolyData* GetDisplacementObj();
-    cvPolyData* GetWSSObj();
+protected:
+  int openInputFile(char *filename, gzFile *fp);
+  int closeInputFile(gzFile fp);
 
-  protected:
+  int readVelocityFromFile();
+  int readPressureFromFile();
+  int readTransportFromFile();
+  int readStressFromFile();
+  int readTractionFromFile();
+  int readDisplacementFromFile();
+  int readWSSFromFile();
 
-    int openInputFile(char* filename, gzFile* fp);
-    int closeInputFile(gzFile fp);
+  int findStringInFile(char *findme, gzFile fp);
+  int readNextLineFromFile(gzFile fp);
 
-    int readVelocityFromFile();
-    int readPressureFromFile();
-    int readTransportFromFile();
-    int readStressFromFile();
-    int readTractionFromFile();
-    int readDisplacementFromFile();
-    int readWSSFromFile();
+private:
+  gzFile meshfp_;
+  gzFile resfp_;
+  char meshfilename_[MAXPATHLEN];
+  char resfilename_[MAXPATHLEN];
 
-    int findStringInFile(char *findme, gzFile fp);
-    int readNextLineFromFile(gzFile fp);
+  int numTractionNodes_;
+  int *tractionNodes_;
 
-  private:
+  int meshLoaded_;
+  int resLoaded_;
+  int meshExported_;
 
-    gzFile meshfp_;
-    gzFile resfp_;
-    char meshfilename_[MAXPATHLEN];
-    char resfilename_[MAXPATHLEN];
+  int haveVelocityResults_;
+  int havePressureResults_;
+  int haveTransportResults_;
+  int haveStressResults_;
+  int haveTractionResults_;
+  int haveDisplacementResults_;
+  int haveWSSResults_;
 
-    int  numTractionNodes_;
-    int* tractionNodes_;
+  char currentLine_[MAXVISLINELENGTH];
 
-    int meshLoaded_;
-    int resLoaded_;
-    int meshExported_;
-
-    int haveVelocityResults_;
-    int havePressureResults_;
-    int haveTransportResults_;
-    int haveStressResults_;
-    int haveTractionResults_;
-    int haveDisplacementResults_;
-    int haveWSSResults_;
-
-    char currentLine_[MAXVISLINELENGTH];
-
-    vtkPoints* meshpts_;
-    vtkUnstructuredGrid* grid_;
-    vtkFloatingPointArrayType* pressure_;
-    vtkFloatingPointArrayType* velocity_;
-    vtkFloatingPointArrayType* transport_;
-    vtkFloatingPointArrayType* stress_;
-    vtkFloatingPointArrayType* traction_;
-    vtkFloatingPointArrayType* displacement_;
-    vtkFloatingPointArrayType* wss_;
-
+  vtkPoints *meshpts_;
+  vtkUnstructuredGrid *grid_;
+  vtkFloatingPointArrayType *pressure_;
+  vtkFloatingPointArrayType *velocity_;
+  vtkFloatingPointArrayType *transport_;
+  vtkFloatingPointArrayType *stress_;
+  vtkFloatingPointArrayType *traction_;
+  vtkFloatingPointArrayType *displacement_;
+  vtkFloatingPointArrayType *wss_;
 };
 
 #endif

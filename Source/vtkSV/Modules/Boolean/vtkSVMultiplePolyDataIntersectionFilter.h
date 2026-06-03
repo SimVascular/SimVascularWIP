@@ -47,22 +47,22 @@
 #include "vtkPolyData.h"
 #include "vtkPolyDataAlgorithm.h"
 
-class VTKSVBOOLEAN_EXPORT vtkSVMultiplePolyDataIntersectionFilter : public vtkPolyDataAlgorithm
-{
+class VTKSVBOOLEAN_EXPORT vtkSVMultiplePolyDataIntersectionFilter
+    : public vtkPolyDataAlgorithm {
 public:
   static vtkSVMultiplePolyDataIntersectionFilter *New();
 
-  vtkTypeMacro(vtkSVMultiplePolyDataIntersectionFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  vtkTypeMacro(vtkSVMultiplePolyDataIntersectionFilter, vtkPolyDataAlgorithm);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
-  /// \details UserManagedInputs allows the user to set inputs by number instead of
-  /// using the AddInput/RemoveInput functions. Calls to
-  /// SetNumberOfInputs/SetInputConnectionByNumber should not be mixed with calls
-  /// to AddInput/RemoveInput. By default, UserManagedInputs is false.
-  vtkSetMacro(UserManagedInputs,int);
-  vtkGetMacro(UserManagedInputs,int);
-  vtkBooleanMacro(UserManagedInputs,int);
+  /// \details UserManagedInputs allows the user to set inputs by number instead
+  /// of using the AddInput/RemoveInput functions. Calls to
+  /// SetNumberOfInputs/SetInputConnectionByNumber should not be mixed with
+  /// calls to AddInput/RemoveInput. By default, UserManagedInputs is false.
+  vtkSetMacro(UserManagedInputs, int);
+  vtkGetMacro(UserManagedInputs, int);
+  vtkBooleanMacro(UserManagedInputs, int);
   //@}
 
   //@{
@@ -73,14 +73,15 @@ public:
 
   //@{
   /// \brief Remove a dataset from the list of data to append. Should not be
-  /// used when UserManagedInputs is true, use SetInputByNumber (nullptr) instead.
+  /// used when UserManagedInputs is true, use SetInputByNumber (nullptr)
+  /// instead.
   void RemoveInputData(vtkPolyData *);
   //@}
 
   //@{
   /// \brief Get any input of this filter.
   vtkPolyData *GetInput(int idx);
-  vtkPolyData *GetInput() { return this->GetInput( 0 ); };
+  vtkPolyData *GetInput() { return this->GetInput(0); };
   //@}
 
   //@{
@@ -113,23 +114,23 @@ public:
   /// \brief Set/get the boolean determing the output when two objects don't
   /// intersect. With a value of 1, either objects output. With a value of 1,
   /// both objects are output.
-  vtkSetMacro(NoIntersectionOutput,int);
-  vtkGetMacro(NoIntersectionOutput,int);
+  vtkSetMacro(NoIntersectionOutput, int);
+  vtkGetMacro(NoIntersectionOutput, int);
   //@}
 
   //@{
   /// \brief Set/get boolean to determine whether info such as BoundaryPoints
   /// is passed as global information. Local boundary scalars will be
   /// passed to the full boolean
-  vtkSetMacro(PassInfoAsGlobal,int);
-  vtkGetMacro(PassInfoAsGlobal,int);
+  vtkSetMacro(PassInfoAsGlobal, int);
+  vtkGetMacro(PassInfoAsGlobal, int);
   //@}
 
   //@{
-  /// \brief Set/get boolean to determine whether surfaces are given id information
-  /// the output scalary array will be defined as "ModelFaceId"
-  vtkSetMacro(AssignSurfaceIds,int);
-  vtkGetMacro(AssignSurfaceIds,int);
+  /// \brief Set/get boolean to determine whether surfaces are given id
+  /// information the output scalary array will be defined as "ModelFaceId"
+  vtkSetMacro(AssignSurfaceIds, int);
+  vtkGetMacro(AssignSurfaceIds, int);
   //@}
 
   //@{
@@ -153,13 +154,13 @@ protected:
   int ParallelStreaming;
 
   // Usual data generation method
-  virtual int RequestData(vtkInformation *,
-                          vtkInformationVector **, vtkInformationVector *) override;
-  virtual int RequestUpdateExtent(vtkInformation *,
-                                  vtkInformationVector **, vtkInformationVector *) override;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **,
+                          vtkInformationVector *) override;
+  virtual int RequestUpdateExtent(vtkInformation *, vtkInformationVector **,
+                                  vtkInformationVector *) override;
   virtual int FillInputPortInformation(int, vtkInformation *) override;
 
-  //User defined booleans for filter management
+  // User defined booleans for filter management
   int UserManagedInputs;
   int NoIntersectionOutput;
   int PassInfoAsGlobal;
@@ -171,29 +172,30 @@ protected:
   int Status;
   double Tolerance;
 
-  //Function to build the table defining where intersections occur.
-  int BuildIntersectionTable(vtkPolyData* inputs[], int numInputs);
-  //Function to run the intersection on intersecting polydatas
-  int ExecuteIntersection(vtkPolyData *inputs[],int numInputs,int start);
-  //Function to set the boundary point information as global information
+  // Function to build the table defining where intersections occur.
+  int BuildIntersectionTable(vtkPolyData *inputs[], int numInputs);
+  // Function to run the intersection on intersecting polydatas
+  int ExecuteIntersection(vtkPolyData *inputs[], int numInputs, int start);
+  // Function to set the boundary point information as global information
   void PreSetGlobalArrays(vtkPolyData *input);
   void PostSetGlobalArrays(int numIntersections);
-  //Function to set surface id
-  void SetSurfaceId(vtkPolyData *input,int surfaceid);
+  // Function to set surface id
+  void SetSurfaceId(vtkPolyData *input, int surfaceid);
 
-  //Function to print intersectiontable
+  // Function to print intersectiontable
   void PrintTable(int numInputs);
 
-
- private:
+private:
   // hide the superclass' AddInput() from the user and the compiler
-  void AddInputData(vtkDataObject *)
-    { vtkErrorMacro( << "AddInput() must be called with a vtkPolyData not a vtkDataObject."); };
+  void AddInputData(vtkDataObject *) {
+    vtkErrorMacro(
+        << "AddInput() must be called with a vtkPolyData not a vtkDataObject.");
+  };
 
-  vtkSVMultiplePolyDataIntersectionFilter(const vtkSVMultiplePolyDataIntersectionFilter&);  // Not implemented.
-  void operator=(const vtkSVMultiplePolyDataIntersectionFilter&);  // Not implemented.
+  vtkSVMultiplePolyDataIntersectionFilter(
+      const vtkSVMultiplePolyDataIntersectionFilter &); // Not implemented.
+  void operator=(
+      const vtkSVMultiplePolyDataIntersectionFilter &); // Not implemented.
 };
 
 #endif
-
-

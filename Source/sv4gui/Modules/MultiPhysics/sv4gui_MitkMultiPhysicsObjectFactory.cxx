@@ -33,103 +33,89 @@
 
 #include "sv4gui_MitkMultiPhysicsJob.h"
 
-#include <mitkProperties.h>
 #include <mitkBaseRenderer.h>
-#include <mitkDataNode.h>
 #include <mitkCoreObjectFactory.h>
+#include <mitkDataNode.h>
+#include <mitkProperties.h>
 
 sv4guiMitkMultiPhysicsObjectFactory::sv4guiMitkMultiPhysicsObjectFactory()
-  : mitk::CoreObjectFactoryBase()
-{
+    : mitk::CoreObjectFactoryBase() {
   static bool alreadyDone = false;
-  if (!alreadyDone)
-  {
+  if (!alreadyDone) {
     MITK_DEBUG << "sv4guiMitkMultiPhysicsObjectFactory c'tor" << std::endl;
 
     alreadyDone = true;
   }
 }
 
-sv4guiMitkMultiPhysicsObjectFactory::~sv4guiMitkMultiPhysicsObjectFactory()
-{
-}
+sv4guiMitkMultiPhysicsObjectFactory::~sv4guiMitkMultiPhysicsObjectFactory() {}
 
-mitk::Mapper::Pointer sv4guiMitkMultiPhysicsObjectFactory::CreateMapper(mitk::DataNode* node, MapperSlotId id)
-{
-  mitk::Mapper::Pointer newMapper=nullptr;
+mitk::Mapper::Pointer
+sv4guiMitkMultiPhysicsObjectFactory::CreateMapper(mitk::DataNode *node,
+                                                  MapperSlotId id) {
+  mitk::Mapper::Pointer newMapper = nullptr;
 
-  if ( id == mitk::BaseRenderer::Standard2D )
-  {
-    if( dynamic_cast<sv4guiMitkMultiPhysicsJob*>(node->GetData())!=nullptr )
-    {
+  if (id == mitk::BaseRenderer::Standard2D) {
+    if (dynamic_cast<sv4guiMitkMultiPhysicsJob *>(node->GetData()) != nullptr) {
     }
-  }
-  else if ( id == mitk::BaseRenderer::Standard3D )
-  {
-    if( dynamic_cast<sv4guiMitkMultiPhysicsJob*>(node->GetData())!=nullptr )
-    {
+  } else if (id == mitk::BaseRenderer::Standard3D) {
+    if (dynamic_cast<sv4guiMitkMultiPhysicsJob *>(node->GetData()) != nullptr) {
     }
   }
   return newMapper;
 }
 
-void sv4guiMitkMultiPhysicsObjectFactory::SetDefaultProperties(mitk::DataNode* node)
-{
+void sv4guiMitkMultiPhysicsObjectFactory::SetDefaultProperties(
+    mitk::DataNode *node) {
 
-  if(node==nullptr)
+  if (node == nullptr)
     return;
 
-  if(node->GetData() ==nullptr)
+  if (node->GetData() == nullptr)
     return;
 
-  if( dynamic_cast<sv4guiMitkMultiPhysicsJob*>(node->GetData())!=nullptr )
-  {
+  if (dynamic_cast<sv4guiMitkMultiPhysicsJob *>(node->GetData()) != nullptr) {
   }
 }
 
-std::string sv4guiMitkMultiPhysicsObjectFactory::GetFileExtensions()
-{
+std::string sv4guiMitkMultiPhysicsObjectFactory::GetFileExtensions() {
   std::string fileExtension;
   this->CreateFileExtensions(m_FileExtensionsMap, fileExtension);
   return fileExtension;
 }
 
-mitk::CoreObjectFactoryBase::MultimapType sv4guiMitkMultiPhysicsObjectFactory::GetFileExtensionsMap()
-{
+mitk::CoreObjectFactoryBase::MultimapType
+sv4guiMitkMultiPhysicsObjectFactory::GetFileExtensionsMap() {
   return m_FileExtensionsMap;
 }
 
-mitk::CoreObjectFactoryBase::MultimapType sv4guiMitkMultiPhysicsObjectFactory::GetSaveFileExtensionsMap()
-{
+mitk::CoreObjectFactoryBase::MultimapType
+sv4guiMitkMultiPhysicsObjectFactory::GetSaveFileExtensionsMap() {
   return m_SaveFileExtensionsMap;
 }
 
-void sv4guiMitkMultiPhysicsObjectFactory::CreateFileExtensionsMap()
-{
-}
+void sv4guiMitkMultiPhysicsObjectFactory::CreateFileExtensionsMap() {}
 
-std::string sv4guiMitkMultiPhysicsObjectFactory::GetSaveFileExtensions()
-{
+std::string sv4guiMitkMultiPhysicsObjectFactory::GetSaveFileExtensions() {
   std::string fileExtension;
   this->CreateFileExtensions(m_SaveFileExtensionsMap, fileExtension);
   return fileExtension;
 }
 
-void sv4guiMitkMultiPhysicsObjectFactory::RegisterIOFactories()
-{
+void sv4guiMitkMultiPhysicsObjectFactory::RegisterIOFactories() {}
+
+Registersv4guiMitkMultiPhysicsObjectFactory::
+    Registersv4guiMitkMultiPhysicsObjectFactory()
+    : m_Factory(sv4guiMitkMultiPhysicsObjectFactory::New()) {
+  mitk::CoreObjectFactory::GetInstance()->RegisterExtraFactory(m_Factory);
+  m_MitkSimJobIO = new sv4guiMitkMultiPhysicsJobIO();
 }
 
-Registersv4guiMitkMultiPhysicsObjectFactory::Registersv4guiMitkMultiPhysicsObjectFactory()
-    : m_Factory( sv4guiMitkMultiPhysicsObjectFactory::New() )
-{
-    mitk::CoreObjectFactory::GetInstance()->RegisterExtraFactory( m_Factory );
-    m_MitkSimJobIO=new sv4guiMitkMultiPhysicsJobIO();
+Registersv4guiMitkMultiPhysicsObjectFactory::
+    ~Registersv4guiMitkMultiPhysicsObjectFactory() {
+  mitk::CoreObjectFactory::GetInstance()->UnRegisterExtraFactory(m_Factory);
+  delete m_MitkSimJobIO;
 }
 
-Registersv4guiMitkMultiPhysicsObjectFactory::~Registersv4guiMitkMultiPhysicsObjectFactory()
-{
-    mitk::CoreObjectFactory::GetInstance()->UnRegisterExtraFactory( m_Factory );
-    delete m_MitkSimJobIO;
-}
-
-static Registersv4guiMitkMultiPhysicsObjectFactory registersv4guiMitkMultiPhysicsObjectFactory;
+static Registersv4guiMitkMultiPhysicsObjectFactory
+    registersv4guiMitkMultiPhysicsObjectFactory;

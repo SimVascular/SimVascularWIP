@@ -31,7 +31,8 @@
 
 /**
  *  \class  vtkSVMathUtils
- *  \brief This is class of useful functions for doing specialized math operations.
+ *  \brief This is class of useful functions for doing specialized math
+ * operations.
  *
  *  \author Adam Updegrove
  *  \author updega2@gmail.com
@@ -42,15 +43,14 @@
 #ifndef vtkSVMathUtils_h
 #define vtkSVMathUtils_h
 
-#include "vtkSVSparseMatrix.h"
 #include "vtkSVCommonModule.h" // For export
+#include "vtkSVSparseMatrix.h"
 
 #include "vtkFloatArray.h"
 
-class VTKSVCOMMON_EXPORT vtkSVMathUtils : public vtkObject
-{
+class VTKSVCOMMON_EXPORT vtkSVMathUtils : public vtkObject {
 public:
-  vtkTypeMacro(vtkSVMathUtils,vtkObject);
+  vtkTypeMacro(vtkSVMathUtils, vtkObject);
 
   /** \brief performs conjugate gradient solve given a sparse matrix,
    *  the right hand side, and the vector to solve for with an intial guess.
@@ -63,9 +63,9 @@ public:
    *  equal the number of columns in the sparse matrix.
    *  \param epsilon Desired residual that the conjugate gradient solve should
    *  reach before exiting. */
-  static int ConjugateGradient(vtkSVSparseMatrix *a,
-                                const double *b, int num_iterations,
-                                double *x, const double epsilon);
+  static int ConjugateGradient(vtkSVSparseMatrix *a, const double *b,
+                               int num_iterations, double *x,
+                               const double epsilon);
 
   /** \brief Does exactly what it says. Multiplies A transpose with A and then
    *  with column vector b.
@@ -74,8 +74,7 @@ public:
    *  \param b column vector that is equal in size to the number of rows in a.
    *  \return c column vector containing the result. Should also be equal in
    *  size to the number of rows in a. */
-  static void Multiply_ATA_b(vtkSVSparseMatrix *a_trans,
-                             vtkSVSparseMatrix *a,
+  static void Multiply_ATA_b(vtkSVSparseMatrix *a_trans, vtkSVSparseMatrix *a,
                              const double *b, double *c);
 
   /** \brief Performs the inner product of two vectors of given size.
@@ -83,24 +82,29 @@ public:
    *  \param b second vector.
    *  \param n size of the vectors.
    *  \return inner product. */
-  static double InnerProduct(const double a[], const double b[], int n, double &product);
+  static double InnerProduct(const double a[], const double b[], int n,
+                             double &product);
 
-  /** \brief Function to add to vectors with the possiblity of multiplying by a scalar.
+  /** \brief Function to add to vectors with the possiblity of multiplying by a
+   * scalar.
    *  \param a First vector.
    *  \param b Second vector.
    *  \param beta scalar to be multiplied to be before being added.
    *  \param n size of the vector.
    *  \return c result. */
-  static void Add(const double a[], const double alpha, const double b[], const double beta, const int n, double c[]);
+  static void Add(const double a[], const double alpha, const double b[],
+                  const double beta, const int n, double c[]);
 
-  /** \brief Function to add to vectors with the possiblity of multiplying by a scalar.
+  /** \brief Function to add to vectors with the possiblity of multiplying by a
+   * scalar.
    *  \param a First vector.
    *  \param alpha scalar to be multiplied to a before being added.
    *  \param b Second vector.
    *  \param beta scalar to be multiplied to b before being added.
    *  \param n size of the vector.
    *  \return c result. */
-  static void Add(const double a[], const double b[], const double beta, const int n, double c[]);
+  static void Add(const double a[], const double b[], const double beta,
+                  const int n, double c[]);
 
   /** \brief Addition of two arrays of given size.
    *  \param a first vector.
@@ -129,13 +133,15 @@ public:
    *  \param pt1 second vertex of the triangle.
    *  \param pt2 third vertex of the triangle.
    *  \return the signed area. */
-  static double ComputeTriangleArea(double pt0[3], double pt1[3], double pt2[3]);
+  static double ComputeTriangleArea(double pt0[3], double pt1[3],
+                                    double pt2[3]);
 
   //@{
   /** \brief Get distance between two 3D points, very simple
    *  \return the unsigned distance */
   static double Distance(const double pt0[3], const double pt1[3]);
-  static double Distance(const double pt0[], const double pt1[], const int size);
+  static double Distance(const double pt0[], const double pt1[],
+                         const int size);
   //@}
 
   /** \brief Dot product between each tuple of two data arrays.
@@ -144,7 +150,8 @@ public:
    *  \param numVals number of values in v0, v1, product.
    *  \param numComps number of components in v0, v1.
    *  \return product the resultant array; should be same size as v0 and v1. */
-  static int VectorDotProduct(vtkDataArray *v0, vtkDataArray *v1, double product[], int numVals, int numComps);
+  static int VectorDotProduct(vtkDataArray *v0, vtkDataArray *v1,
+                              double product[], int numVals, int numComps);
 
   /** \brief Addition between each tuple of two data arrays.
    *  \param v0 first vtk array.
@@ -152,7 +159,8 @@ public:
    *  \param numVals number of values in v0, v1, product.
    *  \param numComps number of components in v0, v1.
    *  \return resultant vector array. */
-  static int VectorAdd(vtkDataArray *v0, vtkDataArray *v1, double scalar, vtkDataArray *result, int numVals, int numComps);
+  static int VectorAdd(vtkDataArray *v0, vtkDataArray *v1, double scalar,
+                       vtkDataArray *result, int numVals, int numComps);
 
   /** \brief Compute the binoial coefficient. */
   static double Binom(const int i, const int j);
@@ -162,8 +170,8 @@ protected:
   ~vtkSVMathUtils();
 
 private:
-  vtkSVMathUtils(const vtkSVMathUtils&);  // Not implemented.
-  void operator=(const vtkSVMathUtils&);  // Not implemented.
+  vtkSVMathUtils(const vtkSVMathUtils &); // Not implemented.
+  void operator=(const vtkSVMathUtils &); // Not implemented.
 };
 
-#endif  // vtkSVMathUtils_h
+#endif // vtkSVMathUtils_h

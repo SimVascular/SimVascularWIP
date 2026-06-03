@@ -39,30 +39,40 @@
 #include <string>
 #include <vector>
 
-#include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
+#include <vtkSmartPointer.h>
 #include <vtkUnstructuredGrid.h>
 
-class SV4GUIMODULEROMSIMULATION_EXPORT sv4guiROMSimulationUtils
-{
+class SV4GUIMODULEROMSIMULATION_EXPORT sv4guiROMSimulationUtils {
 
 public:
-    static std::string CreatePreSolverFileContent(sv4guiROMSimJob* job, std::string outputDir="");
-    static std::string CreateCORTFileContent(const sv4guiROMSimJob* job);
-    static std::string CreateRCRTFileContent(const sv4guiROMSimJob* job);
-    static std::string CreateFlowSolverFileContent(sv4guiROMSimJob* job);
+  static std::string CreatePreSolverFileContent(sv4guiROMSimJob *job,
+                                                std::string outputDir = "");
+  static std::string CreateCORTFileContent(const sv4guiROMSimJob *job);
+  static std::string CreateRCRTFileContent(const sv4guiROMSimJob *job);
+  static std::string CreateFlowSolverFileContent(sv4guiROMSimJob *job);
 
-    static bool CreateFlowFiles(std::string outFlowFilePath, std::string outPressureFlePath
-                                                   , std::string outAverageFilePath, std::string outAverageUnitsFilePath
-                                                   , std::vector<std::string> vtxFilePaths, bool useComboFile
-                                                   , std::string meshFaceDir, std::vector<std::string> meshFaceFileNames
-                                                   , std::string unit, bool skipWalls);
+  static bool CreateFlowFiles(std::string outFlowFilePath,
+                              std::string outPressureFlePath,
+                              std::string outAverageFilePath,
+                              std::string outAverageUnitsFilePath,
+                              std::vector<std::string> vtxFilePaths,
+                              bool useComboFile, std::string meshFaceDir,
+                              std::vector<std::string> meshFaceFileNames,
+                              std::string unit, bool skipWalls);
 
-    static void VtpExtractSingleFace(std::string step, vtkSmartPointer<vtkPolyData> simvtp,vtkSmartPointer<vtkPolyData> facevtp);
+  static void VtpExtractSingleFace(std::string step,
+                                   vtkSmartPointer<vtkPolyData> simvtp,
+                                   vtkSmartPointer<vtkPolyData> facevtp);
 
-    static void VtuExtractSingleFace(std::string step, vtkSmartPointer<vtkUnstructuredGrid> simug,vtkSmartPointer<vtkPolyData> facevtp);
+  static void VtuExtractSingleFace(std::string step,
+                                   vtkSmartPointer<vtkUnstructuredGrid> simug,
+                                   vtkSmartPointer<vtkPolyData> facevtp);
 
-    static void VtpIntegrateFace(vtkSmartPointer<vtkPolyData>facevtp, std::map<std::string, double>& pmap, std::map<std::string, double>& qmap, std::map<std::string, double>& amap);
+  static void VtpIntegrateFace(vtkSmartPointer<vtkPolyData> facevtp,
+                               std::map<std::string, double> &pmap,
+                               std::map<std::string, double> &qmap,
+                               std::map<std::string, double> &amap);
 };
 
 #endif /* SV4GUI_SIMULATIONUTILS_H */

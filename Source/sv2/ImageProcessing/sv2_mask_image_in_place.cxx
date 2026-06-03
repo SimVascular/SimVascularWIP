@@ -33,47 +33,43 @@
 
 #include "sv2_mask_image_in_place.h"
 
-#include <stdio.h>
 #include <math.h>
+#include <stdio.h>
 
-int MaskImageInPlace(vtkStructuredPoints *imgsp,
-                          vtkStructuredPoints *masksp,
-                         double replaceVal,int notval) {
+int MaskImageInPlace(vtkStructuredPoints *imgsp, vtkStructuredPoints *masksp,
+                     double replaceVal, int notval) {
 
+  int i;
+  int numPtsImg = imgsp->GetNumberOfPoints();
+  int numPtsMask = masksp->GetNumberOfPoints();
 
-    int i;
-    int numPtsImg = imgsp->GetNumberOfPoints();
-    int numPtsMask = masksp->GetNumberOfPoints();
+  vtkDataArray *mscalars = masksp->GetPointData()->GetScalars();
+  vtkDataArray *iscalars = imgsp->GetPointData()->GetScalars();
 
+  if (numPtsImg != numPtsMask) {
+    fprintf(stderr, "ERROR:  number of points in image and mask must match!\n");
+    return SV_ERROR;
+  }
 
-    vtkDataArray *mscalars = masksp->GetPointData()->GetScalars();
-    vtkDataArray *iscalars = imgsp->GetPointData()->GetScalars();
+  int numBlanked = 0;
 
-    if (numPtsImg != numPtsMask) {
-        fprintf(stderr,"ERROR:  number of points in image and mask must match!\n");
-        return SV_ERROR;
-    }
-
-    int numBlanked = 0;
-
-    if (notval) {
-      for (i = 0; i < numPtsImg; i++) {
-        if (mscalars->GetTuple1(i)) {
-         iscalars->SetTuple1(i,replaceVal);
-         numBlanked++;
-        }
-      }
-    } else {
-      for (i = 0; i < numPtsImg; i++) {
-        if (!(mscalars->GetTuple1(i))) {
-          iscalars->SetTuple1(i,replaceVal);
-          numBlanked++;
-        }
+  if (notval) {
+    for (i = 0; i < numPtsImg; i++) {
+      if (mscalars->GetTuple1(i)) {
+        iscalars->SetTuple1(i, replaceVal);
+        numBlanked++;
       }
     }
+  } else {
+    for (i = 0; i < numPtsImg; i++) {
+      if (!(mscalars->GetTuple1(i))) {
+        iscalars->SetTuple1(i, replaceVal);
+        numBlanked++;
+      }
+    }
+  }
 
-    fprintf(stdout,"  %i pixels changed out of %i\n",numBlanked,numPtsImg);
+  fprintf(stdout, "  %i pixels changed out of %i\n", numBlanked, numPtsImg);
 
-    return SV_OK;
-
+  return SV_OK;
 }

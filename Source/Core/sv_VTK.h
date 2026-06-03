@@ -32,7 +32,7 @@
 #ifndef __CV_VTK_H
 #define __CV_VTK_H
 
-//dp #include "vtkToolkits.h"
+// dp #include "vtkToolkits.h"
 #include "vtkAbstractMapper.h"
 #include "vtkAbstractTransform.h"
 #include "vtkActor2D.h"
@@ -78,7 +78,7 @@
 #include "vtkIdList.h"
 #include "vtkIdentityTransform.h"
 #include "vtkImageData.h"
-//#include "vtkImageSource.h"
+// #include "vtkImageSource.h"
 #include "vtkImageToStructuredPoints.h"
 #include "vtkImplicitFunction.h"
 #include "vtkImplicitFunctionCollection.h"
@@ -93,15 +93,15 @@
 #include "vtkLongArray.h"
 #include "vtkLookupTable.h"
 #include "vtkMapper2D.h"
-//#include "vtkMarchingCubesCases.h"
-//#include "vtkMarchingSquaresCases.h"
+// #include "vtkMarchingCubesCases.h"
+// #include "vtkMarchingSquaresCases.h"
 #include "vtkMath.h"
 #include "vtkMatrix4x4.h"
 #include "vtkMatrixToHomogeneousTransform.h"
 #include "vtkMatrixToLinearTransform.h"
 #include "vtkMergePoints.h"
-//#include "vtkMultiThreader.h"
-//dp #include "vtkMutexLock.h"
+// #include "vtkMultiThreader.h"
+// dp #include "vtkMutexLock.h"
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 #include "vtkObjectFactoryCollection.h"
@@ -115,12 +115,12 @@
 #include "vtkPointSet.h"
 #include "vtkPoints.h"
 #include "vtkPolyData.h"
-//#include "vtkPolyDataSource.h"
+// #include "vtkPolyDataSource.h"
 #include "vtkPolyLine.h"
 #include "vtkPolyVertex.h"
 #include "vtkPolygon.h"
 #include "vtkPriorityQueue.h"
-//#include "vtkProcessObject.h"
+// #include "vtkProcessObject.h"
 #include "vtkProp.h"
 #include "vtkPropAssembly.h"
 #include "vtkPropCollection.h"
@@ -136,7 +136,7 @@
 #include "vtkScalarsToColors.h"
 #include "vtkSetGet.h"
 #include "vtkShortArray.h"
-//#include "vtkSource.h"
+// #include "vtkSource.h"
 #include "vtkStructuredData.h"
 #include "vtkStructuredGrid.h"
 #include "vtkStructuredPoints.h"
@@ -165,36 +165,32 @@
 #include "vtkWindowToImageFilter.h"
 
 // from graphics
+#include "vtkCardinalSpline.h"
 #include "vtkCellLocator.h"
 #include "vtkCleanPolyData.h"
-#include "vtkTriangleFilter.h"
-#include "vtkSpline.h"
-#include "vtkCardinalSpline.h"
-#include "vtkKochanekSpline.h"
-#include "vtkPolyDataNormals.h"
 #include "vtkContourFilter.h"
 #include "vtkExtractEdges.h"
-#include "vtkPolyDataWriter.h"
+#include "vtkKochanekSpline.h"
+#include "vtkPolyDataNormals.h"
 #include "vtkPolyDataReader.h"
+#include "vtkPolyDataWriter.h"
+#include "vtkSpline.h"
 #include "vtkStructuredPointsWriter.h"
+#include "vtkTriangleFilter.h"
 #include "vtkUnstructuredGridWriter.h"
 
+#include "vtkDelaunay3D.h"
 #include "vtkFeatureEdges.h"
 #include "vtkMath.h"
-#include "vtkDelaunay3D.h"
 
 #ifndef vtkFloatingPointArrayType
-  #define vtkFloatingPointArrayType vtkFloatingPointArrayType
-  /*typedef vtkFloatArray vtkFloatingPointArrayType;*/
-  typedef vtkDoubleArray vtkFloatingPointArrayType;
+#define vtkFloatingPointArrayType vtkFloatingPointArrayType
+/*typedef vtkFloatArray vtkFloatingPointArrayType;*/
+typedef vtkDoubleArray vtkFloatingPointArrayType;
 #endif
 
 #ifndef vtkFloatingPointType
-  #define vtkFloatingPointType double
+#define vtkFloatingPointType double
 #endif
 
 #endif
-
-
-
-

@@ -35,8 +35,10 @@
  *  \brief absolute and relative persistance of each cell during the
  *  \brief iterative procedure
  *  \brief For more details on the method and the cell data see:
- *  \brief Liu, L., et al. "A simple and robust thinning algorithm on cell complexes."
- *  \brief Computer Graphics Forum. Vol. 29. No. 7. Blackwell Publishing Ltd, 2010.
+ *  \brief Liu, L., et al. "A simple and robust thinning algorithm on cell
+ * complexes."
+ *  \brief Computer Graphics Forum. Vol. 29. No. 7. Blackwell Publishing Ltd,
+ * 2010.
  *  \brief Also, the corresponding edge pd can be retrieved in OutputEdgePd
  *
  *  \author Adam Updegrove
@@ -51,11 +53,10 @@
 #include "vtkPolyDataAlgorithm.h"
 #include "vtkSVMiscModule.h" // For export
 
-class VTKSVMISC_EXPORT vtkSVCellComplexThinner : public vtkPolyDataAlgorithm
-{
+class VTKSVMISC_EXPORT vtkSVCellComplexThinner : public vtkPolyDataAlgorithm {
 public:
   static vtkSVCellComplexThinner *New();
-  vtkTypeMacro(vtkSVCellComplexThinner,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkSVCellComplexThinner, vtkPolyDataAlgorithm);
 
   //@{
   /// \brief Get/set name for array on edge pd if preserving
@@ -73,16 +74,13 @@ public:
   //@}
 
 protected:
-
   vtkSVCellComplexThinner();
   ~vtkSVCellComplexThinner();
 
-  virtual int RequestData(vtkInformation *,
-                          vtkInformationVector **,
+  virtual int RequestData(vtkInformation *, vtkInformationVector **,
                           vtkInformationVector *) override;
 
 private:
-
   vtkPolyData *InputEdgePd;
   vtkPolyData *OutputEdgePd;
 
@@ -94,8 +92,8 @@ private:
   int PrepFilter();
   int RunFilter();
 
-  vtkSVCellComplexThinner(const vtkSVCellComplexThinner&);  // Not implemented.
-  void operator=(const vtkSVCellComplexThinner&);  // Not implemented.
+  vtkSVCellComplexThinner(const vtkSVCellComplexThinner &); // Not implemented.
+  void operator=(const vtkSVCellComplexThinner &);          // Not implemented.
 };
 
 #endif

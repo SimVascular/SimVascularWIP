@@ -35,96 +35,100 @@
 #include "sv3_VascularLevelSetImageFilter.h"
 #include "sv3_VascularPhaseTwoLevelSetFunction.h"
 
-namespace itk
-{
-template<	typename TInputImage,
-typename TFeatureImage,
-typename TOutputPixelType = float >
-class ITK_EXPORT VascularPhaseTwoLevelSetImageFilter:
-public VascularLevelSetImageFilter< TInputImage, TFeatureImage,
-TOutputPixelType >
-{
+namespace itk {
+template <typename TInputImage, typename TFeatureImage,
+          typename TOutputPixelType = float>
+class ITK_EXPORT VascularPhaseTwoLevelSetImageFilter
+    : public VascularLevelSetImageFilter<TInputImage, TFeatureImage,
+                                         TOutputPixelType> {
 
 public:
-	/* Standard */
-	typedef VascularPhaseTwoLevelSetImageFilter Self;
-	typedef VascularLevelSetImageFilter< TInputImage, TFeatureImage,
-			TOutputPixelType > Superclass;
+  /* Standard */
+  typedef VascularPhaseTwoLevelSetImageFilter Self;
+  typedef VascularLevelSetImageFilter<TInputImage, TFeatureImage,
+                                      TOutputPixelType>
+      Superclass;
 
-	typedef SmartPointer< Self >       Pointer;
-	typedef SmartPointer< const Self > ConstPointer;
+  typedef SmartPointer<Self> Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
 
-	/** Inherited typedef from the superclass. */
-	typedef typename Superclass::ValueType        ValueType;
-	typedef typename Superclass::OutputImageType  OutputImageType;
-	typedef typename Superclass::FeatureImageType FeatureImageType;
-	typedef typename Superclass::CurrentImageType CurrentImageType;
+  /** Inherited typedef from the superclass. */
+  typedef typename Superclass::ValueType ValueType;
+  typedef typename Superclass::OutputImageType OutputImageType;
+  typedef typename Superclass::FeatureImageType FeatureImageType;
+  typedef typename Superclass::CurrentImageType CurrentImageType;
 
-	/** Type of the segmentation function */
-	typedef VascularPhaseTwoLevelSetFunction< OutputImageType,
-			FeatureImageType > VascularPhaseTwoLevelSetFunctionType;
-	typedef typename VascularPhaseTwoLevelSetFunctionType::Pointer
-			VascularPhaseTwoLevelSetFunctionPointer;
+  /** Type of the segmentation function */
+  typedef VascularPhaseTwoLevelSetFunction<OutputImageType, FeatureImageType>
+      VascularPhaseTwoLevelSetFunctionType;
+  typedef typename VascularPhaseTwoLevelSetFunctionType::Pointer
+      VascularPhaseTwoLevelSetFunctionPointer;
 
-	/** Run-time type information (and related methods). */
-	itkTypeMacro(VascularPhaseTwoLevelSetImageFilter, VascularLevelSetImageFilter);
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(VascularPhaseTwoLevelSetImageFilter,
+               VascularLevelSetImageFilter);
 
-	/** Method for creation through the object factory */
-	itkNewMacro(Self);
+  /** Method for creation through the object factory */
+  itkNewMacro(Self);
 
-	void SetAdvectionDerivativeSigma(float value)
-	{if ( value != m_VascularPhaseTwoLevelSetFunction->GetAdvectionDerivativeSigma() )
-	{m_VascularPhaseTwoLevelSetFunction->SetAdvectionDerivativeSigma(value);
-	this->Modified();}}
+  void SetAdvectionDerivativeSigma(float value) {
+    if (value !=
+        m_VascularPhaseTwoLevelSetFunction->GetAdvectionDerivativeSigma()) {
+      m_VascularPhaseTwoLevelSetFunction->SetAdvectionDerivativeSigma(value);
+      this->Modified();
+    }
+  }
 
-	/** Get the value of sigma used to compute the edge potential map derivatives.*/
-	float GetAdvectionDerivativeSigma() const
-	{ return m_VascularPhaseTwoLevelSetFunction->GetAdvectionDerivativeSigma(); }
+  /** Get the value of sigma used to compute the edge potential map
+   * derivatives.*/
+  float GetAdvectionDerivativeSigma() const {
+    return m_VascularPhaseTwoLevelSetFunction->GetAdvectionDerivativeSigma();
+  }
 
-	void SetSpeedDerivativeSigma(float value)
-	{if ( value != m_VascularPhaseTwoLevelSetFunction->GetSpeedDerivativeSigma() )
-	{m_VascularPhaseTwoLevelSetFunction->SetSpeedDerivativeSigma(value);
-	this->Modified();}}
-	float GetSpeedDerivativeSigma() const
-	{ return m_VascularPhaseTwoLevelSetFunction->GetSpeedDerivativeSigma(); }
+  void SetSpeedDerivativeSigma(float value) {
+    if (value !=
+        m_VascularPhaseTwoLevelSetFunction->GetSpeedDerivativeSigma()) {
+      m_VascularPhaseTwoLevelSetFunction->SetSpeedDerivativeSigma(value);
+      this->Modified();
+    }
+  }
+  float GetSpeedDerivativeSigma() const {
+    return m_VascularPhaseTwoLevelSetFunction->GetSpeedDerivativeSigma();
+  }
 
+  void SetCurvataureLowerThreshold(const double v) {
+    m_VascularPhaseTwoLevelSetFunction->SetCurvataureLowerThreshold(v);
+    this->Modified();
+  }
+  double GetCurvataureLowerThreshold() {
+    return m_VascularPhaseTwoLevelSetFunction->GetCurvataureLowerThreshold();
+  }
 
-	void SetCurvataureLowerThreshold(const double v)
-	{ m_VascularPhaseTwoLevelSetFunction->SetCurvataureLowerThreshold(v);
-	this->Modified();}
-	double GetCurvataureLowerThreshold()
-	{ return m_VascularPhaseTwoLevelSetFunction->GetCurvataureLowerThreshold(); }
-
-	void SetCurvataureUpperThreshold(const double v)
-	{ m_VascularPhaseTwoLevelSetFunction->SetCurvataureUpperThreshold(v);
-	this->Modified();}
-	double GetCurvataureUpperThreshold()
-	{ return m_VascularPhaseTwoLevelSetFunction->GetCurvataureUpperThreshold();}
-
-
+  void SetCurvataureUpperThreshold(const double v) {
+    m_VascularPhaseTwoLevelSetFunction->SetCurvataureUpperThreshold(v);
+    this->Modified();
+  }
+  double GetCurvataureUpperThreshold() {
+    return m_VascularPhaseTwoLevelSetFunction->GetCurvataureUpperThreshold();
+  }
 
 protected:
-	~VascularPhaseTwoLevelSetImageFilter() {}
-	VascularPhaseTwoLevelSetImageFilter();
+  ~VascularPhaseTwoLevelSetImageFilter() {}
+  VascularPhaseTwoLevelSetImageFilter();
 
-	virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream &os, Indent indent) const;
 
-	VascularPhaseTwoLevelSetImageFilter(const Self &); // purposely not
-	// implemented
-	void operator=(const Self &);
+  VascularPhaseTwoLevelSetImageFilter(const Self &); // purposely not
+  // implemented
+  void operator=(const Self &);
 
-	void GenerateData();
+  void GenerateData();
 
 private:
-	VascularPhaseTwoLevelSetFunctionPointer m_VascularPhaseTwoLevelSetFunction;
-
-
+  VascularPhaseTwoLevelSetFunctionPointer m_VascularPhaseTwoLevelSetFunction;
 };
 
-}//namespace
-
-
-
+} // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "sv3_VascularPhaseTwoLevelSetImageFilter.hxx"

@@ -39,22 +39,20 @@
 #include "mitkOperation.h"
 #include "sv4gui_Seg3D.h"
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiMitkSeg3DOperation : public mitk::Operation
-{
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiMitkSeg3DOperation
+    : public mitk::Operation {
 public:
+  enum Seg3DOperationType { OpSETSEG3D };
 
-    enum Seg3DOperationType {OpSETSEG3D};
+  sv4guiMitkSeg3DOperation(mitk::OperationType operationType,
+                           sv4guiSeg3D *seg3D);
 
-    sv4guiMitkSeg3DOperation(mitk::OperationType operationType, sv4guiSeg3D* seg3D);
+  virtual ~sv4guiMitkSeg3DOperation();
 
-    virtual ~sv4guiMitkSeg3DOperation();
-
-    sv4guiSeg3D* GetSeg3D();
+  sv4guiSeg3D *GetSeg3D();
 
 private:
-
-    sv4guiSeg3D* m_Seg3D;
-
+  sv4guiSeg3D *m_Seg3D;
 };
 
 #endif // SV4GUI_MITKSEG3DOPERATION_H

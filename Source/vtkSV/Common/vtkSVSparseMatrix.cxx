@@ -32,8 +32,8 @@
 #include "vtkSVSparseMatrix.h"
 
 #include "vtkObjectFactory.h"
-#include "vtkSmartPointer.h"
 #include "vtkSVGlobals.h"
+#include "vtkSmartPointer.h"
 
 #include <algorithm>
 
@@ -45,24 +45,20 @@ vtkStandardNewMacro(vtkSVSparseMatrix);
 // ----------------------
 // Constructor
 // ----------------------
-vtkSVSparseMatrix::vtkSVSparseMatrix()
-{
-  this->NumberOfRows    = 0;
+vtkSVSparseMatrix::vtkSVSparseMatrix() {
+  this->NumberOfRows = 0;
   this->NumberOfColumns = 0;
 }
 
 // ----------------------
 // Destructor
 // ----------------------
-vtkSVSparseMatrix::~vtkSVSparseMatrix()
-{
-}
+vtkSVSparseMatrix::~vtkSVSparseMatrix() {}
 
 // ----------------------
 // PrintSelf
 // ----------------------
-void vtkSVSparseMatrix::PrintSelf(ostream& os, vtkIndent indent)
-{
+void vtkSVSparseMatrix::PrintSelf(ostream &os, vtkIndent indent) {
   this->Superclass::PrintSelf(os, indent);
 
   os << indent << "Number of rows: " << this->NumberOfRows << "\n";
@@ -72,8 +68,7 @@ void vtkSVSparseMatrix::PrintSelf(ostream& os, vtkIndent indent)
 // ----------------------
 // SetNumberOfRows
 // ----------------------
-void vtkSVSparseMatrix::SetNumberOfRows(int numRows)
-{
+void vtkSVSparseMatrix::SetNumberOfRows(int numRows) {
   this->NumberOfRows = numRows;
   this->Data.resize(numRows);
   this->Cols.resize(numRows);
@@ -82,9 +77,8 @@ void vtkSVSparseMatrix::SetNumberOfRows(int numRows)
 // ----------------------
 // SetMatrixSize
 // ----------------------
-void vtkSVSparseMatrix::SetMatrixSize(int numRows, int numCols)
-{
-  this->NumberOfRows    = numRows;
+void vtkSVSparseMatrix::SetMatrixSize(int numRows, int numCols) {
+  this->NumberOfRows = numRows;
   this->NumberOfColumns = numCols;
   this->Data.resize(numRows);
   this->Cols.resize(numRows);
@@ -93,8 +87,7 @@ void vtkSVSparseMatrix::SetMatrixSize(int numRows, int numCols)
 // ----------------------
 // GetNumberOfElements
 // ----------------------
-int vtkSVSparseMatrix::GetNumberOfElements() const
-{
+int vtkSVSparseMatrix::GetNumberOfElements() const {
   int numEls = 0;
   for (int i = 0; i < this->NumberOfRows; i++)
     numEls += this->Cols[i].size();
@@ -105,11 +98,9 @@ int vtkSVSparseMatrix::GetNumberOfElements() const
 // ----------------------
 // MultiplyColumn
 // ----------------------
-void vtkSVSparseMatrix::MultiplyColumn(
-    const double *column, double *output) const
-{
-  for (int i = 0; i < this->NumberOfRows; i++)
-  {
+void vtkSVSparseMatrix::MultiplyColumn(const double *column,
+                                       double *output) const {
+  for (int i = 0; i < this->NumberOfRows; i++) {
     output[i] = 0.0;
     for (int j = 0; j < this->Cols[i].size(); j++)
       output[i] += this->Data[i][j] * column[this->Cols[i][j]];
@@ -119,13 +110,10 @@ void vtkSVSparseMatrix::MultiplyColumn(
 // ----------------------
 // SetElement
 // ----------------------
-void vtkSVSparseMatrix::SetElement(int row, int col, double value)
-{
+void vtkSVSparseMatrix::SetElement(int row, int col, double value) {
   if (value == 0.0) {
-    for (int j = 0; j < this->Cols[row].size(); j++)
-    {
-      if (this->Cols[row][j] == col)
-      {
+    for (int j = 0; j < this->Cols[row].size(); j++) {
+      if (this->Cols[row][j] == col) {
         this->Cols[row].erase(this->Cols[row].begin() + j);
         this->Data[row].erase(this->Data[row].begin() + j);
         break;
@@ -134,10 +122,8 @@ void vtkSVSparseMatrix::SetElement(int row, int col, double value)
     return;
   }
 
-  for (int j = 0; j < this->Cols[row].size(); j++)
-  {
-    if (this->Cols[row][j] == col)
-    {
+  for (int j = 0; j < this->Cols[row].size(); j++) {
+    if (this->Cols[row][j] == col) {
       this->Data[row][j] = value;
       return;
     }
@@ -147,14 +133,11 @@ void vtkSVSparseMatrix::SetElement(int row, int col, double value)
   this->Data[row].push_back(value);
 }
 
-
 // ----------------------
 // GetElement
 // ----------------------
-double vtkSVSparseMatrix::GetElement(int row, int col) const
-{
-  for (int j = 0; j < this->Cols[row].size(); j++)
-  {
+double vtkSVSparseMatrix::GetElement(int row, int col) const {
+  for (int j = 0; j < this->Cols[row].size(); j++) {
     if (this->Cols[row][j] == col)
       return this->Data[row][j];
   }
@@ -164,12 +147,10 @@ double vtkSVSparseMatrix::GetElement(int row, int col) const
 // ----------------------
 // Transpose
 // ----------------------
-int vtkSVSparseMatrix::Transpose(vtkSVSparseMatrix *transpose)
-{
+int vtkSVSparseMatrix::Transpose(vtkSVSparseMatrix *transpose) {
   transpose->SetMatrixSize(this->NumberOfColumns, this->NumberOfRows);
 
-  for (int i = 0; i < this->NumberOfRows; i++)
-  {
+  for (int i = 0; i < this->NumberOfRows; i++) {
     for (int j = 0; j < this->Cols[i].size(); j++)
       transpose->SetElement(this->Cols[i][j], i, this->Data[i][j]);
   }

@@ -43,18 +43,15 @@ std::string MultiPhysicsViscosityModelNames::CARREAU_YASUDA = "carreau-yasuda";
 std::string MultiPhysicsViscosityModelNames::CASSONS = "cassons";
 std::string MultiPhysicsViscosityModelNames::NEWTONIAN = "newtonian";
 std::vector<std::string> MultiPhysicsViscosityModelNames::list = {
-  MultiPhysicsViscosityModelNames::CARREAU_YASUDA, 
-  MultiPhysicsViscosityModelNames::CASSONS,
-  MultiPhysicsViscosityModelNames::NEWTONIAN 
-};
+    MultiPhysicsViscosityModelNames::CARREAU_YASUDA,
+    MultiPhysicsViscosityModelNames::CASSONS,
+    MultiPhysicsViscosityModelNames::NEWTONIAN};
 
 //----------------------
-// sv4guiMultiPhysicsViscosity 
+// sv4guiMultiPhysicsViscosity
 //----------------------
 //
-sv4guiMultiPhysicsViscosity::sv4guiMultiPhysicsViscosity()
-{
-}
+sv4guiMultiPhysicsViscosity::sv4guiMultiPhysicsViscosity() {}
 
 sv4guiMultiPhysicsViscosity::~sv4guiMultiPhysicsViscosity() {}
 
@@ -62,8 +59,8 @@ sv4guiMultiPhysicsViscosity::~sv4guiMultiPhysicsViscosity() {}
 //                          CarreauYasuda                         //
 ////////////////////////////////////////////////////////////////////
 
-sv4guiMultiPhysicsViscosityCarreauYasuda::sv4guiMultiPhysicsViscosityCarreauYasuda() 
-{ 
+sv4guiMultiPhysicsViscosityCarreauYasuda::
+    sv4guiMultiPhysicsViscosityCarreauYasuda() {
   model_name_ = MultiPhysicsViscosityModelNames::CARREAU_YASUDA;
   limiting_high_shear_rate_viscosity_ = 0.0;
   limiting_low_shear_rate_viscosity_ = 0.0;
@@ -72,43 +69,43 @@ sv4guiMultiPhysicsViscosityCarreauYasuda::sv4guiMultiPhysicsViscosityCarreauYasu
   power_law_index_ = 0.0;
 };
 
-std::map<std::string,double> sv4guiMultiPhysicsViscosityCarreauYasuda::get_values()
-{
-  std::map<std::string,double> values = { 
-    {"Limiting high shear-rate viscosity", limiting_high_shear_rate_viscosity_},
-    {"Limiting low shear-rate viscosity", limiting_low_shear_rate_viscosity_},
-    {"Shear-rate tensor multiplier (lamda)", shear_rate_tensor_multiplier_},
-    {"Shear-rate tensor exponent (a)", shear_rate_tensor_exponent_},
-    {"Power-law index (n)", power_law_index_},
+std::map<std::string, double>
+sv4guiMultiPhysicsViscosityCarreauYasuda::get_values() {
+  std::map<std::string, double> values = {
+      {"Limiting high shear-rate viscosity",
+       limiting_high_shear_rate_viscosity_},
+      {"Limiting low shear-rate viscosity", limiting_low_shear_rate_viscosity_},
+      {"Shear-rate tensor multiplier (lamda)", shear_rate_tensor_multiplier_},
+      {"Shear-rate tensor exponent (a)", shear_rate_tensor_exponent_},
+      {"Power-law index (n)", power_law_index_},
   };
 
   return values;
 }
 
-sv4guiMultiPhysicsViscosityCarreauYasuda::~sv4guiMultiPhysicsViscosityCarreauYasuda() { }
+sv4guiMultiPhysicsViscosityCarreauYasuda::
+    ~sv4guiMultiPhysicsViscosityCarreauYasuda() {}
 
 ////////////////////////////////////////////////////////////////////
 //                          Cassons                               //
 ////////////////////////////////////////////////////////////////////
 
-sv4guiMultiPhysicsViscosityCassons::sv4guiMultiPhysicsViscosityCassons()
-{
+sv4guiMultiPhysicsViscosityCassons::sv4guiMultiPhysicsViscosityCassons() {
   model_name_ = MultiPhysicsViscosityModelNames::CASSONS;
   asymptotic_viscosity_ = 0.0;
   yield_stress_ = 0.0;
   low_shear_rate_threshold_ = 0.0;
 };
 
-sv4guiMultiPhysicsViscosityCassons::~sv4guiMultiPhysicsViscosityCassons() { }
+sv4guiMultiPhysicsViscosityCassons::~sv4guiMultiPhysicsViscosityCassons() {}
 
-std::map<std::string,double> sv4guiMultiPhysicsViscosityCassons::get_values()
-{
-  std::map<std::string,double> values = {  
-    {"Asymptotic viscosity parameter", asymptotic_viscosity_},
-    {"Yield stress parameter", yield_stress_},
-    {"Low shear-rate threshold", low_shear_rate_threshold_},
+std::map<std::string, double> sv4guiMultiPhysicsViscosityCassons::get_values() {
+  std::map<std::string, double> values = {
+      {"Asymptotic viscosity parameter", asymptotic_viscosity_},
+      {"Yield stress parameter", yield_stress_},
+      {"Low shear-rate threshold", low_shear_rate_threshold_},
   };
-  
+
   return values;
 }
 
@@ -116,20 +113,16 @@ std::map<std::string,double> sv4guiMultiPhysicsViscosityCassons::get_values()
 //                          Newtonian                             //
 ////////////////////////////////////////////////////////////////////
 
-sv4guiMultiPhysicsViscosityNewtonian::sv4guiMultiPhysicsViscosityNewtonian()
-{
+sv4guiMultiPhysicsViscosityNewtonian::sv4guiMultiPhysicsViscosityNewtonian() {
   model_name_ = MultiPhysicsViscosityModelNames::NEWTONIAN;
   constant_value_ = 0.0;
 }
 
-sv4guiMultiPhysicsViscosityNewtonian::~sv4guiMultiPhysicsViscosityNewtonian() { }
+sv4guiMultiPhysicsViscosityNewtonian::~sv4guiMultiPhysicsViscosityNewtonian() {}
 
-std::map<std::string,double> sv4guiMultiPhysicsViscosityNewtonian::get_values()
-{
-  std::map<std::string,double> values = {  
-    {"Value", constant_value_}
-  };
-  
+std::map<std::string, double>
+sv4guiMultiPhysicsViscosityNewtonian::get_values() {
+  std::map<std::string, double> values = {{"Value", constant_value_}};
+
   return values;
 }
-

@@ -43,23 +43,28 @@
 
 #include <list>
 
-class SV4GUIMODULECOMMON_EXPORT sv4guiXmlIOUtil
-{
+class SV4GUIMODULECOMMON_EXPORT sv4guiXmlIOUtil {
 public:
-    sv4guiXmlIOUtil(tinyxml2::XMLDocument& doc) : document(doc) { }
-    sv4guiXmlIOUtil() = delete;
+  sv4guiXmlIOUtil(tinyxml2::XMLDocument &doc) : document(doc) {}
+  sv4guiXmlIOUtil() = delete;
 
-    tinyxml2::XMLElement* CreateXMLxyzElement(const char* name, double v[3]);
-    tinyxml2::XMLElement* CreateXMLPointElement(const char* name, int id, mitk::Point3D point);
-    tinyxml2::XMLElement* CreateXMLPointElement(const char* name, mitk::Point3D point);
-    tinyxml2::XMLElement* CreateXMLVectorElement(const char* name, mitk::Vector3D vec);
+  tinyxml2::XMLElement *CreateXMLxyzElement(const char *name, double v[3]);
+  tinyxml2::XMLElement *CreateXMLPointElement(const char *name, int id,
+                                              mitk::Point3D point);
+  tinyxml2::XMLElement *CreateXMLPointElement(const char *name,
+                                              mitk::Point3D point);
+  tinyxml2::XMLElement *CreateXMLVectorElement(const char *name,
+                                               mitk::Vector3D vec);
 
-    void Getxyz(tinyxml2::XMLElement* element, double xyz[3]);
-    mitk::Point3D GetPoint(tinyxml2::XMLElement* element);
-    mitk::Vector3D GetVector(tinyxml2::XMLElement* element);
-    std::list< double > GetDoubleAttributeListFromXMLNode(tinyxml2::XMLElement* e, const char *attributeNameBase, unsigned int count);
+  void Getxyz(tinyxml2::XMLElement *element, double xyz[3]);
+  mitk::Point3D GetPoint(tinyxml2::XMLElement *element);
+  mitk::Vector3D GetVector(tinyxml2::XMLElement *element);
+  std::list<double>
+  GetDoubleAttributeListFromXMLNode(tinyxml2::XMLElement *e,
+                                    const char *attributeNameBase,
+                                    unsigned int count);
 
-    tinyxml2::XMLDocument& document;
+  tinyxml2::XMLDocument &document;
 };
 
 #endif // SV4GUI_XMLIOUTIL_H

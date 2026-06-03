@@ -44,36 +44,35 @@
 #ifndef vtkSVUpdeSmoothing_h
 #define vtkSVUpdeSmoothing_h
 
+#include "vtkCellLocator.h"
 #include "vtkPolyDataAlgorithm.h"
 #include "vtkSVGeometryModule.h" // for export
-#include "vtkCellLocator.h"
 #include <set>
 
-class VTKSVGEOMETRY_EXPORT vtkSVUpdeSmoothing : public vtkPolyDataAlgorithm
-{
+class VTKSVGEOMETRY_EXPORT vtkSVUpdeSmoothing : public vtkPolyDataAlgorithm {
 public:
-  static vtkSVUpdeSmoothing* New();
+  static vtkSVUpdeSmoothing *New();
   vtkTypeMacro(vtkSVUpdeSmoothing, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
-  vtkGetObjectMacro(SourcePd,vtkPolyData);
-  vtkSetObjectMacro(SourcePd,vtkPolyData);
+  vtkGetObjectMacro(SourcePd, vtkPolyData);
+  vtkSetObjectMacro(SourcePd, vtkPolyData);
   //@}
 
   //@{
-  vtkGetMacro(NumberOfOuterSmoothOperations,int);
-  vtkSetMacro(NumberOfOuterSmoothOperations,int);
+  vtkGetMacro(NumberOfOuterSmoothOperations, int);
+  vtkSetMacro(NumberOfOuterSmoothOperations, int);
   //@}
 
   //@{
-  vtkGetMacro(NumberOfInnerSmoothOperations,int);
-  vtkSetMacro(NumberOfInnerSmoothOperations,int);
+  vtkGetMacro(NumberOfInnerSmoothOperations, int);
+  vtkSetMacro(NumberOfInnerSmoothOperations, int);
   //@}
 
   //@{
-  vtkGetMacro(UseInputAsSource,int);
-  vtkSetMacro(UseInputAsSource,int);
+  vtkGetMacro(UseInputAsSource, int);
+  vtkSetMacro(UseInputAsSource, int);
   //@}
 
   //@{
@@ -89,9 +88,8 @@ protected:
 
   // Usual data generation method
   int RequestData(vtkInformation *vtkNotUsed(request),
-		  vtkInformationVector **inputVector,
-		  vtkInformationVector *outputVector) override;
-
+                  vtkInformationVector **inputVector,
+                  vtkInformationVector *outputVector) override;
 
   int RunFilter(vtkPolyData *original, vtkPolyData *output);
 
@@ -100,32 +98,52 @@ protected:
   int SmoothSurface(vtkDoubleArray *shapeImproveFunction,
                     vtkDoubleArray *shapeImproveDirection);
 
-  int PointCellStatus(double currentPt[3], int sourceCell, int &pointCellStatus);
-  int EdgeStatusWithDir(double currentPt[3], int sourceCell, double moveDir[3], int &edgeStatus) ;
-  int ComputeOptimizationPoint(int pointId, double pt0[3], double pt1[3], double pt2[3],
-                               double oppositePt[3], int sourceCell, double newPt[3]);
-  int ComputeOptimizationDirection(double pt0[3], double pt1[3], double currentPt[3], double oppositePt[3], int sourceCell, double newDir[3]);
-  int MovePointToEdge(double currentPt[3], int sourceCell, double moveDir[3], double newPt[3], int &edgeStatus);
-  int MovePointFromEdgeToEdge(double currentPt[3], int ptId0, int ptId1, int ptId2, double moveDir[3], double newPt[3], int &edgeStatus);
-  int MovePointFromPointToEdge(double currentPt[3], int ptId0, int ptId1, int ptId2, double moveDir[3], double newPt[3], int &edgeStatus);
-  int MovePointDistance(double currentPt[3], double moveDir[3], double length, double newPt[3]);
-  int ComputeUntanglingDerivatives(double pt0[3], double pt1[3], double pt2[3], double oppositePt[3], double theta, double newDir[3]);
+  int PointCellStatus(double currentPt[3], int sourceCell,
+                      int &pointCellStatus);
+  int EdgeStatusWithDir(double currentPt[3], int sourceCell, double moveDir[3],
+                        int &edgeStatus);
+  int ComputeOptimizationPoint(int pointId, double pt0[3], double pt1[3],
+                               double pt2[3], double oppositePt[3],
+                               int sourceCell, double newPt[3]);
+  int ComputeOptimizationDirection(double pt0[3], double pt1[3],
+                                   double currentPt[3], double oppositePt[3],
+                                   int sourceCell, double newDir[3]);
+  int MovePointToEdge(double currentPt[3], int sourceCell, double moveDir[3],
+                      double newPt[3], int &edgeStatus);
+  int MovePointFromEdgeToEdge(double currentPt[3], int ptId0, int ptId1,
+                              int ptId2, double moveDir[3], double newPt[3],
+                              int &edgeStatus);
+  int MovePointFromPointToEdge(double currentPt[3], int ptId0, int ptId1,
+                               int ptId2, double moveDir[3], double newPt[3],
+                               int &edgeStatus);
+  int MovePointDistance(double currentPt[3], double moveDir[3], double length,
+                        double newPt[3]);
+  int ComputeUntanglingDerivatives(double pt0[3], double pt1[3], double pt2[3],
+                                   double oppositePt[3], double theta,
+                                   double newDir[3]);
   int GetJacobianDerivatives(double pt0[3], double pt1[3], double pt2[3],
-                           double pPt0[3], double pPt1[3], double pPt2[3],
-                           double &dJdX, double &dJdY, double &dJdZ);
-  int ComputeShapeImprovementDerivatives(double pt0[3], double pt1[3], double pt2[3], double oppositePt[3],
-                                       double dK[3]);
+                             double pPt0[3], double pPt1[3], double pPt2[3],
+                             double &dJdX, double &dJdY, double &dJdZ);
+  int ComputeShapeImprovementDerivatives(double pt0[3], double pt1[3],
+                                         double pt2[3], double oppositePt[3],
+                                         double dK[3]);
 
-  int ComputeUntanglingFunction(double pt0[3], double pt1[3], double pt2[3], double compareNormal[3], double theta, double &f);
+  int ComputeUntanglingFunction(double pt0[3], double pt1[3], double pt2[3],
+                                double compareNormal[3], double theta,
+                                double &f);
 
-  int ComputeShapeImprovementFunction(double pt0[3], double pt1[3], double pt2[3], double oppositePt[3], double &f);
-  int ComputeVertexCondition(int ptId, double &vertexCondition, double optDirection[3]);
-  int CheckVertexInverted(int ptId, double compareNormal[3], double &vertexCondition, double optDirection[3]);
+  int ComputeShapeImprovementFunction(double pt0[3], double pt1[3],
+                                      double pt2[3], double oppositePt[3],
+                                      double &f);
+  int ComputeVertexCondition(int ptId, double &vertexCondition,
+                             double optDirection[3]);
+  int CheckVertexInverted(int ptId, double compareNormal[3],
+                          double &vertexCondition, double optDirection[3]);
 
   double Determinant(double mat[4]);
 
-  int GetJacobians(double pPt0[3], double pPt1[3], double pPt2[3],
-                   double J0[4], double J1[4], double J2[4]);
+  int GetJacobians(double pPt0[3], double pPt1[3], double pPt2[3], double J0[4],
+                   double J1[4], double J2[4]);
 
   int UseInputAsSource;
   int NumberOfOuterSmoothOperations;
@@ -145,16 +163,14 @@ protected:
 
   char *SmoothPointArrayName;
 
-  std::vector<std::vector<int> > CellsOnSource;
-  std::vector<std::vector<int> > PointCells;
-  std::vector<std::vector<int> > CellPoints;
+  std::vector<std::vector<int>> CellsOnSource;
+  std::vector<std::vector<int>> PointCells;
+  std::vector<std::vector<int>> CellPoints;
   std::vector<int> FixedPoints;
 
 private:
-  vtkSVUpdeSmoothing(const vtkSVUpdeSmoothing&);  // Not implemented.
-  void operator=(const vtkSVUpdeSmoothing&);  // Not implemented.
+  vtkSVUpdeSmoothing(const vtkSVUpdeSmoothing &); // Not implemented.
+  void operator=(const vtkSVUpdeSmoothing &);     // Not implemented.
 };
 
 #endif
-
-

@@ -28,7 +28,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #ifndef SV3_PATHUTILS_H
 #define SV3_PATHUTILS_H
 
@@ -43,16 +43,15 @@
 
 namespace sv3 {
 
-class SV_EXPORT_PATH PathUtils
-{
-  public:
+class SV_EXPORT_PATH PathUtils {
+public:
+  static std::vector<vtkSmartPointer<vtkPolyData>>
+  ExtractCenterlinesSections(vtkSmartPointer<vtkPolyData> &centerlines);
 
-    static std::vector<vtkSmartPointer<vtkPolyData>> ExtractCenterlinesSections(vtkSmartPointer<vtkPolyData>& centerlines);
-
-    static std::vector<std::array<double,3>> SampleLinePoints(vtkSmartPointer<vtkPolyData>& polydata, int numSamples, 
-        double minAngle, double distMeasure);
-    
+  static std::vector<std::array<double, 3>>
+  SampleLinePoints(vtkSmartPointer<vtkPolyData> &polydata, int numSamples,
+                   double minAngle, double distMeasure);
 };
 
-}
+} // namespace sv3
 #endif // SV3_PATHUTILS_H

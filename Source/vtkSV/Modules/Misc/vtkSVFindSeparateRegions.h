@@ -48,11 +48,10 @@
 #include "vtkIdList.h"
 #include "vtkPolyDataAlgorithm.h"
 
-class VTKSVMISC_EXPORT vtkSVFindSeparateRegions : public vtkPolyDataAlgorithm
-{
+class VTKSVMISC_EXPORT vtkSVFindSeparateRegions : public vtkPolyDataAlgorithm {
 public:
-  static vtkSVFindSeparateRegions* New();
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  static vtkSVFindSeparateRegions *New();
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
   /// \brief Get/Set macro for array names used by filter
@@ -73,14 +72,14 @@ protected:
 
   // Usual data generation method
   int RequestData(vtkInformation *vtkNotUsed(request),
-		  vtkInformationVector **inputVector,
-		  vtkInformationVector *outputVector) override;
+                  vtkInformationVector **inputVector,
+                  vtkInformationVector *outputVector) override;
 
   int PrepFilter(); // Prep work.
-  int RunFilter(); // Run filter operations.
+  int RunFilter();  // Run filter operations.
 
-  char* CellArrayName;
-  char* OutPointArrayName;
+  char *CellArrayName;
+  char *OutPointArrayName;
 
   vtkPolyData *WorkPd;
   vtkIntArray *IntCellScalars;
@@ -90,10 +89,9 @@ protected:
   int SetAllCellIds();
 
 private:
-  vtkSVFindSeparateRegions(const vtkSVFindSeparateRegions&);  // Not implemented.
-  void operator=(const vtkSVFindSeparateRegions&);  // Not implemented.
+  vtkSVFindSeparateRegions(
+      const vtkSVFindSeparateRegions &);            // Not implemented.
+  void operator=(const vtkSVFindSeparateRegions &); // Not implemented.
 };
 
 #endif
-
-

@@ -49,13 +49,12 @@
 
 #include "vtkSVNURBSCurve.h"
 
-class VTKSVNURBS_EXPORT vtkSVLoftNURBSCurve : public vtkPolyDataAlgorithm
-{
+class VTKSVNURBS_EXPORT vtkSVLoftNURBSCurve : public vtkPolyDataAlgorithm {
 public:
   static vtkSVLoftNURBSCurve *New();
 
-  vtkTypeMacro(vtkSVLoftNURBSCurve,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  vtkTypeMacro(vtkSVLoftNURBSCurve, vtkPolyDataAlgorithm);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
   /// \brief Get and set macro for degree of output curve
@@ -81,7 +80,8 @@ public:
   //@}
 
   //@{
-  /// \brief Get and set the the derivatives for start and end. Only used if KnotSpanType = "derivative"
+  /// \brief Get and set the the derivatives for start and end. Only used if
+  /// KnotSpanType = "derivative"
   vtkSetVector3Macro(StartDerivative, double);
   vtkGetVector3Macro(StartDerivative, double);
   vtkSetVector3Macro(EndDerivative, double);
@@ -95,16 +95,17 @@ public:
 
   /** \brief Function to get a default set of derivatives if none are given
    *  and a knot span type of derivative is given. */
-  static int GetDefaultDerivatives(vtkPoints *points, double D0[3], double DN[3]);
+  static int GetDefaultDerivatives(vtkPoints *points, double D0[3],
+                                   double DN[3]);
 
-//ETX
+  // ETX
 protected:
   vtkSVLoftNURBSCurve();
   ~vtkSVLoftNURBSCurve();
 
   // Usual data generation method
-  virtual int RequestData(vtkInformation *,
-                          vtkInformationVector **, vtkInformationVector *) override;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **,
+                          vtkInformationVector *) override;
   virtual int FillInputPortInformation(int, vtkInformation *) override;
 
   /** \brief lofts a surface and generates polydata representation. */
@@ -121,8 +122,8 @@ protected:
   vtkSVNURBSCurve *Curve;
 
 private:
-  vtkSVLoftNURBSCurve(const vtkSVLoftNURBSCurve&);  // Not implemented.
-  void operator=(const vtkSVLoftNURBSCurve&);  // Not implemented.
+  vtkSVLoftNURBSCurve(const vtkSVLoftNURBSCurve &); // Not implemented.
+  void operator=(const vtkSVLoftNURBSCurve &);      // Not implemented.
 };
 
 #endif

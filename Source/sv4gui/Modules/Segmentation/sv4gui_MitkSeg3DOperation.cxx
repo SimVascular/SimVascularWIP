@@ -31,18 +31,10 @@
 
 #include "sv4gui_MitkSeg3DOperation.h"
 
-sv4guiMitkSeg3DOperation::sv4guiMitkSeg3DOperation(mitk::OperationType operationType,  sv4guiSeg3D* seg3D)
-    : mitk::Operation(operationType)
-    , m_Seg3D(seg3D)
-{
-}
+sv4guiMitkSeg3DOperation::sv4guiMitkSeg3DOperation(
+    mitk::OperationType operationType, sv4guiSeg3D *seg3D)
+    : mitk::Operation(operationType), m_Seg3D(seg3D) {}
 
-sv4guiMitkSeg3DOperation::~sv4guiMitkSeg3DOperation()
-{
-}
+sv4guiMitkSeg3DOperation::~sv4guiMitkSeg3DOperation() {}
 
-sv4guiSeg3D* sv4guiMitkSeg3DOperation::GetSeg3D()
-{
-    return m_Seg3D;
-}
-
+sv4guiSeg3D *sv4guiMitkSeg3DOperation::GetSeg3D() { return m_Seg3D; }

@@ -40,23 +40,23 @@
 
 #include "vtkSVConstrainedBlend.h"
 
+#include "vtkCellArray.h"
 #include "vtkCellData.h"
 #include "vtkErrorCode.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
+#include "vtkIntArray.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
-#include "vtkCellArray.h"
-#include "vtkIntArray.h"
-#include "vtkSmartPointer.h"
+#include "vtkPolyDataNormals.h"
 #include "vtkSVConstrainedSmoothing.h"
 #include "vtkSVGeneralUtils.h"
 #include "vtkSVGlobals.h"
 #include "vtkSVLocalLoopSubdivisionFilter.h"
-#include "vtkSVLocalSmoothPolyDataFilter.h"
 #include "vtkSVLocalQuadricDecimation.h"
-#include "vtkPolyDataNormals.h"
+#include "vtkSVLocalSmoothPolyDataFilter.h"
+#include "vtkSmartPointer.h"
 
 #include <iostream>
 
@@ -68,38 +68,34 @@ vtkStandardNewMacro(vtkSVConstrainedBlend);
 // ----------------------
 // Constructor
 // ----------------------
-vtkSVConstrainedBlend::vtkSVConstrainedBlend()
-{
-    this->CellArrayName  = nullptr;
-    this->PointArrayName = nullptr;
-    this->Weight = 0.2;
+vtkSVConstrainedBlend::vtkSVConstrainedBlend() {
+  this->CellArrayName = nullptr;
+  this->PointArrayName = nullptr;
+  this->Weight = 0.2;
 
-    this->UsePointArray = 0;
-    this->UseCellArray = 0;
+  this->UsePointArray = 0;
+  this->UseCellArray = 0;
 
-    this->NumBlendOperations = 2;
-    this->NumSubBlendOperations = 2;
-    this->NumConstrainedSmoothOperations = 3;
-    this->NumLapSmoothOperations = 50;
-    this->RelaxationFactor = 0.01;
-    this->NumGradientSolves = 20;
-    this->DecimationTargetReduction = 0.01;
-    this->NumSubdivisionIterations = 1;
+  this->NumBlendOperations = 2;
+  this->NumSubBlendOperations = 2;
+  this->NumConstrainedSmoothOperations = 3;
+  this->NumLapSmoothOperations = 50;
+  this->RelaxationFactor = 0.01;
+  this->NumGradientSolves = 20;
+  this->DecimationTargetReduction = 0.01;
+  this->NumSubdivisionIterations = 1;
 }
 
 // ----------------------
 // Destructor
 // ----------------------
-vtkSVConstrainedBlend::~vtkSVConstrainedBlend()
-{
-  if (this->CellArrayName != nullptr)
-  {
-    delete [] this->CellArrayName;
+vtkSVConstrainedBlend::~vtkSVConstrainedBlend() {
+  if (this->CellArrayName != nullptr) {
+    delete[] this->CellArrayName;
     this->CellArrayName = nullptr;
   }
-  if (this->PointArrayName != nullptr)
-  {
-    delete [] this->PointArrayName;
+  if (this->PointArrayName != nullptr) {
+    delete[] this->PointArrayName;
     this->PointArrayName = nullptr;
   }
 }
@@ -107,8 +103,7 @@ vtkSVConstrainedBlend::~vtkSVConstrainedBlend()
 // ----------------------
 // PrintSelf
 // ----------------------
-void vtkSVConstrainedBlend::PrintSelf(ostream& os, vtkIndent indent)
-{
+void vtkSVConstrainedBlend::PrintSelf(ostream &os, vtkIndent indent) {
   this->Superclass::PrintSelf(os, indent);
 
   if (this->CellArrayName != nullptr)
@@ -121,14 +116,24 @@ void vtkSVConstrainedBlend::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Use point array: " << this->UsePointArray << "\n";
   os << indent << "Use cell array: " << this->UseCellArray << "\n";
 
-  os << indent << "Number of blend operations: " << this->NumBlendOperations << "\n";
-  os << indent << "Number of sub blend operations: " << this->NumSubBlendOperations << "\n";
-  os << indent << "Number of constrained smooth operations: " << this->NumConstrainedSmoothOperations << "\n";
-  os << indent << "Number of laplacian smooth operations: " << this->NumLapSmoothOperations << "\n";
+  os << indent << "Number of blend operations: " << this->NumBlendOperations
+     << "\n";
+  os << indent
+     << "Number of sub blend operations: " << this->NumSubBlendOperations
+     << "\n";
+  os << indent << "Number of constrained smooth operations: "
+     << this->NumConstrainedSmoothOperations << "\n";
+  os << indent << "Number of laplacian smooth operations: "
+     << this->NumLapSmoothOperations << "\n";
   os << indent << "Relaxation factor: " << this->RelaxationFactor << "\n";
-  os << indent << "Number of conjugate gradient iterations: " << this->NumGradientSolves << "\n";
-  os << indent << "Target reduction for decimation: " << this->DecimationTargetReduction << "\n";
-  os << indent << "Number of iterations in subdivision: " << this->NumSubdivisionIterations << "\n";
+  os << indent
+     << "Number of conjugate gradient iterations: " << this->NumGradientSolves
+     << "\n";
+  os << indent
+     << "Target reduction for decimation: " << this->DecimationTargetReduction
+     << "\n";
+  os << indent << "Number of iterations in subdivision: "
+     << this->NumSubdivisionIterations << "\n";
 }
 
 // ----------------------
@@ -136,89 +141,80 @@ void vtkSVConstrainedBlend::PrintSelf(ostream& os, vtkIndent indent)
 // ----------------------
 int vtkSVConstrainedBlend::RequestData(vtkInformation *vtkNotUsed(request),
                                        vtkInformationVector **inputVector,
-                                       vtkInformationVector *outputVector)
-{
-    // get the input and output
-    vtkPolyData *input = vtkPolyData::GetData(inputVector[0]);
-    vtkPolyData *output = vtkPolyData::GetData(outputVector);
+                                       vtkInformationVector *outputVector) {
+  // get the input and output
+  vtkPolyData *input = vtkPolyData::GetData(inputVector[0]);
+  vtkPolyData *output = vtkPolyData::GetData(outputVector);
 
-    // Define variables used by the algorithm
-    vtkNew(vtkPoints, inpts);
-    vtkNew(vtkCellArray, inPolys);
-    vtkIdType numPts, numPolys;
-    vtkIdType newId, cellId,pointId;
+  // Define variables used by the algorithm
+  vtkNew(vtkPoints, inpts);
+  vtkNew(vtkCellArray, inPolys);
+  vtkIdType numPts, numPolys;
+  vtkIdType newId, cellId, pointId;
 
-    //Get input points, polys and set the up in the vtkPolyData mesh
-    inpts = input->GetPoints();
-    inPolys = input->GetPolys();
+  // Get input points, polys and set the up in the vtkPolyData mesh
+  inpts = input->GetPoints();
+  inPolys = input->GetPolys();
 
-    //Get the number of Polys for scalar  allocation
-    numPolys = input->GetNumberOfPolys();
-    numPts = input->GetNumberOfPoints();
+  // Get the number of Polys for scalar  allocation
+  numPolys = input->GetNumberOfPolys();
+  numPts = input->GetNumberOfPoints();
 
-    //Check the input to make sure it is there
-    if (numPolys < 1)
-    {
-      vtkErrorMacro("No input!");
+  // Check the input to make sure it is there
+  if (numPolys < 1) {
+    vtkErrorMacro("No input!");
+    this->SetErrorCode(vtkErrorCode::UserError + 1);
+    return SV_ERROR;
+  }
+
+  if (this->UsePointArray) {
+    if (this->PointArrayName == nullptr) {
+      vtkErrorMacro("No PointArrayName given.");
       this->SetErrorCode(vtkErrorCode::UserError + 1);
       return SV_ERROR;
     }
-
-    if (this->UsePointArray)
-    {
-      if (this->PointArrayName == nullptr)
-      {
-        vtkErrorMacro("No PointArrayName given.");
-        this->SetErrorCode(vtkErrorCode::UserError + 1);
-        return SV_ERROR;
-      }
-      if (this->GetArrays(input,0) != 1)
-      {
-        vtkErrorMacro("No Point Array Named " << this->PointArrayName << " on surface");
-        this->SetErrorCode(vtkErrorCode::UserError + 1);
-        return SV_ERROR;
-      }
+    if (this->GetArrays(input, 0) != 1) {
+      vtkErrorMacro("No Point Array Named " << this->PointArrayName
+                                            << " on surface");
+      this->SetErrorCode(vtkErrorCode::UserError + 1);
+      return SV_ERROR;
     }
-    if (this->UseCellArray)
-    {
-      if (this->CellArrayName == nullptr)
-      {
-        vtkErrorMacro("No CellArrayName given.");
-        this->SetErrorCode(vtkErrorCode::UserError + 1);
-        return SV_ERROR;
-      }
-      if (this->GetArrays(input,1) != 1)
-      {
-        vtkErrorMacro("No Cell Array Named " << this->CellArrayName << " on surface");
-        this->SetErrorCode(vtkErrorCode::UserError + 1);
-        return SV_ERROR;
-      }
+  }
+  if (this->UseCellArray) {
+    if (this->CellArrayName == nullptr) {
+      vtkErrorMacro("No CellArrayName given.");
+      this->SetErrorCode(vtkErrorCode::UserError + 1);
+      return SV_ERROR;
     }
-
-    vtkNew(vtkPolyData, tmp);
-    tmp->DeepCopy(input);
-    for (int i=0;i<this->NumBlendOperations;i++)
-    {
-      for (int j=0;j<this->NumSubBlendOperations;j++)
-      {
-        this->ConstrainedSmooth(tmp);
-
-        this->LaplacianSmooth(tmp);
-
-        this->Decimate(tmp);
-      }
-      this->Subdivide(tmp);
+    if (this->GetArrays(input, 1) != 1) {
+      vtkErrorMacro("No Cell Array Named " << this->CellArrayName
+                                           << " on surface");
+      this->SetErrorCode(vtkErrorCode::UserError + 1);
+      return SV_ERROR;
     }
+  }
 
-    output->DeepCopy(tmp);
-    return SV_OK;
+  vtkNew(vtkPolyData, tmp);
+  tmp->DeepCopy(input);
+  for (int i = 0; i < this->NumBlendOperations; i++) {
+    for (int j = 0; j < this->NumSubBlendOperations; j++) {
+      this->ConstrainedSmooth(tmp);
+
+      this->LaplacianSmooth(tmp);
+
+      this->Decimate(tmp);
+    }
+    this->Subdivide(tmp);
+  }
+
+  output->DeepCopy(tmp);
+  return SV_OK;
 }
 
 // ----------------------
 // GetArrays
 // ----------------------
-int vtkSVConstrainedBlend::GetArrays(vtkPolyData *object,int type)
-{
+int vtkSVConstrainedBlend::GetArrays(vtkPolyData *object, int type) {
   vtkIdType i;
   int numArrays;
 
@@ -232,19 +228,14 @@ int vtkSVConstrainedBlend::GetArrays(vtkPolyData *object,int type)
   // Check if array exists
   int exists = vtkSVGeneralUtils::CheckArrayExists(object, type, arrayName);
 
-  if (exists)
-  {
-    if (type == 0)
-    {
+  if (exists) {
+    if (type == 0) {
       this->PointArray = vtkIntArray::SafeDownCast(
-	  object->GetPointData()->GetArray(this->PointArrayName));
-    }
-    else
-    {
+          object->GetPointData()->GetArray(this->PointArrayName));
+    } else {
       this->CellArray = vtkIntArray::SafeDownCast(
-	  object->GetCellData()->GetArray(this->CellArrayName));
+          object->GetCellData()->GetArray(this->CellArrayName));
     }
-
   }
 
   return exists;
@@ -256,13 +247,11 @@ int vtkSVConstrainedBlend::GetArrays(vtkPolyData *object,int type)
 int vtkSVConstrainedBlend::Decimate(vtkPolyData *pd) {
   vtkNew(vtkSVLocalQuadricDecimation, decimator);
   decimator->SetInputData(pd);
-  if (this->UsePointArray)
-  {
+  if (this->UsePointArray) {
     decimator->SetDecimatePointArrayName(this->PointArrayName);
     decimator->UsePointArrayOn();
   }
-  if (this->UseCellArray)
-  {
+  if (this->UseCellArray) {
     decimator->SetDecimateCellArrayName(this->CellArrayName);
     decimator->UseCellArrayOn();
   }
@@ -270,19 +259,17 @@ int vtkSVConstrainedBlend::Decimate(vtkPolyData *pd) {
   decimator->Update();
   pd->DeepCopy(decimator->GetOutput());
 
-  if (this->UsePointArray)
-  {
-    if (this->GetArrays(pd,0) != 1)
-    {
-      std::cout<<"No Point Array Named "<<this->PointArrayName<<" on surface"<<endl;
+  if (this->UsePointArray) {
+    if (this->GetArrays(pd, 0) != 1) {
+      std::cout << "No Point Array Named " << this->PointArrayName
+                << " on surface" << endl;
       return SV_ERROR;
     }
   }
-  if (this->UseCellArray)
-  {
-    if (this->GetArrays(pd,1) != 1)
-    {
-      std::cout<<"No Point Array Named "<<this->CellArrayName<<" on surface"<<endl;
+  if (this->UseCellArray) {
+    if (this->GetArrays(pd, 1) != 1) {
+      std::cout << "No Point Array Named " << this->CellArrayName
+                << " on surface" << endl;
       return SV_ERROR;
     }
   }
@@ -298,32 +285,28 @@ int vtkSVConstrainedBlend::Subdivide(vtkPolyData *pd) {
 
   subdivider->SetInputData(pd);
   subdivider->SetNumberOfSubdivisions(this->NumSubdivisionIterations);
-  if (this->UseCellArray)
-  {
+  if (this->UseCellArray) {
     subdivider->SetSubdivideCellArrayName(this->CellArrayName);
     subdivider->UseCellArrayOn();
   }
-  if (this->UsePointArray)
-  {
+  if (this->UsePointArray) {
     subdivider->SetSubdividePointArrayName(this->PointArrayName);
     subdivider->UsePointArrayOn();
   }
   subdivider->Update();
   pd->DeepCopy(subdivider->GetOutput());
 
-  if (this->UsePointArray)
-  {
-    if (this->GetArrays(pd,0) != 1)
-    {
-      std::cout<<"No Point Array Named "<<this->PointArrayName<<" on surface"<<endl;
+  if (this->UsePointArray) {
+    if (this->GetArrays(pd, 0) != 1) {
+      std::cout << "No Point Array Named " << this->PointArrayName
+                << " on surface" << endl;
       return SV_ERROR;
     }
   }
-  if (this->UseCellArray)
-  {
-    if (this->GetArrays(pd,1) != 1)
-    {
-      std::cout<<"No Point Array Named "<<this->CellArrayName<<" on surface"<<endl;
+  if (this->UseCellArray) {
+    if (this->GetArrays(pd, 1) != 1) {
+      std::cout << "No Point Array Named " << this->CellArrayName
+                << " on surface" << endl;
       return SV_ERROR;
     }
   }
@@ -333,19 +316,16 @@ int vtkSVConstrainedBlend::Subdivide(vtkPolyData *pd) {
 // ----------------------
 // ConstrainedSmooth
 // ----------------------
-int vtkSVConstrainedBlend::ConstrainedSmooth(vtkPolyData *pd)
-{
+int vtkSVConstrainedBlend::ConstrainedSmooth(vtkPolyData *pd) {
   vtkNew(vtkSVConstrainedSmoothing, smoother);
   smoother->SetInputData(pd);
   smoother->SetNumGradientSolves(this->NumGradientSolves);
   smoother->SetNumSmoothOperations(this->NumConstrainedSmoothOperations);
-  if (this->UsePointArray)
-  {
+  if (this->UsePointArray) {
     smoother->SetPointArrayName(this->PointArrayName);
     smoother->UsePointArrayOn();
   }
-  if (this->UseCellArray)
-  {
+  if (this->UseCellArray) {
     smoother->SetCellArrayName(this->CellArrayName);
     smoother->UseCellArrayOn();
   }
@@ -359,17 +339,14 @@ int vtkSVConstrainedBlend::ConstrainedSmooth(vtkPolyData *pd)
 // ----------------------
 // LaplacianSmooth
 // ----------------------
-int vtkSVConstrainedBlend::LaplacianSmooth(vtkPolyData *pd)
-{
+int vtkSVConstrainedBlend::LaplacianSmooth(vtkPolyData *pd) {
   vtkNew(vtkSVLocalSmoothPolyDataFilter, smoother);
   smoother->SetInputData(pd);
-  if (this->UsePointArray)
-  {
+  if (this->UsePointArray) {
     smoother->SetSmoothPointArrayName(this->PointArrayName);
     smoother->UsePointArrayOn();
   }
-  if (this->UseCellArray)
-  {
+  if (this->UseCellArray) {
     smoother->SetSmoothCellArrayName(this->CellArrayName);
     smoother->UseCellArrayOn();
   }

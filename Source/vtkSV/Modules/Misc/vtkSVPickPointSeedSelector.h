@@ -32,8 +32,8 @@
 /**
  * \class vtkSVPickPointsSeedSelector
  *
- * \brief This is a c++ replication of the python code for picking seed points on a surface
- * in vmtk.
+ * \brief This is a c++ replication of the python code for picking seed points
+ * on a surface in vmtk.
  *
  * \author Adam Updegrove
  * \author updega2@gmail.com
@@ -46,8 +46,8 @@
 
 #include "vtkDataArray.h"
 #include "vtkIdList.h"
-#include "vtkPolyData.h"
 #include "vtkPoints.h"
+#include "vtkPolyData.h"
 #include "vtkUnstructuredGrid.h"
 
 #include "vtkSVRenderer.h"
@@ -55,38 +55,43 @@
 
 #include "vtkSVMiscModule.h" // For exports
 
-class VTKSVMISC_EXPORT vtkSVPickPointSeedSelector : public vtkSVSeedSelector
-{
-  public:
-  vtkTypeMacro(vtkSVPickPointSeedSelector,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+class VTKSVMISC_EXPORT vtkSVPickPointSeedSelector : public vtkSVSeedSelector {
+public:
+  vtkTypeMacro(vtkSVPickPointSeedSelector, vtkPolyDataAlgorithm);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   static vtkSVPickPointSeedSelector *New();
 
   void InitializeSeeds();
 
-  static void PickCallback( vtkObject* caller, long unsigned int vtkNotUsed(eventId), void* clientData, void* vtkNotUsed(callData) );
+  static void PickCallback(vtkObject *caller,
+                           long unsigned int vtkNotUsed(eventId),
+                           void *clientData, void *vtkNotUsed(callData));
 
-  static void UndoCallback( vtkObject* caller, long unsigned int vtkNotUsed(eventId), void* clientData, void* vtkNotUsed(callData) );
+  static void UndoCallback(vtkObject *caller,
+                           long unsigned int vtkNotUsed(eventId),
+                           void *clientData, void *vtkNotUsed(callData));
 
-  protected:
+protected:
   vtkSVPickPointSeedSelector();
   ~vtkSVPickPointSeedSelector();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **,
+                          vtkInformationVector *) override;
 
   vtkPolyData *PickedSeeds;
 
-  vtkIdList* PickedSeedIds;
+  vtkIdList *PickedSeedIds;
 
   vtkSVRenderer *SVRenderer;
 
   vtkCallbackCommand *UndoCallbackCommand;
   vtkCallbackCommand *PickCallbackCommand;
 
-  private:
-  vtkSVPickPointSeedSelector(const vtkSVPickPointSeedSelector&);  // Not implemented.
-  void operator=(const vtkSVPickPointSeedSelector&);  // Not implemented.
+private:
+  vtkSVPickPointSeedSelector(
+      const vtkSVPickPointSeedSelector &);            // Not implemented.
+  void operator=(const vtkSVPickPointSeedSelector &); // Not implemented.
 };
 
 #endif

@@ -34,166 +34,106 @@
 
 #include <sv4guiModuleSegmentationExports.h>
 
+#include <map>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
-#include <map>
 
-struct SV4GUIMODULESEGMENTATION_EXPORT svSeed
-{
-    int id;
-    std::string type;//begin, end
+struct SV4GUIMODULESEGMENTATION_EXPORT svSeed {
+  int id;
+  std::string type; // begin, end
 
-    double x;
-    double y;
-    double z;
+  double x;
+  double y;
+  double z;
 
-    double radius;
+  double radius;
 
-    bool selected;
+  bool selected;
 
-    std::string status;
+  std::string status;
 
-    svSeed()
-        : id(-1)
-        , type("")
-        , x(0)
-        , y(0)
-        , z(0)
-        , radius(0.2)
-        , selected(false)
-        , status("")
-    {
-    }
+  svSeed()
+      : id(-1), type(""), x(0), y(0), z(0), radius(0.2), selected(false),
+        status("") {}
 
-    svSeed(double xx, double yy, double zz, std::string ttype="")
-        : id(-1)
-        , type(ttype)
-        , x(xx)
-        , y(yy)
-        , z(zz)
-        , radius(0.2)
-        , selected(false)
-        , status("")
-    {
-    }
+  svSeed(double xx, double yy, double zz, std::string ttype = "")
+      : id(-1), type(ttype), x(xx), y(yy), z(zz), radius(0.2), selected(false),
+        status("") {}
 
-    svSeed(double xx, double yy, double zz, double r, std::string ttype="")
-        : id(-1)
-        , type(ttype)
-        , x(xx)
-        , y(yy)
-        , z(zz)
-        , radius(r)
-        , selected(false)
-        , status("")
-    {
-    }
+  svSeed(double xx, double yy, double zz, double r, std::string ttype = "")
+      : id(-1), type(ttype), x(xx), y(yy), z(zz), radius(r), selected(false),
+        status("") {}
 
-    svSeed(const svSeed &other)
-        : id(other.id)
-        , type(other.type)
-        , x(other.x)
-        , y(other.y)
-        , z(other.z)
-        , radius(other.radius)
-        , selected(false)
-        , status("")
-    {
-    }
-
+  svSeed(const svSeed &other)
+      : id(other.id), type(other.type), x(other.x), y(other.y), z(other.z),
+        radius(other.radius), selected(false), status("") {}
 };
 
-struct SV4GUIMODULESEGMENTATION_EXPORT sv4guiSeg3DParam
-{
-    std::string method;
+struct SV4GUIMODULESEGMENTATION_EXPORT sv4guiSeg3DParam {
+  std::string method;
 
-    double lowerThreshold;
-    double upperThreshold;
+  double lowerThreshold;
+  double upperThreshold;
 
-    std::map<int, svSeed> seedMap;
+  std::map<int, svSeed> seedMap;
 
-    sv4guiSeg3DParam()
-        : method("")
-        , lowerThreshold(0)
-        , upperThreshold(0)
-    {
+  sv4guiSeg3DParam() : method(""), lowerThreshold(0), upperThreshold(0) {}
+
+  sv4guiSeg3DParam(const sv4guiSeg3DParam &other)
+      : method(other.method), lowerThreshold(other.lowerThreshold),
+        upperThreshold(other.upperThreshold), seedMap(other.seedMap) {}
+
+  std::map<int, svSeed> &GetSeedMap() { return seedMap; }
+
+  int AddSeed(svSeed seed) {
+    int newID = seed.id;
+
+    if (newID < 0) {
+      int idmax = 0;
+      for (auto s : seedMap) {
+        if (s.first > idmax)
+          idmax = s.first;
+      }
+
+      newID = idmax + 1;
+
+      seed.id = newID;
     }
 
-    sv4guiSeg3DParam(const sv4guiSeg3DParam &other)
-        : method(other.method)
-        , lowerThreshold(other.lowerThreshold)
-        , upperThreshold(other.upperThreshold)
-        , seedMap(other.seedMap)
-    {
-    }
+    seedMap[newID] = seed;
 
-    std::map<int,svSeed>& GetSeedMap()
-    {
-        return seedMap;
-    }
+    return newID;
+  }
 
-    int AddSeed(svSeed seed)
-    {    int newID=seed.id;
-
-         if(newID<0)
-         {
-             int idmax=0;
-             for(auto s:seedMap)
-             {
-                 if(s.first>idmax)
-                     idmax=s.first;
-             }
-
-             newID=idmax+1;
-
-             seed.id=newID;
-         }
-
-         seedMap[newID]=seed;
-
-         return newID;
-    }
-
-    void RemoveSeed(int id)
-    {
-       seedMap.erase(id);
-    }
-
+  void RemoveSeed(int id) { seedMap.erase(id); }
 };
 
-
-
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiSeg3D
-{
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiSeg3D {
 public:
+  sv4guiSeg3D();
 
-    sv4guiSeg3D();
+  sv4guiSeg3D(const sv4guiSeg3D &other, bool copyVpd = true);
 
-    sv4guiSeg3D(const sv4guiSeg3D &other, bool copyVpd=true);
+  virtual ~sv4guiSeg3D();
 
-    virtual ~sv4guiSeg3D();
+  virtual sv4guiSeg3D *Clone();
 
-    virtual sv4guiSeg3D* Clone();
+  sv4guiSeg3DParam &GetParam();
 
-    sv4guiSeg3DParam& GetParam();
+  sv4guiSeg3DParam &GetInnerParam();
 
-    sv4guiSeg3DParam& GetInnerParam();
+  void SetParam(sv4guiSeg3DParam param, bool copyToInner = true);
 
-    void SetParam(sv4guiSeg3DParam param, bool copyToInner=true);
+  vtkSmartPointer<vtkPolyData> GetVtkPolyData() { return m_Vpd; }
 
-    vtkSmartPointer<vtkPolyData> GetVtkPolyData(){return m_Vpd;}
-
-    void SetVtkPolyData(vtkSmartPointer<vtkPolyData> vpd) {m_Vpd=vpd;}
+  void SetVtkPolyData(vtkSmartPointer<vtkPolyData> vpd) { m_Vpd = vpd; }
 
 protected:
+  sv4guiSeg3DParam m_Param;
 
-    sv4guiSeg3DParam m_Param;
+  sv4guiSeg3DParam m_InnerParam;
 
-    sv4guiSeg3DParam m_InnerParam;
-
-    vtkSmartPointer<vtkPolyData> m_Vpd;
-
+  vtkSmartPointer<vtkPolyData> m_Vpd;
 };
-
 
 #endif // SV4GUI_SEG3D_H

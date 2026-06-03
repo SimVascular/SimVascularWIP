@@ -52,11 +52,11 @@
 #include "vtkEdgeTable.h"
 #include "vtkIntArray.h"
 
-class VTKSVPARAMETERIZATION_EXPORT vtkSVBoundaryMapper : public vtkPolyDataAlgorithm
-{
+class VTKSVPARAMETERIZATION_EXPORT vtkSVBoundaryMapper
+    : public vtkPolyDataAlgorithm {
 public:
-  vtkTypeMacro(vtkSVBoundaryMapper,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  vtkTypeMacro(vtkSVBoundaryMapper, vtkPolyDataAlgorithm);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
   /// \brief Get/Set for list of point ids that are corner points
@@ -94,34 +94,34 @@ protected:
 
   // Usual data generation method
   int RequestData(vtkInformation *vtkNotUsed(request),
-		  vtkInformationVector **inputVector,
-		  vtkInformationVector *outputVector) override;
+                  vtkInformationVector **inputVector,
+                  vtkInformationVector *outputVector) override;
 
   int RemoveInternalIds;
 
-  int PrepFilter(); // Prep work
-  int RunFilter(); // Run operation
+  int PrepFilter();      // Prep work
+  int RunFilter();       // Run operation
   int GetBoundaryLoop(); // Get the loop of points on the boundary
-  int FindBoundaries(); // Find the boundaries of the surface
+  int FindBoundaries();  // Find the boundaries of the surface
   virtual int SetBoundaries() = 0;
 
   char *InternalIdsArrayName;
 
-  vtkPolyData  *InitialPd;
-  vtkPolyData  *BoundaryPd;
+  vtkPolyData *InitialPd;
+  vtkPolyData *BoundaryPd;
   vtkEdgeTable *EdgeTable;
-  vtkIntArray  *BoundaryIds;
+  vtkIntArray *BoundaryIds;
   vtkDataArray *IsBoundary;
 
-  vtkPolyData  *Boundaries;
-  vtkPolyData  *BoundaryLoop;
+  vtkPolyData *Boundaries;
+  vtkPolyData *BoundaryLoop;
 
   double ObjectXAxis[3];
   double ObjectZAxis[3];
 
 private:
-  vtkSVBoundaryMapper(const vtkSVBoundaryMapper&);
-  void operator=(const vtkSVBoundaryMapper&);
+  vtkSVBoundaryMapper(const vtkSVBoundaryMapper &);
+  void operator=(const vtkSVBoundaryMapper &);
 };
 
 #endif

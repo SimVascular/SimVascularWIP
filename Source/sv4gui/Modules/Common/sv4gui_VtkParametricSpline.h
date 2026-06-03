@@ -38,18 +38,15 @@
 
 #include "vtkParametricSpline.h"
 
-class SV4GUIMODULECOMMON_EXPORT sv4guiVtkParametricSpline : public vtkParametricSpline
-{
+class SV4GUIMODULECOMMON_EXPORT sv4guiVtkParametricSpline
+    : public vtkParametricSpline {
 public:
+  sv4guiVtkParametricSpline();
 
-    sv4guiVtkParametricSpline();
+  ~sv4guiVtkParametricSpline();
 
-    ~sv4guiVtkParametricSpline();
+  void Evaluate(double t, double Pt[3]);
 
-    void Evaluate(double t, double Pt[3]);
-
-    void EvaluateByLengthFactor(double t, double Pt[3]);
-
-
+  void EvaluateByLengthFactor(double t, double Pt[3]);
 };
 #endif // SV4GUI_VTKPARAMETRICSPLINE_H

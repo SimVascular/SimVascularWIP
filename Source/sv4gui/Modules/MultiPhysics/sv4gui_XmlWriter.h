@@ -30,7 +30,7 @@
  */
 
 #ifndef SV4GUI_XMLWRITER_H
-#define SV4GUI_XMLWRITER_H 
+#define SV4GUI_XMLWRITER_H
 
 #include "sv4gui_MultiPhysicsJob.h"
 
@@ -43,60 +43,69 @@
 //-----------------
 // Sv4GuiXmlWriter
 //-----------------
-// The Sv4GuiXmlWriter class is used to write MultiPhysicsplus input commands 
+// The Sv4GuiXmlWriter class is used to write MultiPhysicsplus input commands
 // in an XML format.
 //
-class Sv4GuiXmlWriter 
-{
-  static const char path_sep_ = 
-  #ifdef _WIN32
-  '\\';
-  #else
-  '/';
-  #endif
+class Sv4GuiXmlWriter {
+  static const char path_sep_ =
+#ifdef _WIN32
+      '\\';
+#else
+      '/';
+#endif
 
-  public:
-    Sv4GuiXmlWriter();
-    ~Sv4GuiXmlWriter();
+public:
+  Sv4GuiXmlWriter();
+  ~Sv4GuiXmlWriter();
 
-    void create_document(const sv4guiMultiPhysicsJob* job, const std::string& file_name);
+  void create_document(const sv4guiMultiPhysicsJob *job,
+                       const std::string &file_name);
 
-  private:
-    
-    // The XML document to create.
-    tinyxml2::XMLDocument doc_;
+private:
+  // The XML document to create.
+  tinyxml2::XMLDocument doc_;
 
-    // The root element of the document.
-    tinyxml2::XMLElement* root_;
+  // The root element of the document.
+  tinyxml2::XMLElement *root_;
 
-    template <typename T>
-    tinyxml2::XMLElement* add_child(tinyxml2::XMLElement* parent, const std::string& name, T value);
+  template <typename T>
+  tinyxml2::XMLElement *add_child(tinyxml2::XMLElement *parent,
+                                  const std::string &name, T value);
 
-    tinyxml2::XMLElement* add_sub_child(tinyxml2::XMLElement* parent, const std::string& name);
+  tinyxml2::XMLElement *add_sub_child(tinyxml2::XMLElement *parent,
+                                      const std::string &name);
 
-    void add_equations(const sv4guiMultiPhysicsJob* job);
+  void add_equations(const sv4guiMultiPhysicsJob *job);
 
-    void add_equation_bcs(const sv4guiMultiPhysicseqClass& eq, tinyxml2::XMLElement* xml_equation);
-                        
-    void add_equation_output(const sv4guiMultiPhysicseqClass& eq, tinyxml2::XMLElement* xml_equation);
+  void add_equation_bcs(const sv4guiMultiPhysicseqClass &eq,
+                        tinyxml2::XMLElement *xml_equation);
 
-    void add_equation_solver(const sv4guiMultiPhysicseqClass& eq, tinyxml2::XMLElement* xml_equation);
+  void add_equation_output(const sv4guiMultiPhysicseqClass &eq,
+                           tinyxml2::XMLElement *xml_equation);
 
-    void add_fsi_equation(const sv4guiMultiPhysicsJob* job, const sv4guiMultiPhysicseqClass& equation, tinyxml2::XMLElement* xml_equation);
+  void add_equation_solver(const sv4guiMultiPhysicseqClass &eq,
+                           tinyxml2::XMLElement *xml_equation);
 
-    void add_general(const sv4guiMultiPhysicsJob* job);
+  void add_fsi_equation(const sv4guiMultiPhysicsJob *job,
+                        const sv4guiMultiPhysicseqClass &equation,
+                        tinyxml2::XMLElement *xml_equation);
 
-    void add_mesh(const sv4guiMultiPhysicsJob* job, sv4guiMultiPhysicsDomain& domain, const int domain_id);
+  void add_general(const sv4guiMultiPhysicsJob *job);
 
-    void add_projection(const sv4guiMultiPhysicsJob* job);
+  void add_mesh(const sv4guiMultiPhysicsJob *job,
+                sv4guiMultiPhysicsDomain &domain, const int domain_id);
 
-    void add_remeshing(const sv4guiMultiPhysicsJob* job, const sv4guiMultiPhysicseqClass& eq, tinyxml2::XMLElement* xml_equation);
+  void add_projection(const sv4guiMultiPhysicsJob *job);
 
-    void add_single_physics_equation(const sv4guiMultiPhysicseqClass& eq, tinyxml2::XMLElement* xml_equation);
+  void add_remeshing(const sv4guiMultiPhysicsJob *job,
+                     const sv4guiMultiPhysicseqClass &eq,
+                     tinyxml2::XMLElement *xml_equation);
 
-    std::vector<sv4guiMultiPhysicsDomain> sort_domains(const sv4guiMultiPhysicsJob* job);
+  void add_single_physics_equation(const sv4guiMultiPhysicseqClass &eq,
+                                   tinyxml2::XMLElement *xml_equation);
 
+  std::vector<sv4guiMultiPhysicsDomain>
+  sort_domains(const sv4guiMultiPhysicsJob *job);
 };
 
-
-#endif 
+#endif

@@ -37,40 +37,36 @@
 #include "sv4gui_Surface.h"
 #include <sv4gui_Seg3D.h>
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiMitkSeg3D : public mitk::sv4guiSurface
-{
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiMitkSeg3D
+    : public mitk::sv4guiSurface {
 public:
+  mitkClassMacro(sv4guiMitkSeg3D, mitk::sv4guiSurface);
+  itkFactorylessNewMacro(Self) itkCloneMacro(Self)
 
-    mitkClassMacro(sv4guiMitkSeg3D, mitk::sv4guiSurface);
-    itkFactorylessNewMacro(Self)
-    itkCloneMacro(Self)
+      virtual bool IsEmptyTimeStep(unsigned int t) const override;
+  virtual void ExecuteOperation(mitk::Operation *operation) override;
 
-    virtual bool IsEmptyTimeStep(unsigned int t) const override;
-    virtual void ExecuteOperation(mitk::Operation *operation) override;
+  bool IsDataModified() { return m_DataModified; }
+  void SetDataModified(bool modified = true) { m_DataModified = modified; }
 
-    bool IsDataModified(){return m_DataModified;}
-    void SetDataModified(bool modified = true){m_DataModified=modified;}
+  sv4guiSeg3D *GetSeg3D() const { return m_Seg3D; }
 
-    sv4guiSeg3D* GetSeg3D() const {return m_Seg3D;}
+  void SetSeg3D(sv4guiSeg3D *seg3D);
 
-    void SetSeg3D(sv4guiSeg3D* seg3D);
+protected:
+  mitkCloneMacro(Self);
 
-  protected:
+  sv4guiMitkSeg3D();
+  sv4guiMitkSeg3D(const sv4guiMitkSeg3D &other);
+  virtual ~sv4guiMitkSeg3D();
 
-    mitkCloneMacro(Self);
+  bool m_DataModified;
 
-    sv4guiMitkSeg3D();
-    sv4guiMitkSeg3D(const sv4guiMitkSeg3D &other);
-    virtual ~sv4guiMitkSeg3D();
-
-    bool m_DataModified;
-
-    sv4guiSeg3D* m_Seg3D;
-
+  sv4guiSeg3D *m_Seg3D;
 };
 
-itkEventMacro( sv4guiMitkSeg3DEvent, itk::AnyEvent );
+itkEventMacro(sv4guiMitkSeg3DEvent, itk::AnyEvent);
 
-itkEventMacro( sv4guiMitkSeg3DSetEvent, sv4guiMitkSeg3DEvent );
+itkEventMacro(sv4guiMitkSeg3DSetEvent, sv4guiMitkSeg3DEvent);
 
 #endif // SV4GUI_MITKSEG3D_H

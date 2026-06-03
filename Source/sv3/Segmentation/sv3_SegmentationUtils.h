@@ -28,49 +28,49 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #ifndef SV3_SEGMENTATIONUTILS_H
 #define SV3_SEGMENTATIONUTILS_H
 
-
 #include "SimVascular.h"
 
+#include "sv3_PathElement.h"
+#include "sv_StrPts.h"
+#include "vtkSmartPointer.h"
 #include <deque>
 #include <sv3SegmentationExports.h>
-#include "sv_StrPts.h"
-#include "sv3_PathElement.h"
 #include <vtkImageData.h>
-#include "vtkSmartPointer.h"
 #include <vtkPlane.h>
 
 namespace sv3 {
 
-class SV_EXPORT_SEGMENTATION SegmentationUtils
-{
-  public:
-    static cvStrPts* vtkImageData2cvStrPts(vtkImageData* vtkImg);
-    
-    static std::deque<int> GetOrderedPtIDs(vtkCellArray* lines, bool& ifClosed);
-    
-    static vtkTransform* GetvtkTransform(sv3::PathElement::PathPoint pathPoint);
-    
-    static vtkImageData* GetSlicevtkImage(sv3::PathElement::PathPoint pathPoint, vtkImageData* volumeimage, double size);
-    
-    static vtkPlane* CreatePlaneGeometry(PathElement::PathPoint pathPoint, std::array<double,3> spacing, double size);
-    
-    static void getOrthogonalVector(double normal[3], double vec[3]);
+class SV_EXPORT_SEGMENTATION SegmentationUtils {
+public:
+  static cvStrPts *vtkImageData2cvStrPts(vtkImageData *vtkImg);
 
-    static double math_angleBtw3DVectors(double vecA[3], double vecB[3]);
+  static std::deque<int> GetOrderedPtIDs(vtkCellArray *lines, bool &ifClosed);
 
-    static double math_radToDeg(double rad);
+  static vtkTransform *GetvtkTransform(sv3::PathElement::PathPoint pathPoint);
 
-    static double math_dot(double vecA[3], double vecB[3]);
+  static vtkImageData *GetSlicevtkImage(sv3::PathElement::PathPoint pathPoint,
+                                        vtkImageData *volumeimage, double size);
 
-    static void math_cross(double cross[3], double vecA[3], double vecB[3]);
+  static vtkPlane *CreatePlaneGeometry(PathElement::PathPoint pathPoint,
+                                       std::array<double, 3> spacing,
+                                       double size);
 
-    static double math_magnitude(double vecA[3]);
+  static void getOrthogonalVector(double normal[3], double vec[3]);
 
+  static double math_angleBtw3DVectors(double vecA[3], double vecB[3]);
+
+  static double math_radToDeg(double rad);
+
+  static double math_dot(double vecA[3], double vecB[3]);
+
+  static void math_cross(double cross[3], double vecA[3], double vecB[3]);
+
+  static double math_magnitude(double vecA[3]);
 };
 
-}
+} // namespace sv3
 #endif // SV3_SEGMENTATIONUTILS_H

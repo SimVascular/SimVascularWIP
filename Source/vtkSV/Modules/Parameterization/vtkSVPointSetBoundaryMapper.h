@@ -55,12 +55,12 @@
 
 #include "vtkSVBoundaryMapper.h"
 
-class VTKSVPARAMETERIZATION_EXPORT vtkSVPointSetBoundaryMapper : public vtkSVBoundaryMapper
-{
+class VTKSVPARAMETERIZATION_EXPORT vtkSVPointSetBoundaryMapper
+    : public vtkSVBoundaryMapper {
 public:
-  static vtkSVPointSetBoundaryMapper* New();
-  vtkTypeMacro(vtkSVPointSetBoundaryMapper,vtkSVBoundaryMapper);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  static vtkSVPointSetBoundaryMapper *New();
+  vtkTypeMacro(vtkSVPointSetBoundaryMapper, vtkSVBoundaryMapper);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   vtkSetObjectMacro(PointSet, vtkPointSet);
   vtkGetObjectMacro(PointSet, vtkPointSet);
@@ -73,16 +73,17 @@ protected:
   ~vtkSVPointSetBoundaryMapper();
 
   int SetBoundaries() override; // Need to implement from BoundaryMapper
-  int CalculateEdgeLengths(vtkIntArray *actualIds); // Calculate square edge lengths
+  int CalculateEdgeLengths(
+      vtkIntArray *actualIds);             // Calculate square edge lengths
   int SetBoundary(vtkIntArray *actualIds); // Set the boundary
 
   vtkPointSet *PointSet;
   vtkDoubleArray *BoundaryLengths;
-  vtkIntArray    *PointSetBoundaryIds;
+  vtkIntArray *PointSetBoundaryIds;
 
 private:
-  vtkSVPointSetBoundaryMapper(const vtkSVPointSetBoundaryMapper&);
-  void operator=(const vtkSVPointSetBoundaryMapper&);
+  vtkSVPointSetBoundaryMapper(const vtkSVPointSetBoundaryMapper &);
+  void operator=(const vtkSVPointSetBoundaryMapper &);
 };
 
 #endif

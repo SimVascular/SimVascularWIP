@@ -37,8 +37,8 @@
 #include "vtkMath.h"
 #include "vtkMatrix4x4.h"
 #include "vtkObjectFactory.h"
-#include "vtkPolyData.h"
 #include "vtkPointData.h"
+#include "vtkPolyData.h"
 #include "vtkSmartPointer.h"
 #include "vtkTextureMapToSphere.h"
 #include "vtkTransform.h"
@@ -47,8 +47,8 @@
 #include "vtkSVGeneralUtils.h"
 #include "vtkSVGlobals.h"
 
-#include <iostream>
 #include <cmath>
+#include <iostream>
 
 // ----------------------
 // StandardNewMacro
@@ -58,8 +58,7 @@ vtkStandardNewMacro(vtkSVPlacePointsOnS2);
 // ----------------------
 // Constructor
 // ----------------------
-vtkSVPlacePointsOnS2::vtkSVPlacePointsOnS2()
-{
+vtkSVPlacePointsOnS2::vtkSVPlacePointsOnS2() {
   this->InitialPd = vtkPolyData::New();
   this->WorkPd = vtkPolyData::New();
 
@@ -71,14 +70,11 @@ vtkSVPlacePointsOnS2::vtkSVPlacePointsOnS2()
 // ----------------------
 // Destructor
 // ----------------------
-vtkSVPlacePointsOnS2::~vtkSVPlacePointsOnS2()
-{
-  if (this->InitialPd != nullptr)
-  {
+vtkSVPlacePointsOnS2::~vtkSVPlacePointsOnS2() {
+  if (this->InitialPd != nullptr) {
     this->InitialPd->Delete();
   }
-  if (this->WorkPd != nullptr)
-  {
+  if (this->WorkPd != nullptr) {
     this->WorkPd->Delete();
   }
 }
@@ -86,15 +82,14 @@ vtkSVPlacePointsOnS2::~vtkSVPlacePointsOnS2()
 // ----------------------
 // PrintSelf
 // ----------------------
-void vtkSVPlacePointsOnS2::PrintSelf(ostream& os, vtkIndent indent)
-{
+void vtkSVPlacePointsOnS2::PrintSelf(ostream &os, vtkIndent indent) {
   this->Superclass::PrintSelf(os, indent);
 
   os << indent << "Use custom axis align: " << this->UseCustomAxisAlign << "\n";
-  os << indent << "Z axis: " <<
-    this->ZAxis[0] << " " << this->ZAxis[1] << " " << this->ZAxis[2] << "\n";
-  os << indent << "X axis: " <<
-    this->XAxis[0] << " " << this->XAxis[1] << " " << this->XAxis[2] << "\n";
+  os << indent << "Z axis: " << this->ZAxis[0] << " " << this->ZAxis[1] << " "
+     << this->ZAxis[2] << "\n";
+  os << indent << "X axis: " << this->XAxis[0] << " " << this->XAxis[1] << " "
+     << this->XAxis[2] << "\n";
 }
 
 // ----------------------
@@ -102,18 +97,16 @@ void vtkSVPlacePointsOnS2::PrintSelf(ostream& os, vtkIndent indent)
 // ----------------------
 int vtkSVPlacePointsOnS2::RequestData(vtkInformation *vtkNotUsed(request),
                                       vtkInformationVector **inputVector,
-                                      vtkInformationVector *outputVector)
-{
+                                      vtkInformationVector *outputVector) {
   // get the input and output
   vtkPolyData *input1 = vtkPolyData::GetData(inputVector[0]);
   vtkPolyData *output = vtkPolyData::GetData(outputVector);
 
-  //Copy the input to operate on
+  // Copy the input to operate on
   this->InitialPd->DeepCopy(input1);
 
   // Run the filter
-  if (this->RunFilter() != SV_OK)
-  {
+  if (this->RunFilter() != SV_OK) {
     vtkErrorMacro("Filter failed");
     this->SetErrorCode(vtkErrorCode::UserError + 1);
     return SV_ERROR;
@@ -126,39 +119,33 @@ int vtkSVPlacePointsOnS2::RequestData(vtkInformation *vtkNotUsed(request),
 // ----------------------
 // RunFilter
 // ----------------------
-int vtkSVPlacePointsOnS2::RunFilter()
-{
+int vtkSVPlacePointsOnS2::RunFilter() {
   // Set the working pd
   this->WorkPd->SetPoints(this->InitialPd->GetPoints());
   this->WorkPd->SetPolys(this->InitialPd->GetPolys());
 
   // Move to origin
-  if (this->MoveToOrigin() != SV_OK)
-  {
+  if (this->MoveToOrigin() != SV_OK) {
     vtkErrorMacro("Couldn't move to origin\n");
     return SV_ERROR;
   }
 
   // Use custom axis to align object at origin
-  if (this->UseCustomAxisAlign)
-  {
-    if (this->RotateToCubeCenterAxis() != SV_OK)
-    {
+  if (this->UseCustomAxisAlign) {
+    if (this->RotateToCubeCenterAxis() != SV_OK) {
       vtkErrorMacro("Couldn't rotate\n");
       return SV_ERROR;
     }
   }
 
   // Scale to unit size using bounding box
-  if (this->ScaleToUnitCube() != SV_OK)
-  {
+  if (this->ScaleToUnitCube() != SV_OK) {
     vtkErrorMacro("Couldn't scale\n");
     return SV_ERROR;
   }
 
   // Use texture map to sphere
-  if (this->DumbMapToSphere() != SV_OK)
-  {
+  if (this->DumbMapToSphere() != SV_OK) {
     vtkErrorMacro("Point placement failed");
     return SV_ERROR;
   }
@@ -169,8 +156,7 @@ int vtkSVPlacePointsOnS2::RunFilter()
 // ----------------------
 // DumbMapToSphere
 // ----------------------
-int vtkSVPlacePointsOnS2::DumbMapToSphere()
-{
+int vtkSVPlacePointsOnS2::DumbMapToSphere() {
   // Texture map
   if (this->TextureMap() != SV_OK)
     return SV_ERROR;
@@ -185,8 +171,7 @@ int vtkSVPlacePointsOnS2::DumbMapToSphere()
 // ----------------------
 // TextureMap
 // ----------------------
-int vtkSVPlacePointsOnS2::TextureMap()
-{
+int vtkSVPlacePointsOnS2::TextureMap() {
   // Use vtk texture mapper
   vtkNew(vtkTextureMapToSphere, texturer);
   texturer->SetInputData(this->WorkPd);
@@ -201,16 +186,15 @@ int vtkSVPlacePointsOnS2::TextureMap()
 // ----------------------
 // ConvertTextureFieldToPolyData
 // ----------------------
-int vtkSVPlacePointsOnS2::ConvertTextureFieldToPolyData()
-{
+int vtkSVPlacePointsOnS2::ConvertTextureFieldToPolyData() {
   // Get texture coordinates
   vtkNew(vtkFloatArray, textureCoords);
-  textureCoords = vtkFloatArray::SafeDownCast(this->WorkPd->GetPointData()->GetArray("Texture Coordinates"));
+  textureCoords = vtkFloatArray::SafeDownCast(
+      this->WorkPd->GetPointData()->GetArray("Texture Coordinates"));
 
   // Loop through points
   int numPts = this->WorkPd->GetNumberOfPoints();
-  for (int i=0; i< numPts; i++)
-  {
+  for (int i = 0; i < numPts; i++) {
     // Get tuple at point
     double tPt[2];
     textureCoords->GetTuple(i, tPt);
@@ -231,12 +215,15 @@ int vtkSVPlacePointsOnS2::ConvertTextureFieldToPolyData()
 // ----------------------
 // RotateToCubeCenterAxis
 // ----------------------
-int vtkSVPlacePointsOnS2::RotateToCubeCenterAxis()
-{
+int vtkSVPlacePointsOnS2::RotateToCubeCenterAxis() {
   // Default axis
   double realY[3], realZ[3];
-  realY[0] = 0.0; realY[1] = 1.0; realY[2] = 0.0;
-  realZ[0] = 0.0; realZ[1] = 0.0; realZ[2] = 1.0;
+  realY[0] = 0.0;
+  realY[1] = 1.0;
+  realY[2] = 0.0;
+  realZ[0] = 0.0;
+  realZ[1] = 0.0;
+  realZ[2] = 1.0;
 
   // Compute new axis using custom axis
   double YAxis[3];
@@ -245,7 +232,7 @@ int vtkSVPlacePointsOnS2::RotateToCubeCenterAxis()
   vtkMath::Cross(this->ZAxis, this->XAxis, YAxis);
   vtkMath::Normalize(YAxis);
   double inZ[4], outZ[4], rotZ[3];
-  for (int i=0; i<3; i++)
+  for (int i = 0; i < 3; i++)
     inZ[i] = this->ZAxis[i];
   inZ[3] = 1.0;
 
@@ -255,7 +242,7 @@ int vtkSVPlacePointsOnS2::RotateToCubeCenterAxis()
   vtkSVGeneralUtils::GetRotationMatrix(YAxis, realY, rotMatrix0);
   vtkSVGeneralUtils::ApplyRotationMatrix(this->WorkPd, rotMatrix0);
   rotMatrix0->MultiplyPoint(inZ, outZ);
-  for (int i=0; i<3; i++)
+  for (int i = 0; i < 3; i++)
     rotZ[i] = outZ[i];
 
   // Need to rotation around the other axis to get to the right orientation
@@ -268,23 +255,21 @@ int vtkSVPlacePointsOnS2::RotateToCubeCenterAxis()
 // ----------------------
 // MoveToOrigin
 // ----------------------
-int vtkSVPlacePointsOnS2::MoveToOrigin()
-{
+int vtkSVPlacePointsOnS2::MoveToOrigin() {
   // Get mass center
   double massCenter[3];
   vtkSVGeneralUtils::ComputeMassCenter(this->WorkPd, massCenter);
 
   // Loop through points
   int numPts = this->WorkPd->GetNumberOfPoints();
-  for (int i=0; i<numPts; i++)
-  {
+  for (int i = 0; i < numPts; i++) {
     // Get point
     double pt[3];
     this->WorkPd->GetPoint(i, pt);
 
     // Move point
     double movePt[3];
-    for (int j=0; j<3; j++)
+    for (int j = 0; j < 3; j++)
       movePt[j] = pt[j] - massCenter[j];
 
     // Set new point location
@@ -297,16 +282,15 @@ int vtkSVPlacePointsOnS2::MoveToOrigin()
 // ----------------------
 // ScaleToUnitCube
 // ----------------------
-int vtkSVPlacePointsOnS2::ScaleToUnitCube()
-{
+int vtkSVPlacePointsOnS2::ScaleToUnitCube() {
   // GetBounds
   double bounds[6];
   this->WorkPd->GetBounds(bounds);
 
   // Get scale factors from bounds
-  double xScaleFactor = 1.0/(bounds[1]-bounds[0]);
-  double yScaleFactor = 1.0/(bounds[3]-bounds[2]);
-  double zScaleFactor = 1.0/4*(bounds[5]-bounds[4]);
+  double xScaleFactor = 1.0 / (bounds[1] - bounds[0]);
+  double yScaleFactor = 1.0 / (bounds[3] - bounds[2]);
+  double zScaleFactor = 1.0 / 4 * (bounds[5] - bounds[4]);
 
   // Set up transformer
   vtkNew(vtkTransform, transformer);

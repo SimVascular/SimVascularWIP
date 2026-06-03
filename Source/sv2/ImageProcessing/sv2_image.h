@@ -54,8 +54,8 @@ typedef struct {
 
 typedef struct {
   Pixel_T *pixels;
-  int imgDims[3];        // in pixels
-  double pixelDims[3];   // in physical units
+  int imgDims[3];      // in pixels
+  double pixelDims[3]; // in physical units
   char filebase[1000];
   int fileNumRange[2];
   int dim;
@@ -64,63 +64,61 @@ typedef struct {
   double lowerleft[3];
 } Image_T;
 
-typedef enum {
-  IMG_INTENSITY, IMG_GRADIX, IMG_GRADIY, IMG_GRADIZ
-} ImageData_T;
+typedef enum { IMG_INTENSITY, IMG_GRADIX, IMG_GRADIY, IMG_GRADIZ } ImageData_T;
 
+SV_EXPORT_IMAGE Image_T *ReadImage(char *filebase, int fileNumRange[],
+                                   char *imgTypeFlag, int imgDims[],
+                                   double pixelDims[]);
 
-SV_EXPORT_IMAGE Image_T *ReadImage( char *filebase, int fileNumRange[], char *imgTypeFlag,
-		    int imgDims[], double pixelDims[] );
+SV_EXPORT_IMAGE Image_T *CreateImage(void *data, int numData, char *imgTypeFlag,
+                                     int imgDims[], double pixelDims[]);
 
-SV_EXPORT_IMAGE Image_T *CreateImage( void *data, int numData, char *imgTypeFlag,
-		      int imgDims[], double pixelDims[] );
+SV_EXPORT_IMAGE void Image_Delete(Image_T *img);
 
-SV_EXPORT_IMAGE void Image_Delete( Image_T *img );
+SV_EXPORT_IMAGE double ComputePointSlope(Pixel_T *prev, Pixel_T *curr,
+                                         Pixel_T *next, Image_T *image,
+                                         int dimFlag);
 
-SV_EXPORT_IMAGE double ComputePointSlope( Pixel_T *prev, Pixel_T *curr, Pixel_T *next,
-                          Image_T *image, int dimFlag );
+SV_EXPORT_IMAGE void ComputeImageGrad(Image_T *image);
 
-SV_EXPORT_IMAGE void ComputeImageGrad( Image_T *image );
+SV_EXPORT_IMAGE double GetMaxGrad(Image_T *image);
 
-SV_EXPORT_IMAGE double GetMaxGrad( Image_T *image );
+SV_EXPORT_IMAGE void Img_GetMagGradRange(Image_T *image, double rng[]);
 
-SV_EXPORT_IMAGE void Img_GetMagGradRange( Image_T *image, double rng[] );
+SV_EXPORT_IMAGE void Img_GetXYMagGradRange(Image_T *image, double rng[]);
 
-SV_EXPORT_IMAGE void Img_GetXYMagGradRange( Image_T *image, double rng[] );
+SV_EXPORT_IMAGE void Img_GetZMagGradRange(Image_T *image, double rng[]);
 
-SV_EXPORT_IMAGE void Img_GetZMagGradRange( Image_T *image, double rng[] );
+SV_EXPORT_IMAGE void Img_GetIntensityRange(Image_T *image, double rng[]);
 
-SV_EXPORT_IMAGE void Img_GetIntensityRange( Image_T *image, double rng[] );
+SV_EXPORT_IMAGE void SetImageClosed(Image_T *image, int flag);
 
-SV_EXPORT_IMAGE void SetImageClosed( Image_T *image, int flag );
+SV_EXPORT_IMAGE int GetImageClosed(Image_T *image);
 
-SV_EXPORT_IMAGE int GetImageClosed( Image_T *image );
+SV_EXPORT_IMAGE void SetLowerLeft(Image_T *image, double pos[]);
 
-SV_EXPORT_IMAGE void SetLowerLeft( Image_T *image, double pos[] );
+SV_EXPORT_IMAGE void GetLowerLeft(Image_T *image, double pos[]);
 
-SV_EXPORT_IMAGE void GetLowerLeft( Image_T *image, double pos[] );
+SV_EXPORT_IMAGE int InBorder(Image_T *image, double pos[], int borderWd);
 
-SV_EXPORT_IMAGE int InBorder( Image_T *image, double pos[], int borderWd );
+SV_EXPORT_IMAGE void CloseImageGradBounds(Image_T *image);
 
-SV_EXPORT_IMAGE void CloseImageGradBounds( Image_T *image );
+SV_EXPORT_IMAGE int LinearInterp(Image_T *image, ImageData_T code, double pos[],
+                                 double *value);
 
-SV_EXPORT_IMAGE int LinearInterp( Image_T *image, ImageData_T code, double pos[],
-		  double *value );
+SV_EXPORT_IMAGE int GetIntensity(Image_T *image, double pos[], double *result);
 
-SV_EXPORT_IMAGE int GetIntensity( Image_T *image, double pos[], double *result );
+SV_EXPORT_IMAGE int GetGradIx(Image_T *image, double pos[], double *result);
 
-SV_EXPORT_IMAGE int GetGradIx( Image_T *image, double pos[], double *result );
+SV_EXPORT_IMAGE int GetGradIy(Image_T *image, double pos[], double *result);
 
-SV_EXPORT_IMAGE int GetGradIy( Image_T *image, double pos[], double *result );
+SV_EXPORT_IMAGE int GetGradIz(Image_T *image, double pos[], double *result);
 
-SV_EXPORT_IMAGE int GetGradIz( Image_T *image, double pos[], double *result );
+SV_EXPORT_IMAGE void WriteZSlice(Image_T *image, char *filename, int num,
+                                 char *imgTypeFlag, ImageData_T field);
 
-SV_EXPORT_IMAGE void WriteZSlice( Image_T *image, char *filename, int num,
-		  char *imgTypeFlag, ImageData_T field );
+SV_EXPORT_IMAGE int InRange(Image_T *image, double pos[]);
 
-SV_EXPORT_IMAGE int InRange( Image_T *image, double pos[] );
-
-SV_EXPORT_IMAGE int Img_GetMemoryUsage( Image_T *image );
-
+SV_EXPORT_IMAGE int Img_GetMemoryUsage(Image_T *image);
 
 #endif // __IMAGE_H

@@ -45,20 +45,20 @@
 #include "vtkLabeledDataMapper.h"
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
+#include "vtkPointData.h"
+#include "vtkPointLocator.h"
 #include "vtkPoints.h"
 #include "vtkPolyData.h"
 #include "vtkPolyDataMapper.h"
 #include "vtkPolyLine.h"
-#include "vtkPointData.h"
-#include "vtkPointLocator.h"
 #include "vtkProperty.h"
 #include "vtkSphereSource.h"
 #include "vtkThreshold.h"
 #include "vtkTriangleFilter.h"
 #include "vtkUnstructuredGrid.h"
 
-#include "vtkSVIOUtils.h"
 #include "vtkSVGlobals.h"
+#include "vtkSVIOUtils.h"
 
 // ----------------------
 // StandardNewMacro
@@ -68,8 +68,7 @@ vtkStandardNewMacro(vtkSVOpenProfilesSeedSelector);
 // ----------------------
 // Constructor
 // ----------------------
-vtkSVOpenProfilesSeedSelector::vtkSVOpenProfilesSeedSelector()
-{
+vtkSVOpenProfilesSeedSelector::vtkSVOpenProfilesSeedSelector() {
   this->SeedIds = vtkIdList::New();
 
   this->SVRenderer = vtkSVRenderer::New();
@@ -78,15 +77,12 @@ vtkSVOpenProfilesSeedSelector::vtkSVOpenProfilesSeedSelector()
 // ----------------------
 // Destructor
 // ----------------------
-vtkSVOpenProfilesSeedSelector::~vtkSVOpenProfilesSeedSelector()
-{
-  if (this->SeedIds != nullptr)
-  {
+vtkSVOpenProfilesSeedSelector::~vtkSVOpenProfilesSeedSelector() {
+  if (this->SeedIds != nullptr) {
     this->SeedIds->Delete();
     this->SeedIds = nullptr;
   }
-  if (this->SVRenderer != nullptr)
-  {
+  if (this->SVRenderer != nullptr) {
     this->SVRenderer->Delete();
     this->SVRenderer = nullptr;
   }
@@ -96,31 +92,28 @@ vtkSVOpenProfilesSeedSelector::~vtkSVOpenProfilesSeedSelector()
 // RequestData
 // ----------------------
 int vtkSVOpenProfilesSeedSelector::RequestData(
-  vtkInformation *vtkNotUsed(request),
-  vtkInformationVector **inputVector,
-  vtkInformationVector *outputVector)
-{
+    vtkInformation *vtkNotUsed(request), vtkInformationVector **inputVector,
+    vtkInformationVector *outputVector) {
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
 
-  vtkPolyData *input = vtkPolyData::SafeDownCast(
-    inInfo->Get(vtkDataObject::DATA_OBJECT()));
-  vtkPolyData *output = vtkPolyData::SafeDownCast(
-    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkPolyData *input =
+      vtkPolyData::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkPolyData *output =
+      vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
   this->SurfacePd->DeepCopy(input);
 
   if (this->SurfacePd->GetNumberOfPoints() == 0 ||
-      this->SurfacePd->GetNumberOfCells() == 0)
-  {
+      this->SurfacePd->GetNumberOfCells() == 0) {
     vtkErrorMacro("Not a valid input surface, need cells and points");
     return SV_ERROR;
   }
 
   vtkNew(vtkPoints, seedPoints);
-  for (int i=0; i<this->SeedIds->GetNumberOfIds(); i++)
-  {
-    seedPoints->InsertNextPoint(this->SurfacePd->GetPoint(this->SeedIds->GetId(i)));
+  for (int i = 0; i < this->SeedIds->GetNumberOfIds(); i++) {
+    seedPoints->InsertNextPoint(
+        this->SurfacePd->GetPoint(this->SeedIds->GetId(i)));
   }
 
   vtkNew(vtkPolyData, seedPolyData);
@@ -145,39 +138,38 @@ int vtkSVOpenProfilesSeedSelector::RequestData(
 
   this->SVRenderer->Render();
 
-  this->SVRenderer->SetTextInputQuery("Please input list of inlet profile ids: \n");
+  this->SVRenderer->SetTextInputQuery(
+      "Please input list of inlet profile ids: \n");
   this->SVRenderer->SetCurrentTextInput(nullptr);
   this->SVRenderer->UpdateTextInput();
   this->SVRenderer->EnterTextInputMode();
 
   std::string currentText = this->SVRenderer->GetCurrentTextInput();
-  if (currentText == "")
-  {
+  if (currentText == "") {
     vtkErrorMacro("Must provide a source seed");
     this->SetErrorCode(vtkErrorCode::UserError + 1);
     return SV_ERROR;
-  }
-  else
-  {
+  } else {
     std::string separator = " ";
     if (currentText.find(separator) == std::string::npos)
       separator = ",";
 
     size_t pos = 0;
     std::string textId;
-    while ((pos = currentText.find(separator)) != std::string::npos)
-    {
+    while ((pos = currentText.find(separator)) != std::string::npos) {
       textId = currentText.substr(0, pos);
-      //this->SourceSeedIds->InsertNextId(this->SeedIds->GetId(std::stoi(textId)));
+      // this->SourceSeedIds->InsertNextId(this->SeedIds->GetId(std::stoi(textId)));
       this->SourceSeedIds->InsertNextId(std::stoi(textId));
       currentText.erase(0, pos + separator.length());
     }
-    //this->SourceSeedIds->InsertNextId(this->SeedIds->GetId(std::stoi(currentText)));
+    // this->SourceSeedIds->InsertNextId(this->SeedIds->GetId(std::stoi(currentText)));
     this->SourceSeedIds->InsertNextId(std::stoi(currentText));
   }
   // Process info
 
-  this->SVRenderer->SetTextInputQuery("Please input list of outlet profile ids (leave empty for all available profiles): ");
+  this->SVRenderer->SetTextInputQuery(
+      "Please input list of outlet profile ids (leave empty for all available "
+      "profiles): ");
   this->SVRenderer->SetCurrentTextInput(nullptr);
   this->SVRenderer->UpdateTextInput();
   this->SVRenderer->EnterTextInputMode();
@@ -185,34 +177,28 @@ int vtkSVOpenProfilesSeedSelector::RequestData(
   // Process info
 
   currentText = this->SVRenderer->GetCurrentTextInput();
-  if (currentText == "")
-  {
-    for (int i=0; i<seedPoints->GetNumberOfPoints(); i++)
-    {
-      //if (this->SourceSeedIds->IsId(this->SeedIds->GetId(i)) == -1)
-      if (this->SourceSeedIds->IsId(i) == -1)
-      {
-        //this->TargetSeedIds->InsertNextId(this->SeedIds->GetId(i));
+  if (currentText == "") {
+    for (int i = 0; i < seedPoints->GetNumberOfPoints(); i++) {
+      // if (this->SourceSeedIds->IsId(this->SeedIds->GetId(i)) == -1)
+      if (this->SourceSeedIds->IsId(i) == -1) {
+        // this->TargetSeedIds->InsertNextId(this->SeedIds->GetId(i));
         this->TargetSeedIds->InsertNextId(i);
       }
     }
-  }
-  else
-  {
+  } else {
     std::string separator = " ";
     if (currentText.find(separator) == std::string::npos)
       separator = ",";
 
     size_t pos = 0;
     std::string textId;
-    while ((pos = currentText.find(separator)) != std::string::npos)
-    {
+    while ((pos = currentText.find(separator)) != std::string::npos) {
       textId = currentText.substr(0, pos);
-      //this->TargetSeedIds->InsertNextId(this->SeedIds->GetId(std::stoi(textId)));
+      // this->TargetSeedIds->InsertNextId(this->SeedIds->GetId(std::stoi(textId)));
       this->TargetSeedIds->InsertNextId(std::stoi(textId));
       currentText.erase(0, pos + separator.length());
     }
-    //this->TargetSeedIds->InsertNextId(this->SeedIds->GetId(std::stoi(currentText)));
+    // this->TargetSeedIds->InsertNextId(this->SeedIds->GetId(std::stoi(currentText)));
     this->TargetSeedIds->InsertNextId(std::stoi(currentText));
   }
 
@@ -222,7 +208,6 @@ int vtkSVOpenProfilesSeedSelector::RequestData(
 // ----------------------
 // PrintSelf
 // ----------------------
-void vtkSVOpenProfilesSeedSelector::PrintSelf(ostream& os, vtkIndent indent)
-{
-  this->Superclass::PrintSelf(os,indent);
+void vtkSVOpenProfilesSeedSelector::PrintSelf(ostream &os, vtkIndent indent) {
+  this->Superclass::PrintSelf(os, indent);
 }

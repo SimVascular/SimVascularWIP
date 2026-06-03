@@ -33,17 +33,13 @@
 
 #include "sv_DataSet.h"
 
-cvDataSet::cvDataSet( RepositoryDataT type ) : cvDataObject( type )
-{
-}
+cvDataSet::cvDataSet(RepositoryDataT type) : cvDataObject(type) {}
 
 // --------
 // ~cvDataObject
 // --------
 
-cvDataSet::~cvDataSet()
-{
-}
+cvDataSet::~cvDataSet() {}
 
 // -----------
 // ShallowCopy
@@ -53,16 +49,18 @@ cvDataSet::~cvDataSet()
 
 // See notes at constructor above.
 
-void cvDataSet::ShallowCopy( vtkDataSet *src )
-{
-  if ( data_ == nullptr ) {
+void cvDataSet::ShallowCopy(vtkDataSet *src) {
+  if (data_ == nullptr) {
     return;
   }
-  (static_cast<vtkDataSet*>(data_))->CopyStructure(src);
-  (static_cast<vtkDataSet*>(data_))->GetPointData()->PassData(src->GetPointData());
-  (static_cast<vtkDataSet*>(data_))->GetCellData()->PassData(src->GetCellData());
-  // not in vtk-6.0.0  (static_cast<vtkDataSet*>(data_))->CopyTypeSpecificInformation( src );
+  (static_cast<vtkDataSet *>(data_))->CopyStructure(src);
+  (static_cast<vtkDataSet *>(data_))
+      ->GetPointData()
+      ->PassData(src->GetPointData());
+  (static_cast<vtkDataSet *>(data_))
+      ->GetCellData()
+      ->PassData(src->GetCellData());
+  // not in vtk-6.0.0
+  // (static_cast<vtkDataSet*>(data_))->CopyTypeSpecificInformation( src );
   return;
 }
-
-

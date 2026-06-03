@@ -39,70 +39,61 @@
 #include "vtkInformation.h"
 #include "vtkObjectFactory.h"
 #include "vtkPolyData.h"
-#include "vtkTriangle.h"
-#include "vtkTriangleStrip.h"
 #include "vtkSVGlobals.h"
 #include "vtkSVNURBSVolume.h"
+#include "vtkTriangle.h"
+#include "vtkTriangleStrip.h"
 
 #if !defined(_WIN32) || defined(__CYGWIN__)
-# include <unistd.h> /* unlink */
+#include <unistd.h> /* unlink */
 #else
-# include <io.h> /* unlink */
+#include <io.h> /* unlink */
 #endif
 
 vtkStandardNewMacro(vtkSVPERIGEENURBSWriter);
 
-static char header[]="Visualization Toolkit generated SLA File                                        ";
+static char header[] = "Visualization Toolkit generated SLA File               "
+                       "                         ";
 
-vtkSVPERIGEENURBSWriter::vtkSVPERIGEENURBSWriter()
-{
-  this->FileName = nullptr;
-}
+vtkSVPERIGEENURBSWriter::vtkSVPERIGEENURBSWriter() { this->FileName = nullptr; }
 
-void vtkSVPERIGEENURBSWriter::WriteData()
-{
+void vtkSVPERIGEENURBSWriter::WriteData() {
   vtkSVNURBSObject *input = this->GetInput();
 
-  if (this->FileName == nullptr)
-  {
+  if (this->FileName == nullptr) {
     vtkErrorMacro(<< "Please specify FileName to write");
     this->SetErrorCode(vtkErrorCode::NoFileNameError);
     return;
   }
 
   this->WritePERIGEEFile(input);
-  if (this->ErrorCode == vtkErrorCode::OutOfDiskSpaceError)
-  {
-    vtkErrorMacro("Ran out of disk space; deleting file: "
-                  << this->FileName);
+  if (this->ErrorCode == vtkErrorCode::OutOfDiskSpaceError) {
+    vtkErrorMacro("Ran out of disk space; deleting file: " << this->FileName);
     unlink(this->FileName);
   }
 }
 
-void vtkSVPERIGEENURBSWriter::WritePERIGEEFile(vtkSVNURBSObject *object)
-{
+void vtkSVPERIGEENURBSWriter::WritePERIGEEFile(vtkSVNURBSObject *object) {
   FILE *fp;
   double v[3];
   int top[2];
   vtkIdType npts = 0;
   vtkIdType *indx = 0;
 
-  if (!strncmp(object->GetType().c_str(),"Volume",6))
-  {
+  if (!strncmp(object->GetType().c_str(), "Volume", 6)) {
     vtkSVNURBSVolume *volume = vtkSVNURBSVolume::SafeDownCast(object);
 
-    if ((fp = fopen(this->FileName, "w")) == nullptr)
-    {
+    if ((fp = fopen(this->FileName, "w")) == nullptr) {
       vtkErrorMacro(<< "Couldn't open file: " << this->FileName);
       this->SetErrorCode(vtkErrorCode::CannotOpenFileError);
       return;
     }
-  //
-  //  Write header
-  //
+    //
+    //  Write header
+    //
     vtkDebugMacro("Writing ASCII PERIGEE file");
-    fprintf(fp,"TYPE = NURBS\n");
-    fprintf(fp,"\n");
+    fprintf(fp, "TYPE = NURBS\n");
+    fprintf(fp, "\n");
 
     vtkDoubleArray *uKnots = volume->GetUKnotVector();
     vtkDoubleArray *vKnots = volume->GetVKnotVector();
@@ -123,98 +114,88 @@ void vtkSVPERIGEENURBSWriter::WritePERIGEEFile(vtkSVNURBSObject *object)
     int vdeg = volume->GetVDegree();
     int wdeg = volume->GetWDegree();
 
-  //
-  //  Knot vectors
-  //
-    fprintf(fp,"GLOBAL_S = [");
-    for (int i=0; i<nuk; i++)
-    {
-      fprintf(fp,"%.6f", uKnots->GetTuple1(i));
-      if (i<nuk-1)
-        fprintf(fp," ");
+    //
+    //  Knot vectors
+    //
+    fprintf(fp, "GLOBAL_S = [");
+    for (int i = 0; i < nuk; i++) {
+      fprintf(fp, "%.6f", uKnots->GetTuple1(i));
+      if (i < nuk - 1)
+        fprintf(fp, " ");
     }
-    fprintf(fp,"]\n");
+    fprintf(fp, "]\n");
 
-    fprintf(fp,"GLOBAL_T = [");
-    for (int i=0; i<nvk; i++)
-    {
-      fprintf(fp,"%.6f", vKnots->GetTuple1(i));
-      if (i<nvk-1)
-        fprintf(fp," ");
+    fprintf(fp, "GLOBAL_T = [");
+    for (int i = 0; i < nvk; i++) {
+      fprintf(fp, "%.6f", vKnots->GetTuple1(i));
+      if (i < nvk - 1)
+        fprintf(fp, " ");
     }
-    fprintf(fp,"]\n");
+    fprintf(fp, "]\n");
 
-    fprintf(fp,"GLOBAL_U = [");
-    for (int i=0; i<nwk; i++)
-    {
-      fprintf(fp,"%.6f", wKnots->GetTuple1(i));
-      if (i<nwk-1)
-        fprintf(fp," ");
+    fprintf(fp, "GLOBAL_U = [");
+    for (int i = 0; i < nwk; i++) {
+      fprintf(fp, "%.6f", wKnots->GetTuple1(i));
+      if (i < nwk - 1)
+        fprintf(fp, " ");
     }
-    fprintf(fp,"]\n");
-    fprintf(fp,"\n");
+    fprintf(fp, "]\n");
+    fprintf(fp, "\n");
 
-  //
-  //  Degrees
-  //
-    fprintf(fp,"DEGREE_S = %d\n", udeg);
-    fprintf(fp,"DEGREE_T = %d\n", vdeg);
-    fprintf(fp,"DEGREE_U = %d\n", wdeg);
-    fprintf(fp,"\n");
+    //
+    //  Degrees
+    //
+    fprintf(fp, "DEGREE_S = %d\n", udeg);
+    fprintf(fp, "DEGREE_T = %d\n", vdeg);
+    fprintf(fp, "DEGREE_U = %d\n", wdeg);
+    fprintf(fp, "\n");
 
-  //
-  //  Control points
-  //
-    fprintf(fp,"NUM_CP = %d\n", np*mp*lp);
-    for (int i=0;i<lp; i++)
-    {
-      for (int j=0; j<mp; j++)
-      {
-        for (int k=0; k<np; k++)
-        {
+    //
+    //  Control points
+    //
+    fprintf(fp, "NUM_CP = %d\n", np * mp * lp);
+    for (int i = 0; i < lp; i++) {
+      for (int j = 0; j < mp; j++) {
+        for (int k = 0; k < np; k++) {
           double pw[4];
           controlPoints->GetControlPoint(k, j, i, pw);
-          fprintf(fp,"%.6f %.6f %.6f %.6f\n", pw[0], pw[1], pw[2], pw[3]);
+          fprintf(fp, "%.6f %.6f %.6f %.6f\n", pw[0], pw[1], pw[2], pw[3]);
         }
       }
     }
 
-    if(fflush(fp))
-    {
+    if (fflush(fp)) {
       fclose(fp);
       this->SetErrorCode(vtkErrorCode::OutOfDiskSpaceError);
       return;
     }
-    fclose (fp);
+    fclose(fp);
   }
 }
 
 //----------------------------------------------------------------------------
-void vtkSVPERIGEENURBSWriter::PrintSelf(ostream& os, vtkIndent indent)
-{
-  this->Superclass::PrintSelf(os,indent);
+void vtkSVPERIGEENURBSWriter::PrintSelf(ostream &os, vtkIndent indent) {
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "FileName: "
-     << ((this->GetFileName() == nullptr) ?
-         "(none)" : this->GetFileName()) << std::endl;
+     << ((this->GetFileName() == nullptr) ? "(none)" : this->GetFileName())
+     << std::endl;
   os << indent << "Input: " << this->GetInput() << std::endl;
 }
 
 //----------------------------------------------------------------------------
-vtkSVNURBSObject* vtkSVPERIGEENURBSWriter::GetInput()
-{
+vtkSVNURBSObject *vtkSVPERIGEENURBSWriter::GetInput() {
   return vtkSVNURBSObject::SafeDownCast(this->GetInput(0));
 }
 
 //----------------------------------------------------------------------------
-vtkSVNURBSObject* vtkSVPERIGEENURBSWriter::GetInput(int port)
-{
+vtkSVNURBSObject *vtkSVPERIGEENURBSWriter::GetInput(int port) {
   return vtkSVNURBSObject::SafeDownCast(this->Superclass::GetInput(port));
 }
 
 //----------------------------------------------------------------------------
-int vtkSVPERIGEENURBSWriter::FillInputPortInformation(int, vtkInformation *info)
-{
+int vtkSVPERIGEENURBSWriter::FillInputPortInformation(int,
+                                                      vtkInformation *info) {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkSVNURBSObject");
   return 1;
 }

@@ -37,30 +37,30 @@
 
 #define maxOutput 10
 #define maxProp 10
-#include <map>
 #include <QStringList>
+#include <map>
 #include <vector>
 
-class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMultiPhysicsLinearSolverPreconditioner
-{
-  public:
-    static std::string FSILS;
-    static std::string ROW_COLUMN_SCALING;
-    static std::string TRILINOS_DIAGONAL;
-    static std::string TRILINOS_BLOCK_JACOBI;
-    static std::string TRILINOS_ILU;
-    static std::string TRILINOS_ILUT;
-    static std::string TRILINOS_IC;
-    static std::string TRILINOS_ICT;
-    static std::string TRILINOS_ML;
-    static std::vector<std::string> list;
+class SV4GUIMODULEMULTIPHYSICS_EXPORT
+    sv4guiMultiPhysicsLinearSolverPreconditioner {
+public:
+  static std::string FSILS;
+  static std::string ROW_COLUMN_SCALING;
+  static std::string TRILINOS_DIAGONAL;
+  static std::string TRILINOS_BLOCK_JACOBI;
+  static std::string TRILINOS_ILU;
+  static std::string TRILINOS_ILUT;
+  static std::string TRILINOS_IC;
+  static std::string TRILINOS_ICT;
+  static std::string TRILINOS_ML;
+  static std::vector<std::string> list;
 };
 
 //--------------------
 // sv4guiMultiPhysicseqClass
 //--------------------
-// The sv4guiMultiPhysicseqClass is used to store properties for different simulation
-// physics: fluid, solid, FSI, etc.
+// The sv4guiMultiPhysicseqClass is used to store properties for different
+// simulation physics: fluid, solid, FSI, etc.
 //
 // Equation specific properties are store in
 //
@@ -68,111 +68,109 @@ class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMultiPhysicsLinearSolverPrecondition
 //
 //    double propVal[maxProp];
 //
-// Warning: Property names and values are referenced using an interger index into
-// propNames[] and propVal[] so values stored at a given index must match.
+// Warning: Property names and values are referenced using an interger index
+// into propNames[] and propVal[] so values stored at a given index must match.
 // propNames[] sets the GUI widget label name in the Physics/Properties panel.
 //
 // See sv4guiMultiPhysicsView::SelectEquation().
 //
-class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMultiPhysicseqClass
-{
-  public:
-    sv4guiMultiPhysicseqClass(const QString& eq="none");
-    sv4guiMultiPhysicseqClass(const sv4guiMultiPhysicseqClass& iEq) { *this = iEq; }
-    ~sv4guiMultiPhysicseqClass();
+class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMultiPhysicseqClass {
+public:
+  sv4guiMultiPhysicseqClass(const QString &eq = "none");
+  sv4guiMultiPhysicseqClass(const sv4guiMultiPhysicseqClass &iEq) {
+    *this = iEq;
+  }
+  ~sv4guiMultiPhysicseqClass();
 
-    // get and set functions for few common data between equations
-    void setCoupled(const bool& coupledIn) { coupled = coupledIn; }
-    void setMaxItr(const int& maxItrIn) { maxItr = maxItrIn; }
-    void setMinItr(const int& minItrIn) { minItr = minItrIn; }
-    void setTol(const QString& tolIn) { tol = tolIn; }
-    void setdBr(const double& dBrIn) { dBr = dBrIn; }
+  // get and set functions for few common data between equations
+  void setCoupled(const bool &coupledIn) { coupled = coupledIn; }
+  void setMaxItr(const int &maxItrIn) { maxItr = maxItrIn; }
+  void setMinItr(const int &minItrIn) { minItr = minItrIn; }
+  void setTol(const QString &tolIn) { tol = tolIn; }
+  void setdBr(const double &dBrIn) { dBr = dBrIn; }
 
-    bool getCoupled() const { return coupled; }
-    int getMaxItr() const { return maxItr; }
-    int getMinItr() const { return minItr; }
-    QString getTol() const { return tol; }
-    double getdBr() const { return dBr; }
-    QString getPhysName() const { return physName; }
-    QString getDomainName() const { return domainName; }
+  bool getCoupled() const { return coupled; }
+  int getMaxItr() const { return maxItr; }
+  int getMinItr() const { return minItr; }
+  QString getTol() const { return tol; }
+  double getdBr() const { return dBr; }
+  QString getPhysName() const { return physName; }
+  QString getDomainName() const { return domainName; }
 
-    // output related functions
-    bool getOutput(const QString& outputName ) const
-    {
-        int indx=searchOutput(outputName);
-        if(indx>-1)
-            return isOutsputed[indx];
-        else
-            return false;
-    }
+  // output related functions
+  bool getOutput(const QString &outputName) const {
+    int indx = searchOutput(outputName);
+    if (indx > -1)
+      return isOutsputed[indx];
+    else
+      return false;
+  }
 
-    void setOutput(const QString& outputName, const bool flag)
-    {
-        int indx=searchOutput(outputName);
-        if(indx>-1)
-            isOutsputed[indx] = flag;
-    }
-    void setOutputs( const QStringList& outputNameList );
-    const QStringList getOutputNames() const;
-    const QStringList getOutputCandidates() const;
+  void setOutput(const QString &outputName, const bool flag) {
+    int indx = searchOutput(outputName);
+    if (indx > -1)
+      isOutsputed[indx] = flag;
+  }
+  void setOutputs(const QStringList &outputNameList);
+  const QStringList getOutputNames() const;
+  const QStringList getOutputCandidates() const;
 
-    // properties related functions
-    int getPropCount() const { return propNames.length(); }
-    const QString getPropName(const int i ) const { return propNames.at(i); }
-    double getPropValue( const int i ) const { return propVal[i]; }
-    void setPropValue( const double val, const int i ) { propVal[i] = val; }
-    void setPropValue( const double value, const QString propName);
+  // properties related functions
+  int getPropCount() const { return propNames.length(); }
+  const QString getPropName(const int i) const { return propNames.at(i); }
+  double getPropValue(const int i) const { return propVal[i]; }
+  void setPropValue(const double val, const int i) { propVal[i] = val; }
+  void setPropValue(const double value, const QString propName);
 
-    // Common properties
-    bool coupled;
-    int maxItr;
-    int minItr;
-    QString tol;
-    double dBr;
-    QString fullName;
-    QString physName;
+  // Common properties
+  bool coupled;
+  int maxItr;
+  int minItr;
+  QString tol;
+  double dBr;
+  QString fullName;
+  QString physName;
 
-    // Outputs
-    QStringList outputNames;
-    bool isOutsputed[maxOutput];
+  // Outputs
+  QStringList outputNames;
+  bool isOutsputed[maxOutput];
 
-    // Equation specific properties
-    QStringList propNames;
-    double propVal[maxProp];
+  // Equation specific properties
+  QStringList propNames;
+  double propVal[maxProp];
 
-    QString constitutiveModel;
+  QString constitutiveModel;
 
-    double backflowStab; //for fluid
+  double backflowStab; // for fluid
 
-    //linear solver
-    QString lsType;
-    int lsMaxItr;
-    QString lsTol;
-    int lsNSGMMaxItr;
-    QString lsNSGMTol;
-    int lsNSCGMaxItr;
-    QString lsNSCGTol;
-    int lsKrylovDim;
-    QString lsAbsoluteTol;
-    QString lsPreconditioner;
+  // linear solver
+  QString lsType;
+  int lsMaxItr;
+  QString lsTol;
+  int lsNSGMMaxItr;
+  QString lsNSGMTol;
+  int lsNSCGMaxItr;
+  QString lsNSCGTol;
+  int lsKrylovDim;
+  QString lsAbsoluteTol;
+  QString lsPreconditioner;
 
-    //remesher
-    QString remesher;//Tetgen, Meshsim
-    std::map<std::string, double> rmMaxEdgeSizes; //domain name, size
-    double rmMinAngle;
-    double rmMaxRadiusRatio;
-    int rmFrequency;
-    int rmCopyFrequency;
+  // remesher
+  QString remesher;                             // Tetgen, Meshsim
+  std::map<std::string, double> rmMaxEdgeSizes; // domain name, size
+  double rmMinAngle;
+  double rmMaxRadiusRatio;
+  int rmFrequency;
+  int rmCopyFrequency;
 
-    //    QList<sv4guiMultiPhysicsbcClass> bcs;
-    std::map<std::string, sv4guiMultiPhysicsbcClass> faceBCs;
+  //    QList<sv4guiMultiPhysicsbcClass> bcs;
+  std::map<std::string, sv4guiMultiPhysicsbcClass> faceBCs;
 
-    QString domainName;
+  QString domainName;
 
-    QString domainName2; //for FSI
+  QString domainName2; // for FSI
 
-    int searchOutput(const QString& outputName) const;
-
+  int searchOutput(const QString &outputName) const;
 };
 
 #endif // SV4GUI_MULTIPHYSICSEQCLASS_H

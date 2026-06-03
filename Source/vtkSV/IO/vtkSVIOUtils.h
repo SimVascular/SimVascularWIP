@@ -51,14 +51,13 @@
 #include "vtkStructuredGrid.h"
 #include "vtkUnstructuredGrid.h"
 
-#include <string>
-#include <sstream>
 #include <iostream>
+#include <sstream>
+#include <string>
 
-class VTKSVIO_EXPORT vtkSVIOUtils : public vtkObject
-{
+class VTKSVIO_EXPORT vtkSVIOUtils : public vtkObject {
 public:
-  vtkTypeMacro(vtkSVIOUtils,vtkObject);
+  vtkTypeMacro(vtkSVIOUtils, vtkObject);
 
   /// \brief Check directory exists
   static int CheckDirectoryExists(std::string dirname);
@@ -67,12 +66,17 @@ public:
   static int CheckFileExists(std::string filename);
 
   // String processing functions
-  static std::string IntToString(int i); /**< \brief Converts integer to string. */
-  static std::string GetPath(std::string fullName); /**< \brief Gets filename path. */
-  static std::string GetRawName(std::string fullName); /**< \brief Gets filename raw name without extension. */
-  static std::string GetExt(std::string fullName); /**< \brief Gets filename extension (e.g. vtp). */
+  static std::string
+  IntToString(int i); /**< \brief Converts integer to string. */
+  static std::string
+  GetPath(std::string fullName); /**< \brief Gets filename path. */
+  static std::string
+  GetRawName(std::string fullName); /**< \brief Gets filename raw name without
+                                       extension. */
+  static std::string GetExt(
+      std::string fullName); /**< \brief Gets filename extension (e.g. vtp). */
 
-  //Read Write functions for stl, vtp
+  // Read Write functions for stl, vtp
   /** \brief read an stl file. */
   static int ReadSTLFile(std::string inputFilename, vtkPolyData *polydata);
 
@@ -83,29 +87,39 @@ public:
   static int ReadVTUFile(std::string inputFilename, vtkUnstructuredGrid *grid);
 
   /** \brief read a raw file. */
-  static int ReadPolyDataRawFile(std::string inputFilename, vtkPolyData *polydata);
+  static int ReadPolyDataRawFile(std::string inputFilename,
+                                 vtkPolyData *polydata);
 
   /** \brief read a raw file. */
-  static int ReadUnstructuredGridRawFile(std::string inputFilename, vtkUnstructuredGrid *unstructuredgrid);
+  static int ReadUnstructuredGridRawFile(std::string inputFilename,
+                                         vtkUnstructuredGrid *unstructuredgrid);
   /** \brief read an stl or polydata file. */
   static int ReadInputFile(std::string inputFilename, vtkPolyData *polydata);
 
   //@{
   /** \brief write a vtp file. */
-  static int WriteVTPFile(std::string outputFilename, vtkPolyData *writePolyData);
-  static int WriteVTPFile(std::string inputFilename, vtkPolyData *writePolyData,std::string attachName);
+  static int WriteVTPFile(std::string outputFilename,
+                          vtkPolyData *writePolyData);
+  static int WriteVTPFile(std::string inputFilename, vtkPolyData *writePolyData,
+                          std::string attachName);
   //@}
 
   //@{
   /** \brief write a vtu file. */
-  static int WriteVTUFile(std::string outputFilename, vtkUnstructuredGrid *writeUnstructuredGrid);
-  static int WriteVTUFile(std::string inputFilename, vtkUnstructuredGrid *writeUnstructuredGrid,std::string attachName);
+  static int WriteVTUFile(std::string outputFilename,
+                          vtkUnstructuredGrid *writeUnstructuredGrid);
+  static int WriteVTUFile(std::string inputFilename,
+                          vtkUnstructuredGrid *writeUnstructuredGrid,
+                          std::string attachName);
   //@}
 
   //@{
   /** \brief write a vts file. */
-  static int WriteVTSFile(std::string outputFilename, vtkStructuredGrid *writeStructuredGrid);
-  static int WriteVTSFile(std::string inputFilename,vtkStructuredGrid *writeStructuredGrid,std::string attachName);
+  static int WriteVTSFile(std::string outputFilename,
+                          vtkStructuredGrid *writeStructuredGrid);
+  static int WriteVTSFile(std::string inputFilename,
+                          vtkStructuredGrid *writeStructuredGrid,
+                          std::string attachName);
   //@}
 
   //@{
@@ -116,8 +130,10 @@ public:
 
   //@{
   /** \brief write a raw file. */
-  static int WriteRawFile(std::string outputFilename, vtkPolyData *writePolyData);
-  static int WriteRawFile(std::string inputFilename,vtkPolyData *writePolyData,std::string attachName);
+  static int WriteRawFile(std::string outputFilename,
+                          vtkPolyData *writePolyData);
+  static int WriteRawFile(std::string inputFilename, vtkPolyData *writePolyData,
+                          std::string attachName);
   //@}
 
 protected:
@@ -125,8 +141,8 @@ protected:
   ~vtkSVIOUtils();
 
 private:
-  vtkSVIOUtils(const vtkSVIOUtils&);  // Not implemented.
-  void operator=(const vtkSVIOUtils&);  // Not implemented.
+  vtkSVIOUtils(const vtkSVIOUtils &);   // Not implemented.
+  void operator=(const vtkSVIOUtils &); // Not implemented.
 };
 
 #endif

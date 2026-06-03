@@ -42,8 +42,8 @@
 
 #include "vtkSVGlobals.h"
 
-#include <sstream>
 #include <map>
+#include <sstream>
 
 // ----------------------
 // StandardNewMacro
@@ -53,19 +53,16 @@ vtkStandardNewMacro(vtkSVSquareBoundaryMapper);
 // ----------------------
 // SetBoundaries
 // ----------------------
-int vtkSVSquareBoundaryMapper::SetBoundaries()
-{
+int vtkSVSquareBoundaryMapper::SetBoundaries() {
   // Calculate edge lengths using chord length
   vtkNew(vtkIntArray, actualIds);
-  if (this->CalculateSquareEdgeLengths(actualIds) != SV_OK)
-  {
+  if (this->CalculateSquareEdgeLengths(actualIds) != SV_OK) {
     vtkErrorMacro("Didn't work");
     return SV_ERROR;
   }
 
   // Set the boundary
-  if (!this->SetSquareBoundary(actualIds))
-  {
+  if (!this->SetSquareBoundary(actualIds)) {
     vtkErrorMacro("Was not able to set boundary");
     return SV_ERROR;
   }
@@ -76,14 +73,15 @@ int vtkSVSquareBoundaryMapper::SetBoundaries()
 // ----------------------
 // CalculateSquareEdgeLengths
 // ----------------------
-int vtkSVSquareBoundaryMapper::CalculateSquareEdgeLengths(vtkIntArray *actualIds)
-{
+int vtkSVSquareBoundaryMapper::CalculateSquareEdgeLengths(
+    vtkIntArray *actualIds) {
   // Get full point ids
-  vtkDataArray *pointIds = this->BoundaryLoop->GetPointData()->GetArray(this->InternalIdsArrayName);
+  vtkDataArray *pointIds =
+      this->BoundaryLoop->GetPointData()->GetArray(this->InternalIdsArrayName);
   int numLines = this->BoundaryLoop->GetNumberOfLines();
 
   // Initialize boundary lengths to zero
-  for (int i=0; i<4; i++)
+  for (int i = 0; i < 4; i++)
     this->BoundaryLengths[i] = 0.0;
 
   // Set up the array for point ids on the actual boundary polydata
@@ -92,17 +90,15 @@ int vtkSVSquareBoundaryMapper::CalculateSquareEdgeLengths(vtkIntArray *actualIds
 
   // Loop through boundaries
   int currCell = 0;
-  for (int i=0; i<4; i++)
-  {
+  for (int i = 0; i < 4; i++) {
     // Update variables
     vtkIdType npts;
     const vtkIdType *pts;
     int checkPt = -1;
-    int done=0;
+    int done = 0;
 
     // Go till we can't no more
-    while (!done)
-    {
+    while (!done) {
       // Get cell points
       this->BoundaryLoop->GetCellPoints(currCell, npts, pts);
 
@@ -113,19 +109,16 @@ int vtkSVSquareBoundaryMapper::CalculateSquareEdgeLengths(vtkIntArray *actualIds
 
       // See if we found a boundary point!
       checkPt = pts[1];
-      for (int j=0; j<4; j++)
-      {
-        if (checkPt == pointIds->LookupValue(this->BoundaryIds->GetValue(j)))
-        {
-          actualIds->SetValue((i+1)%4, pointIds->GetTuple1(checkPt));
+      for (int j = 0; j < 4; j++) {
+        if (checkPt == pointIds->LookupValue(this->BoundaryIds->GetValue(j))) {
+          actualIds->SetValue((i + 1) % 4, pointIds->GetTuple1(checkPt));
           done = 1;
         }
       }
 
       // Update the distance
-      double dist = sqrt(pow(pt0[0]-pt1[0], 2.0) +
-                         pow(pt0[1]-pt1[1], 2.0) +
-                         pow(pt0[2]-pt1[2], 2.0));
+      double dist = sqrt(pow(pt0[0] - pt1[0], 2.0) + pow(pt0[1] - pt1[1], 2.0) +
+                         pow(pt0[2] - pt1[2], 2.0));
       this->BoundaryLengths[i] += dist;
 
       // Get the next cell
@@ -139,14 +132,14 @@ int vtkSVSquareBoundaryMapper::CalculateSquareEdgeLengths(vtkIntArray *actualIds
 // ----------------------
 // SetSquareBoundary
 // ----------------------
-int vtkSVSquareBoundaryMapper::SetSquareBoundary(vtkIntArray *actualIds)
-{
+int vtkSVSquareBoundaryMapper::SetSquareBoundary(vtkIntArray *actualIds) {
   // Get full point ids on boundary
-  vtkDataArray *pointIds = this->BoundaryLoop->GetPointData()->GetArray(this->InternalIdsArrayName);
+  vtkDataArray *pointIds =
+      this->BoundaryLoop->GetPointData()->GetArray(this->InternalIdsArrayName);
 
   // Set up the coordinates to lay down
   double currCoords[3];
-  for (int i=0; i<3; i++)
+  for (int i = 0; i < 3; i++)
     currCoords[i] = 0.0;
 
   // Set up our new data set
@@ -159,8 +152,7 @@ int vtkSVSquareBoundaryMapper::SetSquareBoundary(vtkIntArray *actualIds)
   int checkPt = -1;
 
   // Loop through boundary points
-  for (int i=0; i<4; i++)
-  {
+  for (int i = 0; i < 4; i++) {
 
     // Update variables
     double currLength = 0.0;
@@ -168,11 +160,10 @@ int vtkSVSquareBoundaryMapper::SetSquareBoundary(vtkIntArray *actualIds)
     const vtkIdType *pts;
 
     // Get the id we are looking fo
-    int lastPt  = pointIds->LookupValue(actualIds->GetValue((i+1)%4));
+    int lastPt = pointIds->LookupValue(actualIds->GetValue((i + 1) % 4));
 
     // Go till we can't no more
-    while (checkPt != lastPt)
-    {
+    while (checkPt != lastPt) {
       // Get cell points
       this->BoundaryLoop->GetCellPoints(currCell, npts, pts);
 
@@ -184,21 +175,20 @@ int vtkSVSquareBoundaryMapper::SetSquareBoundary(vtkIntArray *actualIds)
       // Set the current  point
       checkPt = pts[1];
 
-      double dist = sqrt(pow(pt0[0]-pt1[0], 2.0) +
-                         pow(pt0[1]-pt1[1], 2.0) +
-                         pow(pt0[2]-pt1[2], 2.0));
+      double dist = sqrt(pow(pt0[0] - pt1[0], 2.0) + pow(pt0[1] - pt1[1], 2.0) +
+                         pow(pt0[2] - pt1[2], 2.0));
       currLength += dist;
 
       // Based on which edge we are on, update the coordinates to lay down
       // on the plane
       if (i == 0)
-        currCoords[0] += dist/this->BoundaryLengths[i] * unitLength;
+        currCoords[0] += dist / this->BoundaryLengths[i] * unitLength;
       else if (i == 1)
-        currCoords[1] += dist/this->BoundaryLengths[i] * unitLength;
+        currCoords[1] += dist / this->BoundaryLengths[i] * unitLength;
       else if (i == 2)
-        currCoords[0] -= dist/this->BoundaryLengths[i] * unitLength;
+        currCoords[0] -= dist / this->BoundaryLengths[i] * unitLength;
       else
-        currCoords[1] -= dist/this->BoundaryLengths[i] * unitLength;
+        currCoords[1] -= dist / this->BoundaryLengths[i] * unitLength;
 
       // Set the points and data for the boundary
       newPoints->InsertNextPoint(currCoords);
@@ -211,12 +201,11 @@ int vtkSVSquareBoundaryMapper::SetSquareBoundary(vtkIntArray *actualIds)
 
   // Set up cells now that we have points, trivial
   vtkNew(vtkCellArray, newCells);
-  int i=0;
-  for (i=0; i<newPoints->GetNumberOfPoints()-1; i++)
-  {
+  int i = 0;
+  for (i = 0; i < newPoints->GetNumberOfPoints() - 1; i++) {
     newCells->InsertNextCell(2);
     newCells->InsertCellPoint(i);
-    newCells->InsertCellPoint(i+1);
+    newCells->InsertCellPoint(i + 1);
   }
   newCells->InsertNextCell(2);
   newCells->InsertCellPoint(i);
@@ -234,11 +223,10 @@ int vtkSVSquareBoundaryMapper::SetSquareBoundary(vtkIntArray *actualIds)
 // ----------------------
 // PrintSelf
 // ----------------------
-void vtkSVSquareBoundaryMapper::PrintSelf(ostream& os, vtkIndent indent)
-{
-  this->Superclass::PrintSelf(os,indent);
+void vtkSVSquareBoundaryMapper::PrintSelf(ostream &os, vtkIndent indent) {
+  this->Superclass::PrintSelf(os, indent);
 
-  os << indent << "Boundary Lengths: " <<
-    this->BoundaryLengths[0] << " " << this->BoundaryLengths[1] <<
-    " " << this->BoundaryLengths[2] << this->BoundaryLengths[3] << "\n";
+  os << indent << "Boundary Lengths: " << this->BoundaryLengths[0] << " "
+     << this->BoundaryLengths[1] << " " << this->BoundaryLengths[2]
+     << this->BoundaryLengths[3] << "\n";
 }

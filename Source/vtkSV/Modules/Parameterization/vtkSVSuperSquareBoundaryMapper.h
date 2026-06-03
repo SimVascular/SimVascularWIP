@@ -54,17 +54,18 @@
 
 #include "vtkSVBoundaryMapper.h"
 
-class VTKSVPARAMETERIZATION_EXPORT vtkSVSuperSquareBoundaryMapper : public vtkSVBoundaryMapper
-{
+class VTKSVPARAMETERIZATION_EXPORT vtkSVSuperSquareBoundaryMapper
+    : public vtkSVBoundaryMapper {
 public:
-  static vtkSVSuperSquareBoundaryMapper* New();
-  vtkTypeMacro(vtkSVSuperSquareBoundaryMapper,vtkSVBoundaryMapper);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  static vtkSVSuperSquareBoundaryMapper *New();
+  vtkTypeMacro(vtkSVSuperSquareBoundaryMapper, vtkSVBoundaryMapper);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
-  /// \brief Vector describing how many divisions on each of the four boundaries.
-  /// \detailsThe total number of divisions should be equal to the total number of
-  /// boundary ids minus four (the four corners)
+  /// \brief Vector describing how many divisions on each of the four
+  /// boundaries.
+  /// \detailsThe total number of divisions should be equal to the total number
+  /// of boundary ids minus four (the four corners)
   vtkSetVector4Macro(SuperBoundaryDivisions, int);
   vtkGetVector4Macro(SuperBoundaryDivisions, int);
   //@}
@@ -80,7 +81,8 @@ protected:
   ~vtkSVSuperSquareBoundaryMapper();
 
   int SetBoundaries() override; // Need to implement from BoundaryMapper
-  int CalculateSquareEdgeLengths(vtkIntArray *actualIds); // Calculate square edge lengths
+  int CalculateSquareEdgeLengths(
+      vtkIntArray *actualIds); // Calculate square edge lengths
   int SetSquareBoundary(vtkIntArray *actualIds); // Set the boundary
 
   vtkDoubleArray *BoundaryLengths;
@@ -88,8 +90,8 @@ protected:
   double SuperBoundaryLengths[4];
 
 private:
-  vtkSVSuperSquareBoundaryMapper(const vtkSVSuperSquareBoundaryMapper&);
-  void operator=(const vtkSVSuperSquareBoundaryMapper&);
+  vtkSVSuperSquareBoundaryMapper(const vtkSVSuperSquareBoundaryMapper &);
+  void operator=(const vtkSVSuperSquareBoundaryMapper &);
 };
 
 #endif

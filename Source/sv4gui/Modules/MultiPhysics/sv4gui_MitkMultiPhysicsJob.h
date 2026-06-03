@@ -32,7 +32,6 @@
 // The 'sv4guiMitkMultiPhysicsJob' class a mitk::BaseData derived class used to
 // represent a MultiPhysics job SV Data Manager data node.
 
-
 #ifndef sv4guiMitkMultiPhysicsJOB_H
 #define sv4guiMitkMultiPhysicsJOB_H
 
@@ -42,75 +41,73 @@
 
 #include <mitkBaseData.h>
 
-class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMitkMultiPhysicsJob : public mitk::BaseData
-{
+class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMitkMultiPhysicsJob
+    : public mitk::BaseData {
 public:
+  mitkClassMacro(sv4guiMitkMultiPhysicsJob, mitk::BaseData);
+  itkFactorylessNewMacro(Self) itkCloneMacro(Self)
 
-    mitkClassMacro(sv4guiMitkMultiPhysicsJob, mitk::BaseData);
-    itkFactorylessNewMacro(Self)
-    itkCloneMacro(Self)
+      virtual void Expand(unsigned int timeSteps = 1) override;
+  //    virtual void ExecuteOperation(mitk::Operation *operation) override;
+  virtual bool IsEmptyTimeStep(unsigned int t) const override;
+  virtual unsigned int GetTimeSize() const;
+  void CalculateBoundingBox(double *bounds, unsigned int t = 0);
 
-    virtual void Expand( unsigned int timeSteps = 1 ) override;
-//    virtual void ExecuteOperation(mitk::Operation *operation) override;
-    virtual bool IsEmptyTimeStep(unsigned int t) const override;
-    virtual unsigned int GetTimeSize() const;
-    void CalculateBoundingBox(double *bounds,unsigned int t = 0 );
+  virtual void UpdateOutputInformation() override;
+  virtual void SetRequestedRegionToLargestPossibleRegion() override;
+  virtual bool RequestedRegionIsOutsideOfTheBufferedRegion() override;
+  virtual bool VerifyRequestedRegion() override;
+  virtual void SetRequestedRegion(const itk::DataObject *data) override;
 
-    virtual void UpdateOutputInformation() override;
-    virtual void SetRequestedRegionToLargestPossibleRegion() override;
-    virtual bool RequestedRegionIsOutsideOfTheBufferedRegion() override;
-    virtual bool VerifyRequestedRegion() override;
-    virtual void SetRequestedRegion(const itk::DataObject *data) override;
+  sv4guiMultiPhysicsJob *GetSimJob(unsigned int t = 0) const;
 
-    sv4guiMultiPhysicsJob* GetSimJob(unsigned int t=0) const;
+  void SetSimJob(sv4guiMultiPhysicsJob *job, unsigned int t = 0);
 
-    void SetSimJob(sv4guiMultiPhysicsJob* job, unsigned int t=0);
+  void SetMeshName(std::string meshName);
 
-    void SetMeshName(std::string meshName);
+  std::string GetMeshName() const;
 
-    std::string GetMeshName() const;
+  void SetModelName(std::string modelName);
 
-    void SetModelName(std::string modelName);
+  std::string GetModelName() const;
 
-    std::string GetModelName() const;
+  std::string GetStatus() const;
 
-    std::string GetStatus() const;
+  void SetStatus(std::string status);
 
-    void SetStatus(std::string status);
+  bool IsDataModified() { return m_DataModified; }
+  void SetDataModified(bool modified = true) { m_DataModified = modified; }
 
-    bool IsDataModified(){return m_DataModified;}
-    void SetDataModified(bool modified = true){m_DataModified=modified;}
+  int GetProcessNumber() const { return m_ProcessNumber; }
+  void SetProcessNumber(int number) { m_ProcessNumber = number; }
 
-    int GetProcessNumber() const {return m_ProcessNumber;}
-    void SetProcessNumber(int number) {m_ProcessNumber=number;}
+protected:
+  mitkCloneMacro(Self);
 
-  protected:
+  sv4guiMitkMultiPhysicsJob();
+  sv4guiMitkMultiPhysicsJob(const sv4guiMitkMultiPhysicsJob &other);
+  virtual ~sv4guiMitkMultiPhysicsJob();
 
-    mitkCloneMacro(Self);
+  //    virtual void PrintSelf(std::ostream& os, itk::Indent indent) const
+  //    override;
+  virtual void ClearData() override;
+  virtual void InitializeEmpty() override;
 
-    sv4guiMitkMultiPhysicsJob();
-    sv4guiMitkMultiPhysicsJob(const sv4guiMitkMultiPhysicsJob &other);
-    virtual ~sv4guiMitkMultiPhysicsJob();
+  std::vector<sv4guiMultiPhysicsJob *> m_JobSet;
 
-//    virtual void PrintSelf(std::ostream& os, itk::Indent indent) const override;
-    virtual void ClearData() override;
-    virtual void InitializeEmpty() override;
+  bool m_CalculateBoundingBox;
 
-    std::vector<sv4guiMultiPhysicsJob*> m_JobSet;
+  std::string m_MeshName;
 
-    bool m_CalculateBoundingBox;
+  std::string m_ModelName;
 
-    std::string m_MeshName;
+  std::string m_Status;
 
-    std::string m_ModelName;
+  bool m_DataModified;
 
-    std::string m_Status;
-
-    bool m_DataModified;
-
-    int m_ProcessNumber;
+  int m_ProcessNumber;
 };
 
-//itkEventMacro( sv4guiMitkMultiPhysicsJobEvent, itk::AnyEvent );
+// itkEventMacro( sv4guiMitkMultiPhysicsJobEvent, itk::AnyEvent );
 
 #endif // sv4guiMitkMultiPhysicsJOB_H

@@ -33,8 +33,8 @@
 /**
  * \class vtkSVIdListSeedSelector
  *
- * \brief This is a c++ replication of the python code for an id list seed selector
- * in vmtk. It allows seed points to be chosen by giving an id list.
+ * \brief This is a c++ replication of the python code for an id list seed
+ * selector in vmtk. It allows seed points to be chosen by giving an id list.
  *
  * \author Adam Updegrove
  * \author updega2@gmail.com
@@ -44,8 +44,8 @@
 #ifndef vtkSVIdListSeedSelector_h
 #define vtkSVIdListSeedSelector_h
 
-#include "vtkSVSeedSelector.h"
 #include "vtkIdList.h"
+#include "vtkSVSeedSelector.h"
 
 #include "vtkSVMiscModule.h" // For exports
 
@@ -56,11 +56,10 @@ class vtkPoints;
 class vtkIdList;
 class vtkDataArray;
 
-class VTKSVMISC_EXPORT vtkSVIdListSeedSelector : public vtkSVSeedSelector
-{
-  public:
-  vtkTypeMacro(vtkSVIdListSeedSelector,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+class VTKSVMISC_EXPORT vtkSVIdListSeedSelector : public vtkSVSeedSelector {
+public:
+  vtkTypeMacro(vtkSVIdListSeedSelector, vtkPolyDataAlgorithm);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   vtkSetObjectMacro(SourceIds, vtkIdList);
   vtkGetObjectMacro(SourceIds, vtkIdList);
@@ -69,18 +68,19 @@ class VTKSVMISC_EXPORT vtkSVIdListSeedSelector : public vtkSVSeedSelector
 
   static vtkSVIdListSeedSelector *New();
 
-  protected:
+protected:
   vtkSVIdListSeedSelector();
   ~vtkSVIdListSeedSelector();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **,
+                          vtkInformationVector *) override;
 
-  vtkIdList* SourceIds;
-  vtkIdList* TargetIds;
+  vtkIdList *SourceIds;
+  vtkIdList *TargetIds;
 
-  private:
-  vtkSVIdListSeedSelector(const vtkSVIdListSeedSelector&);  // Not implemented.
-  void operator=(const vtkSVIdListSeedSelector&);  // Not implemented.
+private:
+  vtkSVIdListSeedSelector(const vtkSVIdListSeedSelector &); // Not implemented.
+  void operator=(const vtkSVIdListSeedSelector &);          // Not implemented.
 };
 
 #endif

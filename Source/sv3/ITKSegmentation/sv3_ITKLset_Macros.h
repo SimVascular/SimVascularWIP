@@ -32,38 +32,34 @@
 #ifndef CVMACROS_H_
 #define CVMACROS_H_
 
-#define cvGetRepoObjMacro(name,type)																\
-		virtual inline int Get##name(type **value){ 											\
-			if(m_cv##name == NULL){ 															\
-                                return SV_ERROR; 																		\
-			} else { 																			\
-				*value = m_cv##name;															\
-                                return SV_OK; 																		\
-			} 																					\
-		}																						\
+#define cvGetRepoObjMacro(name, type)                                          \
+  virtual inline int Get##name(type **value) {                                 \
+    if (m_cv##name == NULL) {                                                  \
+      return SV_ERROR;                                                         \
+    } else {                                                                   \
+      *value = m_cv##name;                                                     \
+      return SV_OK;                                                            \
+    }                                                                          \
+  }
 
-#define cvSetRepoObjMacro(name,cvtype,baseType)													\
-		virtual inline int Set##name(cvtype *value){ 											\
-			if ( m_cv##name != NULL ) { 														\
-				delete m_cv##name;																\
-				m_cv##name = NULL;																\
-			}																					\
-			m_cv##name = new cvtype ( (baseType*)value->GetVtkPtr() );							\
-			m_cv##name->SetName( value->GetName() ); 											\
-                        return SV_OK;																			\
-		}																						\
+#define cvSetRepoObjMacro(name, cvtype, baseType)                              \
+  virtual inline int Set##name(cvtype *value) {                                \
+    if (m_cv##name != NULL) {                                                  \
+      delete m_cv##name;                                                       \
+      m_cv##name = NULL;                                                       \
+    }                                                                          \
+    m_cv##name = new cvtype((baseType *)value->GetVtkPtr());                   \
+    m_cv##name->SetName(value->GetName());                                     \
+    return SV_OK;                                                              \
+  }
 
+#define cvSetMacro(name, type)                                                 \
+  virtual inline void Set##name(type value) {                                  \
+    if (m_##name != value)                                                     \
+      m_##name = value;                                                        \
+  }
 
-#define cvSetMacro(name,type) \
-		virtual inline void Set##name(type value){ \
-			if(m_##name != value) \
-			m_##name = value; \
-		} \
-
-#define cvGetMacro(name,type) \
-		virtual inline type Get##name(){ \
-			return this->m_##name; \
-		} \
-
+#define cvGetMacro(name, type)                                                 \
+  virtual inline type Get##name() { return this->m_##name; }
 
 #endif /* CVMACROS_H_ */

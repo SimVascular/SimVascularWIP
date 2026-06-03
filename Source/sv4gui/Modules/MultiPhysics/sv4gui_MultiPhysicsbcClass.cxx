@@ -35,9 +35,8 @@
 // sv4guiMultiPhysicsbcClass
 //--------------------
 //
-sv4guiMultiPhysicsbcClass::sv4guiMultiPhysicsbcClass()
-{
-  faceName="";
+sv4guiMultiPhysicsbcClass::sv4guiMultiPhysicsbcClass() {
+  faceName = "";
   bcGrp = "NA";
   bcType = "Steady";
   profile = "Flat";
@@ -51,11 +50,9 @@ sv4guiMultiPhysicsbcClass::sv4guiMultiPhysicsbcClass()
   gxFile = "";
   zperm = true;
   flux = false;
-  projectionFaceName="";
-  imposeIntegral=false;
-  effectiveDirection="";
+  projectionFaceName = "";
+  imposeIntegral = false;
+  effectiveDirection = "";
 }
 
 sv4guiMultiPhysicsbcClass::~sv4guiMultiPhysicsbcClass() {}
-
-

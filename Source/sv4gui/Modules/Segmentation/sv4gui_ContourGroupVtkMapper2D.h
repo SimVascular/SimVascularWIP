@@ -38,22 +38,21 @@
 
 #include "sv4gui_ContourModelVtkMapper2D.h"
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourGroupVtkMapper2D : public sv4guiContourModelVtkMapper2D
-{
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourGroupVtkMapper2D
+    : public sv4guiContourModelVtkMapper2D {
 public:
+  mitkClassMacro(sv4guiContourGroupVtkMapper2D, sv4guiContourModelVtkMapper2D);
 
-    mitkClassMacro(sv4guiContourGroupVtkMapper2D, sv4guiContourModelVtkMapper2D);
+itkFactorylessNewMacro(Self) itkCloneMacro(Self)
 
-    itkFactorylessNewMacro(Self)
-    itkCloneMacro(Self)
-
-protected:
+    protected :
 
     sv4guiContourGroupVtkMapper2D();
 
-    virtual ~sv4guiContourGroupVtkMapper2D();
+  virtual ~sv4guiContourGroupVtkMapper2D();
 
-    virtual void FindContourOnCurrentSlice(mitk::BaseRenderer* renderer, unsigned int t = 0) override;
+  virtual void FindContourOnCurrentSlice(mitk::BaseRenderer *renderer,
+                                         unsigned int t = 0) override;
 };
 
 #endif // SV4GUI_CONTOURGROUPVTKMAPPER2D_H

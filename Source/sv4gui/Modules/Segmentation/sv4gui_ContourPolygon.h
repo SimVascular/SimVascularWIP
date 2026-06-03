@@ -36,38 +36,34 @@
 
 #include <sv4guiModuleSegmentationExports.h>
 
-#include "sv4gui_Contour.h"
 #include "sv3_PolygonContour.h"
+#include "sv4gui_Contour.h"
 
-
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourPolygon : public sv4guiContour
-{
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourPolygon
+    : public sv4guiContour {
 
 public:
+  sv4guiContourPolygon();
 
-    sv4guiContourPolygon();
+  sv4guiContourPolygon(const sv4guiContourPolygon &other);
 
-    sv4guiContourPolygon(const sv4guiContourPolygon &other);
+  virtual ~sv4guiContourPolygon();
 
-    virtual ~sv4guiContourPolygon();
+  virtual sv4guiContourPolygon *Clone() override;
 
-    virtual sv4guiContourPolygon* Clone() override;
+  virtual std::string GetClassName() override;
 
-    virtual std::string GetClassName() override;
+  virtual void SetControlPoint(int index, mitk::Point3D point) override;
 
-    virtual void SetControlPoint(int index, mitk::Point3D point) override;
+  virtual void CreateContourPoints() override;
 
-    virtual void CreateContourPoints() override;
+  virtual int SearchControlPointByContourPoint(int contourPointIndex) override;
 
-    virtual int SearchControlPointByContourPoint( int contourPointIndex ) override;
+  virtual void AssignCenterScalingPoints() override;
 
-    virtual void AssignCenterScalingPoints() override;
+  virtual void PlaceControlPoints(mitk::Point3D point) override;
 
-    virtual void PlaceControlPoints(mitk::Point3D point) override;
-
-  protected:
-
-  };
-
+protected:
+};
 
 #endif // SV4GUI_CONTOURPOLYGON_H

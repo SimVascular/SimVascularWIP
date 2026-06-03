@@ -32,159 +32,137 @@
 #ifndef __VascularLevelSetImageFilter_H_
 #define __VascularLevelSetImageFilter_H_
 
-
 #include "itkSegmentationLevelSetImageFilter.h"
 #include "sv3_VascularLevelSetFunction.h"
 
-namespace itk
-{
-template<	typename TInputImage,
-typename TFeatureImage,
-typename TOutputPixelType = float >
-class ITK_EXPORT VascularLevelSetImageFilter:
-public SegmentationLevelSetImageFilter<TInputImage, TFeatureImage,
-TOutputPixelType >
-{
+namespace itk {
+template <typename TInputImage, typename TFeatureImage,
+          typename TOutputPixelType = float>
+class ITK_EXPORT VascularLevelSetImageFilter
+    : public SegmentationLevelSetImageFilter<TInputImage, TFeatureImage,
+                                             TOutputPixelType> {
 public:
-	/* Standard */
-	typedef VascularLevelSetImageFilter Self;
-	typedef SegmentationLevelSetImageFilter< TInputImage, TFeatureImage,
-			TOutputPixelType > Superclass;
+  /* Standard */
+  typedef VascularLevelSetImageFilter Self;
+  typedef SegmentationLevelSetImageFilter<TInputImage, TFeatureImage,
+                                          TOutputPixelType>
+      Superclass;
 
-	typedef SmartPointer< Self >       Pointer;
-	typedef SmartPointer< const Self > ConstPointer;
+  typedef SmartPointer<Self> Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
 
-	/** Inherited typedef from the superclass. */
-	typedef typename Superclass::ValueType        ValueType;
-	typedef typename Superclass::OutputImageType  OutputImageType;
-	typedef typename Superclass::FeatureImageType FeatureImageType;
+  /** Inherited typedef from the superclass. */
+  typedef typename Superclass::ValueType ValueType;
+  typedef typename Superclass::OutputImageType OutputImageType;
+  typedef typename Superclass::FeatureImageType FeatureImageType;
 
-	/** Type of the segmentation function */
-	typedef VascularLevelSetFunction< OutputImageType,
-			FeatureImageType > VascularLevelSetFunctionType;
-	typedef typename VascularLevelSetFunctionType::Pointer
-			VascularLevelSetFunctionPointer;
+  /** Type of the segmentation function */
+  typedef VascularLevelSetFunction<OutputImageType, FeatureImageType>
+      VascularLevelSetFunctionType;
+  typedef typename VascularLevelSetFunctionType::Pointer
+      VascularLevelSetFunctionPointer;
 
-	/** Run-time type information (and related methods). */
-	itkTypeMacro(VascularLevelSetImageFilter, SegmentationLevelSetImageFilter);
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(VascularLevelSetImageFilter, SegmentationLevelSetImageFilter);
 
-	/** Method for creation through the object factory */
-	itkNewMacro(Self);
+  /** Method for creation through the object factory */
+  itkNewMacro(Self);
 
-	int GetDebug() const
-	{
-		if ( m_VascularLevelSetFunction == 0 )
-		{
-			itkExceptionMacro("No finite difference function was specified.");
-		}
-		return m_VascularLevelSetFunction->GetDebug(); }
+  int GetDebug() const {
+    if (m_VascularLevelSetFunction == 0) {
+      itkExceptionMacro("No finite difference function was specified.");
+    }
+    return m_VascularLevelSetFunction->GetDebug();
+  }
 
-	void SetDebug(int _arg){
-		if ( this->GetDebug() != _arg ){
-			m_VascularLevelSetFunction->SetDebug(_arg);
-			this->Modified();
-		}
-	}
+  void SetDebug(int _arg) {
+    if (this->GetDebug() != _arg) {
+      m_VascularLevelSetFunction->SetDebug(_arg);
+      this->Modified();
+    }
+  }
 
-	typedef typename VascularLevelSetFunctionType::ImageType CurrentImageType;
-	const CurrentImageType * GetCurrentCurvatureImage() const
-	{
-		return m_VascularLevelSetFunction->GetCurrentCurvatureImage();
-	}
+  typedef typename VascularLevelSetFunctionType::ImageType CurrentImageType;
+  const CurrentImageType *GetCurrentCurvatureImage() const {
+    return m_VascularLevelSetFunction->GetCurrentCurvatureImage();
+  }
 
-	void GenerateCurrentCurvatureImage();
+  void GenerateCurrentCurvatureImage();
 
+  const CurrentImageType *GetCurrentAdvectionImage() const {
+    return m_VascularLevelSetFunction->GetCurrentAdvectionImage();
+  }
 
-	const CurrentImageType * GetCurrentAdvectionImage() const
-	{
-		return m_VascularLevelSetFunction->GetCurrentAdvectionImage();
-	}
+  void GenerateCurrentAdvectionImage();
 
-	void GenerateCurrentAdvectionImage();
+  const CurrentImageType *GetCurrentUpdateImage() const {
+    return m_VascularLevelSetFunction->GetCurrentUpdateImage();
+  }
 
+  const OutputImageType *GetCurrentOutputImage() const {
+    return this->m_OutputImage;
+  }
+  void GenerateCurrentUpdateImage();
+  virtual void
+  SetVascularSegmentationFunction(VascularLevelSetFunctionType *s) {
+    m_VascularLevelSetFunction = s;
 
-	const CurrentImageType * GetCurrentUpdateImage() const
-	{
-		return m_VascularLevelSetFunction->GetCurrentUpdateImage();
-	}
-
-	const OutputImageType * GetCurrentOutputImage() const
-	{
-		return this->m_OutputImage;
-	}
-	void GenerateCurrentUpdateImage();
-	virtual void SetVascularSegmentationFunction(VascularLevelSetFunctionType *s)
-	{
-		m_VascularLevelSetFunction = s;
-
-		this->Superclass::SetSegmentationFunction(m_VascularLevelSetFunction);
-		this->Modified();
-	}
-	virtual VascularLevelSetFunctionType * GetVascularSegmentationFunction()
-	{
-		return m_VascularLevelSetFunction;
-	}
-	void ClearCurrentCurvatureImage()
-	{
-		m_VascularLevelSetFunction->ClearCurrentCurvatureImage();
-	}
+    this->Superclass::SetSegmentationFunction(m_VascularLevelSetFunction);
+    this->Modified();
+  }
+  virtual VascularLevelSetFunctionType *GetVascularSegmentationFunction() {
+    return m_VascularLevelSetFunction;
+  }
+  void ClearCurrentCurvatureImage() {
+    m_VascularLevelSetFunction->ClearCurrentCurvatureImage();
+  }
 
 protected:
-	~VascularLevelSetImageFilter() {}
-	VascularLevelSetImageFilter();
+  ~VascularLevelSetImageFilter() {}
+  VascularLevelSetImageFilter();
 
-	virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream &os, Indent indent) const;
 
-	VascularLevelSetImageFilter(const Self &); // purposely not implemented
-	void operator=(const Self &);
+  VascularLevelSetImageFilter(const Self &); // purposely not implemented
+  void operator=(const Self &);
 
-	void GenerateData();
+  void GenerateData();
 
 private:
-	VascularLevelSetFunctionType * m_VascularLevelSetFunction;
+  VascularLevelSetFunctionType *m_VascularLevelSetFunction;
 
 }; // Class Declaration
 
-template< class TInputImage, class TFeatureImage, class TOutputPixelType >
-VascularLevelSetImageFilter< TInputImage, TFeatureImage, TOutputPixelType >
-::VascularLevelSetImageFilter()
- {
-	m_VascularLevelSetFunction = 0;
- }
-
-
-template< class TInputImage, class TFeatureImage, class TOutputPixelType >
-void
-VascularLevelSetImageFilter<TInputImage, TFeatureImage, TOutputPixelType >
-::GenerateData(){
-	if ( m_VascularLevelSetFunction == 0 )
-	{
-		itkExceptionMacro("No finite difference function was specified.");
-	}
-	else
-	{
-		this->GetVascularSegmentationFunction()->AllocateCurrentCurvatureImage();
-		this->GetVascularSegmentationFunction()->AllocateCurrentAdvectionImage();
-		this->GetVascularSegmentationFunction()->AllocateCurrentUpdateImage();
-	}
-
-
-	// Continue with Superclass implementation
-	Superclass::GenerateData();
+template <class TInputImage, class TFeatureImage, class TOutputPixelType>
+VascularLevelSetImageFilter<TInputImage, TFeatureImage,
+                            TOutputPixelType>::VascularLevelSetImageFilter() {
+  m_VascularLevelSetFunction = 0;
 }
 
-template< class TInputImage, class TFeatureImage, class TOutputPixelType >
-void
-VascularLevelSetImageFilter< TInputImage, TFeatureImage, TOutputPixelType >
-::PrintSelf(std::ostream & os, Indent indent) const
- {
-	Superclass::PrintSelf(os, indent);
-	os << indent << "m_VascularLevelSetFunction = " << m_VascularLevelSetFunction << std::endl;
- }
+template <class TInputImage, class TFeatureImage, class TOutputPixelType>
+void VascularLevelSetImageFilter<TInputImage, TFeatureImage,
+                                 TOutputPixelType>::GenerateData() {
+  if (m_VascularLevelSetFunction == 0) {
+    itkExceptionMacro("No finite difference function was specified.");
+  } else {
+    this->GetVascularSegmentationFunction()->AllocateCurrentCurvatureImage();
+    this->GetVascularSegmentationFunction()->AllocateCurrentAdvectionImage();
+    this->GetVascularSegmentationFunction()->AllocateCurrentUpdateImage();
+  }
 
-
-
-
-
+  // Continue with Superclass implementation
+  Superclass::GenerateData();
 }
+
+template <class TInputImage, class TFeatureImage, class TOutputPixelType>
+void VascularLevelSetImageFilter<TInputImage, TFeatureImage,
+                                 TOutputPixelType>::PrintSelf(std::ostream &os,
+                                                              Indent indent)
+    const {
+  Superclass::PrintSelf(os, indent);
+  os << indent << "m_VascularLevelSetFunction = " << m_VascularLevelSetFunction
+     << std::endl;
+}
+
+} // namespace itk
 #endif /* VASCULARLEVELSETIMAGEFILTER_H_ */

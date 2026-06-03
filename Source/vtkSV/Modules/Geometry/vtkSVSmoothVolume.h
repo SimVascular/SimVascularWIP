@@ -31,7 +31,8 @@
 
 /**
  *  \class vtkSVSmoothVolume
- *  \brief This class uses vtkDijkstraGraphGeodesicPath to get path betwen points
+ *  \brief This class uses vtkDijkstraGraphGeodesicPath to get path betwen
+ * points
  *
  *  \author Adam Updegrove
  *  \author updega2@gmail.com
@@ -48,12 +49,12 @@
 #include "vtkPolyData.h"
 #include "vtkUnstructuredGridAlgorithm.h"
 
-class VTKSVGEOMETRY_EXPORT vtkSVSmoothVolume : public vtkUnstructuredGridAlgorithm
-{
+class VTKSVGEOMETRY_EXPORT vtkSVSmoothVolume
+    : public vtkUnstructuredGridAlgorithm {
 public:
-  static vtkSVSmoothVolume* New();
-  vtkTypeMacro(vtkSVSmoothVolume,vtkUnstructuredGridAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  static vtkSVSmoothVolume *New();
+  vtkTypeMacro(vtkSVSmoothVolume, vtkUnstructuredGridAlgorithm);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
   /// \brief Set the number of smooth iterations. Default 1000
@@ -67,11 +68,11 @@ protected:
 
   // Usual data generation method
   int RequestData(vtkInformation *vtkNotUsed(request),
-		  vtkInformationVector **inputVector,
-		  vtkInformationVector *outputVector) override;
+                  vtkInformationVector **inputVector,
+                  vtkInformationVector *outputVector) override;
 
   int PrepFilter(); // Prep work.
-  int RunFilter(); // Run filter operations.
+  int RunFilter();  // Run filter operations.
 
   int SmoothHexMesh();
   int SmoothTetMesh();
@@ -80,9 +81,8 @@ protected:
   int NumberOfSmoothIterations;
 
 private:
-  vtkSVSmoothVolume(const vtkSVSmoothVolume&);  // Not implemented.
-  void operator=(const vtkSVSmoothVolume&);  // Not implemented.
-
+  vtkSVSmoothVolume(const vtkSVSmoothVolume &); // Not implemented.
+  void operator=(const vtkSVSmoothVolume &);    // Not implemented.
 };
 
 #endif

@@ -42,36 +42,30 @@
 // does not ensure TYPE COMPATIBILITY between ShallowCopy's input and
 // the member data_.  This is why ShallowCopy must be protected.)
 
-cvDataObject::cvDataObject( RepositoryDataT type )
-  : cvRepositoryData( type )
-{
+cvDataObject::cvDataObject(RepositoryDataT type) : cvRepositoryData(type) {
   data_ = nullptr;
 }
-
 
 // --------
 // ~cvDataObject
 // --------
 
-cvDataObject::~cvDataObject()
-{
-  if ( data_ != nullptr ) {
+cvDataObject::~cvDataObject() {
+  if (data_ != nullptr) {
     data_->Delete();
   }
 }
-
 
 // --------------
 // GetMemoryUsage
 // --------------
 
-int cvDataObject::GetMemoryUsage()
-{
+int cvDataObject::GetMemoryUsage() {
   int sz = 0;
 
-  sz += sizeof( this );
-  if ( data_ != nullptr ) {
-    sz += data_->GetActualMemorySize() * 1024;  // vtk returns kB
+  sz += sizeof(this);
+  if (data_ != nullptr) {
+    sz += data_->GetActualMemorySize() * 1024; // vtk returns kB
   }
   return sz;
 }

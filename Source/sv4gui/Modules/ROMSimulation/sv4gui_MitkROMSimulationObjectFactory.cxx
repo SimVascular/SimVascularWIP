@@ -33,103 +33,89 @@
 
 #include "sv4gui_MitkROMSimJob.h"
 
-#include "mitkProperties.h"
 #include "mitkBaseRenderer.h"
-#include "mitkDataNode.h"
 #include "mitkCoreObjectFactory.h"
+#include "mitkDataNode.h"
+#include "mitkProperties.h"
 
 sv4guiMitkROMSimulationObjectFactory::sv4guiMitkROMSimulationObjectFactory()
-  : mitk::CoreObjectFactoryBase()
-{
+    : mitk::CoreObjectFactoryBase() {
   static bool alreadyDone = false;
-  if (!alreadyDone)
-  {
+  if (!alreadyDone) {
     MITK_DEBUG << "sv4guiMitkROMSimulationObjectFactory c'tor" << std::endl;
 
     alreadyDone = true;
   }
 }
 
-sv4guiMitkROMSimulationObjectFactory::~sv4guiMitkROMSimulationObjectFactory()
-{
-}
+sv4guiMitkROMSimulationObjectFactory::~sv4guiMitkROMSimulationObjectFactory() {}
 
-mitk::Mapper::Pointer sv4guiMitkROMSimulationObjectFactory::CreateMapper(mitk::DataNode* node, MapperSlotId id)
-{
-  mitk::Mapper::Pointer newMapper=nullptr;
+mitk::Mapper::Pointer
+sv4guiMitkROMSimulationObjectFactory::CreateMapper(mitk::DataNode *node,
+                                                   MapperSlotId id) {
+  mitk::Mapper::Pointer newMapper = nullptr;
 
-  if ( id == mitk::BaseRenderer::Standard2D )
-  {
-    if( dynamic_cast<sv4guiMitkROMSimJob*>(node->GetData())!=nullptr )
-    {
+  if (id == mitk::BaseRenderer::Standard2D) {
+    if (dynamic_cast<sv4guiMitkROMSimJob *>(node->GetData()) != nullptr) {
     }
-  }
-  else if ( id == mitk::BaseRenderer::Standard3D )
-  {
-    if( dynamic_cast<sv4guiMitkROMSimJob*>(node->GetData())!=nullptr )
-    {
+  } else if (id == mitk::BaseRenderer::Standard3D) {
+    if (dynamic_cast<sv4guiMitkROMSimJob *>(node->GetData()) != nullptr) {
     }
   }
   return newMapper;
 }
 
-void sv4guiMitkROMSimulationObjectFactory::SetDefaultProperties(mitk::DataNode* node)
-{
+void sv4guiMitkROMSimulationObjectFactory::SetDefaultProperties(
+    mitk::DataNode *node) {
 
-  if(node==nullptr)
+  if (node == nullptr)
     return;
 
-  if(node->GetData() ==nullptr)
+  if (node->GetData() == nullptr)
     return;
 
-  if( dynamic_cast<sv4guiMitkROMSimJob*>(node->GetData())!=nullptr )
-  {
+  if (dynamic_cast<sv4guiMitkROMSimJob *>(node->GetData()) != nullptr) {
   }
 }
 
-std::string sv4guiMitkROMSimulationObjectFactory::GetFileExtensions()
-{
+std::string sv4guiMitkROMSimulationObjectFactory::GetFileExtensions() {
   std::string fileExtension;
   this->CreateFileExtensions(m_FileExtensionsMap, fileExtension);
   return fileExtension.c_str();
 }
 
-mitk::CoreObjectFactoryBase::MultimapType sv4guiMitkROMSimulationObjectFactory::GetFileExtensionsMap()
-{
+mitk::CoreObjectFactoryBase::MultimapType
+sv4guiMitkROMSimulationObjectFactory::GetFileExtensionsMap() {
   return m_FileExtensionsMap;
 }
 
-mitk::CoreObjectFactoryBase::MultimapType sv4guiMitkROMSimulationObjectFactory::GetSaveFileExtensionsMap()
-{
+mitk::CoreObjectFactoryBase::MultimapType
+sv4guiMitkROMSimulationObjectFactory::GetSaveFileExtensionsMap() {
   return m_SaveFileExtensionsMap;
 }
 
-void sv4guiMitkROMSimulationObjectFactory::CreateFileExtensionsMap()
-{
-}
+void sv4guiMitkROMSimulationObjectFactory::CreateFileExtensionsMap() {}
 
-std::string sv4guiMitkROMSimulationObjectFactory::GetSaveFileExtensions()
-{
+std::string sv4guiMitkROMSimulationObjectFactory::GetSaveFileExtensions() {
   std::string fileExtension;
   this->CreateFileExtensions(m_SaveFileExtensionsMap, fileExtension);
   return fileExtension.c_str();
 }
 
-void sv4guiMitkROMSimulationObjectFactory::RegisterIOFactories()
-{
+void sv4guiMitkROMSimulationObjectFactory::RegisterIOFactories() {}
+
+Registersv4guiMitkROMSimulationObjectFactory::
+    Registersv4guiMitkROMSimulationObjectFactory()
+    : m_Factory(sv4guiMitkROMSimulationObjectFactory::New()) {
+  mitk::CoreObjectFactory::GetInstance()->RegisterExtraFactory(m_Factory);
+  m_MitkSimJobIO = new sv4guiMitkROMSimJobIO();
 }
 
-Registersv4guiMitkROMSimulationObjectFactory::Registersv4guiMitkROMSimulationObjectFactory()
-    : m_Factory( sv4guiMitkROMSimulationObjectFactory::New() )
-{
-    mitk::CoreObjectFactory::GetInstance()->RegisterExtraFactory( m_Factory );
-    m_MitkSimJobIO=new sv4guiMitkROMSimJobIO();
+Registersv4guiMitkROMSimulationObjectFactory::
+    ~Registersv4guiMitkROMSimulationObjectFactory() {
+  mitk::CoreObjectFactory::GetInstance()->UnRegisterExtraFactory(m_Factory);
+  delete m_MitkSimJobIO;
 }
 
-Registersv4guiMitkROMSimulationObjectFactory::~Registersv4guiMitkROMSimulationObjectFactory()
-{
-    mitk::CoreObjectFactory::GetInstance()->UnRegisterExtraFactory( m_Factory );
-    delete m_MitkSimJobIO;
-}
-
-//static Registersv4guiMitkROMSimulationObjectFactory registersv4guiMitkROMSimulationObjectFactory;
+// static Registersv4guiMitkROMSimulationObjectFactory
+// registersv4guiMitkROMSimulationObjectFactory;

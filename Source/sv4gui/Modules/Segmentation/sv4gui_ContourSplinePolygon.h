@@ -38,29 +38,26 @@
 
 #include "sv4gui_ContourPolygon.h"
 
-
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourSplinePolygon : public sv4guiContourPolygon
-{
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourSplinePolygon
+    : public sv4guiContourPolygon {
 
 public:
+  sv4guiContourSplinePolygon();
 
-    sv4guiContourSplinePolygon();
+  sv4guiContourSplinePolygon(const sv4guiContourSplinePolygon &other);
 
-    sv4guiContourSplinePolygon(const sv4guiContourSplinePolygon &other);
+  virtual ~sv4guiContourSplinePolygon();
 
-    virtual ~sv4guiContourSplinePolygon();
+  virtual sv4guiContourSplinePolygon *Clone() override;
 
-    virtual sv4guiContourSplinePolygon* Clone() override;
+  virtual std::string GetClassName() override;
 
-    virtual std::string GetClassName() override;
+  virtual void CreateContourPoints() override;
 
-    virtual void CreateContourPoints() override;
+  static sv4guiContour *CreateByFitting(sv4guiContour *contour,
+                                        int divisionNumber = 12);
 
-    static sv4guiContour* CreateByFitting(sv4guiContour* contour, int divisionNumber = 12);
-
-  protected:
-
-  };
-
+protected:
+};
 
 #endif // SV4GUI_CONTOURSPLINEPOLYGON_H

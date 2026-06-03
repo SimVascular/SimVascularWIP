@@ -31,129 +31,101 @@
 
 #ifndef EDGEREMAPIMAGEFILTER_H_
 #define EDGEREMAPIMAGEFILTER_H_
-#include <iostream>
-#include "itkUnaryFunctorImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
 #include "itkNumericTraits.h"
+#include "itkUnaryFunctorImageFilter.h"
+#include <iostream>
 #include <itkSmartPointer.h>
 
-template<typename TInput1, typename TOutput = float>
-class EdgeRemapFunctor
-{
+template <typename TInput1, typename TOutput = float> class EdgeRemapFunctor {
 public:
+  inline TOutput operator()(const TInput1 &X) const {
+    typedef typename itk::NumericTraits<TInput1>::RealType RealType1;
+    //		float scale = 1.0f / (m_inputMax);
+    //		float xNorm = (static_cast<RealType1>(X))*scale;
+    return static_cast<TOutput>(
+        (1.0 / (1.0 + std::pow(static_cast<RealType1>(X * m_Kappa),
+                               static_cast<RealType1>(m_Exponent)))));
+  }
 
-	inline TOutput operator()(const TInput1 & X) const
-	{
-		typedef typename itk::NumericTraits< TInput1 >::RealType RealType1;
-//		float scale = 1.0f / (m_inputMax);
-//		float xNorm = (static_cast<RealType1>(X))*scale;
-		return static_cast< TOutput >((1.0 / (1.0 + std::pow(static_cast<RealType1>(X * m_Kappa),static_cast<RealType1>(m_Exponent)))));
-	}
+  bool operator==(const EdgeRemapFunctor &other) { return !(*this != other); }
 
-	bool operator ==(const EdgeRemapFunctor &other)
-	    				{
-		return !( *this != other );
-	    				}
+  bool operator!=(const EdgeRemapFunctor &z) { return false; }
 
-	bool operator !=(const EdgeRemapFunctor &z)
-	    				{ return false; }
+  void SetKappa(double kappa) { m_Kappa = kappa; }
 
-	void SetKappa(double kappa)
-	{
-		m_Kappa = kappa;
-	}
+  double GetKappa() const { return m_Kappa; }
 
-	double GetKappa() const
-	{
-		return m_Kappa;
-	}
+  void SetExponent(double exponent) { m_Exponent = exponent; }
 
-	void SetExponent(double exponent)
-	{
-		m_Exponent = exponent;
-	}
-
-	double GetExponent() const
-	{
-		return m_Exponent;
-	}
-//	void SetInputMax(double inputmax)
-//	{
-//		m_inputMax = inputmax;
-//	}
-//
-//	double GetInputMax() const
-//	{
-//		return m_inputMax;
-//	}
+  double GetExponent() const { return m_Exponent; }
+  //	void SetInputMax(double inputmax)
+  //	{
+  //		m_inputMax = inputmax;
+  //	}
+  //
+  //	double GetInputMax() const
+  //	{
+  //		return m_inputMax;
+  //	}
 
 private:
-	float m_Kappa;
-	float m_Exponent;
-//	float m_inputMax;
-
+  float m_Kappa;
+  float m_Exponent;
+  //	float m_inputMax;
 };
 
-template <typename TInputImage1,
-typename TOutputImage = TInputImage1>
-class EdgeRemapImageFilter:
-		public itk::UnaryFunctorImageFilter<TInputImage1,TOutputImage,
-						EdgeRemapFunctor<
-		typename TInputImage1::PixelType,
-		typename TOutputImage::PixelType >   >
-{
+template <typename TInputImage1, typename TOutputImage = TInputImage1>
+class EdgeRemapImageFilter
+    : public itk::UnaryFunctorImageFilter<
+          TInputImage1, TOutputImage,
+          EdgeRemapFunctor<typename TInputImage1::PixelType,
+                           typename TOutputImage::PixelType>> {
 public:
-	typedef EdgeRemapImageFilter Self;
-	typedef itk::UnaryFunctorImageFilter< TInputImage1, TOutputImage,
-			EdgeRemapFunctor<
-			typename TInputImage1::PixelType,
-			typename TOutputImage::PixelType > > Superclass;
+  typedef EdgeRemapImageFilter Self;
+  typedef itk::UnaryFunctorImageFilter<
+      TInputImage1, TOutputImage,
+      EdgeRemapFunctor<typename TInputImage1::PixelType,
+                       typename TOutputImage::PixelType>>
+      Superclass;
 
-	typedef itk::SmartPointer< Self >       Pointer;
-	typedef itk::SmartPointer< const Self > ConstPointer;
+  typedef itk::SmartPointer<Self> Pointer;
+  typedef itk::SmartPointer<const Self> ConstPointer;
 
+  /** Method for creation through the object factory. */
+  itkNewMacro(Self);
 
-	/** Method for creation through the object factory. */
-	itkNewMacro(Self);
+  /** Runtime information support. */
+  itkTypeMacro(EdgeRemapImageFilter, UnaryFunctorImageFilter);
 
-	/** Runtime information support. */
-	itkTypeMacro(EdgeRemapImageFilter,
-			UnaryFunctorImageFilter);
-
-	/** Set the second operand as a constant */
-	void SetKappa(float kappa)
-	{
-		if ( kappa == this->GetFunctor().GetKappa() )
-		{
-			return;
-		}
-		this->GetFunctor().SetKappa(kappa);
-		this->Modified();
-	}
-	double GetKappa(){return this->GetFunctor().GetKappa();}
-	/** Set the Third operand as a constant */
-	virtual void SetExponent(float exponent)
-	{
-		if ( exponent == this->GetFunctor().GetExponent() )
-		{
-			return;
-		}
-		this->GetFunctor().SetExponent(exponent);
-		this->Modified();
-	}
-	virtual double GetExponent(){return this->GetFunctor().GetExponent(); }
-//	void SetInputMax(float inputmax)
-//	{
-//		if ( inputmax == this->GetFunctor().GetInputMax() )
-//		{
-//			return;
-//		}
-//		this->GetFunctor().SetInputMax(inputmax);
-//		this->Modified();
-//	}
-//	void GetInputMax(){return this->GetInputMax().GetKappa();}
-
+  /** Set the second operand as a constant */
+  void SetKappa(float kappa) {
+    if (kappa == this->GetFunctor().GetKappa()) {
+      return;
+    }
+    this->GetFunctor().SetKappa(kappa);
+    this->Modified();
+  }
+  double GetKappa() { return this->GetFunctor().GetKappa(); }
+  /** Set the Third operand as a constant */
+  virtual void SetExponent(float exponent) {
+    if (exponent == this->GetFunctor().GetExponent()) {
+      return;
+    }
+    this->GetFunctor().SetExponent(exponent);
+    this->Modified();
+  }
+  virtual double GetExponent() { return this->GetFunctor().GetExponent(); }
+  //	void SetInputMax(float inputmax)
+  //	{
+  //		if ( inputmax == this->GetFunctor().GetInputMax() )
+  //		{
+  //			return;
+  //		}
+  //		this->GetFunctor().SetInputMax(inputmax);
+  //		this->Modified();
+  //	}
+  //	void GetInputMax(){return this->GetInputMax().GetKappa();}
 };
-
 
 #endif /* EDGEREMAPIMAGEFILTER_H_ */

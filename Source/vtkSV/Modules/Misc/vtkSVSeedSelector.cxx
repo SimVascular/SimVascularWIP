@@ -30,62 +30,56 @@
  */
 
 #include "vtkSVSeedSelector.h"
-#include "vtkDataSetSurfaceFilter.h"
-#include "vtkInformation.h"
-#include "vtkInformationVector.h"
-#include "vtkGlyph3D.h"
-#include "vtkIntArray.h"
-#include "vtkPoints.h"
-#include "vtkPolyData.h"
-#include "vtkPolyLine.h"
-#include "vtkPointData.h"
-#include "vtkPointLocator.h"
-#include "vtkPolyDataMapper.h"
-#include "vtkProperty.h"
-#include "vtkIdList.h"
 #include "vtkCellData.h"
 #include "vtkCleanPolyData.h"
+#include "vtkDataSetSurfaceFilter.h"
 #include "vtkDoubleArray.h"
+#include "vtkGlyph3D.h"
+#include "vtkIdList.h"
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
+#include "vtkIntArray.h"
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
+#include "vtkPointData.h"
+#include "vtkPointLocator.h"
+#include "vtkPoints.h"
+#include "vtkPolyData.h"
+#include "vtkPolyDataMapper.h"
+#include "vtkPolyLine.h"
+#include "vtkProperty.h"
 #include "vtkSphereSource.h"
 #include "vtkThreshold.h"
 #include "vtkTriangleFilter.h"
 #include "vtkUnstructuredGrid.h"
 
-#include "vtkSVIOUtils.h"
 #include "vtkSVGlobals.h"
+#include "vtkSVIOUtils.h"
 
 vtkStandardNewMacro(vtkSVSeedSelector);
 
-vtkSVSeedSelector::vtkSVSeedSelector()
-{
-  this->SurfacePd   = vtkPolyData::New();
+vtkSVSeedSelector::vtkSVSeedSelector() {
+  this->SurfacePd = vtkPolyData::New();
 
   this->SourceSeedIds = vtkIdList::New();
   this->TargetSeedIds = vtkIdList::New();
 }
 
-vtkSVSeedSelector::~vtkSVSeedSelector()
-{
-  if (this->SurfacePd != nullptr)
-  {
+vtkSVSeedSelector::~vtkSVSeedSelector() {
+  if (this->SurfacePd != nullptr) {
     this->SurfacePd->Delete();
     this->SurfacePd = nullptr;
   }
-  if (this->SourceSeedIds != nullptr)
-  {
+  if (this->SourceSeedIds != nullptr) {
     this->SourceSeedIds->Delete();
     this->SourceSeedIds = nullptr;
   }
-  if (this->TargetSeedIds != nullptr)
-  {
+  if (this->TargetSeedIds != nullptr) {
     this->TargetSeedIds->Delete();
     this->TargetSeedIds = nullptr;
   }
 }
 
-void vtkSVSeedSelector::PrintSelf(ostream& os, vtkIndent indent)
-{
-  this->Superclass::PrintSelf(os,indent);
+void vtkSVSeedSelector::PrintSelf(ostream &os, vtkIndent indent) {
+  this->Superclass::PrintSelf(os, indent);
 }

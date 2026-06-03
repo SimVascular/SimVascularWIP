@@ -38,29 +38,28 @@
 
 #include <tinyxml2.h>
 
-class SV4GUIMODULEROMSIMULATION_EXPORT sv4guiMitkROMSimJobIO : public mitk::AbstractFileIO
-{
+class SV4GUIMODULEROMSIMULATION_EXPORT sv4guiMitkROMSimJobIO
+    : public mitk::AbstractFileIO {
 public:
+  sv4guiMitkROMSimJobIO();
 
-    sv4guiMitkROMSimJobIO();
+  using mitk::AbstractFileReader::Read;
+  std::vector<mitk::BaseData::Pointer> Read() override;
+  std::vector<mitk::BaseData::Pointer> DoRead() override {
+    std::cout << "Should implement this?" << std::endl << std::flush;
+  }
+  mitk::IFileIO::ConfidenceLevel GetReaderConfidenceLevel() const override;
 
-    using mitk::AbstractFileReader::Read;
-    std::vector<mitk::BaseData::Pointer> Read() override;
-    std::vector<mitk::BaseData::Pointer> DoRead() override {
-        std::cout << "Should implement this?" << std::endl << std::flush;
-    }
-    mitk::IFileIO::ConfidenceLevel GetReaderConfidenceLevel() const override;
-
-    void Write() override;
-    mitk::IFileIO::ConfidenceLevel GetWriterConfidenceLevel() const override;
+  void Write() override;
+  mitk::IFileIO::ConfidenceLevel GetWriterConfidenceLevel() const override;
 
 private:
-    sv4guiMitkROMSimJobIO* IOClone() const override;
-    std::map<std::string,std::string> GetProps(tinyxml2::XMLElement* jobElement, const std::string& propName);
-    std::map<std::string,std::map<std::string,std::string> > GetMapProps(tinyxml2::XMLElement* jobElement, 
-      const std::string& propName1, const std::string& propName2);
-
-
+  sv4guiMitkROMSimJobIO *IOClone() const override;
+  std::map<std::string, std::string> GetProps(tinyxml2::XMLElement *jobElement,
+                                              const std::string &propName);
+  std::map<std::string, std::map<std::string, std::string>>
+  GetMapProps(tinyxml2::XMLElement *jobElement, const std::string &propName1,
+              const std::string &propName2);
 };
 
 #endif // SV4GUI_MITKSIMJOBIO_H

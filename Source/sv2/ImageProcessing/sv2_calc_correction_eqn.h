@@ -36,13 +36,15 @@
 #include "svImageExports.h" // For exports
 #include "sv_VTK.h"
 
-SV_EXPORT_IMAGE int img_calcCorrectionEqn(int numRegions,vtkPolyData **listPd,
-                          int numImages,vtkStructuredPoints **listImg,
-                          int order, double results[]);
+SV_EXPORT_IMAGE int img_calcCorrectionEqn(int numRegions, vtkPolyData **listPd,
+                                          int numImages,
+                                          vtkStructuredPoints **listImg,
+                                          int order, double results[]);
 
-SV_EXPORT_IMAGE int img_calcCorrectionEqnAuto(int numRegions,vtkPolyData **listPd,
-                          int numImages,vtkStructuredPoints **listImg,
-                          int order, double sdev_limit_factor,double results[],
+SV_EXPORT_IMAGE int
+img_calcCorrectionEqnAuto(int numRegions, vtkPolyData **listPd, int numImages,
+                          vtkStructuredPoints **listImg, int order,
+                          double sdev_limit_factor, double results[],
                           vtkStructuredPoints **maskImg);
 
 #endif

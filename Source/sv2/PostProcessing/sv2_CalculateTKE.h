@@ -43,31 +43,27 @@
 
 class SV_EXPORT_POST cvCalculateTKE {
 
-  public:
+public:
+  cvCalculateTKE();
+  ~cvCalculateTKE();
 
-    cvCalculateTKE();
-    ~cvCalculateTKE();
+  int SetInputData(int numPds, cvPolyData **inputPds);
+  cvPolyData *GetAverageVelocityPolyData();
+  cvPolyData *GetTKEPolyData();
 
-    int SetInputData(int numPds, cvPolyData **inputPds);
-    cvPolyData* GetAverageVelocityPolyData();
-    cvPolyData* GetTKEPolyData();
+protected:
+private:
+  int CalculateAverageVelocity();
+  int CalculateTKE();
 
-  protected:
+  vtkDataArray **inputVectors_;
+  int numInputArrays_;
+  int numArrayPts_;
+  vtkPoints *points_;
 
-  private:
-
-    int CalculateAverageVelocity();
-    int CalculateTKE();
-
-    vtkDataArray** inputVectors_;
-    int numInputArrays_;
-    int numArrayPts_;
-    vtkPoints* points_;
-
-    vtkFloatingPointArrayType* averageU_;
-    vtkFloatingPointArrayType* rms_;
-    vtkFloatingPointArrayType* KE_;
-
+  vtkFloatingPointArrayType *averageU_;
+  vtkFloatingPointArrayType *rms_;
+  vtkFloatingPointArrayType *KE_;
 };
 
 #endif

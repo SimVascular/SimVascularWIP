@@ -36,67 +36,64 @@
 
 #include <sv4guiModuleCommonExports.h>
 
+#include <algorithm>
+#include <cctype>
+#include <functional>
+#include <locale>
+#include <sstream>
 #include <string>
 #include <vector>
-#include <sstream>
-#include <algorithm>
-#include <functional>
-#include <cctype>
-#include <locale>
 
 // I'm having problems getting the static members to resolve properly on MSVC,
 // so use private static functions instead.
 
-static std::vector<std::string> sv4guiStringUtils_split(const std::string &s, char delim)
-{
-    std::stringstream ss(s);
-    std::string item;
-    std::vector<std::string> elems;
-    while (std::getline(ss, item, delim)) {
-        if (item.length() > 0) {
-            elems.push_back(item);
-        }
+static std::vector<std::string> sv4guiStringUtils_split(const std::string &s,
+                                                        char delim) {
+  std::stringstream ss(s);
+  std::string item;
+  std::vector<std::string> elems;
+  while (std::getline(ss, item, delim)) {
+    if (item.length() > 0) {
+      elems.push_back(item);
     }
-    return elems;
+  }
+  return elems;
 }
 
-static void sv4guiStringUtils_ltrim(std::string &s)
-{
-  s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int c) {return !std::isspace(c);}));
+static void sv4guiStringUtils_ltrim(std::string &s) {
+  s.erase(s.begin(), std::find_if(s.begin(), s.end(),
+                                  [](int c) { return !std::isspace(c); }));
 }
 
-static void sv4guiStringUtils_rtrim(std::string &s)
-{
-  s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) {
-    return !std::isspace(ch); }).base(), s.end());
+static void sv4guiStringUtils_rtrim(std::string &s) {
+  s.erase(std::find_if(s.rbegin(), s.rend(),
+                       [](int ch) { return !std::isspace(ch); })
+              .base(),
+          s.end());
 }
 
-static void sv4guiStringUtils_trim(std::string &s)
-{
+static void sv4guiStringUtils_trim(std::string &s) {
   sv4guiStringUtils_rtrim(s);
   sv4guiStringUtils_ltrim(s);
 }
 
 static std::string sv4guiStringUtils_lower(std::string s) {
-    std::transform(s.begin(), s.end(), s.begin(), ::tolower);
-    return s;
+  std::transform(s.begin(), s.end(), s.begin(), ::tolower);
+  return s;
 }
 
-class SV4GUIMODULECOMMON_EXPORT sv4guiStringUtils
-{
+class SV4GUIMODULECOMMON_EXPORT sv4guiStringUtils {
 
- public:
+public:
+  static std::vector<std::string> split(const std::string &s, char delim = ' ');
 
-   static std::vector<std::string> split(const std::string &s, char delim = ' ');
+  static std::string ltrim(std::string s);
 
-   static std::string ltrim(std::string s);
+  static std::string rtrim(std::string s);
 
-   static std::string rtrim(std::string s);
+  static std::string trim(std::string s);
 
-   static std::string trim(std::string s);
-
-   static std::string lower(std::string s);
+  static std::string lower(std::string s);
 };
-
 
 #endif // SV4GUI_STRINGUTILS_H
