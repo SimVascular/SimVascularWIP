@@ -34,6 +34,8 @@
 
 #include <map>
 
+#include <vtkUnstructuredGrid.h>
+
 #include "SimVascular.h"
 #include "svMeshObjectExports.h"
 

@@ -51,21 +51,21 @@
  *                                                            *
  *------------------------------------------------------------*/
 
-void cgeom_VertsCompact(int num_verts, vtkFloatingPointType *verts,
+void cgeom_VertsCompact(int num_verts, double *verts,
                         int num_polys, vtkIdType *conn, int *num_new_verts,
-                        vtkFloatingPointType **new_verts) {
+                        double **new_verts) {
 
   int v;
 
   int i, j;
 
-  vtkFloatingPointType x, y, z;
+  double x, y, z;
 
   vtkIdType *new_conn;
 
   int n;
 
-  vtkFloatingPointType maxx, maxy, maxz, minx, miny, minz;
+  double maxx, maxy, maxz, minx, miny, minz;
 
   CoordBin **hash_table;
 
@@ -81,15 +81,15 @@ void cgeom_VertsCompact(int num_verts, vtkFloatingPointType *verts,
 
   CoordBin *pptr;
 
-  vtkFloatingPointType tx, ty, tz;
+  double tx, ty, tz;
 
-  vtkFloatingPointType dx, dy, dz;
+  double dx, dy, dz;
 
   int id_count;
 
   int id;
 
-  static vtkFloatingPointType f = 0.00001;
+  static double f = 0.00001;
 
   /**************
    ***  body  ***
@@ -228,16 +228,16 @@ void cgeom_VertsCompact(int num_verts, vtkFloatingPointType *verts,
  *                                                            *
  *------------------------------------------------------------*/
 
-void cgeom_CompArea(int num_verts, vtkFloatingPointType *verts, int num_polys,
-                    vtkIdType *conn, vtkFloatingPointType *p_area) {
+void cgeom_CompArea(int num_verts, double *verts, int num_polys,
+                    vtkIdType *conn, double *p_area) {
 
-  vtkFloatingPointType area;
+  double area;
 
   int i, j, p, n, u, v;
 
-  vtkFloatingPointType xp[20], yp[20], zp[20];
+  double xp[20], yp[20], zp[20];
 
-  vtkFloatingPointType nx, ny, nz;
+  double nx, ny, nz;
 
   /**************
    ***  body  ***
@@ -281,16 +281,16 @@ void cgeom_CompArea(int num_verts, vtkFloatingPointType *verts, int num_polys,
  *                                                            *
  *------------------------------------------------------------*/
 
-void cgeom_CompVol(int num_verts, vtkFloatingPointType *verts, int num_polys,
-                   vtkIdType *conn, vtkFloatingPointType *p_vol) {
+void cgeom_CompVol(int num_verts, double *verts, int num_polys,
+                   vtkIdType *conn, double *p_vol) {
 
-  vtkFloatingPointType vol;
+  double vol;
 
   int i, j, p, n, u, v;
 
-  vtkFloatingPointType xp[20], yp[20], zp[20];
+  double xp[20], yp[20], zp[20];
 
-  vtkFloatingPointType nx, ny, nz;
+  double nx, ny, nz;
 
   /**************
    ***  body  ***
@@ -334,7 +334,7 @@ void cgeom_CompVol(int num_verts, vtkFloatingPointType *verts, int num_polys,
  *                                                            *
  *------------------------------------------------------------*/
 
-void cgeom_PolysClosed(int num_verts, vtkFloatingPointType *verts,
+void cgeom_PolysClosed(int num_verts, double *verts,
                        int num_polys, vtkIdType *conn, int *closed) {
 
   int i;
@@ -370,8 +370,8 @@ void cgeom_PolysClosed(int num_verts, vtkFloatingPointType *verts,
  *                                                            *
  *------------------------------------------------------------*/
 
-void cgeom_NormsComp(int num_verts, vtkFloatingPointType *verts, int num_polys,
-                     vtkIdType *conn, vtkFloatingPointType **p_norms) {
+void cgeom_NormsComp(int num_verts, double *verts, int num_polys,
+                     vtkIdType *conn, double **p_norms) {
 
   int v;
 
@@ -381,15 +381,15 @@ void cgeom_NormsComp(int num_verts, vtkFloatingPointType *verts, int num_polys,
 
   int i, j, k;
 
-  vtkFloatingPointType xp[10], yp[10], zp[10];
+  double xp[10], yp[10], zp[10];
 
-  vtkFloatingPointType v1[3], v2[3];
+  double v1[3], v2[3];
 
-  vtkFloatingPointType a, b, c, mag;
+  double a, b, c, mag;
 
   int average;
 
-  vtkFloatingPointType *normals;
+  double *normals;
 
   int n;
 
@@ -400,7 +400,7 @@ void cgeom_NormsComp(int num_verts, vtkFloatingPointType *verts, int num_polys,
   average = 1;
 
   if (average) {
-    normals = (vtkFloatingPointType *)malloc(sizeof(vtkFloatingPointType) *
+    normals = (double *)malloc(sizeof(double) *
                                              num_verts * 3);
 
     for (i = 0; i < num_verts; i++) {
@@ -467,15 +467,15 @@ void cgeom_NormsComp(int num_verts, vtkFloatingPointType *verts, int num_polys,
  *                                                            *
  *------------------------------------------------------------*/
 
-void cgeom_PolysSmooth(int num_verts, vtkFloatingPointType *verts,
+void cgeom_PolysSmooth(int num_verts, double *verts,
                        int num_polys, vtkIdType *conn, int level,
-                       vtkFloatingPointType **p_sverts) {
+                       double **p_sverts) {
 
   int i, j;
 
-  vtkFloatingPointType x, y, z;
+  double x, y, z;
 
-  vtkFloatingPointType ax, ay, az;
+  double ax, ay, az;
 
   int node;
 
@@ -487,19 +487,19 @@ void cgeom_PolysSmooth(int num_verts, vtkFloatingPointType *verts,
 
   int nlist[100], cnlist[1000];
 
-  vtkFloatingPointType wgts[100], w;
+  double wgts[100], w;
 
   int n1, n2;
 
   int loc;
 
-  vtkFloatingPointType *sverts;
+  double *sverts;
 
-  vtkFloatingPointType px, py, pz;
+  double px, py, pz;
 
-  vtkFloatingPointType dx, dy, dz;
+  double dx, dy, dz;
 
-  vtkFloatingPointType td;
+  double td;
 
   /**************
    ***  body  ***
@@ -545,7 +545,7 @@ void cgeom_PolysSmooth(int num_verts, vtkFloatingPointType *verts,
     }
   }
 
-  sverts = (vtkFloatingPointType *)malloc(sizeof(vtkFloatingPointType) *
+  sverts = (double *)malloc(sizeof(double) *
                                           num_verts * 3);
 
   for (i = 0; i < num_verts; i++) {
@@ -610,9 +610,9 @@ void cgeom_PolysSmooth(int num_verts, vtkFloatingPointType *verts,
       az += w * z;
     }
 
-    sverts[3 * i] = ax / (vtkFloatingPointType)n;
-    sverts[3 * i + 1] = ay / (vtkFloatingPointType)n;
-    sverts[3 * i + 2] = az / (vtkFloatingPointType)n;
+    sverts[3 * i] = ax / (double)n;
+    sverts[3 * i + 1] = ay / (double)n;
+    sverts[3 * i + 2] = az / (double)n;
   }
 
   *p_sverts = sverts;
@@ -624,21 +624,21 @@ void cgeom_PolysSmooth(int num_verts, vtkFloatingPointType *verts,
  *                                                            *
  *------------------------------------------------------------*/
 
-void cgeom_FindDegen(int num_verts, vtkFloatingPointType *verts, int num_polys,
-                     vtkIdType *conn, vtkFloatingPointType tol, int *p_num,
+void cgeom_FindDegen(int num_verts, double *verts, int num_polys,
+                     vtkIdType *conn, double tol, int *p_num,
                      int *id) {
 
-  vtkFloatingPointType tot_area, area, min_area, max_area;
+  double tot_area, area, min_area, max_area;
 
   int i, j, p, n, u, v;
 
-  vtkFloatingPointType xp[20], yp[20], zp[20];
+  double xp[20], yp[20], zp[20];
 
-  vtkFloatingPointType nx, ny, nz;
+  double nx, ny, nz;
 
   int num;
 
-  vtkFloatingPointType atol;
+  double atol;
 
   /**************
    ***  body  ***
@@ -703,28 +703,28 @@ void cgeom_FindDegen(int num_verts, vtkFloatingPointType *verts, int num_polys,
  * fix a degenerate polymesh. fixed mesh is returned.         *
  *------------------------------------------------------------*/
 
-void cgeom_FixDegen(int num_verts, vtkFloatingPointType *verts, int num_polys,
-                    vtkIdType *conn, vtkFloatingPointType tol, int *p_num_verts,
-                    vtkFloatingPointType **p_verts, int *p_num_polys,
+void cgeom_FixDegen(int num_verts, double *verts, int num_polys,
+                    vtkIdType *conn, double tol, int *p_num_verts,
+                    double **p_verts, int *p_num_polys,
                     vtkIdType **p_conn) {
 
-  vtkFloatingPointType area;
+  double area;
 
   int i, j, k, m, id, p, n, u, v;
 
-  vtkFloatingPointType x, y, z;
+  double x, y, z;
 
-  vtkFloatingPointType xp[20], yp[20], zp[20];
+  double xp[20], yp[20], zp[20];
 
-  vtkFloatingPointType nx, ny, nz;
+  double nx, ny, nz;
 
   int num;
 
-  vtkFloatingPointType dx, dy, dz, d;
+  double dx, dy, dz, d;
 
-  vtkFloatingPointType x1, y1, z1, x2, y2, z2;
+  double x1, y1, z1, x2, y2, z2;
 
-  vtkFloatingPointType atol;
+  double atol;
 
   int nlist[100];
 
@@ -734,7 +734,7 @@ void cgeom_FixDegen(int num_verts, vtkFloatingPointType *verts, int num_polys,
 
   int num_new_polys;
 
-  vtkFloatingPointType *new_verts;
+  double *new_verts;
 
   int pok;
 
@@ -885,7 +885,7 @@ void cgeom_FixDegen(int num_verts, vtkFloatingPointType *verts, int num_polys,
   }
 
   num_new_verts = num_verts - num_del_verts;
-  new_verts = (vtkFloatingPointType *)malloc(sizeof(vtkFloatingPointType) * 3 *
+  new_verts = (double *)malloc(sizeof(double) * 3 *
                                              num_new_verts);
   num_new_verts = 0;
 
@@ -1003,7 +1003,7 @@ void cgeom_FindVert(int num_cvs, int cv_list[][10], int *vert_stat, int v,
  *                                                            *
  *------------------------------------------------------------*/
 
-void cgeom_PolysManifold(int num_verts, vtkFloatingPointType *verts,
+void cgeom_PolysManifold(int num_verts, double *verts,
                          int num_polys, vtkIdType *conn, int *manifold) {
 
   EdgeList **edge_table;
@@ -1021,7 +1021,7 @@ void cgeom_PolysManifold(int num_verts, vtkFloatingPointType *verts,
  *                                                            *
  *------------------------------------------------------------*/
 
-void cgeom_PolysEdgeTab(int num_verts, vtkFloatingPointType *verts,
+void cgeom_PolysEdgeTab(int num_verts, double *verts,
                         int num_polys, vtkIdType *conn,
                         EdgeList ***p_edge_table) {
 
@@ -1109,7 +1109,7 @@ void cgeom_PolysEdgeTab(int num_verts, vtkFloatingPointType *verts,
  *                                                            *
  *------------------------------------------------------------*/
 
-void cgeom_PolysEdgeConn(int num_verts, vtkFloatingPointType *verts,
+void cgeom_PolysEdgeConn(int num_verts, double *verts,
                          int num_polys, vtkIdType *conn, EdgeList **edge_table,
                          int id, int *p_ncp, int *cp) {
 
@@ -1303,21 +1303,21 @@ void cgeom_CalcCentroid(double *listOfPts, int numPts, int numDim,
  *                                                            *
  **************************************************************/
 
-void cgeom_GetPolyCentroid(int num_verts, vtkFloatingPointType *verts,
+void cgeom_GetPolyCentroid(int num_verts, double *verts,
                            int num_polys, vtkIdType *conn,
                            double rtn_centroid[]) {
 
   int i, j, poly_idx, num_pts_in_poly, u, v, vert_id;
 
-  vtkFloatingPointType xp[20], yp[20], zp[20];
+  double xp[20], yp[20], zp[20];
 
-  vtkFloatingPointType nx, ny, nz;
+  double nx, ny, nz;
 
-  vtkFloatingPointType sum_x, sum_y, sum_z;
+  double sum_x, sum_y, sum_z;
 
-  vtkFloatingPointType wght_cnt_x, wght_cnt_y, wght_cnt_z;
+  double wght_cnt_x, wght_cnt_y, wght_cnt_z;
 
-  vtkFloatingPointType area, sum_area;
+  double area, sum_area;
 
   /**************
    ***  body  ***

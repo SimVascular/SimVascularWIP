@@ -32,10 +32,9 @@
 #ifndef _CVINTEGRATESURFACE_H
 #define _CVINTEGRATESURFACE_H
 
-#include "SimVascular.h"
-#include "svGeometryExports.h" // For exports
 #include "sv_PolyData.h"
-#include "sv_VTK.h"
+
+#include "svGeometryExports.h" // For exports
 
 SV_EXPORT_SYSGEOM int sys_geom_IntegrateSurface(cvPolyData *src, int tensorType,
                                                 double *nrm, double *q);

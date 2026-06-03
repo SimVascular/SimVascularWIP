@@ -29,36 +29,36 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "SimVascular.h"
-
-#include "sv_misc_utils.h"
 #include "sv_polydatasolid_utils.h"
+
+#include <cassert>
+#include <cstdio>
+#include <cstring>
+
+#include <vtkAppendFilter.h>
+#include <vtkCellData.h>
+#include <vtkConnectivityFilter.h>
+#include <vtkDataSetSurfaceFilter.h>
+#include <vtkFeatureEdges.h>
+#include <vtkGenericDataObjectReader.h>
+#include <vtkGenericDataObjectWriter.h>
+#include <vtkPLYReader.h>
+#include <vtkPLYWriter.h>
+#include <vtkPointData.h>
+#include <vtkPolyData.h>
+#include <vtkSTLReader.h>
+#include <vtkSTLWriter.h>
+#include <vtkSmartPointer.h>
+#include <vtkThreshold.h>
+#include <vtkUnstructuredGrid.h>
+#include <vtkXMLPolyDataReader.h>
+#include <vtkXMLPolyDataWriter.h>
+#include <vtkXMLUnstructuredGridWriter.h>
+
 #include "sv_sys_geom.h"
 #include "sv_vtk_utils.h"
-#include <assert.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 #include "sv_vtkGetBoundaryFaces.h"
-#include "vtkAppendFilter.h"
-#include "vtkConnectivityFilter.h"
-#include "vtkDataSetSurfaceFilter.h"
-#include "vtkGenericDataObjectReader.h"
-#include "vtkGenericDataObjectWriter.h"
-#include "vtkGeometryFilter.h"
-#include "vtkPLYReader.h"
-#include "vtkPLYWriter.h"
-#include "vtkPolyData.h"
-#include "vtkSTLReader.h"
-#include "vtkSTLWriter.h"
-#include "vtkSmartPointer.h"
-#include "vtkThreshold.h"
-#include "vtkUnstructuredGrid.h"
-#include "vtkXMLPolyDataReader.h"
-#include "vtkXMLPolyDataWriter.h"
-#include "vtkXMLUnstructuredGridWriter.h"
 
 // -------------
 // PlyDtaUtils_Init

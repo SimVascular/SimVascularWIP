@@ -30,15 +30,19 @@
  */
 
 #include "sv3_ITKLset_ITKUtils.h"
+
+#include <cmath>
 #include <iostream>
-#include <math.h>
 #include <sstream>
+
 #include <vtkContourFilter.h>
 #include <vtkImageCast.h>
 #include <vtkImageChangeInformation.h>
 #include <vtkImageStencil.h>
 #include <vtkMetaImageWriter.h>
+#include <vtkPointData.h>
 #include <vtkPolyDataToImageStencil.h>
+#include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 
 namespace cvITKLSUtil {

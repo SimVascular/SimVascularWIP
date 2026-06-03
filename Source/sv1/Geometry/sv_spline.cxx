@@ -29,13 +29,17 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "SimVascular.h"
-#include "sv_VTK.h"
-
 #include "sv_spline.h"
+
+#include <cmath>
+#include <cstdio>
+
+#include <vtkPolyData.h>
+#include <vtkSpline.h>
+#include <vtkCardinalSpline.h>
+#include <vtkKochanekSpline.h>
+
 #include "sv_misc_utils.h"
-#include <math.h>
-#include <stdio.h>
 
 int sys_geom_splinePtsToPathPlan(vtkPolyData *pd, int numOutputPts,
                                  char *filename, int flag) {
@@ -43,7 +47,7 @@ int sys_geom_splinePtsToPathPlan(vtkPolyData *pd, int numOutputPts,
   SplinePoints *y;
   int i, j;
   int num, dimensions;
-  vtkFloatingPointType *pt;
+  double *pt;
   int numInputPts = 0;
   int numPaths = 1;
   FILE *outfile;
@@ -106,7 +110,7 @@ int pysys_geom_splinePtsToPathPlan(vtkPolyData *pd, int numOutputPts,
   SplinePoints *y;
   int i, j;
   int num, dimensions;
-  vtkFloatingPointType *pt;
+  double *pt;
   int numInputPts = 0;
   int numPaths = 1;
   FILE *outfile;
@@ -177,9 +181,9 @@ SplinePoints *sys_geom_SplinePointsInit(int numPts, int dimensions) {
   int i;
 
   sp = new SplinePoints;
-  sp->pts = new vtkFloatingPointType[numPts * dimensions];
-  sp->tangents = new vtkFloatingPointType[numPts * dimensions];
-  sp->rotVectors = new vtkFloatingPointType[numPts * dimensions];
+  sp->pts = new double[numPts * dimensions];
+  sp->tangents = new double[numPts * dimensions];
+  sp->rotVectors = new double[numPts * dimensions];
   sp->numPts = numPts;
   sp->dim = dimensions;
 
@@ -223,7 +227,7 @@ void sys_geom_SplineInterpolate(SplinePoints *input, int type,
 
   vtkSpline *spline;
   int i, j, k;
-  vtkFloatingPointType t;
+  double t;
   int dimensions;
 
   /*****************
@@ -311,9 +315,9 @@ int sys_geom_SplineGetTangents(SplinePoints *input, int type,
   int i, j;
   int interval;
   int dimensions;
-  vtkFloatingPointType coordinate;
-  vtkFloatingPointType *tmpTangent = new vtkFloatingPointType[MAX_DIM];
-  vtkFloatingPointType *tmpNormTangent = new vtkFloatingPointType[MAX_DIM];
+  double coordinate;
+  double *tmpTangent = new double[MAX_DIM];
+  double *tmpNormTangent = new double[MAX_DIM];
   int err;
 
   /*****************
@@ -436,9 +440,9 @@ int sys_geom_SplineGetTangents(SplinePoints *input, int type,
 void sys_geom_SplineGetRotVectors(SplinePoints *input) {
   int i, j;
   int dimensions;
-  vtkFloatingPointType *tmpRotVector = new vtkFloatingPointType[MAX_DIM];
-  vtkFloatingPointType *tmpNormRotVector = new vtkFloatingPointType[MAX_DIM];
-  vtkFloatingPointType dotProduct;
+  double *tmpRotVector = new double[MAX_DIM];
+  double *tmpNormRotVector = new double[MAX_DIM];
+  double dotProduct;
 
   /*****************
    *     body      *
@@ -494,9 +498,9 @@ void sys_geom_SplineGetRotVectors(SplinePoints *input) {
  * Returns the normalized vector.                                      *
  ***********************************************************************/
 
-int sys_geom_NormalizeVector(vtkFloatingPointType *input,
-                             vtkFloatingPointType *output, int sizeVector) {
-  vtkFloatingPointType magnitude;
+int sys_geom_NormalizeVector(double *input,
+                             double *output, int sizeVector) {
+  double magnitude;
   int j;
 
   /*****************

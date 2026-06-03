@@ -29,16 +29,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "SimVascular.h"
-
-#include "math.h"
-#include "stdio.h"
-#include "stdlib.h"
 #include <array>
 #include <cmath>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
 
-#include "sv_VTK.h"
+#include <vtkMath.h>
 
 #include "sv_Math.h"
 

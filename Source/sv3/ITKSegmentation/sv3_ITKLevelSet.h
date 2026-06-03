@@ -46,11 +46,10 @@
 #ifndef CVITKLEVELSET_H_
 #define CVITKLEVELSET_H_
 
-#include "SimVascular.h"
-#include "svSegITKExports.h" // For exports
 #include "sv_PolyData.h"
-#include "sv_SolidModel.h"
+#include "sv_misc_utils.h"
 
+#include "svSegITKExports.h" // For exports
 
 #ifndef cvStructuredPoints
 #define cvStructuredPoints vtkStructuredPoints

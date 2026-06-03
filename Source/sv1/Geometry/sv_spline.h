@@ -42,9 +42,9 @@
 typedef struct _SplinePoints {
   int numPts;
   int dim;
-  vtkFloatingPointType *pts;
-  vtkFloatingPointType *tangents;
-  vtkFloatingPointType *rotVectors;
+  double *pts;
+  double *tangents;
+  double *rotVectors;
 } SplinePoints;
 
 /****************
@@ -250,8 +250,8 @@ SV_EXPORT_SYSGEOM void sys_geom_SplineGetRotVectors(SplinePoints *input);
  * (0 if OK, 1 if error)                           *
  ***********************************************************************/
 
-SV_EXPORT_SYSGEOM int sys_geom_NormalizeVector(vtkFloatingPointType *input,
-                                               vtkFloatingPointType *output,
+SV_EXPORT_SYSGEOM int sys_geom_NormalizeVector(double *input,
+                                               double *output,
                                                int sizeVector);
 
 #endif /* _GEOSPLINE_H */

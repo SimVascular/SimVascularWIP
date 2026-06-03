@@ -32,7 +32,7 @@
 #ifndef SV_MISC_UTILS_H
 #define SV_MISC_UTILS_H
 
-#include <math.h>
+#include <cmath>
 
 #define svmaximum(A, B) ((A) > (B) ? (A) : (B))
 #define svminimum(A, B) ((A) < (B) ? (A) : (B))

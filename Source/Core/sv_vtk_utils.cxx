@@ -29,16 +29,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "SimVascular.h"
-
-#include "sv_cgeom.h"
 #include "sv_misc_utils.h"
-#include <assert.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
 
+#include <vtkCellData.h>
 #include <vtkDataSetSurfaceFilter.h>
+#include <vtkPointData.h>
+#include <vtkPolyDataNormals.h>
 #include <vtkSmartPointer.h>
 #include <vtkThreshold.h>
 #include <vtkUnstructuredGrid.h>
@@ -131,13 +127,12 @@ VtkUtils_ThresholdSurface(const double lower, const double upper,
 // VtkUtils_NewVtkPolyData
 // -----------------------
 
-int VtkUtils_NewVtkPolyData(vtkPolyData **pd, int numPts,
-                            vtkFloatingPointType pts[], int numCells,
-                            vtkIdType polys[]) {
+int VtkUtils_NewVtkPolyData(vtkPolyData **pd, int numPts, double pts[],
+                            int numCells, vtkIdType polys[]) {
   int i;
   vtkPoints *tmpPts;
   vtkCellArray *tmpPolys;
-  vtkFloatingPointType x, y, z;
+  double x, y, z;
   int numInPoly;
   int n = 0;
 
@@ -145,9 +140,9 @@ int VtkUtils_NewVtkPolyData(vtkPolyData **pd, int numPts,
 
   tmpPts = vtkPoints::New();
   for (i = 0; i < numPts; i++) {
-    x = (vtkFloatingPointType)pts[3 * i];
-    y = (vtkFloatingPointType)pts[3 * i + 1];
-    z = (vtkFloatingPointType)pts[3 * i + 2];
+    x = (double)pts[3 * i];
+    y = (double)pts[3 * i + 1];
+    z = (double)pts[3 * i + 2];
     tmpPts->InsertNextPoint(x, y, z);
   }
   (*pd)->SetPoints(tmpPts);
@@ -170,13 +165,12 @@ int VtkUtils_NewVtkPolyData(vtkPolyData **pd, int numPts,
 // VtkUtils_NewVtkPolyDataLines
 // ----------------------------
 
-int VtkUtils_NewVtkPolyDataLines(vtkPolyData **pd, int numPts,
-                                 vtkFloatingPointType pts[], int numLines,
-                                 vtkIdType lines[]) {
+int VtkUtils_NewVtkPolyDataLines(vtkPolyData **pd, int numPts, double pts[],
+                                 int numLines, vtkIdType lines[]) {
   int i;
   vtkPoints *tmpPts;
   vtkCellArray *tmpLines;
-  vtkFloatingPointType x, y, z;
+  double x, y, z;
   int numInLine;
   int n = 0;
 
@@ -184,9 +178,9 @@ int VtkUtils_NewVtkPolyDataLines(vtkPolyData **pd, int numPts,
 
   tmpPts = vtkPoints::New();
   for (i = 0; i < numPts; i++) {
-    x = (vtkFloatingPointType)pts[3 * i];
-    y = (vtkFloatingPointType)pts[3 * i + 1];
-    z = (vtkFloatingPointType)pts[3 * i + 2];
+    x = (double)pts[3 * i];
+    y = (double)pts[3 * i + 1];
+    z = (double)pts[3 * i + 2];
     tmpPts->InsertNextPoint(x, y, z);
   }
   (*pd)->SetPoints(tmpPts);
@@ -304,9 +298,9 @@ int VtkUtils_FixTopology(vtkPolyData *pd, double tol) {
   PostPt_T *postPtList;
   int preNumPts, preNumElems, preNumLines, preNumTris;
   int postNumPts = 0, postNumElems = 0;
-  vtkFloatingPointType pt[3];
+  double pt[3];
   int found;
-  vtkFloatingPointType curr[3];
+  double curr[3];
   vtkCellArray *lines, *tris, *newLines, *newTris;
   int numCells, *cells, cellIter;
   int numNewCells, newCellIter;
@@ -385,9 +379,9 @@ int VtkUtils_FixTopology(vtkPolyData *pd, double tol) {
   // Build compressed point list:
   compressedPts = vtkPoints::New();
   for (int i = 0; i < postNumPts; i++) {
-    compressedPts->InsertNextPoint((vtkFloatingPointType)postPtList[i].x,
-                                   (vtkFloatingPointType)postPtList[i].y,
-                                   (vtkFloatingPointType)postPtList[i].z);
+    compressedPts->InsertNextPoint((double)postPtList[i].x,
+                                   (double)postPtList[i].y,
+                                   (double)postPtList[i].z);
   }
   pd->SetPoints(compressedPts);
   compressedPts->Delete();
@@ -519,7 +513,7 @@ int VtkUtils_FixTopology(vtkPolyData *pd, double tol) {
 
 int VtkUtils_GetPoints(vtkPolyData *pd, double **pts, int *numPts) {
   int i;
-  vtkFloatingPointType tmp[3];
+  double tmp[3];
 
   *numPts = pd->GetNumberOfPoints();
   if (pd->GetNumberOfPoints() == 0) {
@@ -542,17 +536,16 @@ int VtkUtils_GetPoints(vtkPolyData *pd, double **pts, int *numPts) {
 // VtkUtils_GetPointsFloat
 // -----------------------
 
-int VtkUtils_GetPointsFloat(vtkPolyData *pd, vtkFloatingPointType **pts,
-                            int *numPts) {
+int VtkUtils_GetPointsFloat(vtkPolyData *pd, double **pts, int *numPts) {
   int i;
-  vtkFloatingPointType tmp[3];
+  double tmp[3];
 
   *numPts = pd->GetNumberOfPoints();
   if (pd->GetNumberOfPoints() == 0) {
     return SV_ERROR;
   }
 
-  *pts = new vtkFloatingPointType[(*numPts) * 3];
+  *pts = new double[(*numPts) * 3];
 
   for (i = 0; i < (*numPts); i++) {
     pd->GetPoint(i, tmp);
@@ -1072,9 +1065,8 @@ int VtkUtils_MakePolyDataFromLineIds(double *pts, int numPts, vtkIdType *lines,
   *pd = vtkPolyData::New();
 
   for (i = 0; i < numPts; i++) {
-    pdPts->InsertNextPoint((vtkFloatingPointType)(pts[i * 3]),
-                           (vtkFloatingPointType)(pts[i * 3 + 1]),
-                           (vtkFloatingPointType)(pts[i * 3 + 2]));
+    pdPts->InsertNextPoint((double)(pts[i * 3]), (double)(pts[i * 3 + 1]),
+                           (double)(pts[i * 3 + 2]));
   }
 
   pdLines->InitTraversal();
@@ -1187,7 +1179,7 @@ int VtkUtils_MakeFloatArray(vtkDataArray *s, int *num, float **dataOut) {
 vtkPoints *VtkUtils_DeepCopyPoints(vtkPoints *ptsIn) {
   int numPts;
   vtkPoints *ptsOut;
-  vtkFloatingPointType pt[3];
+  double pt[3];
   int i;
 
   if (ptsIn == nullptr) {

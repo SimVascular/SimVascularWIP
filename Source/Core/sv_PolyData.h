@@ -32,10 +32,13 @@
 #ifndef __CVPOLY_DATA_H
 #define __CVPOLY_DATA_H
 
-#include "SimVascular.h"
+#include <array>
+#include <stdexcept>
+#include <vector>
+
+#include <vtkPolyData.h>
+
 #include "svRepositoryExports.h" // For exports
-#include "sv_VTK.h"
-#include "sv_misc_utils.h"
 
 class SV_EXPORT_REPOSITORY PolyDataCheckResults {
 public:

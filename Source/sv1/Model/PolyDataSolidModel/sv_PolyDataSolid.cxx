@@ -35,24 +35,27 @@
  *  @note Most functions in class call functions in cv_polydatasolid_utils.
  */
 
-#include "SimVascular.h"
-
 #include "sv_PolyDataSolid.h"
+
+#include <cassert>
+
 #include "sv_misc_utils.h"
 #include "sv_polydatasolid_utils.h"
 #include "sv_sys_geom.h"
 #include "sv_vtk_utils.h"
-#include "vtkCubeSource.h"
-#include "vtkCylinderSource.h"
-#include "vtkMath.h"
-#include "vtkPolyData.h"
-#include "vtkSVLoopBooleanPolyDataFilter.h"
-#include "vtkSmartPointer.h"
-#include "vtkSphereSource.h"
-#include "vtkTransform.h"
-#include "vtkTransformPolyDataFilter.h"
-#include <assert.h>
-#include <string.h>
+
+#include <vtkCleanPolyData.h>
+#include <vtkCubeSource.h>
+#include <vtkCylinderSource.h>
+#include <vtkMath.h>
+#include <vtkPolyData.h>
+#include <vtkPolyDataNormals.h>
+#include <vtkSVLoopBooleanPolyDataFilter.h>
+#include <vtkSmartPointer.h>
+#include <vtkSphereSource.h>
+#include <vtkTransform.h>
+#include <vtkTransformPolyDataFilter.h>
+#include <vtkTriangleFilter.h>
 
 #ifdef SV_USE_VMTK
 #include "sv_vmtk_utils.h"

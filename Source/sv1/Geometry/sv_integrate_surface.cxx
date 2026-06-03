@@ -29,20 +29,21 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "SimVascular.h"
-
 #include "sv_integrate_surface.h"
 
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cmath>
+#include <cstdio>
+
+#include <vtkCellData.h>
+#include <vtkPointData.h>
+#include <vtkTriangle.h>
+#include <vtkUnstructuredGrid.h>
+
+#include <vtkSVIntegrateAttributes.h>
+#include <vtkSVIntegrateFlowThroughSurface.h>
 
 #include "sv_PolyData.h"
-#include "sv_VTK.h"
 #include "sv_vtk_utils.h"
-
-#include "vtkSVIntegrateAttributes.h"
-#include "vtkSVIntegrateFlowThroughSurface.h"
 
 int CalcU(double xx[3][5], double *d, double r, double s, double *u) {
 
@@ -143,8 +144,7 @@ int CalcJacDet(double xx[3][5], double r, double s, double *determinant) {
   return SV_OK;
 }
 
-int IntegrateSurfElem(vtkFloatingPointType crd[4][3],
-                      vtkFloatingPointType *uvalues, double *q) {
+int IntegrateSurfElem(double crd[4][3], double *uvalues, double *q) {
 
   // we map from the more intuitive 3-d coordinates of the
   // the cell as defined in vtk to the arrays used in the code
@@ -246,12 +246,12 @@ int sys_geom_IntegrateSurface(cvPolyData *src, int tensorType, double *nrm,
   vtkDataArray *scalars = nullptr;
   vtkDataArray *vectors = nullptr;
   int numPts, numPolys;
-  vtkFloatingPointType *pts;
+  double *pts;
   vtkIdType *polys;
   double qflow;
   double qtotal = 0.0;
   *q = qtotal;
-  vtkFloatingPointType crd[4][3];
+  double crd[4][3];
 
   pd = src->GetVtkPolyData();
 
@@ -308,7 +308,7 @@ int sys_geom_IntegrateSurface(cvPolyData *src, int tensorType, double *nrm,
       crd[j][2] = pts[conn[j] * 3 + 2];
     }
 
-    vtkFloatingPointType uvalues[5];
+    double uvalues[5];
     // if tensorType = 0, scalar is assumed to be through plane component
     if (tensorType == 0) {
       for (j = 0; j < 4; j++) {
@@ -318,7 +318,7 @@ int sys_geom_IntegrateSurface(cvPolyData *src, int tensorType, double *nrm,
       // tensorType = 1, we need to dot the velocity vector with the surface
       // normal
       for (j = 0; j < 4; j++) {
-        vtkFloatingPointType v[3];
+        double v[3];
         vectors->GetTuple(conn[j], v);
         uvalues[j] = nrm[0] * v[0] + nrm[1] * v[1] + nrm[2] * v[2];
       }
@@ -350,7 +350,7 @@ int sys_geom_IntegrateSurface2(vtkPolyData *pd, int tensorType, double *q,
   vtkDataArray *scalars = nullptr;
   vtkDataArray *vectors = nullptr;
   int numPts, numPolys;
-  vtkFloatingPointType *pts;
+  double *pts;
   vtkIdType *polys;
   double qflow;
   double qtotal = 0.0;
@@ -714,12 +714,12 @@ int sys_geom_IntegrateEnergy(cvPolyData *src, double rho, double *nrm,
   vtkDataArray *scalars = nullptr;
   vtkDataArray *vectors = nullptr;
   int numPts, numPolys;
-  vtkFloatingPointType *pts;
+  double *pts;
   vtkIdType *polys;
   double energyElem = 0.0;
   double energyTotal = 0.0;
   *energy = energyTotal;
-  vtkFloatingPointType crd[4][3];
+  double crd[4][3];
 
   pd = src->GetVtkPolyData();
 
@@ -769,8 +769,8 @@ int sys_geom_IntegrateEnergy(cvPolyData *src, double rho, double *nrm,
       crd[j][2] = pts[conn[j] * 3 + 2];
     }
 
-    vtkFloatingPointType uvalues[5];
-    vtkFloatingPointType v[3];
+    double uvalues[5];
+    double v[3];
     double p, vmag, VdotN;
 
     for (j = 0; j < 4; j++) {

@@ -29,14 +29,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "SimVascular.h"
-
-#include "sv_VTK.h"
 #include "sv_sys_geom.h"
-#include <assert.h>
+
+#include <cassert>
+#include <cmath>
+#include <cstdio>
 #include <map>
-#include <math.h>
-#include <stdio.h>
 
 #include "sv_Math.h"
 #include "sv_SolidModel.h"
@@ -44,32 +42,35 @@
 #include "sv_misc_utils.h"
 #include "sv_vtk_utils.h"
 
-#include "vtkAppendPolyData.h"
-#include "vtkConnectivityFilter.h"
-#include "vtkDataSetSurfaceFilter.h"
-#include "vtkOBBTree.h"
-#include "vtkPolygon.h"
-#include "vtkSmartPointer.h"
-#include "vtkSortDataArray.h"
-#include "vtkThreshold.h"
+#include <vtkAppendPolyData.h>
+#include <vtkCellLocator.h>
+#include <vtkCleanPolyData.h>
+#include <vtkConnectivityFilter.h>
+#include <vtkFeatureEdges.h>
+#include <vtkFloatArray.h>
+#include <vtkOBBTree.h>
+#include <vtkPolyDataNormals.h>
+#include <vtkPolygon.h>
+#include <vtkSmartPointer.h>
+#include <vtkSortDataArray.h>
+#include <vtkTriangleFilter.h>
+#include <vtkXMLPolyDataWriter.h>
 
-#include "vtkSVConstrainedBlend.h"
-#include "vtkSVConstrainedSmoothing.h"
-#include "vtkSVFindSeparateRegions.h"
-#include "vtkSVGetSphereRegions.h"
-#include "vtkSVLocalButterflySubdivisionFilter.h"
-#include "vtkSVLocalLinearSubdivisionFilter.h"
-#include "vtkSVLocalLoopSubdivisionFilter.h"
-#include "vtkSVLocalQuadricDecimation.h"
-#include "vtkSVLocalSmoothPolyDataFilter.h"
-#include "vtkSVLoftNURBSSurface.h"
-#include "vtkSVLoftSplineSurface.h"
-#include "vtkSVLoopBooleanPolyDataFilter.h"
-#include "vtkSVLoopIntersectionPolyDataFilter.h"
-#include "vtkSVMultiplePolyDataIntersectionFilter.h"
-#include "vtkSVNURBSSurface.h"
-
-#include "vtkXMLPolyDataWriter.h"
+#include <vtkSVConstrainedBlend.h>
+#include <vtkSVConstrainedSmoothing.h>
+#include <vtkSVFindSeparateRegions.h>
+#include <vtkSVGetSphereRegions.h>
+#include <vtkSVLocalButterflySubdivisionFilter.h>
+#include <vtkSVLocalLinearSubdivisionFilter.h>
+#include <vtkSVLocalLoopSubdivisionFilter.h>
+#include <vtkSVLocalQuadricDecimation.h>
+#include <vtkSVLocalSmoothPolyDataFilter.h>
+#include <vtkSVLoftNURBSSurface.h>
+#include <vtkSVLoftSplineSurface.h>
+#include <vtkSVLoopBooleanPolyDataFilter.h>
+#include <vtkSVLoopIntersectionPolyDataFilter.h>
+#include <vtkSVMultiplePolyDataIntersectionFilter.h>
+#include <vtkSVNURBSSurface.h>
 
 #define vtkNew(type, name)                                                     \
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
@@ -1116,7 +1117,7 @@ int sys_geom_WriteLines(cvPolyData *src, char *fn) {
 int sys_geom_PolysClosed(cvPolyData *src, int *closed) {
   vtkPolyData *pd;
   int numPts, numPolys;
-  vtkFloatingPointType *pts;
+  double *pts;
   vtkIdType *polys;
 
   pd = src->GetVtkPolyData();
@@ -1142,9 +1143,9 @@ int sys_geom_PolysClosed(cvPolyData *src, int *closed) {
 int sys_geom_SurfArea(cvPolyData *src, double *area) {
   vtkPolyData *pd;
   int numPts, numPolys;
-  vtkFloatingPointType *pts;
+  double *pts;
   vtkIdType *polys;
-  vtkFloatingPointType fArea;
+  double fArea;
 
   // since cgeom_CompArea requires triangles, we will
   // create triangles before we call that routine
@@ -1183,7 +1184,7 @@ int sys_geom_SurfArea(cvPolyData *src, double *area) {
 int sys_geom_getPolyCentroid(cvPolyData *src, double centroid[]) {
   vtkPolyData *pd;
   int numPts, numPolys;
-  vtkFloatingPointType *pts;
+  double *pts;
   vtkIdType *polys;
 
   // since cgeom_CalcPolyCentroid requires triangles, we will
@@ -1330,7 +1331,7 @@ int sys_geom_PrintSmallPolys(cvPolyData *src, double sideTol) {
   vtkPolyData *pd;
   int numPts, numPolys;
   int numFound, minPolyId;
-  vtkFloatingPointType *pts;
+  double *pts;
   vtkIdType *polys;
 
   pd = src->GetVtkPolyData();
@@ -1366,11 +1367,11 @@ int sys_geom_PrintSmallPolys(cvPolyData *src, double sideTol) {
 int sys_geom_RmSmallPolys(cvPolyData *src, double sideTol, cvPolyData **dst) {
   vtkPolyData *pd;
   int numPts, numPolys;
-  vtkFloatingPointType *pts;
+  double *pts;
   vtkIdType *polys;
   int numRemoved, minPolyId;
   int numNewPts, numNewPolys;
-  vtkFloatingPointType *newPts;
+  double *newPts;
   vtkIdType *newPolys;
   vtkPolyData *result;
 
@@ -1481,9 +1482,9 @@ int sys_geom_OrientProfile(cvPolyData *src, double ppt[], double ptan[],
   vtkPolyData *srcPd = src->GetVtkPolyData();
   vtkPolyData *pd = vtkPolyData::New();
   int i, numPts;
-  vtkFloatingPointType origpt[3];
-  vtkFloatingPointType newpt[3];
-  vtkFloatingPointType trans[2];
+  double origpt[3];
+  double newpt[3];
+  double trans[2];
   cvPolyData *result;
 
   NormVector(&(ptan[0]), &(ptan[1]), &(ptan[2]));
@@ -1531,8 +1532,8 @@ int sys_geom_DisorientProfile(cvPolyData *src, double ppt[], double ptan[],
   vtkPolyData *srcPd = src->GetVtkPolyData();
   vtkPolyData *pd = vtkPolyData::New();
   int i, numPts;
-  vtkFloatingPointType srcpt[3];
-  vtkFloatingPointType dstpt[3];
+  double srcpt[3];
+  double dstpt[3];
   cvPolyData *result;
 
   double ep = 1e6 * FindMachineEpsilon();
@@ -1642,7 +1643,7 @@ int sys_geom_Translate(cvPolyData *src, double translate[], cvPolyData **dst) {
   //  cvPolyData *result = new cvPolyData( src );
   cvPolyData *result = sys_geom_DeepCopy(src);
   int i, numPts;
-  vtkFloatingPointType pt[3];
+  double pt[3];
 
   vtkPoints *pts = result->GetVtkPolyData()->GetPoints();
   numPts = pts->GetNumberOfPoints();
@@ -1666,8 +1667,8 @@ int sys_geom_ScaleAvg(cvPolyData *src, double factor, cvPolyData **dst) {
   cvPolyData *result = sys_geom_DeepCopy(src);
   int i, numPts;
   double avgPt[3];
-  vtkFloatingPointType pt[3];
-  vtkFloatingPointType vec[3];
+  double pt[3];
+  double vec[3];
 
   sys_geom_AvgPt(src, avgPt);
   vtkPoints *pts = result->GetVtkPolyData()->GetPoints();
@@ -1800,7 +1801,7 @@ cvPolyData *sys_geom_Align(cvPolyData *ref, cvPolyData *src) {
 cvPolyData *sys_geom_ReorderPolygon(cvPolyData *src, int startIx) {
   double *srcPts;
   int numSrcPts;
-  vtkFloatingPointType *alignedPts;
+  double *alignedPts;
   vtkIdType *cells;
   vtkPolyData *pd;
   cvPolyData *dst;
@@ -1817,7 +1818,7 @@ cvPolyData *sys_geom_ReorderPolygon(cvPolyData *src, int startIx) {
     return nullptr;
   }
 
-  alignedPts = new vtkFloatingPointType[3 * numSrcPts];
+  alignedPts = new double[3 * numSrcPts];
   for (i = 0; i < numSrcPts; i++) {
     j = (startIx + i) % numSrcPts;
     alignedPts[3 * i] = srcPts[3 * j];
@@ -1983,7 +1984,7 @@ int sys_geom_Classify(cvPolyData *obj, double pt[], int *result) {
   vtkPolyData *pd;
   vtkCellArray *polys;
   int numPolys;
-  vtkFloatingPointType tmp[3];
+  double tmp[3];
   const vtkIdType *ptIds;
   vtkIdType npts;
 
@@ -2136,7 +2137,7 @@ cvPolyData *sys_geom_sampleLoop(cvPolyData *src, int targetNumPts) {
   int *startIxs;
   int numRegions;
   int i, j;
-  vtkFloatingPointType *ptsOut;
+  double *ptsOut;
   vtkIdType *linesOut;
   vtkPolyData *pdOut;
   cvPolyData *result;
@@ -2186,7 +2187,7 @@ cvPolyData *sys_geom_sampleLoop(cvPolyData *src, int targetNumPts) {
     return nullptr;
   }
 
-  ptsOut = new vtkFloatingPointType[3 * targetNumPts];
+  ptsOut = new double[3 * targetNumPts];
   linesOut = new vtkIdType[3 * targetNumPts];
 
   // unfortunately I wrote my math code expecting 2-dimensional arrays
@@ -2570,15 +2571,15 @@ int sys_geom_InterpolateScalar(cvPolyData *src, double pt[], double *scalar) {
   double s = 0.0;
   *scalar = s;
 
-  vtkFloatingPointType x[3];
-  vtkFloatingPointType closestPoint[3];
+  double x[3];
+  double closestPoint[3];
   vtkIdType cellId = 0;
   int subId = 0;
-  vtkFloatingPointType dist2 = 0;
-  vtkFloatingPointType pcoords[3];
-  vtkFloatingPointType weights[10];
-  vtkFloatingPointType *weightsPtr;
-  vtkFloatingPointType *closestPointPtr;
+  double dist2 = 0;
+  double pcoords[3];
+  double weights[10];
+  double *weightsPtr;
+  double *closestPointPtr;
 
   vtkPolyData *pd;
   pd = src->GetVtkPolyData();
@@ -2623,7 +2624,7 @@ int sys_geom_InterpolateScalar(cvPolyData *src, double pt[], double *scalar) {
 
   vtkDataArray *vScalars = pd->GetPointData()->GetScalars();
 
-  vtkFloatingPointType nodeScalar = 0.0;
+  double nodeScalar = 0.0;
   int numIds = ids->GetNumberOfIds();
 
   for (int i = 0; i < numIds; i++) {
@@ -2655,15 +2656,15 @@ int sys_geom_InterpolateVector(cvPolyData *src, double pt[], double vect[]) {
   vect[1] = vy;
   vect[2] = vz;
 
-  vtkFloatingPointType x[3];
-  vtkFloatingPointType closestPoint[3];
+  double x[3];
+  double closestPoint[3];
   vtkIdType cellId = 0;
   int subId = 0;
-  vtkFloatingPointType dist2 = 0;
-  vtkFloatingPointType pcoords[3];
-  vtkFloatingPointType weights[10];
-  vtkFloatingPointType *weightsPtr;
-  vtkFloatingPointType *closestPointPtr;
+  double dist2 = 0;
+  double pcoords[3];
+  double weights[10];
+  double *weightsPtr;
+  double *closestPointPtr;
 
   vtkPolyData *pd;
   pd = src->GetVtkPolyData();
@@ -2708,7 +2709,7 @@ int sys_geom_InterpolateVector(cvPolyData *src, double pt[], double vect[]) {
   }
   vtkDataArray *vVectors = pd->GetPointData()->GetVectors();
 
-  vtkFloatingPointType *nodeVector;
+  double *nodeVector;
 
   int numIds = ids->GetNumberOfIds();
   for (int i = 0; i < numIds; i++) {
@@ -2739,12 +2740,12 @@ int sys_geom_IntersectWithLine(cvPolyData *src, double p0[], double p1[],
   intersect[1] = 0.0;
   intersect[2] = 0.0;
 
-  vtkFloatingPointType a0[3];
-  vtkFloatingPointType a1[3];
-  vtkFloatingPointType tol = 0.001;
-  vtkFloatingPointType t = 0.0;
-  vtkFloatingPointType x[3];
-  vtkFloatingPointType pcoords[3];
+  double a0[3];
+  double a1[3];
+  double tol = 0.001;
+  double t = 0.0;
+  double x[3];
+  double pcoords[3];
   int subId = 0;
   vtkIdType cellId = 0;
 
@@ -2819,12 +2820,12 @@ cvPolyData *sys_geom_warp3dPts(cvPolyData *src, double scale) {
   mags->Allocate(numPts, 10000);
   mags->Initialize();
 
-  vtkFloatingPointType nrm[3];
-  vtkFloatingPointType v[3];
-  vtkFloatingPointType newpt[3];
-  vtkFloatingPointType pt[3];
+  double nrm[3];
+  double v[3];
+  double newpt[3];
+  double pt[3];
 
-  vtkFloatingPointType v_dot_n = 0.0;
+  double v_dot_n = 0.0;
 
   for (int i = 0; i < numPts; i++) {
     // get outward normal
@@ -2862,12 +2863,12 @@ int sys_geom_mathPointData(cvPolyData *srcA, cvPolyData *srcB,
                            sys_geom_math_vector vflag, cvPolyData **dst) {
   int i = 0;
   int j = 0;
-  vtkFloatingPointType myvec[3];
-  vtkFloatingPointType s = 0;
-  vtkFloatingPointType tmpvec[3];
-  vtkFloatingPointType tmps = 0;
-  vtkFloatingPointArrayType *scalar = nullptr;
-  vtkFloatingPointArrayType *vec = nullptr;
+  double myvec[3];
+  double s = 0;
+  double tmpvec[3];
+  double tmps = 0;
+  vtkDoubleArray *scalar = nullptr;
+  vtkDoubleArray *vec = nullptr;
 
   // all of the pds must have the same num pts
   int numPtsA = srcA->GetVtkPolyData()->GetNumberOfPoints();
@@ -2888,7 +2889,7 @@ int sys_geom_mathPointData(cvPolyData *srcA, cvPolyData *srcB,
     vtkDataArray *scalarsB =
         srcB->GetVtkPolyData()->GetPointData()->GetScalars();
     // create return vtk scalar array
-    scalar = vtkFloatingPointArrayType::New();
+    scalar = vtkDoubleArray::New();
     scalar->SetNumberOfComponents(1);
     scalar->Allocate(numPts, 1000);
     scalar->Initialize();
@@ -2917,7 +2918,7 @@ int sys_geom_mathPointData(cvPolyData *srcA, cvPolyData *srcB,
     vtkDataArray *vectorsB =
         srcB->GetVtkPolyData()->GetPointData()->GetVectors();
     // create return vtk vector array
-    vec = vtkFloatingPointArrayType::New();
+    vec = vtkDoubleArray::New();
     vec->SetNumberOfComponents(3);
     vec->Allocate(numPts, 1000);
     vec->Initialize();
@@ -2977,23 +2978,23 @@ int sys_geom_Project(cvPolyData *srcA, cvPolyData *srcB,
   int i = 0;
   int j = 0;
 
-  vtkFloatingPointType s = 0;
-  vtkFloatingPointArrayType *scalar = nullptr;
-  vtkFloatingPointArrayType *vec = nullptr;
+  double s = 0;
+  vtkDoubleArray *scalar = nullptr;
+  vtkDoubleArray *vec = nullptr;
 
   double vx = 0.0;
   double vy = 0.0;
   double vz = 0.0;
 
-  vtkFloatingPointType x[3];
-  vtkFloatingPointType closestPoint[3];
+  double x[3];
+  double closestPoint[3];
   vtkIdType cellId = 0;
   int subId = 0;
-  vtkFloatingPointType dist2 = 0;
-  vtkFloatingPointType pcoords[3];
-  vtkFloatingPointType weights[10];
-  vtkFloatingPointType *weightsPtr;
-  vtkFloatingPointType *closestPointPtr;
+  double dist2 = 0;
+  double pcoords[3];
+  double weights[10];
+  double *weightsPtr;
+  double *closestPointPtr;
 
   vtkPolyData *pdA = srcA->GetVtkPolyData();
   vtkPolyData *pdB = srcB->GetVtkPolyData();
@@ -3020,7 +3021,7 @@ int sys_geom_Project(cvPolyData *srcA, cvPolyData *srcB,
   if (scflag != SYS_GEOM_NO_SCALAR) {
     scalarsA = srcA->GetVtkPolyData()->GetPointData()->GetScalars();
     // create return vtk scalar array
-    scalar = vtkFloatingPointArrayType::New();
+    scalar = vtkDoubleArray::New();
     scalar->SetNumberOfComponents(1);
     scalar->Allocate(numPtsB, 1000);
     scalar->Initialize();
@@ -3028,7 +3029,7 @@ int sys_geom_Project(cvPolyData *srcA, cvPolyData *srcB,
   if (vflag != SYS_GEOM_NO_VECTOR) {
     vectorsA = srcA->GetVtkPolyData()->GetPointData()->GetVectors();
     // create return vtk vector array
-    vec = vtkFloatingPointArrayType::New();
+    vec = vtkDoubleArray::New();
     vec->SetNumberOfComponents(3);
     vec->Allocate(numPtsB, 1000);
     vec->Initialize();
@@ -3070,8 +3071,8 @@ int sys_geom_Project(cvPolyData *srcA, cvPolyData *srcB,
       return SV_ERROR;
     }
 
-    vtkFloatingPointType *nodeVector;
-    vtkFloatingPointType nodeScalar;
+    double *nodeVector;
+    double nodeScalar;
     int numIds = ids->GetNumberOfIds();
     vx = 0.0;
     vy = 0.0;
@@ -3134,9 +3135,9 @@ int sys_geom_ReplacePointData(cvPolyData *srcA, cvPolyData *srcB,
   int i = 0;
   int j = 0;
 
-  vtkFloatingPointType s = 0;
-  vtkFloatingPointArrayType *scalar = nullptr;
-  vtkFloatingPointArrayType *vec = nullptr;
+  double s = 0;
+  vtkDoubleArray *scalar = nullptr;
+  vtkDoubleArray *vec = nullptr;
 
   double vx = 0.0;
   double vy = 0.0;
@@ -3168,7 +3169,7 @@ int sys_geom_ReplacePointData(cvPolyData *srcA, cvPolyData *srcB,
   if (scflag != SYS_GEOM_NO_SCALAR) {
     scalarsA = srcA->GetVtkPolyData()->GetPointData()->GetScalars();
     // create return vtk scalar array
-    scalar = vtkFloatingPointArrayType::New();
+    scalar = vtkDoubleArray::New();
     scalar->SetNumberOfComponents(1);
     scalar->Allocate(numPtsB, 1000);
     scalar->Initialize();
@@ -3176,7 +3177,7 @@ int sys_geom_ReplacePointData(cvPolyData *srcA, cvPolyData *srcB,
   if (vflag != SYS_GEOM_NO_VECTOR) {
     vectorsA = srcA->GetVtkPolyData()->GetPointData()->GetVectors();
     // create return vtk vector array
-    vec = vtkFloatingPointArrayType::New();
+    vec = vtkDoubleArray::New();
     vec->SetNumberOfComponents(3);
     vec->Allocate(numPtsB, 1000);
     vec->Initialize();
@@ -3188,8 +3189,8 @@ int sys_geom_ReplacePointData(cvPolyData *srcA, cvPolyData *srcB,
     int iB = (int)sB;
     // fprintf(stdout,"sB: %lf  iB: %i\n",sB,iB);
 
-    vtkFloatingPointType *nodeVector;
-    vtkFloatingPointType nodeScalar;
+    double *nodeVector;
+    double nodeScalar;
     s = 0.0;
     vx = 0.0;
     vy = 0.0;

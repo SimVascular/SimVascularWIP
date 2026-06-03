@@ -32,10 +32,10 @@
 #ifndef __CVPOLYDATA_SOLID_H
 #define __CVPOLYDATA_SOLID_H
 
-#include "svPolyDataSolidExports.h" // For exports
 #include "sv_PolyData.h"
 #include "sv_SolidModel.h"
-#include "sv_VTK.h"
+
+#include "svPolyDataSolidExports.h" // For exports
 
 //----------------
 // cvPolyDataSolid

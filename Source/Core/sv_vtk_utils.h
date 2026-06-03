@@ -32,18 +32,19 @@
 #ifndef __CVVTKUTILS_H
 #define __CVVTKUTILS_H
 
-#include "sv_VTK.h"
 #include "sv_cgeom.h"
 
-#include "SimVascular.h"
+#include <vtkPolyData.h>
+#include <vtkUnstructuredGrid.h>
+
 #include "svUtilsExports.h" // For exports
 
 int SV_EXPORT_UTILS VtkUtils_NewVtkPolyData(vtkPolyData **pd, int numPts,
-                                            vtkFloatingPointType pts[],
+                                            double pts[],
                                             int numCells, vtkIdType polys[]);
 
 int SV_EXPORT_UTILS VtkUtils_NewVtkPolyDataLines(vtkPolyData **pd, int numPts,
-                                                 vtkFloatingPointType pts[],
+                                                 double pts[],
                                                  int numLines,
                                                  vtkIdType lines[]);
 
@@ -76,7 +77,7 @@ int SV_EXPORT_UTILS VtkUtils_GetPoints(vtkPolyData *pd, double **pts,
                                        int *numPts);
 
 int SV_EXPORT_UTILS VtkUtils_GetPointsFloat(vtkPolyData *pd,
-                                            vtkFloatingPointType **pts,
+                                            double **pts,
                                             int *numPts);
 
 int SV_EXPORT_UTILS VtkUtils_GetAllLines(vtkPolyData *pd, int *numLines,

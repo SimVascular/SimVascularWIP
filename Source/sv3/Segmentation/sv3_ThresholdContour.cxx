@@ -28,24 +28,20 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "SimVascular.h"
-#include "sv3_ITKLevelSet.h"
-#include "sv3_ITKLset_ITKUtils.h"
-#include "sv_Math.h"
 
+#include "sv3_ThresholdContour.h"
+
+#include "sv3_Contour.h"
+#include "sv3_ITKLevelSet.h"
+#include "sv3_SegmentationUtils.h"
+#include "sv_Math.h"
 #include "sv_sys_geom.h"
 #include "sv_vtk_utils.h"
 
-#include "sv3_Contour.h"
-#include "sv3_SegmentationUtils.h"
-#include "sv3_ThresholdContour.h"
-
-#include <iostream>
-#include <vtkCellArray.h>
-#include <vtkImageReslice.h>
-#include <vtkPoints.h>
+#include <vtkContourFilter.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataConnectivityFilter.h>
+
 using sv3::Contour;
 using sv3::PathElement;
 using sv3::SegmentationUtils;

@@ -10,7 +10,6 @@ set(vtkSVInclude_HEADERS
         sv_LispList.hxx
         sv_Math.h
         sv_PolyData.h
-        sv_VTK.h
         sv_cgeom.h
         sv_misc_utils.h
         sv_vtk_utils.h
