@@ -79,7 +79,7 @@ public:
   int ReadVisMesh(char *infilename);
   cvUnstructuredGrid *GetGridObj();
   void SetGrid(cvUnstructuredGrid *obj) {
-    grid_ = (vtkUnstructuredGrid *)(obj->GetVtkPtr());
+    grid_ = obj;
   }
   void SetTractionNodes(int numnodes, int *nodes);
 

@@ -7,8 +7,6 @@ configure_file(simvascular_options.h.in "${CMAKE_CURRENT_BINARY_DIR}/simvascular
 set(vtkSVInclude_HEADERS
         SimVascular.h
         SimVascular_python.h
-        sv_DataObject.h
-        sv_DataSet.h
         sv_FactoryRegistrar.h
         sv_IOstream.h
         sv_LispList.hxx
@@ -27,8 +25,6 @@ set(vtkSVInclude_HEADERS
 )
 
 set(vtkSVInclude_SOURCES
-        sv_DataObject.cxx
-        sv_DataSet.cxx
         sv_FactoryRegistrar.cxx
         sv_Math.cxx
         sv_PolyData.cxx

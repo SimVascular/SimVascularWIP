@@ -34,14 +34,13 @@
 #include "sv_StrPts.h"
 #include "sv_misc_utils.h"
 
-#include "sv_DataSet.h"
+
 
 // ------
 // cvStrPts
 // ------
 
-cvStrPts::cvStrPts(vtkStructuredPoints *sp) : cvDataSet() {
-  data_ = vtkStructuredPoints::New();
+cvStrPts::cvStrPts(vtkStructuredPoints *sp) {
   ShallowCopy(sp);
 }
 
@@ -50,4 +49,4 @@ cvStrPts::cvStrPts(vtkStructuredPoints *sp) : cvDataSet() {
 // -------
 // Delete called by the virtual destructor in class cvDataObject.
 
-cvStrPts::~cvStrPts() { ; }
+cvStrPts::~cvStrPts() {}

@@ -48,7 +48,7 @@
       delete m_cv##name;                                                       \
       m_cv##name = NULL;                                                       \
     }                                                                          \
-    m_cv##name = new cvtype((baseType *)value->GetVtkPtr());                   \
+    m_cv##name = new cvtype(value);                                            \
     return SV_OK;                                                              \
   }
 

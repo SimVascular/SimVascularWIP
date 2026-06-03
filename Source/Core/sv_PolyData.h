@@ -73,14 +73,13 @@ private:
 
 typedef enum { PD_DIST_VTK, PD_DIST_INVALID } PolyData_DistanceT;
 
-#include "sv_DataSet.h"
 
-class SV_EXPORT_REPOSITORY cvPolyData : public cvDataSet {
+
+class SV_EXPORT_REPOSITORY cvPolyData : public vtkPolyData {
 
 public:
   cvPolyData();
   cvPolyData(vtkPolyData *pd);
-  cvPolyData(cvPolyData *pd);
   ~cvPolyData();
 
   double FindDistance2(double x, double y, double z);
@@ -89,7 +88,7 @@ public:
   double FindDistance2(double x, double y, double z, double radius);
   double FindDistance(double x, double y, double z, double radius);
 
-  vtkPolyData *GetVtkPolyData() { return (vtkPolyData *)data_; }
+  vtkPolyData *GetVtkPolyData() { return this; }
 
   void SetDistMethod(PolyData_DistanceT dt);
   PolyData_DistanceT GetDistMethod() { return distMethod_; }

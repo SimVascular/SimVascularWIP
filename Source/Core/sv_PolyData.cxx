@@ -41,9 +41,7 @@
 // cvPolyData
 // --------
 
-cvPolyData::cvPolyData() : cvDataSet() {
-  data_ = vtkPolyData::New();
-
+cvPolyData::cvPolyData() : vtkPolyData() {
   locator_ = nullptr;
   genericCell_ = nullptr;
   distMethod_ = PD_DIST_VTK;
@@ -53,22 +51,8 @@ cvPolyData::cvPolyData() : cvDataSet() {
 // cvPolyData
 // --------
 
-cvPolyData::cvPolyData(vtkPolyData *pd) : cvDataSet() {
-  data_ = vtkPolyData::New();
+cvPolyData::cvPolyData(vtkPolyData *pd) {
   ShallowCopy(pd);
-
-  locator_ = nullptr;
-  genericCell_ = nullptr;
-  distMethod_ = PD_DIST_VTK;
-}
-
-// --------
-// cvPolyData
-// --------
-
-cvPolyData::cvPolyData(cvPolyData *src) : cvDataSet() {
-  data_ = vtkPolyData::New();
-  ShallowCopy(static_cast<vtkDataSet *>(src->data_));
 
   locator_ = nullptr;
   genericCell_ = nullptr;
@@ -98,7 +82,7 @@ double cvPolyData::FindDistance2(double x, double y, double z) {
     return -1.0;
   }
 
-  if ((static_cast<vtkDataSet *>(data_))->GetNumberOfPoints() == 0) {
+  if (GetNumberOfPoints() == 0) {
     return -1.0;
   }
 
@@ -238,7 +222,7 @@ int cvPolyData::BuildVtkCellLocator() {
     }
     locator_->DebugOff();
     locator_->GlobalWarningDisplayOff();
-    locator_->SetDataSet((vtkPolyData *)data_);
+    locator_->SetDataSet(this);
     locator_->AutomaticOn();
     //  locator_->SetNumberOfCellsPerBucket( 5 );
     locator_->Initialize();

@@ -41,26 +41,15 @@
 // cvUnstructuredGrid
 // ----------------
 
-cvUnstructuredGrid::cvUnstructuredGrid() : cvDataSet() {
-  data_ = vtkUnstructuredGrid::New();
+cvUnstructuredGrid::cvUnstructuredGrid() {
 }
 
 // ----------------
 // cvUnstructuredGrid
 // ----------------
 
-cvUnstructuredGrid::cvUnstructuredGrid(vtkUnstructuredGrid *ug) : cvDataSet() {
-  data_ = vtkUnstructuredGrid::New();
+cvUnstructuredGrid::cvUnstructuredGrid(vtkUnstructuredGrid *ug) {
   ShallowCopy(ug);
-}
-
-// ----------------
-// cvUnstructuredGrid
-// ----------------
-
-cvUnstructuredGrid::cvUnstructuredGrid(cvUnstructuredGrid *src) : cvDataSet() {
-  data_ = vtkUnstructuredGrid::New();
-  ShallowCopy(static_cast<vtkDataSet *>(src->data_));
 }
 
 // -----------------
