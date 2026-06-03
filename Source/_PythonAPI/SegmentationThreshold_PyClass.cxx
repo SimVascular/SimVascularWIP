@@ -32,14 +32,14 @@
 // The functions defined here implement the SV Python API Threshold class.
 //
 #include "SimVascular.h"
-#include "sv_misc_utils.h"
+
 #include "sv3_Contour.h"
 #include "Segmentation_PyModule.h"
 #include "sv3_ThresholdContour.h"
 
 #include <stdio.h>
 #include <string.h>
-#include "sv_misc_utils.h"
+
 
 #include "Python.h"
 

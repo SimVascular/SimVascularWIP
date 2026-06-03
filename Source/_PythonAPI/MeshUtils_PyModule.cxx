@@ -35,7 +35,7 @@
 //
 #include "SimVascular.h"
 #include "SimVascular_python.h"
-#include "sv_misc_utils.h"
+
 #include "sv_vmtk_utils.h"
 #include "PyUtils.h"
 
@@ -43,7 +43,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "sv_PolyData.h"
-#include "sv_misc_utils.h"
+
 
 #include "sv_mmg_mesh_utils.h"
 #include "Python.h"

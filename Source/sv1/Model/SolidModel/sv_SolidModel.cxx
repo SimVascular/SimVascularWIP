@@ -35,7 +35,7 @@
 
 #include "sv_PolyData.h"
 #include "sv_SolidModel.h"
-#include "sv_misc_utils.h"
+
 #include <assert.h>
 #include <string.h>
 
@@ -47,7 +47,7 @@ SolidModel_KernelT cvSolidModel::gCurrentKernel = SM_KT_PARASOLID;
 
 cvSolidModel::cvSolidModel(SolidModel_KernelT t) {
   kernel_ = t;
-  tol_ = 1e6 * FindMachineEpsilon();
+  tol_ = 1e6 * DBL_EPSILON;
 }
 
 // -----------

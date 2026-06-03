@@ -52,7 +52,7 @@
 #include "sv_PolyData.h"
 #include "sv_FactoryRegistrar.h"
 #include "sv_VTK.h"
-#include "sv_misc_utils.h"
+
 #include "TopoDS_Shape.hxx"
 #include "TopoDS_Face.hxx"
 #include "TDF_Label.hxx"

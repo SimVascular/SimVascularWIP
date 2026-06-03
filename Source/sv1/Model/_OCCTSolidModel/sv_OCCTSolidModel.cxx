@@ -53,7 +53,7 @@
 #include "vtkMath.h"
 #include "sv_polydatasolid_utils.h"
 #include "sv_occtsolid_utils.h"
-#include "sv_misc_utils.h"
+
 #include "sv_sys_geom.h"
 #include <string.h>
 #include <assert.h>

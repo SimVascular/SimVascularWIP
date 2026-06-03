@@ -44,7 +44,7 @@
 
 #include "Modeling_PyModule.h"
 #include "sv_SolidModel.h"
-#include "sv_misc_utils.h"
+
 #include "sv_vtk_utils.h"
 #include "sv_PolyData.h"
 #include "sv_OCCTSolidModel.h"

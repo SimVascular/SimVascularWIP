@@ -32,8 +32,6 @@
 #ifndef SV_VTK_UTILS_H
 #define SV_VTK_UTILS_H
 
-#include "sv_cgeom.h"
-
 #include <vtkPolyData.h>
 #include <vtkUnstructuredGrid.h>
 
@@ -119,13 +117,6 @@ SV_EXPORT_UTILS vtkCellArray *VtkUtils_DeepCopyCells(vtkCellArray *cellsIn);
 int SV_EXPORT_UTILS VtkUtils_MakePolysConsistent(vtkPolyData *pd);
 
 int SV_EXPORT_UTILS VtkUtils_ReverseAllCells(vtkPolyData *pd);
-
-int SV_EXPORT_UTILS VtkUtils_GetOrderedPoints(vtkPolyData *inputData,
-                                              int direction, double **pts,
-                                              int *numPts);
-
-int SV_EXPORT_UTILS VtkUtils_CalcDirection(double *pts, int numPts,
-                                           int *currentDirection);
 
 int SV_EXPORT_UTILS VtkUtils_ReversePtList(int num, double ptsIn[],
                                            double *ptsOut[]);

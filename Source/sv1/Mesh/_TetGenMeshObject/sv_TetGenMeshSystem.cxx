@@ -41,7 +41,7 @@
 #include "SimVascular.h"
 
 #include "sv_TetGenMeshSystem.h"
-#include "sv_misc_utils.h"
+
 #include <string.h>
 
 

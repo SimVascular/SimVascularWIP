@@ -53,7 +53,7 @@
 #include <functional>
 #include "sv_PolyData.h"
 #include "sv_VTK.h"
-#include "sv_misc_utils.h"
+
 #include "Python.h"
 
 // Needed for Windows.

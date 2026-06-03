@@ -39,7 +39,7 @@
 #include <vtkCardinalSpline.h>
 #include <vtkKochanekSpline.h>
 
-#include "sv_misc_utils.h"
+
 
 int sys_geom_splinePtsToPathPlan(vtkPolyData *pd, int numOutputPts,
                                  char *filename, int flag) {

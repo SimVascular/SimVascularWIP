@@ -47,7 +47,7 @@
 #define CVITKLEVELSET_H_
 
 #include "sv_PolyData.h"
-#include "sv_misc_utils.h"
+
 
 #include "svSegITKExports.h" // For exports
 
@@ -194,9 +194,6 @@ public:
 
   cvITKLevelSet();
   virtual ~cvITKLevelSet() = default;
-
-  // To facilitate use with Tcl hash tables:
-  char tclName_[CV_STRLEN];
 
 protected:
   // base class

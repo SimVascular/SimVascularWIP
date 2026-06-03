@@ -38,8 +38,8 @@
 
 #include "sv_Math.h"
 #include "sv_SolidModel.h"
+#include "sv_cgeom.h"
 #include "sv_ggems.h"
-#include "sv_misc_utils.h"
 #include "sv_vtk_utils.h"
 
 #include <vtkAppendPolyData.h>
@@ -134,7 +134,7 @@ cvPolyData *sys_geom_DeepCopy(cvPolyData *src) {
 /* ----------------- */
 
 cvPolyData *sys_geom_MergePts(cvPolyData *src) {
-  double tol = 1e10 * FindMachineEpsilon();
+  double tol = 1e10 * DBL_EPSILON;
   return sys_geom_MergePts_tol(src, tol);
 }
 
@@ -879,7 +879,7 @@ int sys_geom_GetOrderedPts(cvPolyData *src, double **ord_pts, int *num) {
 
 int sys_geom_Get2DPgon(cvPolyData *src, double **pgon, int *num) {
   double bbox[6];
-  double tol = 1e10 * FindMachineEpsilon(); // looser than in other places
+  double tol = 1e10 * DBL_EPSILON; // looser than in other places
   double *ord_pts;
   double *rev_pts = nullptr;
   double *pts;
@@ -1234,7 +1234,7 @@ int sys_geom_PrintTriStats(cvPolyData *surf) {
   double minHeight, currMinHeight;
   double len_ab, len_ac, len_bc;
   int min_e_id, min_a_id, min_h_id;
-  double tol = 1e6 * FindMachineEpsilon();
+  double tol = 1e6 * DBL_EPSILON;
 
   pd = surf->GetVtkPolyData();
 
@@ -1266,14 +1266,14 @@ int sys_geom_PrintTriStats(cvPolyData *surf) {
       c = polys[pos + 3];
 
       // Find the shortest edge of the triangle:
-      len_ab = Distance(pts[3 * a], pts[3 * a + 1], pts[3 * a + 2], pts[3 * b],
-                        pts[3 * b + 1], pts[3 * b + 2]);
-      len_ac = Distance(pts[3 * a], pts[3 * a + 1], pts[3 * a + 2], pts[3 * c],
-                        pts[3 * c + 1], pts[3 * c + 2]);
-      len_bc = Distance(pts[3 * b], pts[3 * b + 1], pts[3 * b + 2], pts[3 * c],
-                        pts[3 * c + 1], pts[3 * c + 2]);
-      currMinEdge = svminimum(len_ab, len_ac);
-      currMinEdge = svminimum(currMinEdge, len_bc);
+      len_ab =
+          std::sqrt(vtkMath::Distance2BetweenPoints(&pts[3 * a], &pts[3 * b]));
+      len_ac =
+          std::sqrt(vtkMath::Distance2BetweenPoints(&pts[3 * a], &pts[3 * c]));
+      len_bc =
+          std::sqrt(vtkMath::Distance2BetweenPoints(&pts[3 * b], &pts[3 * c]));
+      currMinEdge = std::min(len_ab, len_ac);
+      currMinEdge = std::min(currMinEdge, len_bc);
       if ((i == 0) || (currMinEdge < minEdge)) {
         minEdge = currMinEdge;
         min_e_id = i;
@@ -1286,9 +1286,8 @@ int sys_geom_PrintTriStats(cvPolyData *surf) {
       ac[0] = pts[3 * c] - pts[3 * a];
       ac[1] = pts[3 * c + 1] - pts[3 * a + 1];
       ac[2] = pts[3 * c + 2] - pts[3 * a + 2];
-      Cross(ab[0], ab[1], ab[2], ac[0], ac[1], ac[2], &(cp[0]), &(cp[1]),
-            &(cp[2]));
-      currArea = Magnitude(cp[0], cp[1], cp[2]) / 2.0;
+      vtkMath::Cross(ab, ac, cp);
+      currArea = vtkMath::Norm(cp, 3) / 2.0;
       if ((i == 0) || (currArea < minArea)) {
         minArea = currArea;
         min_a_id = i;
@@ -1296,8 +1295,8 @@ int sys_geom_PrintTriStats(cvPolyData *surf) {
 
       // Find the smallest triangle height:
       // A(tri) = 1/2 (base) (height)
-      currMaxEdge = svmaximum(len_ab, len_ac);
-      currMaxEdge = svmaximum(currMaxEdge, len_bc);
+      currMaxEdge = std::max(len_ab, len_ac);
+      currMaxEdge = std::max(currMaxEdge, len_bc);
       currMinHeight = 2 * currArea / currMaxEdge;
       if ((i == 0) || (currMinHeight < minHeight)) {
         minHeight = currMinHeight;
@@ -1456,14 +1455,14 @@ int sys_geom_BBox(cvPolyData *obj, double bbox[]) {
       bbox[4] = bbox[5] = pts[3 * i + 2];
     }
 
-    bbox[0] = svminimum(bbox[0], pts[3 * i]);
-    bbox[1] = svmaximum(bbox[1], pts[3 * i]);
+    bbox[0] = std::min(bbox[0], pts[3 * i]);
+    bbox[1] = std::max(bbox[1], pts[3 * i]);
 
-    bbox[2] = svminimum(bbox[2], pts[3 * i + 1]);
-    bbox[3] = svmaximum(bbox[3], pts[3 * i + 1]);
+    bbox[2] = std::min(bbox[2], pts[3 * i + 1]);
+    bbox[3] = std::max(bbox[3], pts[3 * i + 1]);
 
-    bbox[4] = svminimum(bbox[4], pts[3 * i + 2]);
-    bbox[5] = svmaximum(bbox[5], pts[3 * i + 2]);
+    bbox[4] = std::min(bbox[4], pts[3 * i + 2]);
+    bbox[5] = std::max(bbox[5], pts[3 * i + 2]);
   }
 
   delete[] pts;
@@ -1487,11 +1486,10 @@ int sys_geom_OrientProfile(cvPolyData *src, double ppt[], double ptan[],
   double trans[2];
   cvPolyData *result;
 
-  NormVector(&(ptan[0]), &(ptan[1]), &(ptan[2]));
-  NormVector(&(xhat[0]), &(xhat[1]), &(xhat[2]));
-  Cross(ptan[0], ptan[1], ptan[2], xhat[0], xhat[1], xhat[2], &(yhat[0]),
-        &(yhat[1]), &(yhat[2]));
-  NormVector(&(yhat[0]), &(yhat[1]), &(yhat[2]));
+  vtkMath::Normalize(ptan);
+  vtkMath::Normalize(xhat);
+  vtkMath::Cross(ptan, xhat, yhat);
+  vtkMath::Normalize(yhat);
 
   lines = VtkUtils_DeepCopyCells(srcPd->GetLines());
   numPts = srcPd->GetNumberOfPoints();
@@ -1524,9 +1522,9 @@ int sys_geom_OrientProfile(cvPolyData *src, double ppt[], double ptan[],
 int sys_geom_DisorientProfile(cvPolyData *src, double ppt[], double ptan[],
                               double xhat[], cvPolyData **dst) {
   double yhat[3];
-  double S[9], detS;
-  double A[9];
-  double B[9];
+  double S[3][3], detS;
+  double A[3][3];
+  double B[3][3];
   vtkCellArray *lines;
   vtkPoints *pts = vtkPoints::New();
   vtkPolyData *srcPd = src->GetVtkPolyData();
@@ -1536,71 +1534,45 @@ int sys_geom_DisorientProfile(cvPolyData *src, double ppt[], double ptan[],
   double dstpt[3];
   cvPolyData *result;
 
-  double ep = 1e6 * FindMachineEpsilon();
+  double ep = 1e6 * DBL_EPSILON;
 
-  NormVector(&(ptan[0]), &(ptan[1]), &(ptan[2]));
-  NormVector(&(xhat[0]), &(xhat[1]), &(xhat[2]));
-  Cross(ptan[0], ptan[1], ptan[2], xhat[0], xhat[1], xhat[2], &(yhat[0]),
-        &(yhat[1]), &(yhat[2]));
-  NormVector(&(yhat[0]), &(yhat[1]), &(yhat[2]));
+  vtkMath::Normalize(ptan);
+  vtkMath::Normalize(xhat);
+  vtkMath::Cross(ptan, xhat, yhat);
+  vtkMath::Normalize(yhat);
 
   // Set up S, A and B for use with Cramer's Rule to find dstpt[0] and
   // dstpt[1], respectively:
 
-  S[0] = xhat[0];
-  S[1] = xhat[1];
-  S[2] = xhat[2];
+  S[0][0] = xhat[0];
+  S[0][1] = xhat[1];
+  S[0][2] = xhat[2];
 
-  S[3] = yhat[0];
-  S[4] = yhat[1];
-  S[5] = yhat[2];
+  S[1][0] = yhat[0];
+  S[1][1] = yhat[1];
+  S[1][2] = yhat[2];
 
-  S[6] = ptan[0];
-  S[7] = ptan[1];
-  S[8] = ptan[2];
+  S[2][0] = ptan[0];
+  S[2][1] = ptan[1];
+  S[2][2] = ptan[2];
 
-  detS = misc_Det3x3(S);
+  detS = vtkMath::Determinant3x3(S);
 
-  A[3] = yhat[0];
-  A[4] = yhat[1];
-  A[5] = yhat[2];
+  A[1][0] = yhat[0];
+  A[1][1] = yhat[1];
+  A[1][2] = yhat[2];
 
-  A[6] = ptan[0];
-  A[7] = ptan[1];
-  A[8] = ptan[2];
+  A[2][0] = ptan[0];
+  A[2][1] = ptan[1];
+  A[2][2] = ptan[2];
 
-  B[0] = xhat[0];
-  B[1] = xhat[1];
-  B[2] = xhat[2];
+  B[0][0] = xhat[0];
+  B[0][1] = xhat[1];
+  B[0][2] = xhat[2];
 
-  B[6] = ptan[0];
-  B[7] = ptan[1];
-  B[8] = ptan[2];
-
-  /*
-  a = xhat[0];
-  b = yhat[0];
-  c = xhat[1];
-  d = yhat[1];
-  if ( fabs(a*d - b*c) < ep ) {
-    printf("ERR: singular disorientation matrix\n");
-    pts->Delete();
-    pd->Delete();
-    *dst = nullptr;
-    return SV_ERROR;
-  }
-  coeff = 1.0 / ( a*d - b*c );
-
-  lines = VtkUtils_DeepCopyCells( srcPd->GetLines() );
-  numPts = srcPd->GetNumberOfPoints();
-  for ( i = 0; i < numPts; i++ ) {
-    srcPd->GetPoint( i, srcpt );
-    dstpt[0] = coeff * ( d*(srcpt[0] - ppt[0]) - b*(srcpt[1] - ppt[1]) );
-    dstpt[1] = coeff * ( -c*(srcpt[0] - ppt[0]) + a*(srcpt[1] - ppt[1]) );
-    dstpt[2] = 0.0;
-    pts->InsertNextPoint( dstpt );
-  }
-  */
+  B[2][0] = ptan[0];
+  B[2][1] = ptan[1];
+  B[2][2] = ptan[2];
 
   lines = VtkUtils_DeepCopyCells(srcPd->GetLines());
   numPts = srcPd->GetNumberOfPoints();
@@ -1608,16 +1580,16 @@ int sys_geom_DisorientProfile(cvPolyData *src, double ppt[], double ptan[],
 
     srcPd->GetPoint(i, srcpt);
 
-    A[0] = srcpt[0] - ppt[0];
-    A[1] = srcpt[1] - ppt[1];
-    A[2] = srcpt[2] - ppt[2];
+    A[0][0] = srcpt[0] - ppt[0];
+    A[0][1] = srcpt[1] - ppt[1];
+    A[0][2] = srcpt[2] - ppt[2];
 
-    B[3] = srcpt[0] - ppt[0];
-    B[4] = srcpt[1] - ppt[1];
-    B[5] = srcpt[2] - ppt[2];
+    B[1][0] = srcpt[0] - ppt[0];
+    B[1][1] = srcpt[1] - ppt[1];
+    B[1][2] = srcpt[2] - ppt[2];
 
-    dstpt[0] = (1.0 / detS) * (misc_Det3x3(A));
-    dstpt[1] = (1.0 / detS) * (misc_Det3x3(B));
+    dstpt[0] = (1.0 / detS) * (vtkMath::Determinant3x3(A));
+    dstpt[1] = (1.0 / detS) * (vtkMath::Determinant3x3(B));
     dstpt[2] = 0.0;
     pts->InsertNextPoint(dstpt);
   }
@@ -1727,9 +1699,8 @@ cvPolyData *sys_geom_Align(cvPolyData *ref, cvPolyData *src) {
   radial[0] = refStart[0] - refAvg[0];
   radial[1] = refStart[1] - refAvg[1];
   radial[2] = refStart[2] - refAvg[2];
-  Cross(refNrm[0], refNrm[1], refNrm[2], radial[0], radial[1], radial[2],
-        &(refCross[0]), &(refCross[1]), &(refCross[2]));
-  NormVector(&(refCross[0]), &(refCross[1]), &(refCross[2]));
+  vtkMath::Cross(refNrm, radial, refCross);
+  vtkMath::Normalize(refCross);
 
   if (sys_geom_PolygonNormal(src, srcNrm) != SV_OK) {
     printf("ERR: normal calculation for source polygon failed\n");
@@ -1739,8 +1710,7 @@ cvPolyData *sys_geom_Align(cvPolyData *ref, cvPolyData *src) {
   // If src normal opposes ref normal, then invert src.  This is
   // reasonable because this alignment function is only meant for use
   // with neighboring curves which are changing direction gradually.
-  if (Dot(refNrm[0], refNrm[1], refNrm[2], srcNrm[0], srcNrm[1], srcNrm[2]) <
-      0.0) {
+  if (vtkMath::Dot(refNrm, srcNrm) < 0.0) {
     VtkUtils_ReverseAllCells(src->GetVtkPolyData());
   }
 
@@ -1765,11 +1735,9 @@ cvPolyData *sys_geom_Align(cvPolyData *ref, cvPolyData *src) {
     radial[0] = srcPts[3 * i] - srcAvg[0];
     radial[1] = srcPts[3 * i + 1] - srcAvg[1];
     radial[2] = srcPts[3 * i + 2] - srcAvg[2];
-    Cross(srcNrm[0], srcNrm[1], srcNrm[2], radial[0], radial[1], radial[2],
-          &(currCross[0]), &(currCross[1]), &(currCross[2]));
-    NormVector(&(currCross[0]), &(currCross[1]), &(currCross[2]));
-    currScore = Dot(refCross[0], refCross[1], refCross[2], currCross[0],
-                    currCross[1], currCross[2]);
+    vtkMath::Cross(srcNrm, radial, currCross);
+    vtkMath::Normalize(currCross);
+    currScore = vtkMath::Dot(refCross, currCross);
     if (i == 0) {
       maxScore = currScore;
       posId = i;
@@ -1777,7 +1745,7 @@ cvPolyData *sys_geom_Align(cvPolyData *ref, cvPolyData *src) {
       if (currScore > maxScore) {
         posId = i;
       }
-      maxScore = svmaximum(maxScore, currScore);
+      maxScore = std::max(maxScore, currScore);
     }
   }
   delete[] srcPts;
@@ -1876,8 +1844,7 @@ cvPolyData *sys_geom_AlignByDist(cvPolyData *ref, cvPolyData *src) {
   // If src normal opposes ref normal, then invert src.  This is
   // reasonable because this alignment function is only meant for use
   // with neighboring curves which are changing direction gradually.
-  if (Dot(refNrm[0], refNrm[1], refNrm[2], srcNrm[0], srcNrm[1], srcNrm[2]) <
-      0.0) {
+  if (vtkMath::Dot(refNrm, srcNrm) < 0.0) {
     // fprintf(stdout,"  Reversing src.\n");
     VtkUtils_ReverseAllCells(src->GetVtkPolyData());
   }
@@ -2141,7 +2108,7 @@ cvPolyData *sys_geom_sampleLoop(cvPolyData *src, int targetNumPts) {
   vtkIdType *linesOut;
   vtkPolyData *pdOut;
   cvPolyData *result;
-  double tol = 1e10 * FindMachineEpsilon();
+  double tol = 1e10 * DBL_EPSILON;
 
   if (targetNumPts < 3) {
     printf("ERR: target # pts must be >= 3\n");
@@ -2434,11 +2401,11 @@ int sys_geom_2DWindingNum(cvPolyData *pgn) {
     currVec[0] = pts[3 * currJ] - pts[3 * currI];
     currVec[1] = pts[3 * currJ + 1] - pts[3 * currI + 1];
     currVec[2] = 0.0;
-    NormVector(&(currVec[0]), &(currVec[1]), &(currVec[2]));
+    vtkMath::Normalize(currVec);
     nextVec[0] = pts[3 * nextJ] - pts[3 * nextI];
     nextVec[1] = pts[3 * nextJ + 1] - pts[3 * nextI + 1];
     nextVec[2] = 0.0;
-    NormVector(&(nextVec[0]), &(nextVec[1]), &(nextVec[2]));
+    vtkMath::Normalize(nextVec);
 
     // This is nothing more than the z-component of curr x next:
     sign = currVec[0] * nextVec[1] - currVec[1] * nextVec[0];
@@ -2452,7 +2419,7 @@ int sys_geom_2DWindingNum(cvPolyData *pgn) {
     tot_theta += dtheta;
   }
 
-  wnum = svRound(tot_theta / (2 * CV_PI));
+  wnum = static_cast<int>(std::round(tot_theta / (2 * M_PI)));
   delete tmp;
   delete[] lines;
   delete[] pts;
@@ -2521,7 +2488,7 @@ int sys_geom_PolygonNormal(cvPolyData *pgn, double n[]) {
     n[2] += (ax * by - ay * bx);
   }
 
-  NormVector(&(n[0]), &(n[1]), &(n[2]));
+  vtkMath::Normalize(n);
   delete[] pts;
   return SV_OK;
 }

@@ -39,7 +39,7 @@
 
 #include <cassert>
 
-#include "sv_misc_utils.h"
+
 #include "sv_polydatasolid_utils.h"
 #include "sv_sys_geom.h"
 #include "sv_vtk_utils.h"

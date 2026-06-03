@@ -48,7 +48,7 @@
 
 #include "SimVascular.h"
 #include "svAdaptorExports.h" // For exports
-#include "sv_misc_utils.h"
+
 
 #include "vtkUnstructuredGrid.h"
 #include "vtkPolyData.h"

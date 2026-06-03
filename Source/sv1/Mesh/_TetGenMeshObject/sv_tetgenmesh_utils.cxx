@@ -62,7 +62,7 @@
 #include "simvascular_tetgen.h"
 
 #include "sv_polydatasolid_utils.h"
-#include "sv_misc_utils.h"
+
 #include "sv_vtk_utils.h"
 
 #define MAXPATHLEN 1024

@@ -1,17 +1,19 @@
 set(vtkSV1Geometry_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/svGeometryExports.h)
 set(vtkSV1Geometry_HEADERS
+    sv_cgeom.h
     sv_ggems.h
-    sv_sys_geom.h
-    sv_spline.h
     sv_integrate_surface.h
+    sv_spline.h
+    sv_sys_geom.h
     ${vtkSV1Geometry_EXPORT_HEADER}
 )
 
 set(vtkSV1Geometry_SOURCES
-    sv_spline.cxx
-    sv_sys_geom.cxx
     sv_ggems.cxx
     sv_integrate_surface.cxx
+    sv_spline.cxx
+    sv_sys_geom.cxx
+    sv_cgeom.cxx
 )
 
 vtk_module_add_module(VTK::SV1Geometry

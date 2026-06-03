@@ -32,7 +32,7 @@
 #include "SimVascular.h"
 
 #include "sv_MeshSystem.h"
-#include "sv_misc_utils.h"
+
 #include <string.h>
 
 cvMeshObject::KernelType cvMeshSystem::gCurrentKernel =

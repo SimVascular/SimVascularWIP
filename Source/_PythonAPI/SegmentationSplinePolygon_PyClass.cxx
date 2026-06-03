@@ -44,14 +44,14 @@
 // The SV control points are constructed using the boundary control points and other data.
 
 #include "SimVascular.h"
-#include "sv_misc_utils.h"
+
 #include "sv3_Contour.h"
 #include "Segmentation_PyModule.h"
 #include "sv3_SplinePolygonContour.h"
 
 #include <stdio.h>
 #include <string.h>
-#include "sv_misc_utils.h"
+
 
 #include "Python.h"
 #include "PyUtils.h"

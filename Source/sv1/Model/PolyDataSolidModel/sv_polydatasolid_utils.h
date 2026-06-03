@@ -46,15 +46,9 @@
 #ifndef __CV_POLYDATASOLID_UTILS_H
 #define __CV_POLYDATASOLID_UTILS_H
 
-#include "SimVascular.h"
+#include <vtkPolyData.h>
+
 #include "svPolyDataSolidExports.h" // For exports
-
-#include "sv_LispList.hxx"
-#include "sv_PolyData.h"
-#include "sv_vtk_utils.h"
-
-#include <array>
-#include <vector>
 
 /* ------ */
 /* Kernel */

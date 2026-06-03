@@ -33,7 +33,7 @@
 #define __CVGGEMS_H
 
 #include "svGeometryExports.h" // For exports
-#include "sv_misc_utils.h"
+
 
 #define PI 3.141592653589793324
 #define ggemsGeoZeroVec(v) ((v).x = (v).y = (v).z = 0.0)

@@ -52,7 +52,7 @@
 #include "sv_SolidModel.h"
 #include "Modeling_PyModule.h"
 #include "sv_integrate_surface.h"
-#include "sv_misc_utils.h"
+
 #include "sv_vtk_utils.h"
 #include "vtkSmartPointer.h"
 #include "PyUtils.h"

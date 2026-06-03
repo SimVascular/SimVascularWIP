@@ -126,7 +126,7 @@ Rdouble ggemsgeo_solid_angle(int n_vert,           /* number of vertices */
     l1 = ggemsGeoVecLen(&n1);
     l2 = ggemsGeoVecLen(&n2);
     s = ggemsGeoDotProd(&n1, &n2) / (l1 * l2);
-    ang = acos(svmaximum(-1.0, svminimum(1.0, s)));
+    ang = acos(std::max(-1.0, ((1.0) < (s) ? (1.0) : (s))));
     s = ggemsGeoTripleProd(&b, &a, &plane);
     area += s > 0.0 ? PI - ang : PI + ang;
 
@@ -149,8 +149,8 @@ Rdouble ggemsgeo_solid_angle(int n_vert,           /* number of vertices */
 /* --------------------------- */
 
 int ggems_CrossingsMultiplyTest(double pgon[], int numverts, double point[]) {
-  register int j, yflag0, yflag1, inside_flag;
-  register double ty, tx, vtx0[2], vtx1[2], *mark;
+  int j, yflag0, yflag1, inside_flag;
+  double ty, tx, vtx0[2], vtx1[2], *mark;
 
   tx = point[X];
   ty = point[Y];

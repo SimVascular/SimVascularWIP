@@ -32,7 +32,7 @@
 #include "SimVascular.h"
 
 #include "sv_MeshObject.h"
-#include "sv_misc_utils.h"
+
 #include <string.h>
 
 // Set the key names used to store face information.

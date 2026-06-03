@@ -33,7 +33,7 @@
 
 #include "sv_TetGenMeshObject.h"
 #include "sv_SolidModel.h"
-#include "sv_misc_utils.h"
+DBL_EPSILON
 #include "sv_polydatasolid_utils.h"
 
 #include "sv_tetgenmesh_utils.h"

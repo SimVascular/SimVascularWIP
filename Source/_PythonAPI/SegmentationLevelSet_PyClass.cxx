@@ -34,14 +34,14 @@
 // The class name is 'segmentation.LevelSet'.
 //
 #include "SimVascular.h"
-#include "sv_misc_utils.h"
+
 #include "sv3_Contour.h"
 #include "Segmentation_PyModule.h"
 #include "sv3_LevelSetContour.h"
 
 #include <stdio.h>
 #include <string.h>
-#include "sv_misc_utils.h"
+
 
 #include "Python.h"
 

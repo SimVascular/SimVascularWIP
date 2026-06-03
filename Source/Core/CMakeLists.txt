@@ -6,12 +6,8 @@ configure_file(simvascular_options.h.in "${CMAKE_CURRENT_BINARY_DIR}/simvascular
 
 set(vtkSVInclude_HEADERS
         SimVascular.h
-        sv_IOstream.h
-        sv_LispList.hxx
         sv_Math.h
         sv_PolyData.h
-        sv_cgeom.h
-        sv_misc_utils.h
         sv_vtk_utils.h
         "${CMAKE_CURRENT_BINARY_DIR}/simvascular_version.h"
         "${CMAKE_CURRENT_BINARY_DIR}/simvascular_options.h"
@@ -22,8 +18,6 @@ set(vtkSVInclude_HEADERS
 set(vtkSVInclude_SOURCES
         sv_Math.cxx
         sv_PolyData.cxx
-        sv_cgeom.cxx
-        sv_misc_utils.cxx
         sv_vtk_utils.cxx
 )
 

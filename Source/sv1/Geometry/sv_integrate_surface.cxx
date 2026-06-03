@@ -31,6 +31,8 @@
 
 #include "sv_integrate_surface.h"
 
+#include "SimVascular.h"
+
 #include <cmath>
 #include <cstdio>
 
