@@ -1,9 +1,0 @@
-NAME
-    VTK::SV2PostProcessing
-LIBRARY_NAME
-    vtkSV2PostProcessing
-GROUPS
-    SV
-    SV2
-DEPENDS
-    VTK::SVCore
