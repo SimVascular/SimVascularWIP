@@ -29,12 +29,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "SimVascular.h"
-
-#include "sv_misc_utils.h"
-#include <assert.h>
-#include <stdio.h>
-
 #include "sv_PolyData.h"
 
 cvPolyData::cvPolyData() {}

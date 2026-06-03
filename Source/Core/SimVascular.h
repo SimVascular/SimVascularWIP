@@ -37,4 +37,4 @@
 #include "simvascular_options.h"
 #include "simvascular_version.h"
 
-#endif /* SIMVASCULAR_H */
+#endif

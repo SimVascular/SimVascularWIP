@@ -29,14 +29,16 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "sv_Math.h"
+
+#include "SimVascular.h"
+
 #include <array>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
 
 #include <vtkMath.h>
-
-#include "sv_Math.h"
 
 cvMath::cvMath() {}
 

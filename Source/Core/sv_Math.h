@@ -29,18 +29,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __CVMATH_H
-#define __CVMATH_H
+#ifndef SV_MATH_H
+#define SV_MATH_H
 
 /**********************************************************
  * Someday I may want to make this method inherent from a *
  * vtkMath object.                                        *
  **********************************************************/
 
-#include "SimVascular.h"
-#include "svUtilsExports.h" // For exports
 #include <array>
 #include <vector>
+
+#include "svUtilsExports.h" // For exports
 
 class SV_EXPORT_UTILS cvMath {
 

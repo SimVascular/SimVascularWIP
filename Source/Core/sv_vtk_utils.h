@@ -29,8 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __CVVTKUTILS_H
-#define __CVVTKUTILS_H
+#ifndef SV_VTK_UTILS_H
+#define SV_VTK_UTILS_H
 
 #include "sv_cgeom.h"
 
@@ -40,12 +40,11 @@
 #include "svUtilsExports.h" // For exports
 
 int SV_EXPORT_UTILS VtkUtils_NewVtkPolyData(vtkPolyData **pd, int numPts,
-                                            double pts[],
-                                            int numCells, vtkIdType polys[]);
+                                            double pts[], int numCells,
+                                            vtkIdType polys[]);
 
 int SV_EXPORT_UTILS VtkUtils_NewVtkPolyDataLines(vtkPolyData **pd, int numPts,
-                                                 double pts[],
-                                                 int numLines,
+                                                 double pts[], int numLines,
                                                  vtkIdType lines[]);
 
 // What I'd like to do in FixTopology is clean up the vtkPolyData *pd
@@ -76,8 +75,7 @@ int SV_EXPORT_UTILS VtkUtils_FixTopology(vtkPolyData *pd, double tol);
 int SV_EXPORT_UTILS VtkUtils_GetPoints(vtkPolyData *pd, double **pts,
                                        int *numPts);
 
-int SV_EXPORT_UTILS VtkUtils_GetPointsFloat(vtkPolyData *pd,
-                                            double **pts,
+int SV_EXPORT_UTILS VtkUtils_GetPointsFloat(vtkPolyData *pd, double **pts,
                                             int *numPts);
 
 int SV_EXPORT_UTILS VtkUtils_GetAllLines(vtkPolyData *pd, int *numLines,
@@ -144,4 +142,4 @@ void VtkUtils_write_vtu(vtkUnstructuredGrid *ugrid,
 
 void VtkUtils_write_vtp(vtkPolyData *polydata, const std::string file_name);
 
-#endif // __CVVTKUTILS_H
+#endif

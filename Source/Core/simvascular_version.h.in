@@ -29,6 +29,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef SIMVASCULAR_VERSION_H
+#define SIMVASCULAR_VERSION_H
+
 /* Standard Version defines */
 #define SV_VERSION "@SV_VERSION@"
 #define SV_MAJOR_VERSION "@SV_MAJOR_VERSION@"
@@ -39,3 +42,5 @@
 /* Our Version defines */
 #define SV_MAJOR_VER_NO "@SV_MAJOR_VERSION@"
 #define SV_FULL_VER_NO "@SV_MAJOR_VERSION@.@SV_MINOR_VERSION@"
+
+#endif

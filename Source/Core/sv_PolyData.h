@@ -29,8 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __CVPOLY_DATA_H
-#define __CVPOLY_DATA_H
+#ifndef SV_POLYDATA_H
+#define SV_POLYDATA_H
 
 #include <array>
 #include <stdexcept>
@@ -87,4 +87,4 @@ public:
   vtkPolyData *GetVtkPolyData() { return this; }
 };
 
-#endif // __POLY_DATA_H
+#endif
