@@ -34,39 +34,7 @@
 #define SV_OK 1
 #define SV_ERROR 0
 
-/* true / false don't seem to be defined on linux */
-#ifndef WIN32
-#ifndef TRUE
-#define TRUE 1
-#endif
-#ifndef FALSE
-#define FALSE 0
-#endif
-#endif
-
-#ifdef WINDOWS
-#ifndef SV_STATIC_LINK
-#define SV_DLL_EXPORT __declspec(dllexport)
-#define SV_DLL_IMPORT __declspec(dllimport)
-#else
-#define SV_DLL_EXPORT
-#define SV_DLL_IMPORT
-#endif
-#else
-#define SV_DLL_EXPORT
-#define SV_DLL_IMPORT
-#endif
-
 #include "simvascular_options.h"
 #include "simvascular_version.h"
-
-#ifdef SVQTMAINWINDOW_EXPORT
-#undef SVQTMAINWINDOW_EXPORT
-#endif
-#ifdef SVQTMAINWINDOW_EXPORT_COMPILE
-#define SVQTMAINWINDOW_EXPORT SV_DLL_EXPORT
-#else
-#define SVQTMAINWINDOW_EXPORT SV_DLL_IMPORT
-#endif
 
 #endif /* SIMVASCULAR_H */

@@ -70,8 +70,8 @@ PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "SimVascular.h"
 
-#define TRUE 1
-#define FALSE 0
+#define true 1
+#define false 0
 
 #include <assert.h>
 #define cvAssert assert
@@ -183,7 +183,7 @@ public:
   // initialize an iterator
 
   Bool IsDone() { return current == nullptr; };
-  // return TRUE if we are at the end of the list
+  // return true if we are at the end of the list
 
   T Item() {
     cvAssert(!IsDone());
@@ -380,7 +380,7 @@ template <class T> void cvLispList<T>::Remove(T item) {
 
 //----------------------------------------------------------------------
 // cvLispList<T>::IsInList
-//      Return TRUE if the item is in the list.
+//      Return true if the item is in the list.
 //----------------------------------------------------------------------
 
 template <class T> Bool cvLispList<T>::IsInList(T item) const {
@@ -396,10 +396,10 @@ template <class T> Bool cvLispList<T>::IsInList(T item) const {
     //        cout << "\tptr = " << ptr << endl;
 
     if (item == ptr->item) {
-      return TRUE;
+      return true;
     }
   }
-  return FALSE;
+  return false;
 }
 
 //----------------------------------------------------------------------

@@ -234,11 +234,11 @@ void bandr ( int n, int mb, double a[], double d[], double e[], double e2[],
 //    Output, double E2[N], contains the squares of the corresponding
 //    elements of E.  E2 may coincide with E if the squares are not needed.
 //
-//    Input, logical MATZ, should be set to TRUE if the transformation matrix is
+//    Input, logical MATZ, should be set to true if the transformation matrix is
 //    to be accumulated, and to FALSE otherwise.
 //
 //    Output, double Z[N*N], the orthogonal transformation matrix
-//    produced in the reduction if MATZ has been set to TRUE.  Otherwise, Z is
+//    produced in the reduction if MATZ has been set to true.  Otherwise, Z is
 //    not referenced.
 //
 {

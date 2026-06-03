@@ -97,7 +97,7 @@ static struct EmbedImage {
     bool alpha;
     const char *name;
 } embed_image_vec[] = {
-    { 22, 22, 32, (const unsigned char*)segmentation_data, 0, 0, TRUE, "segmentation" },
+    { 22, 22, 32, (const unsigned char*)segmentation_data, 0, 0, true, "segmentation" },
     { 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
@@ -116,7 +116,7 @@ static const QImage& qembed_findImage( const QString& name )
           embed_image_vec[i].numColors,
           QImage::BigEndian );
     if ( embed_image_vec[i].alpha )
-        img->setAlphaBuffer( TRUE );
+        img->setAlphaBuffer( true );
     dict.insert( name, img );
     break;
       }

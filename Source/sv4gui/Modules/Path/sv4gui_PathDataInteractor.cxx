@@ -79,7 +79,7 @@ double sv4guiPathDataInteractor::GetAccuracy(
 
 void sv4guiPathDataInteractor::ConnectActionsAndFunctions() {
   // Condition which is evaluated before transition is taken
-  // following actions in the statemachine are only executed if it returns TRUE
+  // following actions in the statemachine are only executed if it returns true
   CONNECT_CONDITION("isoverpoint", IsOverPoint);
   CONNECT_FUNCTION("addpoint", AddPoint);
   CONNECT_FUNCTION("selectpoint", SelectPoint);
