@@ -50,10 +50,10 @@
 #include "svSegITKExports.h" // For exports
 #include "sv_PolyData.h"
 #include "sv_SolidModel.h"
-#include "sv_StrPts.h"
+
 
 #ifndef cvStructuredPoints
-#define cvStructuredPoints cvStrPts
+#define cvStructuredPoints vtkStructuredPoints
 #endif
 
 #include "sv3_ITKLset_ConnectVTKITK.h"
@@ -109,11 +109,11 @@ public:
 
   // Feature Image stuff
   void DeallocateFeatureObjs();
-  int SetFeatureImage(cvStrPts *s);
-  int GetFeatureImage(cvStrPts **s);
+  int SetFeatureImage(vtkStructuredPoints *s);
+  int GetFeatureImage(vtkStructuredPoints **s);
 
-  //	int GetVelocityImage( cvStrPts **s);
-  cvStrPts *GetVelocityImage();
+  //	int GetVelocityImage( vtkStructuredPoints **s);
+  vtkStructuredPoints *GetVelocityImage();
 
   // Seed Image Stuff
   void DeallocateSeedObjs();
@@ -132,7 +132,7 @@ public:
   void DeallocateFrontObjs();
   int GetFront(cvPolyData **front);
   cvPolyData *GetFront();
-  cvStrPts *GetFrontImage();
+  vtkStructuredPoints *GetFrontImage();
 
   // Get and Set Properties
   cvSetMacro(MaxIterations, int);
@@ -177,9 +177,9 @@ public:
   cvSetMacro(BinarySeed, bool);
   cvGetMacro(BinarySeed, bool);
 
-  // cvSetRepoObjMacro(InputImage,cvStrPts,vtkStructuredPoints);
-  int SetInputImage(cvStrPts *s);
-  cvGetRepoObjMacro(InputImage, cvStrPts);
+  // cvSetRepoObjMacro(InputImage,vtkStructuredPoints,vtkStructuredPoints);
+  int SetInputImage(vtkStructuredPoints *s);
+  cvGetRepoObjMacro(InputImage, vtkStructuredPoints);
 
   // Image Info
   inline void SetInternalImgInfo(vtkStructuredPoints *vtksp) {}
@@ -233,7 +233,7 @@ private:
   ImgInfo InternalImgInfo;
   ImgInfo ExternalImgInfo;
   // Input images
-  cvStructuredPoints *m_cvInputImage;
+  vtkStructuredPoints *m_cvInputImage;
   cvPolyData *m_cvSeed;
 
   typename ITKInternalImageType::Pointer m_itkFeatureImage;
@@ -246,7 +246,7 @@ private:
   // Helper and debug output images
   vtkSmartPointer<vtkStructuredPoints> m_vtkFeatureImage;
   typename ITKInternalImageType::Pointer m_itkFrontImage;
-  cvStructuredPoints *m_cvSeedImage;
+  vtkStructuredPoints *m_cvSeedImage;
 
   // Level Set Parameters
   double m_SigmaFeature;

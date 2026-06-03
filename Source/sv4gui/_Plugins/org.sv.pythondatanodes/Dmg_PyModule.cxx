@@ -54,7 +54,7 @@
 
 #include "sv_PolyData.h"
 #include "sv_PolyDataSolid.h"
-#include "sv_StrPts.h"
+
 
 #include "sv_VTK.h"
 #include "vtkPythonUtil.h"

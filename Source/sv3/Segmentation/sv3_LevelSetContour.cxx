@@ -32,7 +32,7 @@
 #include "sv3_ITKLevelSet.h"
 #include "sv3_ITKLset_ITKUtils.h"
 #include "sv_Math.h"
-#include "sv_StrPts.h"
+
 #include "sv_sys_geom.h"
 #include "sv_vtk_utils.h"
 
@@ -111,7 +111,8 @@ void levelSetContour::CreateContourPoints() {
   ls->SetAdvectionScaling(1.0);
   ls->SetCurvatureScaling(1.0);
 
-  cvStrPts *strPts = SegmentationUtils::vtkImageData2cvStrPts(m_VtkImageSlice);
+  vtkStructuredPoints *strPts =
+      SegmentationUtils::vtkImageData2vtkStructuredPoints(m_VtkImageSlice);
   ls->SetInputImage(strPts);
   ls->SetSeed(seedPd);
 
@@ -144,7 +145,8 @@ void levelSetContour::CreateContourPoints() {
   ls2->SetAdvectionScaling(1.0);
   ls2->SetCurvatureScaling(1.0);
 
-  cvStrPts *strPts2 = SegmentationUtils::vtkImageData2cvStrPts(m_VtkImageSlice);
+  vtkStructuredPoints *strPts2 =
+      SegmentationUtils::vtkImageData2vtkStructuredPoints(m_VtkImageSlice);
   ls2->SetInputImage(strPts2);
   ls2->SetSeed(front1);
 

@@ -35,10 +35,10 @@
 #include "SimVascular.h"
 #include "svSegITKExports.h" // For exports
 #include "sv_PolyData.h"
-#include "sv_StrPts.h"
+
 
 #ifndef cvStructuredPoints
-#define cvStructuredPoints cvStrPts
+#define cvStructuredPoints vtkStructuredPoints
 #endif
 
 #include "itkImage.h"
@@ -197,19 +197,17 @@ SV_EXPORT_SEGITK void CreateImage(typename ITKImageType::Pointer image,
 
 /* CV convienience methods */
 SV_EXPORT_SEGITK void inline vtkPolyDataTo2DImage(vtkPolyData *pd,
-                                                  cvStructuredPoints **result,
+                                                  vtkStructuredPoints **result,
                                                   ImgInfo *refInfo) {
-  vtkStructuredPoints *out = vtkStructuredPoints::New();
-  vtkPolyDataTo2DImage(pd, out, refInfo);
-  (*result) = new cvStructuredPoints(out);
+  *result = vtkStructuredPoints::New();
+  vtkPolyDataTo2DImage(pd, *result, refInfo);
 }
 
 SV_EXPORT_SEGITK void inline vtkPolyDataToVolume(vtkPolyData *pd,
-                                                 cvStructuredPoints **result,
+                                                 vtkStructuredPoints **result,
                                                  ImgInfo *refInfo) {
-  vtkStructuredPoints *out = vtkStructuredPoints::New();
-  vtkPolyDataToVolume(pd, out, refInfo);
-  (*result) = new cvStructuredPoints(out);
+   *result = vtkStructuredPoints::New();
+  vtkPolyDataToVolume(pd, *result, refInfo);
 }
 
 SV_EXPORT_SEGITK void inline vtkGenerateCircle(double radius, double center[3],

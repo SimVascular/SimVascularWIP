@@ -436,7 +436,7 @@ void sv4guiSeg2DEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
     UpdateContourList();
 
     if(m_Image)
-        m_cvImage=sv4guiSegmentationUtils::image2cvStrPts(m_Image);
+        m_cvImage=sv4guiSegmentationUtils::image2vtkStructuredPoints(m_Image);
     else
         m_cvImage=nullptr;
 
@@ -1864,7 +1864,7 @@ void sv4guiSeg2DEdit::PreparePreviewInteraction(QString method)
     // Extract a slice from the image volume.
     auto pathPoint = ui->resliceSlider->getCurrentPathPoint();
     int sliceSize = ui->resliceSlider->getResliceSize();
-    cvStrPts* strPts = sv4guiSegmentationUtils::GetSlicevtkImage(pathPoint, m_cvImage->GetVtkStructuredPoints(), sliceSize, imageTransform);
+    vtkStructuredPoints* strPts = sv4guiSegmentationUtils::GetSlicevtkImage(pathPoint, m_cvImage->GetVtkStructuredPoints(), sliceSize, imageTransform);
 
     // Setup callbacks when finishing interactive selection?
     itk::SimpleMemberCommand<sv4guiSeg2DEdit>::Pointer previewFinished = itk::SimpleMemberCommand<sv4guiSeg2DEdit>::New();

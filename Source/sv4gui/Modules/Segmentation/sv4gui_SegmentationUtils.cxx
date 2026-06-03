@@ -35,7 +35,7 @@
 #include "SimVascular.h"
 #include "sv3_ITKLevelSet.h"
 #include "sv3_ITKLset_ITKUtils.h"
-#include "sv_StrPts.h"
+
 #include "sv_sys_geom.h"
 #include "sv_vtk_utils.h"
 
@@ -554,7 +554,7 @@ sv4guiSegmentationUtils::GetImageTransformation(mitk::Image *image) {
 //------------------
 // Old version no longer used.
 //
-cvStrPts *sv4guiSegmentationUtils::GetSlicevtkImage_old(
+vtkStructuredPoints *sv4guiSegmentationUtils::GetSlicevtkImage_old(
     sv4guiPathElement::sv4guiPathPoint pathPoint, vtkImageData *volumeImage,
     double size) {
 #if 0
@@ -589,7 +589,7 @@ cvStrPts *sv4guiSegmentationUtils::GetSlicevtkImage_old(
     imageReslice->InterpolateOn();
     imageReslice->Update();
 
-    return vtkImageData2cvStrPts(imageReslice->GetOutput());
+    return vtkImageData2vtkStructuredPoints(imageReslice->GetOutput());
 #endif
 }
 
@@ -607,7 +607,7 @@ cvStrPts *sv4guiSegmentationUtils::GetSlicevtkImage_old(
 // transformed mitk image coordinate system so we must transform a slice
 // obtained from path data into the 'vtkImageData' coordinate system.
 //
-cvStrPts *sv4guiSegmentationUtils::GetSlicevtkImage(
+vtkStructuredPoints *sv4guiSegmentationUtils::GetSlicevtkImage(
     sv4guiPathElement::sv4guiPathPoint pathPoint, vtkImageData *volumeImage,
     double size, vtkTransform *imageTransform) {
   // Compute the transformation to define a slice plane aligned with
@@ -658,22 +658,21 @@ cvStrPts *sv4guiSegmentationUtils::GetSlicevtkImage(
   writer->Write();
   */
 
-  return vtkImageData2cvStrPts(imageReslice->GetOutput());
+  return vtkImageData2vtkStructuredPoints(imageReslice->GetOutput());
 }
 
-cvStrPts *sv4guiSegmentationUtils::image2cvStrPts(mitk::Image *image) {
+vtkStructuredPoints *
+sv4guiSegmentationUtils::image2vtkStructuredPoints(mitk::Image *image) {
   vtkImageData *vtkImg = sv4guiVtkUtils::MitkImage2VtkImage(image);
 
   vtkStructuredPoints *mysp = vtkStructuredPoints::New();
   mysp->ShallowCopy(vtkImg);
 
-  cvStrPts *sp;
-  sp = new cvStrPts(mysp);
-
-  return sp;
+  return mysp;
 }
 
-cvStrPts *sv4guiSegmentationUtils::vtkImageData2cvStrPts(vtkImageData *vtkImg) {
+vtkStructuredPoints *
+sv4guiSegmentationUtils::vtkImageData2vtkStructuredPoints(vtkImageData *vtkImg) {
   vtkStructuredPoints *mysp = vtkStructuredPoints::New();
   mysp->ShallowCopy(vtkImg);
 
@@ -702,12 +701,7 @@ cvStrPts *sv4guiSegmentationUtils::vtkImageData2cvStrPts(vtkImageData *vtkImg) {
   mysp->SetOrigin(origin);
   mysp->SetSpacing(spacing);
 
-  cvStrPts *sp;
-  sp = new cvStrPts(mysp);
-
-  //    mysp->Delete();
-
-  return sp;
+  return mysp;
 }
 
 //-----------------
@@ -754,7 +748,7 @@ sv4guiContour *sv4guiSegmentationUtils::CreateLSContour(
   cvITKLSUtil::vtkGenerateCircle(param->radius, center, 50, &seedPd);
 
   // Extract a 2D slice from the image volume.
-  cvStrPts *strPts =
+  vtkStructuredPoints *strPts =
       GetSlicevtkImage(pathPoint, volumeImage, size, imageTransform);
   ls->SetInputImage(strPts);
   ls->SetSeed(seedPd);
@@ -781,7 +775,7 @@ sv4guiContour *sv4guiSegmentationUtils::CreateLSContour(
   ls2->SetAdvectionScaling(1.0);
   ls2->SetCurvatureScaling(1.0);
 
-  cvStrPts *strPts2 =
+  vtkStructuredPoints *strPts2 =
       GetSlicevtkImage(pathPoint, volumeImage, size, imageTransform);
   ls2->SetInputImage(strPts2);
   ls2->SetSeed(front1);
@@ -965,14 +959,13 @@ sv4guiContour *sv4guiSegmentationUtils::CreateThresholdContour(
   contour->SetMethod("Threshold");
   contour->SetPathPoint(pathPoint);
 
-  cvStrPts *strPts =
+  vtkStructuredPoints *strPts =
       GetSlicevtkImage(pathPoint, volumeimage, size, imageTransform);
 
   bool ifClosed;
   double point[3] = {0};
   std::vector<mitk::Point3D> contourPoints =
-      GetThresholdContour(strPts->GetVtkStructuredPoints(), thresholdValue,
-                          pathPoint, ifClosed, point);
+      GetThresholdContour(strPts, thresholdValue, pathPoint, ifClosed, point);
 
   contour->SetClosed(ifClosed || forceClosed);
   contour->SetContourPoints(contourPoints);

@@ -32,13 +32,15 @@
 #ifndef SV4GUI_SEGMENTATIONUTILS_H
 #define SV4GUI_SEGMENTATIONUTILS_H
 
+#include <vtkStructuredPoints.h>
+
 #include "SimVascular.h"
 
 #include <sv4guiModuleSegmentationExports.h>
 
 #include "sv4gui_Contour.h"
 #include "sv4gui_PathElement.h"
-#include "sv_StrPts.h"
+
 
 #include <deque>
 
@@ -117,21 +119,21 @@ public:
   GetSliceImage(const mitk::PlaneGeometry *planeGeometry,
                 const mitk::Image *image, unsigned int timeStep = 0);
 
-  static cvStrPts *
+  static vtkStructuredPoints *
   GetSlicevtkImage_old(sv4guiPathElement::sv4guiPathPoint pathPoint,
                        vtkImageData *volumeimage, double size);
 
   static vtkSmartPointer<vtkTransform>
   GetImageTransformation(mitk::Image *image);
 
-  static cvStrPts *
+  static vtkStructuredPoints *
   GetSlicevtkImage(sv4guiPathElement::sv4guiPathPoint pathPoint,
                    vtkImageData *volumeimage, double size,
                    vtkTransform *imageXform);
 
-  static cvStrPts *image2cvStrPts(mitk::Image *image);
+  static vtkStructuredPoints *image2vtkStructuredPoints(mitk::Image *image);
 
-  static cvStrPts *vtkImageData2cvStrPts(vtkImageData *vtkImg);
+  static vtkStructuredPoints *vtkImageData2vtkStructuredPoints(vtkImageData *vtkImg);
 
   static sv4guiContour *
   CreateLSContour(sv4guiPathElement::sv4guiPathPoint pathPoint,

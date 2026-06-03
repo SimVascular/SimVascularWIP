@@ -50,10 +50,10 @@
 #include "svSegITKExports.h" // For exports
 #include "sv_PolyData.h"
 #include "sv_SolidModel.h"
-#include "sv_StrPts.h"
+
 
 #ifndef cvStructuredPoints
-#define cvStructuredPoints cvStrPts
+#define cvStructuredPoints vtkStructuredPoints
 #endif
 
 #include <iostream>
@@ -113,15 +113,11 @@ public:
   virtual const char *GetNameOfClass() const { return "cvITKLevelSet"; }
 
   // Feature Image stuff
-  void DeallocateFeatureObjs();
-  int SetFeatureImage(cvStrPts *s);
-  int GetFeatureImage(cvStrPts **s);
+  int SetFeatureImage(vtkStructuredPoints *s);
+  int GetFeatureImage(vtkStructuredPoints **s);
 
-  //	int GetVelocityImage( cvStrPts **s);
-  cvStrPts *GetVelocityImage();
-
-  // Seed Image Stuff
-  void DeallocateSeedObjs();
+  //	int GetVelocityImage( vtkStructuredPoints **s);
+  vtkStructuredPoints *GetVelocityImage();
 
   int ComputePhaseOneLevelSet(float kc, float expFactorRising,
                               float expFactorFalling);
@@ -132,11 +128,10 @@ public:
   int GenerateSeedImage();
 
   // Front Image Stuff:
-  void DeallocateFrontObjs();
   int GetFront(cvPolyData **front);
   cvPolyData *GetFront();
 
-  cvStrPts *GetFrontImage();
+  vtkStructuredPoints *GetFrontImage();
 
   // Get and Set Properties
   cvSetMacro(MaxIterations, int);
@@ -172,9 +167,9 @@ public:
   cvSetMacro(UseInputImageDistance, bool);
   cvGetMacro(UseInputImageDistance, bool);
 
-  // cvSetRepoObjMacro(InputImage,cvStrPts,vtkStructuredPoints);
-  int SetInputImage(cvStrPts *s);
-  cvGetRepoObjMacro(InputImage, cvStrPts);
+  // cvSetRepoObjMacro(InputImage,vtkStructuredPoints,vtkStructuredPoints);
+  int SetInputImage(vtkStructuredPoints *s);
+  cvGetRepoObjMacro(InputImage, vtkStructuredPoints);
 
   // Image Info
   inline void SetInternalImgInfo(vtkStructuredPoints *vtksp) {}
@@ -199,16 +194,7 @@ public:
   }
 
   cvITKLevelSet();
-  virtual ~cvITKLevelSet() {
-    if (m_cvInputImage != NULL) {
-      delete m_cvInputImage;
-      m_cvInputImage = NULL;
-    }
-    if (m_cvSeedImage != NULL) {
-      delete m_cvSeedImage;
-      m_cvSeedImage = NULL;
-    }
-  };
+  virtual ~cvITKLevelSet() = default;
 
   // To facilitate use with Tcl hash tables:
   char tclName_[CV_STRLEN];
@@ -225,7 +211,7 @@ private:
   ImgInfo InternalImgInfo;
   ImgInfo ExternalImgInfo;
   // Input images
-  cvStructuredPoints *m_cvInputImage;
+  vtkSmartPointer<vtkStructuredPoints> m_cvInputImage;
   cvPolyData *m_cvSeed;
 
   ITKInternalImageType::Pointer m_itkFeatureImage;
@@ -238,7 +224,7 @@ private:
   // Helper and debug output images
   vtkSmartPointer<vtkStructuredPoints> m_vtkFeatureImage;
   ITKInternalImageType::Pointer m_itkFrontImage;
-  cvStructuredPoints *m_cvSeedImage;
+  vtkSmartPointer<vtkStructuredPoints> m_cvSeedImage;
 
   // Level Set Parameters
   double m_SigmaFeature;

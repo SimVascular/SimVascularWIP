@@ -32,7 +32,7 @@
 #include "sv3_ITKLevelSet.h"
 #include "sv3_ITKLset_ITKUtils.h"
 #include "sv_Math.h"
-#include "sv_StrPts.h"
+
 #include "sv_sys_geom.h"
 #include "sv_vtk_utils.h"
 

@@ -251,7 +251,7 @@ protected:
 
     mitk::Image* m_Image;
 
-    cvStrPts* m_cvImage;
+    vtkStructuredPoints* m_cvImage;
 
     Ui::sv4guiSeg2DEdit *ui;
 

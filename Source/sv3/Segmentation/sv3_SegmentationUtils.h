@@ -32,10 +32,13 @@
 #ifndef SV3_SEGMENTATIONUTILS_H
 #define SV3_SEGMENTATIONUTILS_H
 
+#include <vtkStructuredPoints.h>
+#include <vtkTransform.h>
+
 #include "SimVascular.h"
 
 #include "sv3_PathElement.h"
-#include "sv_StrPts.h"
+
 #include "vtkSmartPointer.h"
 #include <deque>
 #include <sv3SegmentationExports.h>
@@ -46,7 +49,7 @@ namespace sv3 {
 
 class SV_EXPORT_SEGMENTATION SegmentationUtils {
 public:
-  static cvStrPts *vtkImageData2cvStrPts(vtkImageData *vtkImg);
+  static vtkStructuredPoints *vtkImageData2vtkStructuredPoints(vtkImageData *vtkImg);
 
   static std::deque<int> GetOrderedPtIDs(vtkCellArray *lines, bool &ifClosed);
 

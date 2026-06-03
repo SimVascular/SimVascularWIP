@@ -139,9 +139,9 @@ void sv4guiContourModelThresholdInteractor::StartDrawing(
   if (renderer->GetMapperID() != mitk::BaseRenderer::Standard2D)
     return;
 
-  cvStrPts *strPts = sv4guiSegmentationUtils::GetSlicevtkImage(
+  vtkStructuredPoints *strPts = sv4guiSegmentationUtils::GetSlicevtkImage(
       m_PathPoint, m_VtkImageData, m_ResliceSize, m_ImageTransformation);
-  m_ImageSlice = strPts->GetVtkStructuredPoints();
+  m_ImageSlice = strPts;
   vtkImageData *imageSlice = m_ImageSlice;
   if (imageSlice == nullptr)
     return;

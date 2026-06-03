@@ -11,7 +11,6 @@ set(vtkSVInclude_HEADERS
         sv_LispList.hxx
         sv_Math.h
         sv_PolyData.h
-        sv_StrPts.h
         sv_VTK.h
         sv_cgeom.h
         sv_misc_utils.h
@@ -25,7 +24,6 @@ set(vtkSVInclude_HEADERS
 set(vtkSVInclude_SOURCES
         sv_Math.cxx
         sv_PolyData.cxx
-        sv_StrPts.cxx
         sv_cgeom.cxx
         sv_misc_utils.cxx
         sv_vtk_utils.cxx

@@ -93,40 +93,27 @@ cvITKLevelSet::cvITKLevelSet() {
   m_itkSeedImage = ITKInternalImageType::New();
 }
 
-// ---
-// Feature IO and deallocation
-// ---
-void cvITKLevelSet::DeallocateFeatureObjs() {
-  if (m_cvInputImage != NULL) {
-    delete m_cvInputImage;
-    m_cvInputImage = NULL;
-  }
-}
-int cvITKLevelSet::SetInputImage(cvStrPts *s) {
-  DeallocateFeatureObjs();
-
-  ExternalImgInfo = ImgInfo(s->GetVtkStructuredPoints());
+int cvITKLevelSet::SetInputImage(vtkStructuredPoints *s) {
+  ExternalImgInfo = ImgInfo(s);
   InternalImgInfo.SetExtent(ExternalImgInfo.GetExtent());
 
   // ExternalImgInfo.Print(std::cout);
   // InternalImgInfo.Print(std::cout);
 
-  m_cvInputImage = new cvStrPts(s->GetVtkStructuredPoints());
+  m_cvInputImage = s;
 
   return SV_OK;
 }
-int cvITKLevelSet::SetFeatureImage(cvStrPts *s) {
-  DeallocateFeatureObjs();
-
-  ExternalImgInfo = ImgInfo(s->GetVtkStructuredPoints());
+int cvITKLevelSet::SetFeatureImage(vtkStructuredPoints *s) {
+  ExternalImgInfo = ImgInfo(s);
   InternalImgInfo.SetExtent(ExternalImgInfo.GetExtent());
 
-  // m_cvInputImage = new cvStrPts( s->GetVtkStructuredPoints() );
+  // m_cvInputImage = new vtkStructuredPoints( s );
   // m_cvInputImage->SetName( s->GetName() );
 
   return SV_OK;
 }
-int cvITKLevelSet::GetFeatureImage(cvStrPts **s) {
+int cvITKLevelSet::GetFeatureImage(vtkStructuredPoints **s) {
   if (m_cvInputImage == NULL) {
     return SV_ERROR;
   } else {
@@ -135,33 +122,11 @@ int cvITKLevelSet::GetFeatureImage(cvStrPts **s) {
   }
 }
 
-cvStrPts *cvITKLevelSet::GetVelocityImage() {
-  cvStrPts *vimg = new cvStrPts(m_vtkFeatureImage);
-  if (vimg == NULL) {
-    return 0;
-  } else {
+vtkStructuredPoints *cvITKLevelSet::GetVelocityImage() { return m_vtkFeatureImage; }
 
-    return vimg;
-  }
-}
-
-cvStrPts *cvITKLevelSet::GetFrontImage() {
-  cvStrPts *vimg = new cvStrPts(m_vtkFrontImage);
-  if (vimg == NULL) {
-    return 0;
-  } else {
-
-    return vimg;
-  }
-}
-
-// ---
-// Front IO and deallocation
-// ---
-void cvITKLevelSet::DeallocateFrontObjs() {}
+vtkStructuredPoints *cvITKLevelSet::GetFrontImage() { return m_vtkFrontImage; }
 
 int cvITKLevelSet::GetFront(cvPolyData **front) {
-
   *front = this->GetFront();
   if (front != 0)
     return SV_OK;
@@ -177,17 +142,6 @@ cvPolyData *cvITKLevelSet::GetFront() {
   } else {
 
     return front;
-  }
-}
-
-// ---
-// Seed IO and deallocation
-// ---
-void cvITKLevelSet::DeallocateSeedObjs() {
-
-  if (m_cvSeedImage != NULL) {
-    delete m_cvSeedImage;
-    m_cvSeedImage = NULL;
   }
 }
 
@@ -253,8 +207,6 @@ int cvITKLevelSet::ComputeGACLevelSet(float expFactorRising) {
     std::cerr << "Unknown Error!" << std::endl;
     return SV_ERROR;
   }
-
-  DeallocateFrontObjs();
 
   // save itkseed
   try {
@@ -422,7 +374,6 @@ int cvITKLevelSet::ComputePhaseOneLevelSet(float kc, float expFactorRising,
     std::cerr << "Unknown Error!" << std::endl;
     return SV_ERROR;
   }
-  DeallocateFrontObjs();
 
   // save itkseed
   try {
@@ -694,7 +645,7 @@ int cvITKLevelSet::GenerateFeatureImage() {
   ITKInternalImageType::Pointer tempImg = ITKInternalImageType::New();
   cvITKLSUtil::vtk2itkRecastAndRescale<ITKInternalImageType,
                                        ITKExternalImageType>(
-      m_cvInputImage->GetVtkStructuredPoints(), tempImg, &InternalImgInfo);
+      m_cvInputImage, tempImg, &InternalImgInfo);
   if (m_UseInputImageAsFeature) {
     cvITKLSUtil::itkGenerateFeatureImageNoGrad<ITKInternalImageType>(
         tempImg, m_itkFeatureImage, m_SigmaFeature);

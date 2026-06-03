@@ -518,7 +518,7 @@ Image_extract_slice(PyImage* self, PyObject* args)
   std::cout << "[Image_extract_slice]   Spacing: " << slice_spacing[0] << ", " << slice_spacing[1] << ", " << slice_spacing[2] << std::endl;
 
   std::cout<<"[Image_extract_slice] Structured points: "<<std::endl;
-  auto vtkStructPts = sv3::SegmentationUtils::vtkImageData2cvStrPts(slice);
+  auto vtkStructPts = sv3::SegmentationUtils::vtkImageData2vtkStructuredPoints(slice);
   auto slicePts = vtkStructPts->GetVtkStructuredPoints();
 
   int* dims = slicePts->GetDimensions();

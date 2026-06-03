@@ -31,7 +31,7 @@
 
 #include "sv3_SegmentationUtils.h"
 #include "SimVascular.h"
-#include "sv_StrPts.h"
+
 
 #include <vtkImageData.h>
 #include <vtkImageReslice.h>
@@ -72,7 +72,8 @@ double SegmentationUtils::math_angleBtw3DVectors(double vecA[3],
   }
   return acos(cosTheta);
 }
-cvStrPts *SegmentationUtils::vtkImageData2cvStrPts(vtkImageData *vtkImg) {
+vtkStructuredPoints *
+SegmentationUtils::vtkImageData2vtkStructuredPoints(vtkImageData *vtkImg) {
   vtkStructuredPoints *mysp = vtkStructuredPoints::New();
   mysp->ShallowCopy(vtkImg);
 
@@ -101,12 +102,7 @@ cvStrPts *SegmentationUtils::vtkImageData2cvStrPts(vtkImageData *vtkImg) {
   mysp->SetOrigin(origin);
   mysp->SetSpacing(spacing);
 
-  cvStrPts *sp;
-  sp = new cvStrPts(mysp);
-
-  //    mysp->Delete();
-
-  return sp;
+  return mysp;
 }
 
 std::deque<int> SegmentationUtils::GetOrderedPtIDs(vtkCellArray *lines,

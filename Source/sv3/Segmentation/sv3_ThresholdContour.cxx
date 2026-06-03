@@ -32,7 +32,7 @@
 #include "sv3_ITKLevelSet.h"
 #include "sv3_ITKLset_ITKUtils.h"
 #include "sv_Math.h"
-#include "sv_StrPts.h"
+
 #include "sv_sys_geom.h"
 #include "sv_vtk_utils.h"
 
@@ -85,11 +85,12 @@ void thresholdContour::CreateContourPoints() {
     return;
   }
 
-  cvStrPts *strPts = SegmentationUtils::vtkImageData2cvStrPts(m_VtkImageSlice);
+  vtkStructuredPoints *strPts =
+      SegmentationUtils::vtkImageData2vtkStructuredPoints(m_VtkImageSlice);
 
   vtkSmartPointer<vtkContourFilter> contourFilter =
       vtkSmartPointer<vtkContourFilter>::New();
-  contourFilter->SetInputDataObject(strPts->GetVtkStructuredPoints());
+  contourFilter->SetInputDataObject(strPts);
   contourFilter->SetValue(0, m_thresholdValue);
   contourFilter->Update();
 
