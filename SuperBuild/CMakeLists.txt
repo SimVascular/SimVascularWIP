@@ -33,6 +33,9 @@ list(APPEND SimVascular_DEPENDENCIES HDF5)
 include(${CMAKE_CURRENT_SOURCE_DIR}/External_ITK.cmake)
 list(APPEND SimVascular_DEPENDENCIES ITK)
 
+include(${CMAKE_CURRENT_SOURCE_DIR}/External_OpenCASCADE.cmake)
+list(APPEND SimVascular_DEPENDENCIES OpenCASCADE)
+
 include(${CMAKE_CURRENT_SOURCE_DIR}/External_MITK.cmake)
 list(APPEND SimVascular_DEPENDENCIES MITK)
 
@@ -49,6 +52,7 @@ set(SimVascular_superbuild_ep_args
   -DHDF5_DIR:PATH=${HDF5_DIR}
   -DITK_DIR:PATH=${ITK_DIR}
   -DMITK_DIR:PATH=${MITK_DIR}
+  -DOpenCASCADE_DIR:PATH=${OpenCASCADE_DIR}
 )
 
 ExternalProject_Add(SimVascular
