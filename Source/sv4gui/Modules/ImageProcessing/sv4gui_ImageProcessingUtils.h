@@ -32,7 +32,7 @@
 #ifndef SV4GUIIMAGEPROCESSINGUTILS_H
 #define SV4GUIIMAGEPROCESSINGUTILS_H
 
-#include "sv4guiModuleImageProcessingExports.h"
+#include "vtkSV4ImageProcessingModule.h"
 
 #include "SimVascular.h"
 
@@ -45,7 +45,7 @@
 #include <itkImage.h>
 #include <string>
 
-class SV4GUIMODULEIMAGEPROCESSING_EXPORT sv4guiImageProcessingUtils {
+class VTKSV4IMAGEPROCESSING_EXPORT sv4guiImageProcessingUtils {
 
 public:
   sv4guiImageProcessingUtils();

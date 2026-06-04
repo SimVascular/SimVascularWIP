@@ -36,7 +36,7 @@
 
 #include "SimVascular.h"
 
-#include <sv4guiModuleSegmentationExports.h>
+#include <vtkSV4SegmentationModule.h>
 
 #include "sv4gui_Contour.h"
 #include "sv4gui_PathElement.h"
@@ -53,7 +53,7 @@
 // [TODO:DaveP] These functions should be defined in a namespace, not in a
 // class.
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiSegmentationUtils {
+class VTKSV4SEGMENTATION_EXPORT sv4guiSegmentationUtils {
 
 public:
   struct svLSParam {

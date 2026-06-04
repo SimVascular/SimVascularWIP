@@ -34,12 +34,12 @@
 
 #include "SimVascular.h"
 
-#include <sv4guiModulePathExports.h>
+#include <vtkSV4PathModule.h>
 
 #include "mitkOperation.h"
 #include "sv4gui_PathElement.h"
 
-class SV4GUIMODULEPATH_EXPORT sv4guiPathOperation : public mitk::Operation {
+class VTKSV4PATH_EXPORT sv4guiPathOperation : public mitk::Operation {
 public:
   enum PathOperationType {
     OpINSERTCONTROLPOINT,

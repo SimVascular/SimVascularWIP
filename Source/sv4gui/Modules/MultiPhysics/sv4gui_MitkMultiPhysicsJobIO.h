@@ -32,11 +32,11 @@
 #ifndef sv4guiMitkMultiPhysicsJOBIO_H
 #define sv4guiMitkMultiPhysicsJOBIO_H
 
-#include "sv4guiModuleMultiPhysicsExports.h"
+#include "vtkSV4MultiPhysicsModule.h"
 
 #include <mitkAbstractFileIO.h>
 
-class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMitkMultiPhysicsJobIO
+class VTKSV4MULTIPHYSICS_EXPORT sv4guiMitkMultiPhysicsJobIO
     : public mitk::AbstractFileIO {
 public:
   sv4guiMitkMultiPhysicsJobIO();

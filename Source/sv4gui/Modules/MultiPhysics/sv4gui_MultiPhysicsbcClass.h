@@ -35,14 +35,14 @@
 #ifndef SV4GUI_MULTIPHYSICSBCCLASS_H
 #define SV4GUI_MULTIPHYSICSBCCLASS_H
 
-#include "sv4guiModuleMultiPhysicsExports.h"
+#include "vtkSV4MultiPhysicsModule.h"
 
 #define maxOutput 10
 #define maxProp 10
 #include <QStringList>
 #include <map>
 
-class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMultiPhysicsbcClass {
+class VTKSV4MULTIPHYSICS_EXPORT sv4guiMultiPhysicsbcClass {
 public:
   QString faceName;
 

@@ -32,7 +32,7 @@
 #ifndef __CVGGEMS_H
 #define __CVGGEMS_H
 
-#include "svGeometryExports.h" // For exports
+#include "vtkSV1GeometryModule.h" // For exports
 
 
 #define PI 3.141592653589793324
@@ -59,19 +59,19 @@ typedef struct _ggemsGeoPoint {
 /*=========================  ggemsGeometrical Procedures =======================
  */
 
-SV_EXPORT_SYSGEOM Rdouble ggemsGeoDotProd(ggemsGeoPoint *vec0,
+VTKSV1GEOMETRY_EXPORT Rdouble ggemsGeoDotProd(ggemsGeoPoint *vec0,
                                           ggemsGeoPoint *vec1);
 
-SV_EXPORT_SYSGEOM void ggemsGeoCrossProd(ggemsGeoPoint *in0, ggemsGeoPoint *in1,
+VTKSV1GEOMETRY_EXPORT void ggemsGeoCrossProd(ggemsGeoPoint *in0, ggemsGeoPoint *in1,
                                          ggemsGeoPoint *out);
 
-SV_EXPORT_SYSGEOM Rdouble ggemsGeoTripleProd(ggemsGeoPoint *vec0,
+VTKSV1GEOMETRY_EXPORT Rdouble ggemsGeoTripleProd(ggemsGeoPoint *vec0,
                                              ggemsGeoPoint *vec1,
                                              ggemsGeoPoint *vec2);
 
-SV_EXPORT_SYSGEOM Rdouble ggemsGeoVecLen(ggemsGeoPoint *vec);
+VTKSV1GEOMETRY_EXPORT Rdouble ggemsGeoVecLen(ggemsGeoPoint *vec);
 
-SV_EXPORT_SYSGEOM int ggemsGeoPolyNormal(int n_verts, ggemsGeoPoint *verts,
+VTKSV1GEOMETRY_EXPORT int ggemsGeoPolyNormal(int n_verts, ggemsGeoPoint *verts,
                                          ggemsGeoPoint *n);
 
 /*=========================  ggemsgeo_solid_angle  =========================*/
@@ -80,7 +80,7 @@ SV_EXPORT_SYSGEOM int ggemsGeoPolyNormal(int n_verts, ggemsGeoPoint *verts,
   a 3D plane polygon
 */
 
-SV_EXPORT_SYSGEOM Rdouble
+VTKSV1GEOMETRY_EXPORT Rdouble
 ggemsgeo_solid_angle(int n_vert,           /* number of vertices */
                      ggemsGeoPoint *verts, /* vertex coordinates list */
                      ggemsGeoPoint *p);    /* point to be tested */
@@ -97,7 +97,7 @@ ggemsgeo_solid_angle(int n_vert,           /* number of vertices */
  * both of these are much better than the angle test.
  */
 
-SV_EXPORT_SYSGEOM int ggems_CrossingsMultiplyTest(double pgon[], int numverts,
+VTKSV1GEOMETRY_EXPORT int ggems_CrossingsMultiplyTest(double pgon[], int numverts,
                                                   double point[]);
 
 #endif /* __GGEMS_H */

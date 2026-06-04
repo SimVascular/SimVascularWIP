@@ -299,8 +299,8 @@ void sv4guiImageProcessing::CreateQtPartControl(QWidget *parent)
 
     // Create a node used to process mouse events for selecting seeds. 
     m_SeedInteractor = sv4guiImageSeedInteractor::New();
-    m_SeedInteractor->LoadStateMachine("seedInteraction.xml", us::ModuleRegistry::GetModule("sv4guiModuleImageProcessing"));
-    m_SeedInteractor->SetEventConfig("seedConfig.xml", us::ModuleRegistry::GetModule("sv4guiModuleImageProcessing"));
+    m_SeedInteractor->LoadStateMachine("seedInteraction.xml", us::ModuleRegistry::GetModule("VTKSV4IMAGEPROCESSING"));
+    m_SeedInteractor->SetEventConfig("seedConfig.xml", us::ModuleRegistry::GetModule("VTKSV4IMAGEPROCESSING"));
     m_SeedInteractor->SetDataNode(m_SeedNode);
 
     if (imageNode) {
@@ -629,8 +629,8 @@ void sv4guiImageProcessing::InitializeCenterlines()
   // Create a node used to process mouse events for selecting centerlines. 
   if (m_CenterlineInteractor.IsNull()) { 
       m_CenterlineInteractor = sv4guiImageCenterlineInteractor::New();
-      m_CenterlineInteractor->LoadStateMachine("centerlineInteraction.xml", us::ModuleRegistry::GetModule("sv4guiModuleImageProcessing"));
-      m_CenterlineInteractor->SetEventConfig("seedConfig.xml", us::ModuleRegistry::GetModule("sv4guiModuleImageProcessing"));
+      m_CenterlineInteractor->LoadStateMachine("centerlineInteraction.xml", us::ModuleRegistry::GetModule("VTKSV4IMAGEPROCESSING"));
+      m_CenterlineInteractor->SetEventConfig("seedConfig.xml", us::ModuleRegistry::GetModule("VTKSV4IMAGEPROCESSING"));
       m_CenterlineInteractor->SetDataNode(m_CenterlinesNode);
     }
 

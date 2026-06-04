@@ -1,4 +1,3 @@
-set(vtkSV4Segmentation_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/sv4guiModuleSegmentationExports.h)
 set(vtkSV4Segmentation_HEADERS
     sv4gui_ContourModelThresholdInteractor.h
     sv4gui_MitkSeg3DDataInteractor.h
@@ -27,7 +26,6 @@ set(vtkSV4Segmentation_HEADERS
     sv4gui_SurfaceVtkMapper3D.h
     sv4gui_Seg3DUtils.h
     sv4gui_ContourPolygon.h
-    ${vtkSV4Segmentation_EXPORT_HEADER}
 )
 
 set(vtkSV4Segmentation_SOURCES
@@ -63,8 +61,4 @@ set(vtkSV4Segmentation_SOURCES
 vtk_module_add_module(VTK::SV4Segmentation
     HEADERS ${vtkSV4Segmentation_HEADERS}
     SOURCES ${vtkSV4Segmentation_SOURCES}
-)
-generate_export_header(VTK::SV4Segmentation
-    BASE_NAME "SV4GUIMODULESEGMENTATION"
-    EXPORT_FILE_NAME ${vtkSV4Segmentation_EXPORT_HEADER}
 )

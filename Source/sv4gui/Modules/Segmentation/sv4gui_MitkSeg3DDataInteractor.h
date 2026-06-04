@@ -34,14 +34,14 @@
 
 #include "SimVascular.h"
 
-#include <sv4guiModuleSegmentationExports.h>
+#include <vtkSV4SegmentationModule.h>
 
 #include "sv4gui_MitkSeg3D.h"
 
 #include <itkEventObject.h>
 #include <mitkInteractionPositionEvent.h>
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiMitkSeg3DDataInteractor
+class VTKSV4SEGMENTATION_EXPORT sv4guiMitkSeg3DDataInteractor
     : public mitk::DataInteractor {
 public:
   mitkClassMacro(sv4guiMitkSeg3DDataInteractor, mitk::DataInteractor);

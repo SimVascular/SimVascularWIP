@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-#include <sv4guiModuleCommonExports.h>
+#include <vtkSV4CommonModule.h>
 
 #include "mitkPoint.h"
 #include "mitkVector.h"
@@ -43,7 +43,7 @@
 
 #include <list>
 
-class SV4GUIMODULECOMMON_EXPORT sv4guiXmlIOUtil {
+class VTKSV4COMMON_EXPORT sv4guiXmlIOUtil {
 public:
   sv4guiXmlIOUtil(tinyxml2::XMLDocument &doc) : document(doc) {}
   sv4guiXmlIOUtil() = delete;

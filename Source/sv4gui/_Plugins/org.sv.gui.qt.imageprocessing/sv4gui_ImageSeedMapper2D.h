@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-//#include <sv4guiModulePathExports.h>
+//#include <vtkSV4PathModule.h>
 
 //#include "sv4gui_Path.h"
 

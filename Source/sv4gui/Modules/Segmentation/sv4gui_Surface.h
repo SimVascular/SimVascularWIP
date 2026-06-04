@@ -49,7 +49,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #define SV4GUI_SURFACE_H
 
 #include "SimVascular.h"
-#include <sv4guiModuleSegmentationExports.h>
+#include <vtkSV4SegmentationModule.h>
 
 #include "itkImageRegion.h"
 #include "mitkBaseData.h"
@@ -62,7 +62,7 @@ namespace mitk {
  * \brief Class for storing surfaces (vtkPolyData).
  * \ingroup Data
  */
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiSurface : public BaseData {
+class VTKSV4SEGMENTATION_EXPORT sv4guiSurface : public BaseData {
 public:
   typedef itk::ImageRegion<5> RegionType;
 

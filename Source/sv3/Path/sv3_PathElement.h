@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-#include <sv3PathExports.h>
+#include <vtkSV3PathModule.h>
 
 #include "sv3_Spline.h"
 
@@ -45,7 +45,7 @@
 #include <vector>
 
 namespace sv3 {
-class SV_EXPORT_PATH PathElement {
+class VTKSV3PATH_EXPORT PathElement {
 public:
   enum CalculationMethod {
     CONSTANT_TOTAL_NUMBER,

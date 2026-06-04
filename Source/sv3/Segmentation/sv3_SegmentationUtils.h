@@ -41,13 +41,13 @@
 
 #include "vtkSmartPointer.h"
 #include <deque>
-#include <sv3SegmentationExports.h>
+#include <vtkSV3SegmentationModule.h>
 #include <vtkImageData.h>
 #include <vtkPlane.h>
 
 namespace sv3 {
 
-class SV_EXPORT_SEGMENTATION SegmentationUtils {
+class VTKSV3SEGMENTATION_EXPORT SegmentationUtils {
 public:
   static vtkStructuredPoints *vtkImageData2vtkStructuredPoints(vtkImageData *vtkImg);
 

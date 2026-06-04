@@ -39,7 +39,7 @@
 #include "Python.h"
 #include "sv3_PathElement.h"
 #include "sv3_PathGroup.h"
-#include "sv3PathExports.h"
+#include "vtkSV3PathModule.h"
 
 //--------
 // PyPath

@@ -34,14 +34,14 @@
 
 #include "SimVascular.h"
 
-#include <sv4guiModuleSegmentationExports.h>
+#include <vtkSV4SegmentationModule.h>
 
 #include "sv4gui_ContourGroupIO.h"
 #include "sv4gui_MitkSeg3DIO.h"
 
 #include "mitkCoreObjectFactoryBase.h"
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiSegmentationObjectFactory
+class VTKSV4SEGMENTATION_EXPORT sv4guiSegmentationObjectFactory
     : public mitk::CoreObjectFactoryBase {
 public:
   mitkClassMacro(sv4guiSegmentationObjectFactory, mitk::CoreObjectFactoryBase);
@@ -66,7 +66,7 @@ protected:
 private:
 };
 
-struct SV4GUIMODULESEGMENTATION_EXPORT Registersv4guiSegmentationObjectFactory {
+struct VTKSV4SEGMENTATION_EXPORT Registersv4guiSegmentationObjectFactory {
   Registersv4guiSegmentationObjectFactory();
 
   virtual ~Registersv4guiSegmentationObjectFactory();

@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-#include <sv3SegmentationExports.h>
+#include <vtkSV3SegmentationModule.h>
 
 #include "sv3_Contour.h"
 #include "sv3_PathElement.h"
@@ -50,7 +50,7 @@
 #endif
 
 namespace sv3 {
-class SV_EXPORT_SEGMENTATION circleContour : public Contour {
+class VTKSV3SEGMENTATION_EXPORT circleContour : public Contour {
 
 public:
   circleContour();

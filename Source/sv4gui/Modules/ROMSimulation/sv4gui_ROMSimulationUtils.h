@@ -32,7 +32,7 @@
 #ifndef SV4GUI_ROM_SIMULATIONUTILS_H
 #define SV4GUI_ROM_SIMULATIONUTILS_H
 
-#include <sv4guiModuleROMSimulationExports.h>
+#include <vtkSV4ROMSimulationModule.h>
 
 #include "sv4gui_ROMSimJob.h"
 
@@ -43,7 +43,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkUnstructuredGrid.h>
 
-class SV4GUIMODULEROMSIMULATION_EXPORT sv4guiROMSimulationUtils {
+class VTKSV4ROMSIMULATION_EXPORT sv4guiROMSimulationUtils {
 
 public:
   static std::string CreatePreSolverFileContent(sv4guiROMSimJob *job,

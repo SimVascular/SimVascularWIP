@@ -34,14 +34,14 @@
 
 #include "SimVascular.h"
 
-#include <sv4guiModulePathExports.h>
+#include <vtkSV4PathModule.h>
 
 #include "mitkDataNode.h"
 #include "mitkDataStorage.h"
 #include "sv3_PathGroup.h"
 #include <QString>
 
-class SV4GUIMODULEPATH_EXPORT sv4guiPathLegacyIO {
+class VTKSV4PATH_EXPORT sv4guiPathLegacyIO {
 public:
   sv4guiPathLegacyIO() {}
   virtual ~sv4guiPathLegacyIO() {}

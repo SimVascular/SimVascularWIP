@@ -35,15 +35,15 @@
 #include <vtkPolyData.h>
 #include <vtkUnstructuredGrid.h>
 
-#include "svUtilsExports.h" // For exports
+#include "vtkSVCoreModule.h"
 
-int SV_EXPORT_UTILS VtkUtils_NewVtkPolyData(vtkPolyData **pd, int numPts,
-                                            double pts[], int numCells,
-                                            vtkIdType polys[]);
+int VTKSVCORE_EXPORT VtkUtils_NewVtkPolyData(vtkPolyData **pd, int numPts,
+                                             double pts[], int numCells,
+                                             vtkIdType polys[]);
 
-int SV_EXPORT_UTILS VtkUtils_NewVtkPolyDataLines(vtkPolyData **pd, int numPts,
-                                                 double pts[], int numLines,
-                                                 vtkIdType lines[]);
+int VTKSVCORE_EXPORT VtkUtils_NewVtkPolyDataLines(vtkPolyData **pd, int numPts,
+                                                  double pts[], int numLines,
+                                                  vtkIdType lines[]);
 
 // What I'd like to do in FixTopology is clean up the vtkPolyData *pd
 // in-place, returning the modified structure to the caller in pd.
@@ -68,65 +68,67 @@ VtkUtils_ThresholdSurface(const double lower, const double upper,
                           const std::string &data_name,
                           vtkDataObject *vtk_data);
 
-int SV_EXPORT_UTILS VtkUtils_FixTopology(vtkPolyData *pd, double tol);
+int VTKSVCORE_EXPORT VtkUtils_FixTopology(vtkPolyData *pd, double tol);
 
-int SV_EXPORT_UTILS VtkUtils_GetPoints(vtkPolyData *pd, double **pts,
-                                       int *numPts);
+int VTKSVCORE_EXPORT VtkUtils_GetPoints(vtkPolyData *pd, double **pts,
+                                        int *numPts);
 
-int SV_EXPORT_UTILS VtkUtils_GetPointsFloat(vtkPolyData *pd, double **pts,
-                                            int *numPts);
+int VTKSVCORE_EXPORT VtkUtils_GetPointsFloat(vtkPolyData *pd, double **pts,
+                                             int *numPts);
 
-int SV_EXPORT_UTILS VtkUtils_GetAllLines(vtkPolyData *pd, int *numLines,
-                                         vtkIdType **lines);
+int VTKSVCORE_EXPORT VtkUtils_GetAllLines(vtkPolyData *pd, int *numLines,
+                                          vtkIdType **lines);
 
-int SV_EXPORT_UTILS VtkUtils_GetAllPolys(vtkPolyData *pd, int *numPgns,
-                                         vtkIdType **pgns);
+int VTKSVCORE_EXPORT VtkUtils_GetAllPolys(vtkPolyData *pd, int *numPgns,
+                                          vtkIdType **pgns);
 
-int SV_EXPORT_UTILS VtkUtils_GetLines(vtkPolyData *pd, vtkIdType **lines,
-                                      int *numLines);
+int VTKSVCORE_EXPORT VtkUtils_GetLines(vtkPolyData *pd, vtkIdType **lines,
+                                       int *numLines);
 
-int SV_EXPORT_UTILS VtkUtils_GetLinkedLines(vtkIdType *lines, int numLines,
-                                            int ptIx, int **lineIxs,
-                                            int *numLineIxs);
+int VTKSVCORE_EXPORT VtkUtils_GetLinkedLines(vtkIdType *lines, int numLines,
+                                             int ptIx, int **lineIxs,
+                                             int *numLineIxs);
 
-int SV_EXPORT_UTILS VtkUtils_FindClosedLineRegions(vtkIdType *lines,
-                                                   int numLines, int numPts,
-                                                   int **startIxs,
-                                                   int *numRegions);
+int VTKSVCORE_EXPORT VtkUtils_FindClosedLineRegions(vtkIdType *lines,
+                                                    int numLines, int numPts,
+                                                    int **startIxs,
+                                                    int *numRegions);
 
-int SV_EXPORT_UTILS VtkUtils_GetClosedLineRegion(vtkIdType *lines, int numLines,
-                                                 int startIx, int **lineIds,
-                                                 int *numLineIds);
+int VTKSVCORE_EXPORT VtkUtils_GetClosedLineRegion(vtkIdType *lines,
+                                                  int numLines, int startIx,
+                                                  int **lineIds,
+                                                  int *numLineIds);
 
-int SV_EXPORT_UTILS VtkUtils_MakePolyDataFromLineIds(double *pts, int numPts,
-                                                     vtkIdType *lines,
-                                                     int *lineIds,
-                                                     int numLineIds,
-                                                     vtkPolyData **pd);
+int VTKSVCORE_EXPORT VtkUtils_MakePolyDataFromLineIds(double *pts, int numPts,
+                                                      vtkIdType *lines,
+                                                      int *lineIds,
+                                                      int numLineIds,
+                                                      vtkPolyData **pd);
 
-int SV_EXPORT_UTILS VtkUtils_MakeShortArray(vtkDataArray *s, int *num,
-                                            short **dataOut);
+int VTKSVCORE_EXPORT VtkUtils_MakeShortArray(vtkDataArray *s, int *num,
+                                             short **dataOut);
 
-int SV_EXPORT_UTILS VtkUtils_MakeFloatArray(vtkDataArray *s, int *num,
-                                            float **dataOut);
+int VTKSVCORE_EXPORT VtkUtils_MakeFloatArray(vtkDataArray *s, int *num,
+                                             float **dataOut);
 
-SV_EXPORT_UTILS vtkPoints *VtkUtils_DeepCopyPoints(vtkPoints *ptsIn);
+VTKSVCORE_EXPORT vtkPoints *VtkUtils_DeepCopyPoints(vtkPoints *ptsIn);
 
-SV_EXPORT_UTILS vtkCellArray *VtkUtils_DeepCopyCells(vtkCellArray *cellsIn);
+VTKSVCORE_EXPORT vtkCellArray *VtkUtils_DeepCopyCells(vtkCellArray *cellsIn);
 
-int SV_EXPORT_UTILS VtkUtils_MakePolysConsistent(vtkPolyData *pd);
+int VTKSVCORE_EXPORT VtkUtils_MakePolysConsistent(vtkPolyData *pd);
 
-int SV_EXPORT_UTILS VtkUtils_ReverseAllCells(vtkPolyData *pd);
+int VTKSVCORE_EXPORT VtkUtils_ReverseAllCells(vtkPolyData *pd);
 
-int SV_EXPORT_UTILS VtkUtils_ReversePtList(int num, double ptsIn[],
-                                           double *ptsOut[]);
+int VTKSVCORE_EXPORT VtkUtils_ReversePtList(int num, double ptsIn[],
+                                            double *ptsOut[]);
 
-int SV_EXPORT_UTILS VtkUtils_PDCheckArrayName(vtkPolyData *object, int datatype,
-                                              std::string arrayname);
+int VTKSVCORE_EXPORT VtkUtils_PDCheckArrayName(vtkPolyData *object,
+                                               int datatype,
+                                               std::string arrayname);
 
-int SV_EXPORT_UTILS VtkUtils_UGCheckArrayName(vtkUnstructuredGrid *object,
-                                              int datatype,
-                                              std::string arrayname);
+int VTKSVCORE_EXPORT VtkUtils_UGCheckArrayName(vtkUnstructuredGrid *object,
+                                               int datatype,
+                                               std::string arrayname);
 
 void VtkUtils_write_vtu(vtkUnstructuredGrid *ugrid,
                         const std::string file_name);

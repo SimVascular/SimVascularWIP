@@ -34,14 +34,14 @@
 
 #include "SimVascular.h"
 
-#include <sv4guiModuleSegmentationExports.h>
+#include <vtkSV4SegmentationModule.h>
 
 #include <vtkImageData.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiSeg3DUtils {
+class VTKSV4SEGMENTATION_EXPORT sv4guiSeg3DUtils {
 
 public:
   sv4guiSeg3DUtils();

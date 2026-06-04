@@ -49,7 +49,7 @@
 #include "sv_PolyData.h"
 
 
-#include "svSegITKExports.h" // For exports
+#include "vtkSV3ITKSegmentationModule.h" // For exports
 
 #ifndef cvStructuredPoints
 #define cvStructuredPoints vtkStructuredPoints
@@ -94,7 +94,7 @@
     throw std::runtime_error(message.str());                                   \
   }
 
-class SV_EXPORT_SEGITK cvITKLevelSet {
+class VTKSV3ITKSEGMENTATION_EXPORT cvITKLevelSet {
 
 public:
   /** Typedefs */

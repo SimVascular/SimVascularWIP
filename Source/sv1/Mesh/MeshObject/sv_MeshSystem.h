@@ -33,10 +33,10 @@
 #define __CVMESHSYSTEM_H
 
 #include "SimVascular.h"
-#include "svMeshObjectExports.h"
+#include "vtkSV1MeshMeshObjectModule.h"
 #include "sv_MeshObject.h"
 
-class SV_EXPORT_MESH cvMeshSystem {
+class VTKSV1MESHMESHOBJECT_EXPORT cvMeshSystem {
 
 public:
   cvMeshSystem();

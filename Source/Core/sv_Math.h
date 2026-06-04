@@ -40,9 +40,9 @@
 #include <array>
 #include <vector>
 
-#include "svUtilsExports.h" // For exports
+#include "vtkSVCoreModule.h"
 
-class SV_EXPORT_UTILS cvMath {
+class VTKSVCORE_EXPORT cvMath {
 
 public:
   cvMath();

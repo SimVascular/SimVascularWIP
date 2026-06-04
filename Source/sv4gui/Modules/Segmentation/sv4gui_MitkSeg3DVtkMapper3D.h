@@ -34,13 +34,13 @@
 
 #include "SimVascular.h"
 
-#include <sv4guiModuleSegmentationExports.h>
+#include <vtkSV4SegmentationModule.h>
 
 #include "sv4gui_MitkSeg3D.h"
 
 #include "sv4gui_SurfaceVtkMapper3D.h"
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiMitkSeg3DVtkMapper3D
+class VTKSV4SEGMENTATION_EXPORT sv4guiMitkSeg3DVtkMapper3D
     : public mitk::sv4guiSurfaceVtkMapper3D {
 public:
   mitkClassMacro(sv4guiMitkSeg3DVtkMapper3D, mitk::sv4guiSurfaceVtkMapper3D);

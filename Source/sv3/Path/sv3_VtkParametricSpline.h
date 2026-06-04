@@ -34,12 +34,12 @@
 
 #include "SimVascular.h"
 
-#include "sv3PathExports.h"
+#include "vtkSV3PathModule.h"
 
 #include "vtkParametricSpline.h"
 namespace sv3 {
 
-class SV_EXPORT_PATH VtkParametricSpline : public vtkParametricSpline {
+class VTKSV3PATH_EXPORT VtkParametricSpline : public vtkParametricSpline {
 public:
   VtkParametricSpline();
 

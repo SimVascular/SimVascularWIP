@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-#include <sv4guiModuleCommonExports.h>
+#include <vtkSV4CommonModule.h>
 
 #include <algorithm>
 #include <cctype>
@@ -82,7 +82,7 @@ static std::string sv4guiStringUtils_lower(std::string s) {
   return s;
 }
 
-class SV4GUIMODULECOMMON_EXPORT sv4guiStringUtils {
+class VTKSV4COMMON_EXPORT sv4guiStringUtils {
 
 public:
   static std::vector<std::string> split(const std::string &s, char delim = ' ');

@@ -126,7 +126,7 @@ documented anymore.
 * @ingroup Mapper
 */
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiSurfaceVtkMapper3D
+class VTKSV4SEGMENTATION_EXPORT sv4guiSurfaceVtkMapper3D
     : public VtkMapper {
 public:
   mitkClassMacro(sv4guiSurfaceVtkMapper3D, VtkMapper);

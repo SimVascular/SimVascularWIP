@@ -34,13 +34,13 @@
 
 #include "SimVascular.h"
 
-#include "sv4guiModuleCommonExports.h"
+#include "vtkSV4CommonModule.h"
 
 #include <mitkPlaneGeometry.h>
 #include <mitkPoint.h>
 #include <mitkVector.h>
 
-class SV4GUIMODULECOMMON_EXPORT sv4guiMath3 {
+class VTKSV4COMMON_EXPORT sv4guiMath3 {
 public:
   static std::vector<mitk::Point3D>
   CreateSmoothedCurve(std::vector<mitk::Point3D> points, bool closed,

@@ -33,7 +33,7 @@
 #define SV4GUIMACHINELEARNINGUTILS_H
 
 #include "SimVascular.h"
-#include "sv4guiModuleMachineLearningExports.h"
+#include "vtkSV4MachineLearningModule.h"
 
 // needed because clash between QT slots keyword and python stuff
 // see https://stackoverflow.com/questions/23068700/embedding-python3-in-qt-5
@@ -48,7 +48,7 @@
 #include "sv4gui_ContourGroup.h"
 #include "sv4gui_Path.h"
 
-class SV4GUIMODULEMACHINELEARNING_EXPORT sv4gui_MachineLearningUtils {
+class VTKSV4MACHINELEARNING_EXPORT sv4gui_MachineLearningUtils {
 
 public:
   static sv4gui_MachineLearningUtils *getInstance(std::string network_type);

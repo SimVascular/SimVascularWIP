@@ -32,11 +32,11 @@
 #ifndef SV4GUI_MITKSEG3DIO_H
 #define SV4GUI_MITKSEG3DIO_H
 
-#include <sv4guiModuleSegmentationExports.h>
+#include <vtkSV4SegmentationModule.h>
 
 #include "mitkAbstractFileIO.h"
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiMitkSeg3DIO
+class VTKSV4SEGMENTATION_EXPORT sv4guiMitkSeg3DIO
     : public mitk::AbstractFileIO {
 public:
   sv4guiMitkSeg3DIO();

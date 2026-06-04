@@ -61,13 +61,13 @@
 #define __vtkGetBoundaryFaces_h
 
 #include "SimVascular.h"
-#include "svPolyDataSolidExports.h" // For exports
+#include "vtkSV1ModelPolyDataSolidModelModule.h" // For exports
 
 #include "vtkPolyDataAlgorithm.h"
 
 class vtkFeatureEdges;
 
-class SV_EXPORT_POLYDATASOLID vtkGetBoundaryFaces
+class VTKSV1MODELPOLYDATASOLIDMODEL_EXPORT vtkGetBoundaryFaces
     : public vtkPolyDataAlgorithm {
 public:
   static vtkGetBoundaryFaces *New();

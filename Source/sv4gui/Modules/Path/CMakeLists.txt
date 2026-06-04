@@ -1,4 +1,3 @@
-set(vtkSV4Path_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/sv4guiModulePathExports.h)
 set(vtkSV4Path_HEADERS
     sv4gui_PathElement.h
     sv4gui_Path.h
@@ -9,7 +8,6 @@ set(vtkSV4Path_HEADERS
     sv4gui_PathOperation.h
     sv4gui_PathIO.h
     sv4gui_PathDataInteractor.h
-    ${vtkSV4Path_EXPORT_HEADER}
 )
 
 set(vtkSV4Path_SOURCES
@@ -27,10 +25,6 @@ set(vtkSV4Path_SOURCES
 vtk_module_add_module(VTK::SV4Path
     HEADERS ${vtkSV4Path_HEADERS}
     SOURCES ${vtkSV4Path_SOURCES}
-)
-generate_export_header(VTK::SV4Path
-    BASE_NAME "SV4GUIMODULEPATH"
-    EXPORT_FILE_NAME ${vtkSV4Path_EXPORT_HEADER}
 )
 vtk_module_link(VTK::SV4Path PUBLIC Qt6::Core ${MITK_LIBRARIES})
 

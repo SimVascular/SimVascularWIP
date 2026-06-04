@@ -35,13 +35,13 @@
 #include "SimVascular.h"
 #include "sv3_PathElement.h"
 
-#include <sv4guiModulePathExports.h>
+#include <vtkSV4PathModule.h>
 
 #include "sv4gui_Spline.h"
 
 #include "mitkPoint.h"
 
-class SV4GUIMODULEPATH_EXPORT sv4guiPathElement : public sv3::PathElement {
+class VTKSV4PATH_EXPORT sv4guiPathElement : public sv3::PathElement {
 public:
   struct svControlPoint {
     int id = -1;

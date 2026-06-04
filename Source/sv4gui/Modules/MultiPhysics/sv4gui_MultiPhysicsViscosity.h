@@ -35,7 +35,7 @@
 #ifndef SV4GUI_MULTIPHYSICS_VISCOSITY_H
 #define SV4GUI_MULTIPHYSICS_VISCOSITY_H
 
-#include "sv4guiModuleMultiPhysicsExports.h"
+#include "vtkSV4MultiPhysicsModule.h"
 
 #include <map>
 #include <string>
@@ -54,7 +54,7 @@ public:
   static std::vector<std::string> list;
 };
 
-class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMultiPhysicsViscosity {
+class VTKSV4MULTIPHYSICS_EXPORT sv4guiMultiPhysicsViscosity {
 public:
   sv4guiMultiPhysicsViscosity();
   ~sv4guiMultiPhysicsViscosity();
@@ -63,7 +63,7 @@ public:
   virtual std::map<std::string, double> get_values() = 0;
 };
 
-class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMultiPhysicsViscosityCarreauYasuda
+class VTKSV4MULTIPHYSICS_EXPORT sv4guiMultiPhysicsViscosityCarreauYasuda
     : sv4guiMultiPhysicsViscosity {
 public:
   sv4guiMultiPhysicsViscosityCarreauYasuda();
@@ -76,7 +76,7 @@ public:
   std::map<std::string, double> get_values();
 };
 
-class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMultiPhysicsViscosityCassons
+class VTKSV4MULTIPHYSICS_EXPORT sv4guiMultiPhysicsViscosityCassons
     : sv4guiMultiPhysicsViscosity {
 public:
   sv4guiMultiPhysicsViscosityCassons();
@@ -87,7 +87,7 @@ public:
   std::map<std::string, double> get_values();
 };
 
-class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMultiPhysicsViscosityNewtonian
+class VTKSV4MULTIPHYSICS_EXPORT sv4guiMultiPhysicsViscosityNewtonian
     : sv4guiMultiPhysicsViscosity {
 public:
   sv4guiMultiPhysicsViscosityNewtonian();

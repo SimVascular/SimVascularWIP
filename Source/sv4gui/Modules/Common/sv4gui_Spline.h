@@ -35,12 +35,12 @@
 #include "SimVascular.h"
 
 #include "sv3_Spline.h"
-#include "sv4guiModuleCommonExports.h"
+#include "vtkSV4CommonModule.h"
 
 #include <mitkPoint.h>
 #include <mitkVector.h>
 
-class SV4GUIMODULECOMMON_EXPORT sv4guiSpline : public sv3::Spline {
+class VTKSV4COMMON_EXPORT sv4guiSpline : public sv3::Spline {
 public:
   struct sv4guiSplinePoint {
     int id;

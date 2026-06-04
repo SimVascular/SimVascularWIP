@@ -206,8 +206,8 @@ void sv4guiSeg3DEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer /*part*/
         m_DataInteractor->SetMinRadius(minSpacing);
     }
 
-    m_DataInteractor->LoadStateMachine("sv4gui_MitkSeg3DInteraction.xml", us::ModuleRegistry::GetModule("sv4guiModuleSegmentation"));
-    m_DataInteractor->SetEventConfig("sv4gui_SegmentationConfig.xml", us::ModuleRegistry::GetModule("sv4guiModuleSegmentation"));
+    m_DataInteractor->LoadStateMachine("sv4gui_MitkSeg3DInteraction.xml", us::ModuleRegistry::GetModule("VTKSV4SEGMENTATION"));
+    m_DataInteractor->SetEventConfig("sv4gui_SegmentationConfig.xml", us::ModuleRegistry::GetModule("VTKSV4SEGMENTATION"));
     m_DataInteractor->SetDataNode(m_MitkSeg3DNode);
 
     sv4guiSeg3D* seg3D=m_MitkSeg3D->GetSeg3D();

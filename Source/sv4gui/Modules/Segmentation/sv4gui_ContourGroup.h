@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-#include <sv4guiModuleSegmentationExports.h>
+#include <vtkSV4SegmentationModule.h>
 
 #include "sv4gui_Contour.h"
 
@@ -46,7 +46,7 @@
 #include <sstream>
 #include <string>
 
-struct SV4GUIMODULESEGMENTATION_EXPORT svLoftingParam {
+struct VTKSV4SEGMENTATION_EXPORT svLoftingParam {
   std::string method;
 
   // Spline Lofting
@@ -115,7 +115,7 @@ struct SV4GUIMODULESEGMENTATION_EXPORT svLoftingParam {
         vParametricSpanType(other.vParametricSpanType) {}
 };
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourGroup
+class VTKSV4SEGMENTATION_EXPORT sv4guiContourGroup
     : public mitk::BaseData {
 public:
   mitkClassMacro(sv4guiContourGroup, mitk::BaseData);

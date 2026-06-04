@@ -1,4 +1,3 @@
-set(vtkSV4MultiPhysics_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/sv4guiModuleMultiPhysicsExports.h)
 set(vtkSV4MultiPhysics_HEADERS
     sv4gui_MultiPhysicsJob.h
     sv4gui_MitkMultiPhysicsJob.h
@@ -8,7 +7,6 @@ set(vtkSV4MultiPhysics_HEADERS
     sv4gui_MultiPhysicsViscosity.h
     sv4gui_XmlWriter.h
     sv4gui_MultiPhysicseqClass.h
-    ${vtkSV4MultiPhysics_EXPORT_HEADER}
 )
 
 set(vtkSV4MultiPhysics_SOURCES
@@ -25,10 +23,6 @@ set(vtkSV4MultiPhysics_SOURCES
 vtk_module_add_module(VTK::SV4MultiPhysics
     HEADERS ${vtkSV4MultiPhysics_HEADERS}
     SOURCES ${vtkSV4MultiPhysics_SOURCES}
-)
-generate_export_header(VTK::SV4MultiPhysics
-    BASE_NAME "SV4GUIMODULEMULTIPHYSICS"
-    EXPORT_FILE_NAME ${vtkSV4MultiPhysics_EXPORT_HEADER}
 )
 
 vtk_module_link(VTK::SV4MultiPhysics PUBLIC MitkCore Qt6::Core)

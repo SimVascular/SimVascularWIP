@@ -34,14 +34,14 @@
 
 #include "SimVascular.h"
 
-#include <sv4guiModuleSegmentationExports.h>
+#include <vtkSV4SegmentationModule.h>
 
 #include "sv3_CircleContour.h"
 #include "sv4gui_Contour.h"
 
 using sv3::circleContour;
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourCircle
+class VTKSV4SEGMENTATION_EXPORT sv4guiContourCircle
     : public sv4guiContour {
 
 public:

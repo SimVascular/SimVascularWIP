@@ -1,4 +1,3 @@
-set(vtkSV3Segmentation_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/sv3SegmentationExports.h)
 set(vtkSV3Segmentation_HEADERS
     sv3_CircleContour.h
     sv3_SegmentationUtils.h
@@ -7,7 +6,6 @@ set(vtkSV3Segmentation_HEADERS
     sv3_LevelSetContour.h
     sv3_SplinePolygonContour.h
     sv3_PolygonContour.h
-    ${vtkSV3Segmentation_EXPORT_HEADER}
 )
 
 set(vtkSV3Segmentation_SOURCES
@@ -23,8 +21,4 @@ set(vtkSV3Segmentation_SOURCES
 vtk_module_add_module(VTK::SV3Segmentation
     HEADERS ${vtkSV3Segmentation_HEADERS}
     SOURCES ${vtkSV3Segmentation_SOURCES}
-)
-generate_export_header(VTK::SV3Segmentation
-    EXPORT_MACRO_NAME "SV_EXPORT_SEGMENTATION"
-    EXPORT_FILE_NAME ${vtkSV3Segmentation_EXPORT_HEADER}
 )

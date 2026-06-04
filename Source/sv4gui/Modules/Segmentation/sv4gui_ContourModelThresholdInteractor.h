@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-#include <sv4guiModuleSegmentationExports.h>
+#include <vtkSV4SegmentationModule.h>
 
 #include "sv4gui_ContourGroupDataInteractor.h"
 #include "sv4gui_ContourModel.h"
@@ -42,7 +42,7 @@
 #include <itkEventObject.h>
 #include <mitkInteractionPositionEvent.h>
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourModelThresholdInteractor
+class VTKSV4SEGMENTATION_EXPORT sv4guiContourModelThresholdInteractor
     : public mitk::DataInteractor {
 public:
   mitkClassMacro(sv4guiContourModelThresholdInteractor, mitk::DataInteractor);

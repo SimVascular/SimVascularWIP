@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-#include <sv4guiModulePathExports.h>
+#include <vtkSV4PathModule.h>
 
 #include "sv3_PathElement.h"
 #include "sv3_PathGroup.h"
@@ -51,7 +51,7 @@
 #include <sstream>
 #include <string>
 
-class SV4GUIMODULEPATH_EXPORT sv4guiPath : public mitk::BaseData,
+class VTKSV4PATH_EXPORT sv4guiPath : public mitk::BaseData,
                                            public sv3::PathGroup {
 public:
   enum AddingMode { SMART = 0, BEGINNING = 1, END = 2, BEFORE = 3, AFTER = 4 };
@@ -126,10 +126,10 @@ protected:
   std::map<std::string, std::string> m_Props;
 };
 
-SV4GUIMODULEPATH_EXPORT bool Equal(const sv4guiPath *leftHandSide,
+VTKSV4PATH_EXPORT bool Equal(const sv4guiPath *leftHandSide,
                                    const sv4guiPath *rightHandSide,
                                    mitk::ScalarType eps, bool verbose);
-SV4GUIMODULEPATH_EXPORT bool Equal(const sv4guiPath &leftHandSide,
+VTKSV4PATH_EXPORT bool Equal(const sv4guiPath &leftHandSide,
                                    const sv4guiPath &rightHandSide,
                                    mitk::ScalarType eps, bool verbose);
 

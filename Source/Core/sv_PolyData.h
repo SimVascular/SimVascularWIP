@@ -38,9 +38,9 @@
 
 #include <vtkPolyData.h>
 
-#include "svRepositoryExports.h" // For exports
+#include "vtkSVCoreModule.h"
 
-class SV_EXPORT_REPOSITORY PolyDataCheckResults {
+class VTKSVCORE_EXPORT PolyDataCheckResults {
 public:
   std::vector<int> invalid_cells;
 };
@@ -78,7 +78,7 @@ private:
   vtkSmartPointer<vtkPolyData> m_geometry = nullptr;
 };
 
-class SV_EXPORT_REPOSITORY cvPolyData : public vtkPolyData {
+class VTKSVCORE_EXPORT cvPolyData : public vtkPolyData {
 
 public:
   cvPolyData();

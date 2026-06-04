@@ -33,7 +33,7 @@
 #define __CVSOLID_MODEL_H
 
 #include "SimVascular.h"
-#include "svSolidModelExports.h"
+#include "vtkSV1ModelSolidModelModule.h"
 #include "sv_PolyData.h"
 
 enum SolidModel_KernelT {
@@ -46,8 +46,8 @@ enum SolidModel_KernelT {
   SM_KT_INVALID
 };
 
-SV_EXPORT_SOLID SolidModel_KernelT SolidModel_KernelT_StrToEnum(char *name);
-SV_EXPORT_SOLID char *SolidModel_KernelT_EnumToStr(SolidModel_KernelT val);
+VTKSV1MODELSOLIDMODEL_EXPORT SolidModel_KernelT SolidModel_KernelT_StrToEnum(char *name);
+VTKSV1MODELSOLIDMODEL_EXPORT char *SolidModel_KernelT_EnumToStr(SolidModel_KernelT val);
 
 typedef enum {
   SM_Facet_Union,
@@ -56,8 +56,8 @@ typedef enum {
   SM_Facet_Invalid
 } SolidModel_FacetT;
 
-SV_EXPORT_SOLID SolidModel_FacetT SolidModel_FacetT_StrToEnum(char *name);
-SV_EXPORT_SOLID char *SolidModel_FacetT_EnumToStr(SolidModel_FacetT val);
+VTKSV1MODELSOLIDMODEL_EXPORT SolidModel_FacetT SolidModel_FacetT_StrToEnum(char *name);
+VTKSV1MODELSOLIDMODEL_EXPORT char *SolidModel_FacetT_EnumToStr(SolidModel_FacetT val);
 
 typedef enum {
   SM_Simplify_All,
@@ -65,15 +65,15 @@ typedef enum {
   SM_Simplify_Invalid
 } SolidModel_SimplifyT;
 
-SV_EXPORT_SOLID SolidModel_SimplifyT SolidModel_SimplifyT_StrToEnum(char *name);
-SV_EXPORT_SOLID char *SolidModel_SimplifyT_EnumToStr(SolidModel_SimplifyT val);
+VTKSV1MODELSOLIDMODEL_EXPORT SolidModel_SimplifyT SolidModel_SimplifyT_StrToEnum(char *name);
+VTKSV1MODELSOLIDMODEL_EXPORT char *SolidModel_SimplifyT_EnumToStr(SolidModel_SimplifyT val);
 
 //--------------
 // cvSolidModel
 //--------------
 // The cvSolidModel class is used as an abstract interface for solid modelers.
 //
-class SV_EXPORT_SOLID cvSolidModel  {
+class VTKSV1MODELSOLIDMODEL_EXPORT cvSolidModel  {
 
 public:
   cvSolidModel(SolidModel_KernelT t); // can never be called directly;

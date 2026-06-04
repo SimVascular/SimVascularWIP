@@ -35,13 +35,13 @@
 #ifndef sv4guiMitkMultiPhysicsJOB_H
 #define sv4guiMitkMultiPhysicsJOB_H
 
-#include "sv4guiModuleMultiPhysicsExports.h"
+#include "vtkSV4MultiPhysicsModule.h"
 
 #include "sv4gui_MultiPhysicsJob.h"
 
 #include <mitkBaseData.h>
 
-class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMitkMultiPhysicsJob
+class VTKSV4MULTIPHYSICS_EXPORT sv4guiMitkMultiPhysicsJob
     : public mitk::BaseData {
 public:
   mitkClassMacro(sv4guiMitkMultiPhysicsJob, mitk::BaseData);

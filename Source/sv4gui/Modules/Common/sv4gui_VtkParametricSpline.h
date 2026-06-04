@@ -34,11 +34,11 @@
 
 #include "SimVascular.h"
 
-#include "sv4guiModuleCommonExports.h"
+#include "vtkSV4CommonModule.h"
 
 #include "vtkParametricSpline.h"
 
-class SV4GUIMODULECOMMON_EXPORT sv4guiVtkParametricSpline
+class VTKSV4COMMON_EXPORT sv4guiVtkParametricSpline
     : public vtkParametricSpline {
 public:
   sv4guiVtkParametricSpline();

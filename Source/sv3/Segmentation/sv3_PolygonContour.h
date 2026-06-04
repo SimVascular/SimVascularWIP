@@ -39,12 +39,12 @@
 #undef GetClassName
 #endif
 
-#include <sv3SegmentationExports.h>
+#include <vtkSV3SegmentationModule.h>
 
 #include "sv3_Contour.h"
 
 namespace sv3 {
-class SV_EXPORT_SEGMENTATION ContourPolygon : public Contour {
+class VTKSV3SEGMENTATION_EXPORT ContourPolygon : public Contour {
 
 public:
   ContourPolygon();

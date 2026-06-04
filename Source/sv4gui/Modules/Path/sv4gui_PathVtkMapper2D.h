@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-#include <sv4guiModulePathExports.h>
+#include <vtkSV4PathModule.h>
 
 #include "sv4gui_Path.h"
 
@@ -53,7 +53,7 @@ class vtkGlyph3D;
 class vtkFloatArray;
 class vtkCellArray;
 
-class SV4GUIMODULEPATH_EXPORT sv4guiPathVtkMapper2D : public mitk::VtkMapper {
+class VTKSV4PATH_EXPORT sv4guiPathVtkMapper2D : public mitk::VtkMapper {
 public:
   mitkClassMacro(sv4guiPathVtkMapper2D, mitk::VtkMapper);
 
@@ -70,7 +70,7 @@ public:
                                    mitk::BaseRenderer *renderer = nullptr,
                                    bool overwrite = false);
 
-  class SV4GUIMODULEPATH_EXPORT LocalStorage
+  class VTKSV4PATH_EXPORT LocalStorage
       : public mitk::Mapper::BaseLocalStorage {
 
   public:

@@ -33,7 +33,7 @@
 #define CVLEVELSETUTILS_H_
 
 #include "SimVascular.h"
-#include "svSegITKExports.h" // For exports
+#include "vtkSV3ITKSegmentationModule.h" // For exports
 #include "sv_PolyData.h"
 
 
@@ -102,115 +102,115 @@ void WritePerciseVtkImage(vtkStructuredPoints *image, string FilenameBase);
 
 /* itk templated methods */
 template <typename TImageType, typename TExternalImageType>
-SV_EXPORT_SEGITK int vtkGenerateFeatureImage(vtkStructuredPoints *vtkInputImage,
+VTKSV3ITKSEGMENTATION_EXPORT int vtkGenerateFeatureImage(vtkStructuredPoints *vtkInputImage,
                                              vtkStructuredPoints *vtkOuputImage,
                                              ImgInfo *refInfo, double sigma);
 
 template <typename TImageType, typename TExternalImageType>
-SV_EXPORT_SEGITK void
+VTKSV3ITKSEGMENTATION_EXPORT void
 vtk2itkRecastAndRescale(vtkStructuredPoints *vtkImage,
                         typename TImageType::Pointer itkImage,
                         ImgInfo *refInfo);
 
 template <typename TImageType>
-SV_EXPORT_SEGITK void itk2vtkRecast(TImageType *itkImage,
+VTKSV3ITKSEGMENTATION_EXPORT void itk2vtkRecast(TImageType *itkImage,
                                     vtkStructuredPoints *vtkImage,
                                     ImgInfo *refInfo);
 
 template <typename TImageType>
-SV_EXPORT_SEGITK void itk2vtkRecastAndRescale(TImageType *itkImage,
+VTKSV3ITKSEGMENTATION_EXPORT void itk2vtkRecastAndRescale(TImageType *itkImage,
                                               vtkStructuredPoints *vtkImage,
                                               ImgInfo *refInfo);
 
 template <typename TImageType>
-SV_EXPORT_SEGITK void itk2vtkRecast(TImageType *itkImage,
+VTKSV3ITKSEGMENTATION_EXPORT void itk2vtkRecast(TImageType *itkImage,
                                     vtkStructuredPoints *vtkImage,
                                     ImgInfo *refInfo);
 
 template <typename TImageType>
-SV_EXPORT_SEGITK void
+VTKSV3ITKSEGMENTATION_EXPORT void
 itkGenerateFeatureImage(TImageType *itkInputImage,
                         typename TImageType::Pointer featureImage,
                         double sigma);
 
 template <typename TImageType>
-SV_EXPORT_SEGITK void
+VTKSV3ITKSEGMENTATION_EXPORT void
 itkGenerateFeatureImageNoGrad(TImageType *itkInputImage,
                               typename TImageType::Pointer outImage,
                               double sigma);
 
 template <typename TImageType>
-SV_EXPORT_SEGITK void
+VTKSV3ITKSEGMENTATION_EXPORT void
 itkGenerateFeatureImageDistance(TImageType *itkInputImage,
                                 typename TImageType::Pointer outImage,
                                 double thres = .5);
 
 template <typename TImageType>
-SV_EXPORT_SEGITK void
+VTKSV3ITKSEGMENTATION_EXPORT void
 itkGenerateFeatureImageThreshold(TImageType *itkInputImage,
                                  typename TImageType::Pointer outImage,
                                  double thres);
 
 template <typename TImageType, typename TExternalImageType>
-SV_EXPORT_SEGITK void
+VTKSV3ITKSEGMENTATION_EXPORT void
 vtk2itkBinaryImageToSeedImage(vtkStructuredPoints *vtkImg,
                               typename TImageType::Pointer itkImage,
                               ImgInfo *intInfo);
 
 template <typename TImageType>
-SV_EXPORT_SEGITK void itkDeepCopy(const TImageType *input,
+VTKSV3ITKSEGMENTATION_EXPORT void itkDeepCopy(const TImageType *input,
                                   typename TImageType::Pointer output);
 
 template <typename TImageType>
-SV_EXPORT_SEGITK void itkDeepCopy(typename TImageType::Pointer input,
+VTKSV3ITKSEGMENTATION_EXPORT void itkDeepCopy(typename TImageType::Pointer input,
                                   typename TImageType::Pointer output);
 
 template <typename TImageType>
-SV_EXPORT_SEGITK void itkDeepCopy(const TImageType *input, TImageType *output);
+VTKSV3ITKSEGMENTATION_EXPORT void itkDeepCopy(const TImageType *input, TImageType *output);
 
 template <typename TImageType>
-SV_EXPORT_SEGITK void CopyVTKtoITK(vtkStructuredPoints *in, TImageType *out);
+VTKSV3ITKSEGMENTATION_EXPORT void CopyVTKtoITK(vtkStructuredPoints *in, TImageType *out);
 
 template <typename TImageType>
-SV_EXPORT_SEGITK void CopyITKtoVTK(const TImageType *in,
+VTKSV3ITKSEGMENTATION_EXPORT void CopyITKtoVTK(const TImageType *in,
                                    vtkStructuredPoints *out);
 
 template <typename TImageType>
-SV_EXPORT_SEGITK void CopyITKtoVTK(const TImageType *in,
+VTKSV3ITKSEGMENTATION_EXPORT void CopyITKtoVTK(const TImageType *in,
                                    vtkStructuredPoints *out);
 
 template <typename TImageType>
-SV_EXPORT_SEGITK void WriteImage(const TImageType *input, string FilenameBase);
+VTKSV3ITKSEGMENTATION_EXPORT void WriteImage(const TImageType *input, string FilenameBase);
 
 template <typename TImageType>
-SV_EXPORT_SEGITK void WriteImage2(const TImageType *input, string FilenameBase);
+VTKSV3ITKSEGMENTATION_EXPORT void WriteImage2(const TImageType *input, string FilenameBase);
 
 template <typename TImageType>
 static void WritePNGImage(const TImageType *input, string FilenameBase);
 
 template <typename ITKImageType>
-SV_EXPORT_SEGITK void CreateImage(typename ITKImageType::Pointer image,
+VTKSV3ITKSEGMENTATION_EXPORT void CreateImage(typename ITKImageType::Pointer image,
                                   typename ITKImageType::SizeType size,
                                   typename ITKImageType::SpacingType spacing,
                                   typename ITKImageType::PointType origin,
                                   typename ITKImageType::PixelType value);
 
 /* CV convienience methods */
-SV_EXPORT_SEGITK void inline vtkPolyDataTo2DImage(vtkPolyData *pd,
+VTKSV3ITKSEGMENTATION_EXPORT void inline vtkPolyDataTo2DImage(vtkPolyData *pd,
                                                   vtkStructuredPoints **result,
                                                   ImgInfo *refInfo) {
   *result = vtkStructuredPoints::New();
   vtkPolyDataTo2DImage(pd, *result, refInfo);
 }
 
-SV_EXPORT_SEGITK void inline vtkPolyDataToVolume(vtkPolyData *pd,
+VTKSV3ITKSEGMENTATION_EXPORT void inline vtkPolyDataToVolume(vtkPolyData *pd,
                                                  vtkStructuredPoints **result,
                                                  ImgInfo *refInfo) {
    *result = vtkStructuredPoints::New();
   vtkPolyDataToVolume(pd, *result, refInfo);
 }
 
-SV_EXPORT_SEGITK void inline vtkGenerateCircle(double radius, double center[3],
+VTKSV3ITKSEGMENTATION_EXPORT void inline vtkGenerateCircle(double radius, double center[3],
                                                int numPoints,
                                                cvPolyData **circle) {
   vtkPolyData *out = vtkPolyData::New();

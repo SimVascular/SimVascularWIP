@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-#include <sv3PathExports.h>
+#include <vtkSV3PathModule.h>
 
 #include "sv3_PathElement.h"
 
@@ -44,7 +44,7 @@
 #include <string>
 
 namespace sv3 {
-class SV_EXPORT_PATH PathGroup  {
+class VTKSV3PATH_EXPORT PathGroup  {
 public:
   PathGroup();
 

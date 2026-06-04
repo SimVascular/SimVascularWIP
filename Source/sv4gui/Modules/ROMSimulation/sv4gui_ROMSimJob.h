@@ -32,14 +32,14 @@
 #ifndef SV4GUI_ROM_SIMJOB_H
 #define SV4GUI_ROM_SIMJOB_H
 
-#include <sv4guiModuleROMSimulationExports.h>
+#include <vtkSV4ROMSimulationModule.h>
 
 #include <iostream>
 #include <map>
 #include <sstream>
 #include <string>
 
-class SV4GUIMODULEROMSIMULATION_EXPORT sv4guiROMSimJob {
+class VTKSV4ROMSIMULATION_EXPORT sv4guiROMSimJob {
 
 public:
   sv4guiROMSimJob();

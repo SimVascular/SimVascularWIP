@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-#include <sv4guiModulePathExports.h>
+#include <vtkSV4PathModule.h>
 
 #include "sv4gui_Path.h"
 
@@ -49,7 +49,7 @@ class vtkPolyData;
 class vtkTubeFilter;
 class vtkPolyDataMapper;
 
-class SV4GUIMODULEPATH_EXPORT sv4guiPathVtkMapper3D : public mitk::VtkMapper {
+class VTKSV4PATH_EXPORT sv4guiPathVtkMapper3D : public mitk::VtkMapper {
 public:
   mitkClassMacro(sv4guiPathVtkMapper3D, mitk::VtkMapper);
 

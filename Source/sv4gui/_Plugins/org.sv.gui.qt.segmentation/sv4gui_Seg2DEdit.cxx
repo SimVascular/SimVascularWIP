@@ -523,8 +523,8 @@ void sv4guiSeg2DEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
 
     m_DataInteractor = sv4guiContourGroupDataInteractor::New();
     m_DataInteractor->SetInteraction3D(false);
-    m_DataInteractor->LoadStateMachine("sv4gui_ContourGroupInteraction.xml", us::ModuleRegistry::GetModule("sv4guiModuleSegmentation"));
-    m_DataInteractor->SetEventConfig("sv4gui_SegmentationConfig.xml", us::ModuleRegistry::GetModule("sv4guiModuleSegmentation"));
+    m_DataInteractor->LoadStateMachine("sv4gui_ContourGroupInteraction.xml", us::ModuleRegistry::GetModule("VTKSV4SEGMENTATION"));
+    m_DataInteractor->SetEventConfig("sv4gui_SegmentationConfig.xml", us::ModuleRegistry::GetModule("VTKSV4SEGMENTATION"));
     m_DataInteractor->SetDataNode(m_ContourGroupNode);
 
     //Add Observer
@@ -1849,8 +1849,8 @@ void sv4guiSeg2DEdit::PreparePreviewInteraction(QString method)
     // Create an interactor used to select a threshold value.
     m_PreviewDataNodeInteractor = sv4guiContourModelThresholdInteractor::New();
     m_PreviewDataNodeInteractor->LoadStateMachine("sv4gui_ContourModelThresholdInteraction.xml", 
-       us::ModuleRegistry::GetModule("sv4guiModuleSegmentation"));
-    m_PreviewDataNodeInteractor->SetEventConfig("sv4gui_SegmentationConfig.xml", us::ModuleRegistry::GetModule("sv4guiModuleSegmentation"));
+       us::ModuleRegistry::GetModule("VTKSV4SEGMENTATION"));
+    m_PreviewDataNodeInteractor->SetEventConfig("sv4gui_SegmentationConfig.xml", us::ModuleRegistry::GetModule("VTKSV4SEGMENTATION"));
     m_PreviewDataNodeInteractor->SetDataNode(m_PreviewDataNode);
     m_PreviewDataNodeInteractor->SetVtkImageData(m_cvImage->GetVtkStructuredPoints());
     m_PreviewDataNodeInteractor->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());

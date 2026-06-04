@@ -34,12 +34,12 @@
 
 #include "SimVascular.h"
 
-#include <sv4guiModuleSegmentationExports.h>
+#include <vtkSV4SegmentationModule.h>
 
 #include "mitkOperation.h"
 #include "sv4gui_Seg3D.h"
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiMitkSeg3DOperation
+class VTKSV4SEGMENTATION_EXPORT sv4guiMitkSeg3DOperation
     : public mitk::Operation {
 public:
   enum Seg3DOperationType { OpSETSEG3D };

@@ -34,14 +34,14 @@
 
 #include "SimVascular.h"
 
-#include "sv4guiModuleCommonExports.h"
+#include "vtkSV4CommonModule.h"
 
 #include <mitkImage.h>
 #include <vtkImageData.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
-class SV4GUIMODULECOMMON_EXPORT sv4guiVtkUtils {
+class VTKSV4COMMON_EXPORT sv4guiVtkUtils {
 public:
   static vtkSmartPointer<vtkPolyData>
   MergePoints(vtkSmartPointer<vtkPolyData> inpd);

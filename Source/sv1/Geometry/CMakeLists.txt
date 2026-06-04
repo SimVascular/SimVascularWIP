@@ -1,11 +1,9 @@
-set(vtkSV1Geometry_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/svGeometryExports.h)
 set(vtkSV1Geometry_HEADERS
     sv_cgeom.h
     sv_ggems.h
     sv_integrate_surface.h
     sv_spline.h
     sv_sys_geom.h
-    ${vtkSV1Geometry_EXPORT_HEADER}
 )
 
 set(vtkSV1Geometry_SOURCES
@@ -19,8 +17,4 @@ set(vtkSV1Geometry_SOURCES
 vtk_module_add_module(VTK::SV1Geometry
     HEADERS ${vtkSV1Geometry_HEADERS}
     SOURCES ${vtkSV1Geometry_SOURCES}
-)
-generate_export_header(VTK::SV1Geometry
-    EXPORT_MACRO_NAME "SV_EXPORT_SYSGEOM"
-    EXPORT_FILE_NAME ${vtkSV1Geometry_EXPORT_HEADER}
 )

@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-#include <sv4guiModuleSegmentationExports.h>
+#include <vtkSV4SegmentationModule.h>
 
 #include "sv4gui_Contour.h"
 #include "sv4gui_ContourModel.h"
@@ -54,7 +54,7 @@ class vtkGlyph3D;
 class vtkFloatArray;
 class vtkCellArray;
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourModelVtkMapper2D
+class VTKSV4SEGMENTATION_EXPORT sv4guiContourModelVtkMapper2D
     : public mitk::VtkMapper {
 public:
   mitkClassMacro(sv4guiContourModelVtkMapper2D, mitk::VtkMapper);

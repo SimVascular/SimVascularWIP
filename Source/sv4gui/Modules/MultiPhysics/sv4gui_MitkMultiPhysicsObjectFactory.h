@@ -32,13 +32,13 @@
 #ifndef sv4guiMitkMultiPhysicsOBJECTFACTORY_H
 #define sv4guiMitkMultiPhysicsOBJECTFACTORY_H
 
-#include "sv4guiModuleMultiPhysicsExports.h"
+#include "vtkSV4MultiPhysicsModule.h"
 
 #include "sv4gui_MitkMultiPhysicsJobIO.h"
 
 #include <mitkCoreObjectFactoryBase.h>
 
-class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMitkMultiPhysicsObjectFactory
+class VTKSV4MULTIPHYSICS_EXPORT sv4guiMitkMultiPhysicsObjectFactory
     : public mitk::CoreObjectFactoryBase {
 public:
   mitkClassMacro(sv4guiMitkMultiPhysicsObjectFactory,
@@ -64,7 +64,7 @@ protected:
 private:
 };
 
-struct SV4GUIMODULEMULTIPHYSICS_EXPORT
+struct VTKSV4MULTIPHYSICS_EXPORT
     Registersv4guiMitkMultiPhysicsObjectFactory {
   Registersv4guiMitkMultiPhysicsObjectFactory();
 

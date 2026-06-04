@@ -32,13 +32,13 @@
 #ifndef SV4GUI_MITK_ROM_SIMULATIONOBJECTFACTORY_H
 #define SV4GUI_MITK_ROM_SIMULATIONOBJECTFACTORY_H
 
-#include <sv4guiModuleROMSimulationExports.h>
+#include <vtkSV4ROMSimulationModule.h>
 
 #include "sv4gui_MitkROMSimJobIO.h"
 
 #include "mitkCoreObjectFactoryBase.h"
 
-class SV4GUIMODULEROMSIMULATION_EXPORT sv4guiMitkROMSimulationObjectFactory
+class VTKSV4ROMSIMULATION_EXPORT sv4guiMitkROMSimulationObjectFactory
     : public mitk::CoreObjectFactoryBase {
 public:
   mitkClassMacro(sv4guiMitkROMSimulationObjectFactory,
@@ -64,8 +64,7 @@ protected:
 private:
 };
 
-struct SV4GUIMODULEROMSIMULATION_EXPORT
-    Registersv4guiMitkROMSimulationObjectFactory {
+struct VTKSV4ROMSIMULATION_EXPORT Registersv4guiMitkROMSimulationObjectFactory {
   Registersv4guiMitkROMSimulationObjectFactory();
 
   virtual ~Registersv4guiMitkROMSimulationObjectFactory();

@@ -34,12 +34,12 @@
 
 #include "SimVascular.h"
 
-#include <sv4guiModuleSegmentationExports.h>
+#include <vtkSV4SegmentationModule.h>
 
 #include "mitkOperation.h"
 #include "sv4gui_Contour.h"
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourOperation
+class VTKSV4SEGMENTATION_EXPORT sv4guiContourOperation
     : public mitk::Operation {
 public:
   enum ContourOperationType {

@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-#include <sv3CommonExports.h>
+#include <vtkSV3CommonModule.h>
 
 #include <tinyxml2.h>
 
@@ -47,7 +47,7 @@ namespace sv3 {
 // An XmlIOUtil object must be constructed with an existing
 // tinyxml2::XMLDocument.
 //
-class SV_EXPORT_COMMON XmlIOUtil {
+class VTKSV3COMMON_EXPORT XmlIOUtil {
 public:
   XmlIOUtil(tinyxml2::XMLDocument &doc) : document(doc) {}
   XmlIOUtil() = delete;

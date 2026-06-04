@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-#include <sv3PathExports.h>
+#include <vtkSV3PathModule.h>
 
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
@@ -43,7 +43,7 @@
 
 namespace sv3 {
 
-class SV_EXPORT_PATH PathUtils {
+class VTKSV3PATH_EXPORT PathUtils {
 public:
   static std::vector<vtkSmartPointer<vtkPolyData>>
   ExtractCenterlinesSections(vtkSmartPointer<vtkPolyData> &centerlines);

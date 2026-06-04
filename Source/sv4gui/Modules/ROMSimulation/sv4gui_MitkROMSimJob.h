@@ -32,13 +32,13 @@
 #ifndef SV4GUI_MITK_ROM_SIMJOB_H
 #define SV4GUI_MITK_ROM_SIMJOB_H
 
-#include <sv4guiModuleROMSimulationExports.h>
+#include <vtkSV4ROMSimulationModule.h>
 
 #include "sv4gui_ROMSimJob.h"
 
 #include "mitkBaseData.h"
 
-class SV4GUIMODULEROMSIMULATION_EXPORT sv4guiMitkROMSimJob
+class VTKSV4ROMSIMULATION_EXPORT sv4guiMitkROMSimJob
     : public mitk::BaseData {
 public:
   class JobBasicParameters {

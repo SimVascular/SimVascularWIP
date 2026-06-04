@@ -37,10 +37,10 @@
 #include "sv3_PathGroup.h"
 #include "tinyxml2.h"
 
-#include <sv3PathExports.h>
+#include <vtkSV3PathModule.h>
 
 namespace sv3 {
-class SV_EXPORT_PATH PathIO {
+class VTKSV3PATH_EXPORT PathIO {
 public:
   PathIO() {};
 

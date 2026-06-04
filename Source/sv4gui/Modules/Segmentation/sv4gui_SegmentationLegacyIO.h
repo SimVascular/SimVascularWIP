@@ -35,14 +35,14 @@
 #include "SimVascular.h"
 
 #include "sv4gui_ContourGroup.h"
-#include <sv4guiModuleSegmentationExports.h>
+#include <vtkSV4SegmentationModule.h>
 
 #include "mitkDataNode.h"
 #include "mitkDataStorage.h"
 #include "mitkImage.h"
 #include <QString>
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiSegmentationLegacyIO {
+class VTKSV4SEGMENTATION_EXPORT sv4guiSegmentationLegacyIO {
 public:
   sv4guiSegmentationLegacyIO() {}
   virtual ~sv4guiSegmentationLegacyIO() {}

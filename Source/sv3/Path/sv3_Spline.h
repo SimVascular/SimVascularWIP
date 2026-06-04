@@ -34,13 +34,13 @@
 
 #include "SimVascular.h"
 
-#include "sv3PathExports.h"
+#include "vtkSV3PathModule.h"
 #include "sv3_VtkParametricSpline.h"
 #include <array>
 #include <vector>
 namespace sv3 {
 
-class SV_EXPORT_PATH Spline {
+class VTKSV3PATH_EXPORT Spline {
 public:
   enum CalculationMethod {
     CONSTANT_TOTAL_NUMBER,

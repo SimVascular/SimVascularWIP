@@ -34,11 +34,11 @@
 
 #include "SimVascular.h"
 
-#include <sv4guiModuleSegmentationExports.h>
+#include <vtkSV4SegmentationModule.h>
 
 #include "sv4gui_ContourPolygon.h"
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourSplinePolygon
+class VTKSV4SEGMENTATION_EXPORT sv4guiContourSplinePolygon
     : public sv4guiContourPolygon {
 
 public:

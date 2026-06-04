@@ -32,13 +32,13 @@
 #ifndef SV4GUI_SEG3D_H
 #define SV4GUI_SEG3D_H
 
-#include <sv4guiModuleSegmentationExports.h>
+#include <vtkSV4SegmentationModule.h>
 
 #include <map>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
-struct SV4GUIMODULESEGMENTATION_EXPORT svSeed {
+struct VTKSV4SEGMENTATION_EXPORT svSeed {
   int id;
   std::string type; // begin, end
 
@@ -69,7 +69,7 @@ struct SV4GUIMODULESEGMENTATION_EXPORT svSeed {
         radius(other.radius), selected(false), status("") {}
 };
 
-struct SV4GUIMODULESEGMENTATION_EXPORT sv4guiSeg3DParam {
+struct VTKSV4SEGMENTATION_EXPORT sv4guiSeg3DParam {
   std::string method;
 
   double lowerThreshold;
@@ -108,7 +108,7 @@ struct SV4GUIMODULESEGMENTATION_EXPORT sv4guiSeg3DParam {
   void RemoveSeed(int id) { seedMap.erase(id); }
 };
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiSeg3D {
+class VTKSV4SEGMENTATION_EXPORT sv4guiSeg3D {
 public:
   sv4guiSeg3D();
 

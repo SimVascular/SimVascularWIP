@@ -34,7 +34,7 @@
 #ifndef sv4guiMultiPhysicsJOB_H
 #define sv4guiMultiPhysicsJOB_H
 
-#include "sv4guiModuleMultiPhysicsExports.h"
+#include "vtkSV4MultiPhysicsModule.h"
 
 #include "sv4gui_MultiPhysicseqClass.h"
 
@@ -49,7 +49,7 @@
 //-------------------
 // Store information defining a mesh domain.
 //
-struct SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMultiPhysicsDomain {
+struct VTKSV4MULTIPHYSICS_EXPORT sv4guiMultiPhysicsDomain {
   std::string name;
   std::string folderName;
   std::string fileName;
@@ -76,7 +76,7 @@ struct SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMultiPhysicsDomain {
 // Note: All of the data members are public and set in
 // sv4gui_MultiPhysicsView.cxx directly from the GUI.
 //
-class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMultiPhysicsJob {
+class VTKSV4MULTIPHYSICS_EXPORT sv4guiMultiPhysicsJob {
 public:
   sv4guiMultiPhysicsJob();
   sv4guiMultiPhysicsJob(const sv4guiMultiPhysicsJob &other);

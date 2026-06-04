@@ -35,13 +35,13 @@
 #include "sv_PolyData.h"
 #include "sv_SolidModel.h"
 
-#include "svPolyDataSolidExports.h" // For exports
+#include "vtkSV1ModelPolyDataSolidModelModule.h" // For exports
 
 //----------------
 // cvPolyDataSolid
 //-----------------
 //
-class SV_EXPORT_POLYDATASOLID cvPolyDataSolid : public cvSolidModel {
+class VTKSV1MODELPOLYDATASOLIDMODEL_EXPORT cvPolyDataSolid : public cvSolidModel {
 
 public:
   cvPolyDataSolid(); // can never be called directly;

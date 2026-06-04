@@ -34,13 +34,13 @@
 
 #include "SimVascular.h"
 
-#include <sv4guiModulePathExports.h>
+#include <vtkSV4PathModule.h>
 
 #include "mitkAbstractFileIO.h"
 
 #include "sv3_PathIO.h"
 
-class SV4GUIMODULEPATH_EXPORT sv4guiPathIO : public mitk::AbstractFileIO,
+class VTKSV4PATH_EXPORT sv4guiPathIO : public mitk::AbstractFileIO,
                                              sv3::PathIO {
 public:
   sv4guiPathIO();

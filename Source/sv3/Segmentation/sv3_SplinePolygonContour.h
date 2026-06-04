@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-#include <sv3SegmentationExports.h>
+#include <vtkSV3SegmentationModule.h>
 
 #include "sv3_PolygonContour.h"
 
@@ -44,7 +44,7 @@
 #endif
 
 namespace sv3 {
-class SV_EXPORT_SEGMENTATION ContourSplinePolygon : public ContourPolygon {
+class VTKSV3SEGMENTATION_EXPORT ContourSplinePolygon : public ContourPolygon {
 
 public:
   ContourSplinePolygon();

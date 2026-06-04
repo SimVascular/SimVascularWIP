@@ -47,7 +47,7 @@
 #define CVITKLEVELSETBASE_H_
 
 #include "SimVascular.h"
-#include "svSegITKExports.h" // For exports
+#include "vtkSV3ITKSegmentationModule.h" // For exports
 #include "sv_PolyData.h"
 #include "sv_SolidModel.h"
 
@@ -85,7 +85,7 @@
 
 template <typename TInputImage = itk::Image<short, 2>,
           typename TInternalPixelType = float>
-class SV_EXPORT_SEGITK cvITKLevelSetBase {
+class VTKSV3ITKSEGMENTATION_EXPORT cvITKLevelSetBase {
 
 public:
   /** Typedefs */

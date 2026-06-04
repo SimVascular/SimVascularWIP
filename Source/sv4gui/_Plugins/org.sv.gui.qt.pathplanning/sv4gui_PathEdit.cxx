@@ -280,8 +280,8 @@ void sv4guiPathEdit::OnSelectionChanged(berry::IWorkbenchPart::Pointer part, con
   UpdateGUI();
 
   m_DataInteractor = sv4guiPathDataInteractor::New();
-  m_DataInteractor->LoadStateMachine("sv4gui_Path.xml", us::ModuleRegistry::GetModule("sv4guiModulePath"));
-  m_DataInteractor->SetEventConfig("sv4gui_PathConfig.xml", us::ModuleRegistry::GetModule("sv4guiModulePath"));
+  m_DataInteractor->LoadStateMachine("sv4gui_Path.xml", us::ModuleRegistry::GetModule("VTKSV4PATH"));
+  m_DataInteractor->SetEventConfig("sv4gui_PathConfig.xml", us::ModuleRegistry::GetModule("VTKSV4PATH"));
   m_DataInteractor->SetDataNode(m_PathNode);
 
   //Add Observer

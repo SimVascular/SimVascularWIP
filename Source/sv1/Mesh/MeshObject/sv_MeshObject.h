@@ -37,7 +37,7 @@
 #include <vtkUnstructuredGrid.h>
 
 #include "SimVascular.h"
-#include "svMeshObjectExports.h"
+#include "vtkSV1MeshMeshObjectModule.h"
 
 // #include "sys/param.h"
 #define MAXPATHLEN 1024
@@ -64,7 +64,7 @@
 //--------------
 // The cvMeshObject provides an abstract interface for mesh generators.
 //
-class SV_EXPORT_MESH cvMeshObject {
+class VTKSV1MESHMESHOBJECT_EXPORT cvMeshObject {
 
 public:
   enum KernelType {
@@ -78,7 +78,7 @@ public:
   // Define the names used to access face information
   // in the map returned by the GetModelFaceInfo() method.
   //
-  class SV_EXPORT_MESH ModelFaceInfo {
+  class VTKSV1MESHMESHOBJECT_EXPORT ModelFaceInfo {
   public:
     static const std::string ID;
     static const std::string NAME;

@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-#include <sv3SegmentationExports.h>
+#include <vtkSV3SegmentationModule.h>
 
 #include "sv3_PathElement.h"
 
@@ -60,7 +60,7 @@ enum cKernelType {
 };
 
 namespace sv3 {
-class SV_EXPORT_SEGMENTATION Contour {
+class VTKSV3SEGMENTATION_EXPORT Contour {
 
 public:
   struct svLSParam {

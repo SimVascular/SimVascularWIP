@@ -32,7 +32,7 @@
 #ifndef SV4GUI_MULTIPHYSICSEQCLASS_H
 #define SV4GUI_MULTIPHYSICSEQCLASS_H
 
-#include "sv4guiModuleMultiPhysicsExports.h"
+#include "vtkSV4MultiPhysicsModule.h"
 #include "sv4gui_MultiPhysicsbcClass.h"
 
 #define maxOutput 10
@@ -41,7 +41,7 @@
 #include <map>
 #include <vector>
 
-class SV4GUIMODULEMULTIPHYSICS_EXPORT
+class VTKSV4MULTIPHYSICS_EXPORT
     sv4guiMultiPhysicsLinearSolverPreconditioner {
 public:
   static std::string FSILS;
@@ -74,7 +74,7 @@ public:
 //
 // See sv4guiMultiPhysicsView::SelectEquation().
 //
-class SV4GUIMODULEMULTIPHYSICS_EXPORT sv4guiMultiPhysicseqClass {
+class VTKSV4MULTIPHYSICS_EXPORT sv4guiMultiPhysicseqClass {
 public:
   sv4guiMultiPhysicseqClass(const QString &eq = "none");
   sv4guiMultiPhysicseqClass(const sv4guiMultiPhysicseqClass &iEq) {
