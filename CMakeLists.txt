@@ -28,6 +28,8 @@ find_package(Qt6 6.10 COMPONENTS Core CoreTools Gui Widgets REQUIRED)
 option(SimVascular_SUPERBUILD "Build SimVascular and its external dependencies via CMake superbuild." ON)
 mark_as_advanced(SimVascular_SUPERBUILD)
 
+option(SV_WRAP_PYTHON "Build SimVascular Python Bindings" ON)
+
 if(SimVascular_SUPERBUILD)
   add_subdirectory(SuperBuild)
   return()

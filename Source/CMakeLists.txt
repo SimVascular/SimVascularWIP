@@ -9,3 +9,15 @@ vtk_module_build(
         MODULES ${modules}
         INSTALL_EXPORT VTKSV
 )
+
+
+if (${SV_WRAP_PYTHON})
+    vtk_module_python_default_destination(python_destination)
+    vtk_module_wrap_python(
+            MODULES ${modules}
+            BUILD_PYI_FILES ON
+            INSTALL_HEADERS OFF
+            MODULE_DESTINATION ${python_destination}
+            PYTHON_PACKAGE "sv"
+    )
+endif ()

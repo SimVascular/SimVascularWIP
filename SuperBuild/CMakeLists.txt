@@ -41,6 +41,7 @@ list(APPEND SimVascular_DEPENDENCIES MITK)
 #-----------------------------------------------------------------------------
 set(SimVascular_superbuild_ep_args
   -DSimVascular_SUPERBUILD:BOOL=OFF
+  -DSV_WRAP_PYTHON:BOOL=${SV_WRAP_PYTHON}
   -DQt6_DIR:PATH=${Qt6_DIR}
   -DPython_EXECUTABLE:PATH=${Python_EXECUTABLE}
   -DVTK_DIR:PATH=${VTK_DIR}
