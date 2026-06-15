@@ -42,6 +42,9 @@ list(APPEND SimVascular_DEPENDENCIES MMG)
 include(${CMAKE_CURRENT_SOURCE_DIR}/External_TetGen.cmake)
 list(APPEND SimVascular_DEPENDENCIES TetGen)
 
+include(${CMAKE_CURRENT_SOURCE_DIR}/External_tinyxml2.cmake)
+list(APPEND SimVascular_DEPENDENCIES tinyxml2)
+
 include(${CMAKE_CURRENT_SOURCE_DIR}/External_VMTK.cmake)
 list(APPEND SimVascular_DEPENDENCIES VMTK)
 
@@ -65,6 +68,7 @@ set(SimVascular_superbuild_ep_args
   -DMMG_DIR:PATH=${MMG_DIR}
   -DTETGEN_INCLUDE_DIR:PATH=${TETGEN_INCLUDE_DIR}
   -DTETGEN_LIBRARY:FILEPATH=${TETGEN_LIBRARY}
+  -Dtinyxml2_DIR:PATH=${tinyxml2_DIR}
   -DVMTK_DIR:PATH=${VMTK_DIR}
 )
 
