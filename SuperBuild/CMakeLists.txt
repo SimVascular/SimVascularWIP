@@ -39,6 +39,9 @@ list(APPEND SimVascular_DEPENDENCIES OpenCASCADE)
 include(${CMAKE_CURRENT_SOURCE_DIR}/External_MMG.cmake)
 list(APPEND SimVascular_DEPENDENCIES MMG)
 
+include(${CMAKE_CURRENT_SOURCE_DIR}/External_TetGen.cmake)
+list(APPEND SimVascular_DEPENDENCIES TetGen)
+
 include(${CMAKE_CURRENT_SOURCE_DIR}/External_MITK.cmake)
 list(APPEND SimVascular_DEPENDENCIES MITK)
 
@@ -57,6 +60,8 @@ set(SimVascular_superbuild_ep_args
   -DMITK_DIR:PATH=${MITK_DIR}
   -DOpenCASCADE_DIR:PATH=${OpenCASCADE_DIR}
   -DMMG_DIR:PATH=${MMG_DIR}
+  -DTETGEN_INCLUDE_DIR:PATH=${TETGEN_INCLUDE_DIR}
+  -DTETGEN_LIBRARY:FILEPATH=${TETGEN_LIBRARY}
 )
 
 ExternalProject_Add(SimVascular
