@@ -90,7 +90,7 @@ sv4guiMeshTetGen* sv4guiMeshTetGenAdaptor::GetAdaptedMesh()
     if(m_cvTetGetMesh)
     {
         vtkPolyData* surfaceMesh=m_cvTetGetMesh->GetPolyData()->GetVtkPolyData();
-        vtkUnstructuredGrid* volumeMesh=m_cvTetGetMesh->GetUnstructuredGrid()->GetVtkUnstructuredGrid();
+        vtkUnstructuredGrid* volumeMesh=m_cvTetGetMesh->GetUnstructuredGrid();
         if(surfaceMesh && volumeMesh)
         {
             vtkSmartPointer<vtkPolyData> surf=vtkSmartPointer<vtkPolyData>::New();

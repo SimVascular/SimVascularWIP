@@ -32,7 +32,7 @@
 #ifndef SV4GUI_MITKMESHMAPPER3D_H
 #define SV4GUI_MITKMESHMAPPER3D_H
 
-#include <sv4guiModuleMeshExports.h>
+#include <vtkSV4MeshCommonModule.h>
 
 #include "sv4gui_MitkMesh.h"
 
@@ -51,7 +51,7 @@
 #include <vtkPlaneCollection.h>
 #include <vtkSmartPointer.h>
 
-class SV4GUIMODULEMESH_EXPORT sv4guiMitkMeshMapper3D : public mitk::VtkMapper
+class VTKSV4MESHCOMMON_EXPORT sv4guiMitkMeshMapper3D : public mitk::VtkMapper
 {
 public:
 
