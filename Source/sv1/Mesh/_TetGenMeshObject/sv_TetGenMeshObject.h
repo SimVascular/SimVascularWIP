@@ -48,16 +48,16 @@
 #define __CVTETGENMESHOBJECT_H
 
 #include "SimVascular.h"
-#include "svTetGenMeshExports.h" // For exports
+#include "vtkSV1MeshTetGenMeshObjectModule.h" // For exports
 
 #include <math.h>
 #include <set>
 
 #include "sv_MeshObject.h"
 
-#include "simvascular_tetgen.h"
+#include "tetgen.h"
 
-class SV_EXPORT_TETGEN_MESH cvTetGenMeshObject : public cvMeshObject {
+class VTKSV1MESHTETGENMESHOBJECT_EXPORT cvTetGenMeshObject : public cvMeshObject {
 
   typedef struct TGoptions {
     int surfacemeshflag;
@@ -102,9 +102,9 @@ class SV_EXPORT_TETGEN_MESH cvTetGenMeshObject : public cvMeshObject {
   } TGoptions;
 
   public:
-  #ifdef SV_USE_PYTHON
+  // #ifdef SV_WRAP_PYTHON
   cvTetGenMeshObject(); // default constructor for python
-  #endif
+  // #endif
 
   cvTetGenMeshObject( const cvTetGenMeshObject& sm); //copy constructor
 
@@ -163,7 +163,7 @@ class SV_EXPORT_TETGEN_MESH cvTetGenMeshObject : public cvMeshObject {
   cvPolyData *GetPolyData();
   cvPolyData *GetSolid();
   bool HasSolid();
-  cvUnstructuredGrid *GetUnstructuredGrid();
+  vtkUnstructuredGrid *GetUnstructuredGrid();
   int GetModelFaceInfo(std::map<std::string,std::vector<std::string>>& faceInfo);
   int GetModelFaceIDs(std::vector<int>& faceIDs);
 

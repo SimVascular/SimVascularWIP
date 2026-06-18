@@ -7,4 +7,8 @@ GROUPS
     SV1
 DEPENDS
     VTK::SVCore
+    VTK::SV1MeshMeshObject
+    VTK::SV1MeshMeshUtils
+    VTK::SV1ModelPolyDataSolidModel
     VTK::CommonCore
+    
