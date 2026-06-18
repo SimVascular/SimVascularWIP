@@ -32,14 +32,14 @@
 #ifndef SV4GUI_MODELELEMENTOCCT_H
 #define SV4GUI_MODELELEMENTOCCT_H
 
-#include <sv4guiModuleModelOCCTExports.h>
+#include <vtkSV4ModelOCCTModule.h>
 
 #include "sv4gui_ModelElement.h"
 #include "sv4gui_ModelElementAnalytic.h"
 
 #include "sv_OCCTSolidModel.h"
 
-class SV4GUIMODULEMODELOCCT_EXPORT sv4guiModelElementOCCT : public sv4guiModelElementAnalytic
+class VTKSV4MODELOCCT_EXPORT sv4guiModelElementOCCT : public sv4guiModelElementAnalytic
 {
 public:
 
@@ -56,7 +56,7 @@ public:
     virtual sv4guiModelElement* CreateModelElement(std::vector<mitk::DataNode::Pointer> segNodes
                                     , int numSamplingPts
                                     , svLoftingParam *param
-                                    , PolyDataSolidCheckResults& check_results
+                                    , PolyDataCheckResults& check_results
                                     , int* stats = nullptr
                                     , double maxDist = 20.0
                                     , int noInterOut = 1

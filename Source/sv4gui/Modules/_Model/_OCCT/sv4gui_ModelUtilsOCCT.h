@@ -32,14 +32,14 @@
 #ifndef SV4GUI_MODELUTILSOCCT_H
 #define SV4GUI_MODELUTILSOCCT_H
 
-#include <sv4guiModuleModelOCCTExports.h>
+#include <vtkSV4ModelOCCTModule.h>
 
 #include "sv4gui_Contour.h"
 #include "sv4gui_ContourGroup.h"
 #include "sv4gui_ModelElement.h"
 #include "sv4gui_ModelElementOCCT.h"
 
-class SV4GUIMODULEMODELOCCT_EXPORT sv4guiModelUtilsOCCT
+class VTKSV4MODELOCCT_EXPORT sv4guiModelUtilsOCCT
 {
 
 public:
