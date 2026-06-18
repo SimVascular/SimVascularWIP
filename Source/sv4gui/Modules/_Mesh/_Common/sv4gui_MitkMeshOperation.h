@@ -32,12 +32,12 @@
 #ifndef SV4GUI_MITKMESHOPERATION_H
 #define SV4GUI_MITKMESHOPERATION_H
 
-#include <sv4guiModuleMeshExports.h>
+#include <vtkSV4MeshCommonModule.h>
 
 #include "mitkOperation.h"
 #include "sv4gui_Mesh.h"
 
-class SV4GUIMODULEMESH_EXPORT sv4guiMitkMeshOperation : public mitk::Operation
+class VTKSV4MESHCOMMON_EXPORT sv4guiMitkMeshOperation : public mitk::Operation
 {
 public:
 

@@ -46,6 +46,9 @@
 #include <vtkDataSetSurfaceFilter.h>
 #include <vtkThreshold.h>
 
+#include <vtkPointData.h>
+#include <vtkCellData.h>
+
 //-----------------------
 // ComputeVolumeMeshMaps
 //-----------------------

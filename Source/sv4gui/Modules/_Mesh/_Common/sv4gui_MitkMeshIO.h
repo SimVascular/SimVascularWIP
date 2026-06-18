@@ -32,7 +32,7 @@
 #ifndef SV4GUI_MITKMESHIO_H
 #define SV4GUI_MITKMESHIO_H
 
-#include <sv4guiModuleMeshExports.h>
+#include <vtkSV4MeshCommonModule.h>
 
 #include "sv4gui_MitkMesh.h"
 
@@ -42,7 +42,7 @@
 #include <vtkPolyData.h>
 #include <vtkUnstructuredGrid.h>
 
-class SV4GUIMODULEMESH_EXPORT sv4guiMitkMeshIO : public mitk::AbstractFileIO
+class VTKSV4MESHCOMMON_EXPORT sv4guiMitkMeshIO : public mitk::AbstractFileIO
 {
 public:
 

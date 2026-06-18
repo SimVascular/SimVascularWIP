@@ -37,6 +37,8 @@
 #include <iostream>
 #include <fstream>
 
+#include <vtkCleanPolyData.h>
+
 sv4guiMeshTetGen::sv4guiMeshTetGen()
     : m_cvTetGenMesh(nullptr)
 {
@@ -242,7 +244,7 @@ bool sv4guiMeshTetGen::Execute(std::string flag, double values[20], std::string 
         vtkPolyData* surfaceMesh=m_cvTetGenMesh->GetPolyData()->GetVtkPolyData();
         vtkUnstructuredGrid* volumeMesh = nullptr;
         if (m_cvTetGenMesh->GetUnstructuredGrid() != nullptr)
-          volumeMesh = m_cvTetGenMesh->GetUnstructuredGrid()->GetVtkUnstructuredGrid();
+          volumeMesh = m_cvTetGenMesh->GetUnstructuredGrid();
 
         if(surfaceMesh==nullptr)
         {
