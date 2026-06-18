@@ -40,6 +40,16 @@
 #include "vtkSVFindSeparateRegions.h"
 #include "vtkThreshold.h"
 
+#include "vtkCellData.h"
+#include "vtkPointData.h"
+#include "vtkDoubleArray.h"
+#include "vtkCleanPolyData.h"
+#include "vtkPolyDataNormals.h"
+#include "vtkCellLocator.h"
+#include "vtkPointLocator.h"
+#include "vtkPolygon.h"
+#include "vtkEdgeTable.h"
+
 #include "sv_mmg_mesh_utils.h"
 #include "sv_polydatasolid_utils.h"
 #include "sv_vtk_utils.h"

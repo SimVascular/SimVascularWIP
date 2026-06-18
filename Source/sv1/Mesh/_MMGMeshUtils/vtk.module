@@ -7,4 +7,6 @@ GROUPS
     SV1
 DEPENDS
     VTK::SVCore
+    VTK::SVMisc
+    VTK::SV1ModelPolyDataSolidModel
     VTK::CommonCore
