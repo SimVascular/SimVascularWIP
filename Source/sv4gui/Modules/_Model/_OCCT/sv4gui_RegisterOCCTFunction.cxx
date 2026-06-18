@@ -31,7 +31,7 @@
 
 #include "sv4gui_RegisterOCCTFunction.h"
 
-#include <sv4guiModuleModelOCCTExports.h>
+#include <vtkSV4ModelOCCTModule.h>
 
 // davep #include "sv2_globals.h"
 
