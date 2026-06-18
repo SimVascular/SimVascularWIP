@@ -55,6 +55,14 @@
 #include "vtkSVNURBSSurface.h"
 #include <vtkCenterOfMass.h>
 
+#include <vtkCellData.h>
+#include <vtkPolyDataNormals.h>
+#include <vtkCleanPolyData.h>
+#include <vtkPointData.h>
+#include <vtkTriangleFilter.h>
+#include <vtkCellLocator.h>
+
+
 #include "vtkXMLPolyDataWriter.h"
 
 //----------------
@@ -157,7 +165,7 @@ sv4guiModelUtils::CreatePolyData(std::vector<sv4guiContourGroup*> groups, std::v
 //
 sv4guiModelElementPolyData* 
 sv4guiModelUtils::CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, 
-    int numSamplingPts, PolyDataSolidCheckResults& check_results,
+    int numSamplingPts, PolyDataCheckResults& check_results,
     int stats[], svLoftingParam *param, unsigned int t, int noInterOut, double tol)
 {
   #define n_debug_CreateModelElementPolyData
