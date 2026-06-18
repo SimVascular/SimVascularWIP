@@ -34,10 +34,9 @@
 
 #include "SimVascular.h"
 
-#include "svPythonAPIExports.h"
+#include "vtkSVPythonAPIModule.h"
 
 #include "sv4gui_Model.h"
-#include "sv_FactoryRegistrar.h"
 #include "sv_SolidModel.h"
 
 // Need to define this when including sv4gui_ModelIO.h..
@@ -45,21 +44,21 @@
 
 #include "Python.h"
 
-//extern "C" SV_EXPORT_PYTHON_API int Solid_PyInit();
+//extern "C" VTKSVPYTHONAPI_EXPORT int Solid_PyInit();
 
 // Needed for 'dmg' module.
-extern SV_EXPORT_PYTHON_API PyTypeObject PyModelingSeriesType;
-extern SV_EXPORT_PYTHON_API PyTypeObject PyModelingModelerType;
-extern SV_EXPORT_PYTHON_API PyTypeObject PyModelingModelType;
+extern VTKSVPYTHONAPI_EXPORT PyTypeObject PyModelingSeriesType;
+extern VTKSVPYTHONAPI_EXPORT PyTypeObject PyModelingModelerType;
+extern VTKSVPYTHONAPI_EXPORT PyTypeObject PyModelingModelType;
 
 typedef cvSolidModel * (*CreateSolidModelObjectFunction)();
 
-extern "C" SV_EXPORT_PYTHON_API void PyAPI_InitParasolid(CreateSolidModelObjectFunction createObject);
+extern "C" VTKSVPYTHONAPI_EXPORT void PyAPI_InitParasolid(CreateSolidModelObjectFunction createObject);
 
-SolidModel_KernelT SV_EXPORT_PYTHON_API ModelingKernelNameToEnum(std::string name);
+SolidModel_KernelT VTKSVPYTHONAPI_EXPORT ModelingKernelNameToEnum(std::string name);
 
-SV_EXPORT_PYTHON_API PyObject* CreatePyModelingSeries(sv4guiModel::Pointer solidGroup);
-SV_EXPORT_PYTHON_API PyObject* CreatePyModelingModelObject(cvSolidModel* solidModel);
+VTKSVPYTHONAPI_EXPORT PyObject* CreatePyModelingSeries(sv4guiModel::Pointer solidGroup);
+VTKSVPYTHONAPI_EXPORT PyObject* CreatePyModelingModelObject(cvSolidModel* solidModel);
 
 //-----------------
 // PyModelingModel
@@ -90,11 +89,11 @@ typedef struct PyModelingSeries
   int id;
 } PyModelingSeries;
 
-extern "C" SV_EXPORT_PYTHON_API typedef struct
-{
-  PyObject_HEAD
-  cvFactoryRegistrar* registrar;
-}pycvFactoryRegistrar;
+// extern "C" VTKSVPYTHONAPI_EXPORT typedef struct
+// {
+//   PyObject_HEAD
+//   cvFactoryRegistrar* registrar;
+// }pycvFactoryRegistrar;
 
 #if PYTHON_MAJOR_VERSION == 2
 PyMODINIT_FUNC  initpySolid();

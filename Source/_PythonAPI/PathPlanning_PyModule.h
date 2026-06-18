@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-#include "svPythonAPIExports.h"
+#include "vtkSVPythonAPIModule.h"
 
 #include "Python.h"
 #include "sv3_PathElement.h"
@@ -82,8 +82,8 @@ typedef struct {
   PyObject* tangent;
 } PyPathFrame;
 
-SV_EXPORT_PYTHON_API PyObject * CreatePyPath(sv3::PathElement* path = nullptr);
-extern SV_EXPORT_PYTHON_API PyTypeObject PyPathType;
+VTKSVPYTHONAPI_EXPORT PyObject * CreatePyPath(sv3::PathElement* path = nullptr);
+extern VTKSVPYTHONAPI_EXPORT PyTypeObject PyPathType;
 
 #if PYTHON_MAJOR_VERSION == 2
 PyMODINIT_FUNC  initpyPath();

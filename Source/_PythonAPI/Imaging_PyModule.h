@@ -34,12 +34,13 @@
 
 #include "SimVascular.h"
 
-#include "svPythonAPIExports.h"
+#include "vtkSVPythonAPIModule.h"
 
 #include "Python.h"
 
-#include "sv4gui_ProjectManager.h"
+// #include "sv4gui_ProjectManager.h"
 #include <mitkImage.h>
+#include <mitkDataNode.h>
 
 //---------
 // PyImage
@@ -54,8 +55,8 @@ typedef struct
   int id;
 } PyImage;
 
-//SV_EXPORT_PYTHON_API PyObject * CreatePyPath(sv3::PathElement* path = nullptr);
-extern SV_EXPORT_PYTHON_API PyTypeObject PyImageType;
+//VTKSVPYTHONAPI_EXPORT PyObject * CreatePyPath(sv3::PathElement* path = nullptr);
+extern VTKSVPYTHONAPI_EXPORT PyTypeObject PyImageType;
 
 #if PYTHON_MAJOR_VERSION == 3
 PyMODINIT_FUNC PyInit_PyImaging();

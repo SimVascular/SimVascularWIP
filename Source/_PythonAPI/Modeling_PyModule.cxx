@@ -52,8 +52,6 @@
 #include "sv_sys_geom.h"
 #include "PyUtils.h"
 
-#include "sv_FactoryRegistrar.h"
-
 // Needed for Windows.
 #ifdef GetObject
 #undef GetObject

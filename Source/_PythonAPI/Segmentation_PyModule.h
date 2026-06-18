@@ -34,11 +34,10 @@
 
 #include "SimVascular.h"
 
-#include "svPythonAPIExports.h"
+#include "vtkSVPythonAPIModule.h"
 
 #include "Python.h"
 #include "sv3_Contour.h"
-#include "sv_FactoryRegistrar.h"
 #include "sv4gui_ContourGroup.h"
 
 // Segmentation references Path objects.
@@ -48,7 +47,7 @@
 //#define US_MODULE_NAME 
 
 // Needed for the dmd module.
-extern SV_EXPORT_PYTHON_API PyObject * PyCreateSegmentation(sv4guiContour* contour);
+extern VTKSVPYTHONAPI_EXPORT PyObject * PyCreateSegmentation(sv4guiContour* contour);
 
 PyObject* CreatePySegmentationSeries(sv4guiContourGroup* contourGroup);
 
@@ -65,7 +64,7 @@ typedef void (*CopySegmentationDataFunc)(sv4guiContour* sv4Contour, PyObject*);
 //    data to sv3::Contour objects. This is set in each derived class's 
 //    object initialization function (e.g. PyCircleSegmentationInit).
 //
-extern "C" SV_EXPORT_PYTHON_API typedef struct
+extern "C" VTKSVPYTHONAPI_EXPORT typedef struct
 {
   PyObject_HEAD
   sv3::Contour* contour;
