@@ -63,6 +63,12 @@
 #include <vtkXMLUnstructuredGridWriter.h>
 #include <vtkCoincidentPoints.h>
 
+#include <vtkPointLocator.h>
+#include <vtkLongArray.h>
+#include <vtkCellLocator.h>
+#include <vtkPolygon.h>
+
+
 #include "vtkvmtkPolyDataSurfaceRemeshing.h"
 #include "vtkvmtkPolyDataSizingFunction.h"
 #include "vtkvmtkSurfaceProjection.h"
@@ -297,8 +303,9 @@ int sys_geom_centerline_sections(cvPolyData *lines_in, cvPolyData *surface_in, c
     *lines_out = result1;
     result2 = new cvPolyData( cross_sections->GetOutput() );
     *sections = result2;
-    result3 = new cvPolyData( cross_sections->GetSurface() );
-    *surface_out = result3;
+    // TODO: Fix this
+    // result3 = new cvPolyData( cross_sections->GetSurface() );
+    *surface_out = surface_in;
   }
   catch (...) {
     fprintf(stderr,"ERROR in centerline cross-section calculation.\n");
@@ -1179,7 +1186,8 @@ int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh, vtkUnstructuredGrid
   layerer->SetSidewallCellEntityId(sidewallCellEntityId);
   //1
   layerer->SetInnerSurfaceCellEntityId(innerSurfaceCellEntityId);
-  layerer->SetSurfaceCellIdsArrayName("ModelFaceID");
+  // TODO: Fix
+  // layerer->SetSurfaceCellIdsArrayName("ModelFaceID");
   layerer->SetIncludeSurfaceCells(1);
   layerer->SetIncludeSidewallCells(1);
   layerer->SetNumberOfSubsteps(100);
