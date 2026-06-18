@@ -1,4 +1,3 @@
-set(vtkSV4Simulation_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/sv4guiModuleSimulationExports.h)
 set(vtkSV4Simulation_HEADERS
     sv4gui_MitkSimulationObjectFactory.h
     sv4gui_MitkSimJobIO.h
@@ -21,8 +20,4 @@ set(vtkSV4Simulation_SOURCES
 vtk_module_add_module(VTK::SV4Simulation
     HEADERS ${vtkSV4Simulation_HEADERS}
     SOURCES ${vtkSV4Simulation_SOURCES}
-)
-generate_export_header(VTK::SV4Simulation
-    BASE_NAME "SV4GUIMODULESIMULATION"
-    EXPORT_FILE_NAME ${vtkSV4Simulation_EXPORT_HEADER}
 )
