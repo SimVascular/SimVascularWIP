@@ -32,7 +32,7 @@
 #ifndef SV4GUI_SIMJOB_H
 #define SV4GUI_SIMJOB_H
 
-#include <sv4guiModuleSimulationExports.h>
+#include <vtkSV4SimulationModule.h>
 
 #include <map>
 #include <sstream>
@@ -51,7 +51,7 @@ class sv4guiSimJobBCType {
 };
 
 
-class SV4GUIMODULESIMULATION_EXPORT sv4guiSimJobCapProperties
+class VTKSV4SIMULATION_EXPORT sv4guiSimJobCapProperties
 {
   public:
     SimJobCapPropertyMap properties; 
@@ -61,7 +61,7 @@ class SV4GUIMODULESIMULATION_EXPORT sv4guiSimJobCapProperties
     std::string Get(const std::string& capName, const std::string& key) { return properties[capName][key]; };
 };
 
-class SV4GUIMODULESIMULATION_EXPORT sv4guiSimJobProperties
+class VTKSV4SIMULATION_EXPORT sv4guiSimJobProperties
 {
   public:
     SimJobPropertyMap properties; 
@@ -71,7 +71,7 @@ class SV4GUIMODULESIMULATION_EXPORT sv4guiSimJobProperties
     void SetAll(SimJobPropertyMap props) { properties = props; };
 };
 
-class SV4GUIMODULESIMULATION_EXPORT sv4guiSimJob
+class VTKSV4SIMULATION_EXPORT sv4guiSimJob
 {
   public:
     sv4guiSimJob();

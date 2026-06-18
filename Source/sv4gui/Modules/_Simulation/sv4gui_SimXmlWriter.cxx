@@ -44,7 +44,7 @@
 // sections.
 
 #include "sv4gui_SimXmlWriter.h"
-#include "sv4gui_CapBCWidget.h"
+// #include "sv4gui_CapBCWidget.h"
 
 #include <fstream>
 #include <sstream>
