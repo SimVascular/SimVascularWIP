@@ -47,11 +47,9 @@
 #define __CVOPENCASCADE_SOLID_H
 
 #include "SimVascular.h"
-#include "svOpenCASCADEExports.h" // For exports
+#include "vtkSV1ModelOCCTSolidModelModule.h" // For exports
 #include "sv_SolidModel.h"
 #include "sv_PolyData.h"
-#include "sv_FactoryRegistrar.h"
-#include "sv_VTK.h"
 
 #include "TopoDS_Shape.hxx"
 #include "TopoDS_Face.hxx"
@@ -71,7 +69,7 @@
 // Item 34.
 //
 
-class SV_EXPORT_OPENCASCADE cvOCCTSolidModel : public cvSolidModel {
+class VTKSV1MODELOCCTSOLIDMODEL_EXPORT cvOCCTSolidModel : public cvSolidModel {
 
 public:
   cvOCCTSolidModel();  // can never be called directly;
