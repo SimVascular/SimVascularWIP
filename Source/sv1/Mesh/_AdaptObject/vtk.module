@@ -8,3 +8,4 @@ GROUPS
 DEPENDS
     VTK::CommonCore
     VTK::SVCore
+    VTK::SV1MeshMeshObject

@@ -33,12 +33,11 @@
 #define __CVADAPTOBJECT_H
 
 #include "SimVascular.h"
-#include "svAdaptorExports.h" // For exports
+#include "vtkSV1MeshAdaptObjectModule.h" // For exports
 
 //#include "sys/param.h"
 #define MAXPATHLEN 1024
 
-#include "sv_FactoryRegistrar.h"
 #include "sv_PolyData.h"
 #include "sv_MeshSystem.h"
 #include "sv_MeshObject.h"
@@ -69,7 +68,7 @@ enum KernelType {
 // The cvAdaptObject class provides an abstract interface for
 // adaptive meshing.
 //
-class SV_EXPORT_ADAPTOR cvAdaptObject : public cvRepositoryData {
+class VTKSV1MESHADAPTOBJECT_EXPORT cvAdaptObject {
 
 public:
 

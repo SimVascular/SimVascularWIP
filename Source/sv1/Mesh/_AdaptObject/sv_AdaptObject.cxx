@@ -41,7 +41,7 @@
 
 KernelType cvAdaptObject::gCurrentKernel = KERNEL_TETGEN;
 
-cvAdaptObject::cvAdaptObject( KernelType t) : cvRepositoryData(  )
+cvAdaptObject::cvAdaptObject( KernelType t)
 {
   adapt_kernel_ = t;
 }
