@@ -32,9 +32,9 @@
 #ifndef SV4GUI_REGISTERTETGENFUNCTION_H
 #define SV4GUI_REGISTERTETGENFUNCTION_H
 
-#include <sv4guiModuleMeshExports.h>
+#include <vtkSV4MeshCommonModule.h>
 
-class SV4GUIMODULEMESH_EXPORT sv4guiRegisterTetGenFunction {
+class VTKSV4MESHCOMMON_EXPORT sv4guiRegisterTetGenFunction {
 
  public:
     sv4guiRegisterTetGenFunction();

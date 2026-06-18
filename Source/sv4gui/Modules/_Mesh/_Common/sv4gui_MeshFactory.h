@@ -32,13 +32,13 @@
 #ifndef SV4GUI_MESHFACTORY_H
 #define SV4GUI_MESHFACTORY_H
 
-#include <sv4guiModuleMeshExports.h>
+#include <vtkSV4MeshCommonModule.h>
 
 #include "sv4gui_Mesh.h"
 #include "sv4gui_MeshAdaptor.h"
 #include <map>
 
-class SV4GUIMODULEMESH_EXPORT sv4guiMeshFactory
+class VTKSV4MESHCOMMON_EXPORT sv4guiMeshFactory
 {
 
 public:
