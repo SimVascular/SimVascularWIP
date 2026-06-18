@@ -233,10 +233,13 @@ CreatePlaneGeometry(mitk::Image* image, double planeSize, double pos[3], double 
 //----------
 // Read image data from a file and store it the returned MITK data node.
 //
+
+//TODO: Fix this
 mitk::DataNode::Pointer
 ReadFile(const std::string& fileName)
 {
-  return sv4guiProjectManager::LoadDataNode(fileName);
+  // return sv4guiProjectManager::LoadDataNode(fileName);
+  return nullptr;
 }
 
 //--------------------
@@ -519,7 +522,7 @@ Image_extract_slice(PyImage* self, PyObject* args)
 
   std::cout<<"[Image_extract_slice] Structured points: "<<std::endl;
   auto vtkStructPts = sv3::SegmentationUtils::vtkImageData2vtkStructuredPoints(slice);
-  auto slicePts = vtkStructPts->GetVtkStructuredPoints();
+  auto slicePts = vtkStructPts;
 
   int* dims = slicePts->GetDimensions();
   std::cout << "[Image_extract_slice]   Dims: " << " x: " << dims[0] << " y: " << dims[1] << " z: " << dims[2] << std::endl;

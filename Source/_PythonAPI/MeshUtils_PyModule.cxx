@@ -34,7 +34,7 @@
 // [TODO:DaveP] This should be incorporated into the meshing module?
 //
 #include "SimVascular.h"
-#include "SimVascular_python.h"
+#include "Python.h"
 
 #include "sv_vmtk_utils.h"
 #include "PyUtils.h"
@@ -44,6 +44,7 @@
 #include <string.h>
 #include "sv_PolyData.h"
 
+#include "vtkCellData.h"
 
 #include "sv_mmg_mesh_utils.h"
 #include "Python.h"

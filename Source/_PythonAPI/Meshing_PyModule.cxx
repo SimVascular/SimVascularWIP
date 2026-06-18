@@ -52,7 +52,8 @@
 #include <string.h>
 #include <functional>
 #include "sv_PolyData.h"
-#include "sv_VTK.h"
+
+#include "vtkCellData.h"
 
 #include "Python.h"
 

@@ -43,6 +43,9 @@
 #include "sv_vmtk_utils.h"
 #include "sv_polydatasolid_utils.h"
 
+#include "vtkCellData.h"
+#include "vtkCellLocator.h"
+
 //-----------------
 // PyPolyDataSolid
 //-----------------
