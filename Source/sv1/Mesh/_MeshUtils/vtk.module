@@ -1,0 +1,12 @@
+NAME
+    VTK::SV1MeshMeshUtils
+LIBRARY_NAME
+    vtkSV1MeshMeshUtils
+GROUPS
+    SV
+    SV1
+DEPENDS
+    VTK::SVCore
+    VTK::SVMisc
+    VTK::SV1ModelPolyDataSolidModel
+    VTK::CommonCore

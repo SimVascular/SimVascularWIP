@@ -59,7 +59,12 @@
 #include "vtkConnectivityFilter.h"
 #include "vtkDataSetSurfaceFilter.h"
 
-#include "simvascular_tetgen.h"
+#include "vtkPolyDataNormals.h"
+#include "vtkPolygon.h"
+#include "vtkCleanPolyData.h"
+
+
+#include "tetgen.h"
 
 #include "sv_polydatasolid_utils.h"
 
@@ -487,41 +492,42 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
   //fprintf(stdout,"Converting Faces to VTK Structures...\n");
   facePointIds->SetNumberOfIds(3);
 
-  for (i=0;i< numFaces;i++)
-  {
-    for (j=0; j<3;j++)
-    {
-      facePointIds->SetId(j,pointMapping[outmesh->trifacelist[i*3+j]]);
-    }
+  // TODO: Fix (adjtetlist deprecated in TetGen 1.5)
+  // for (i=0;i< numFaces;i++)
+  // {
+  //   for (j=0; j<3;j++)
+  //   {
+  //     facePointIds->SetId(j,pointMapping[outmesh->trifacelist[i*3+j]]);
+  //   }
 
-    faces->InsertNextCell(facePointIds);
+  //   faces->InsertNextCell(facePointIds);
 
-    if (!(outmesh->adjtetlist[2*i] >= numPolys || outmesh->adjtetlist[2*i] < 0))
-    {
-      vtpFaceIds->InsertValue(i,globalElementIds->GetValue(outmesh->adjtetlist[2*i]));
-    }
-    else if (!(outmesh->adjtetlist[2*i+1] >= numPolys || outmesh->adjtetlist[2*i+1] < 0))
-    {
-      vtpFaceIds->InsertValue(i,globalElementIds->GetValue(outmesh->adjtetlist[2*i+1]));
-    }
-    else
-    {
-      fprintf(stderr,"WARNING: TetGen says face has no adjacent tetrahedron\n");
-      vtpFaceIds->InsertValue(i,globalElementIds->GetValue(outmesh->adjtetlist[2*i+1]));
-    }
+  //   if (!(outmesh->adjtetlist[2*i] >= numPolys || outmesh->adjtetlist[2*i] < 0))
+  //   {
+  //     vtpFaceIds->InsertValue(i,globalElementIds->GetValue(outmesh->adjtetlist[2*i]));
+  //   }
+  //   else if (!(outmesh->adjtetlist[2*i+1] >= numPolys || outmesh->adjtetlist[2*i+1] < 0))
+  //   {
+  //     vtpFaceIds->InsertValue(i,globalElementIds->GetValue(outmesh->adjtetlist[2*i+1]));
+  //   }
+  //   else
+  //   {
+  //     fprintf(stderr,"WARNING: TetGen says face has no adjacent tetrahedron\n");
+  //     vtpFaceIds->InsertValue(i,globalElementIds->GetValue(outmesh->adjtetlist[2*i+1]));
+  //   }
 
-    if (getBoundary)
-    {
-      if (outmesh->trifacemarkerlist != nullptr)
-      {
-        boundaryScalars->InsertValue(i,outmesh->trifacemarkerlist[i]);
-      }
-      if (boundaryScalars->GetValue(i)>totRegions)
-      {
-        totRegions = outmesh->trifacemarkerlist[i];
-      }
-    }
-  }
+  //   if (getBoundary)
+  //   {
+  //     if (outmesh->trifacemarkerlist != nullptr)
+  //     {
+  //       boundaryScalars->InsertValue(i,outmesh->trifacemarkerlist[i]);
+  //     }
+  //     if (boundaryScalars->GetValue(i)>totRegions)
+  //     {
+  //       totRegions = outmesh->trifacemarkerlist[i];
+  //     }
+  //   }
+  // }
 
   //Create a polydata grid and link scalar information to nodes and elements
   fullPolyData->SetPoints(vtpPoints);

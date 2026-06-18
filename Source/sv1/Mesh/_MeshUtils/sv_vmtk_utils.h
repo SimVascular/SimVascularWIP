@@ -49,45 +49,45 @@
 #include "vtkPolyData.h"
 #include "sv_PolyData.h"
 #include "vtkUnstructuredGrid.h"
-#include "svVMTKUtilsExports.h" // For exports
+#include "vtkSV1MeshMeshUtilsModule.h" // For exports
 
-SV_EXPORT_VMTK_UTILS int sys_geom_centerlines( cvPolyData *polydata, int *source, int nsources,
+VTKSV1MESHMESHUTILS_EXPORT int sys_geom_centerlines( cvPolyData *polydata, int *source, int nsources,
                             int *targets, int ntargets,
 			    cvPolyData **lines, cvPolyData **voronoi);
 
-SV_EXPORT_VMTK_UTILS int sys_geom_grouppolydata( cvPolyData *polydata,cvPolyData *lines,cvPolyData **grouped );
+VTKSV1MESHMESHUTILS_EXPORT int sys_geom_grouppolydata( cvPolyData *polydata,cvPolyData *lines,cvPolyData **grouped );
 
-SV_EXPORT_VMTK_UTILS int sys_geom_distancetocenterlines( cvPolyData *polydata,cvPolyData *lines,cvPolyData **distance );
+VTKSV1MESHMESHUTILS_EXPORT int sys_geom_distancetocenterlines( cvPolyData *polydata,cvPolyData *lines,cvPolyData **distance );
 
-SV_EXPORT_VMTK_UTILS int sys_geom_separatecenterlines( cvPolyData *lines,cvPolyData **separate );
+VTKSV1MESHMESHUTILS_EXPORT int sys_geom_separatecenterlines( cvPolyData *lines,cvPolyData **separate );
 
-SV_EXPORT_VMTK_UTILS int sys_geom_centerline_sections(cvPolyData *lines_in, cvPolyData *surface_in, 
+VTKSV1MESHMESHUTILS_EXPORT int sys_geom_centerline_sections(cvPolyData *lines_in, cvPolyData *surface_in, 
     cvPolyData **lines_out, cvPolyData **surface_out, cvPolyData **sections);
 
-SV_EXPORT_VMTK_UTILS int sys_geom_mergecenterlines( cvPolyData *lines, int mergeblanked, cvPolyData **merged);
+VTKSV1MESHMESHUTILS_EXPORT int sys_geom_mergecenterlines( cvPolyData *lines, int mergeblanked, cvPolyData **merged);
 
-SV_EXPORT_VMTK_UTILS int sys_geom_cap(cvPolyData* polydata, bool radialFill, std::vector<int>& centerIDs, 
+VTKSV1MESHMESHUTILS_EXPORT int sys_geom_cap(cvPolyData* polydata, bool radialFill, std::vector<int>& centerIDs, 
   cvPolyData** cappedPolydata);
 
-SV_EXPORT_VMTK_UTILS int sys_geom_cap_for_centerlines( cvPolyData *polydata, cvPolyData **cappedpolydata, int *numcenterids,int **centerids,int type);
+VTKSV1MESHMESHUTILS_EXPORT int sys_geom_cap_for_centerlines( cvPolyData *polydata, cvPolyData **cappedpolydata, int *numcenterids,int **centerids,int type);
 
-SV_EXPORT_VMTK_UTILS int sys_geom_cap_with_ids( cvPolyData *polydata, cvPolyData **cappedpolydata,
+VTKSV1MESHMESHUTILS_EXPORT int sys_geom_cap_with_ids( cvPolyData *polydata, cvPolyData **cappedpolydata,
 		int fillId,int filledholes,int filltype);
 
-SV_EXPORT_VMTK_UTILS int sys_geom_mapandcorrectids( cvPolyData *originalpd, cvPolyData *newpd,cvPolyData **polydata, char *originalarray,char *newarray);
+VTKSV1MESHMESHUTILS_EXPORT int sys_geom_mapandcorrectids( cvPolyData *originalpd, cvPolyData *newpd,cvPolyData **polydata, char *originalarray,char *newarray);
 
-SV_EXPORT_VMTK_UTILS int VMTKUtils_SurfaceRemeshing(vtkPolyData *surfaceMesh,double maxEdgeSize,
+VTKSV1MESHMESHUTILS_EXPORT int VMTKUtils_SurfaceRemeshing(vtkPolyData *surfaceMesh,double maxEdgeSize,
     int meshcapsonly, int preserveedges,double trianglesplitfactor,
     double collapseanglethreshold,vtkIdList *excludedIds,
     std::string cellEntityIdsArrayName,int useSizingFunction,vtkDoubleArray *meshSizingFunction);
 
-SV_EXPORT_VMTK_UTILS int VMTKUtils_ComputeSizingFunction(vtkPolyData *inpd, double scalefactor,
+VTKSV1MESHMESHUTILS_EXPORT int VMTKUtils_ComputeSizingFunction(vtkPolyData *inpd, double scalefactor,
     std::string sizingFunctionArrayName);
 
-SV_EXPORT_VMTK_UTILS int VMTKUtils_Capper(vtkPolyData *inpd,int captype,int trioutput,
+VTKSV1MESHMESHUTILS_EXPORT int VMTKUtils_Capper(vtkPolyData *inpd,int captype,int trioutput,
     int cellEntityIdOffset,std::string cellEntityIdsArrayName);
 
-SV_EXPORT_VMTK_UTILS int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh,
+VTKSV1MESHMESHUTILS_EXPORT int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh,
     vtkUnstructuredGrid *innerSurface,
     double edgeSize,double blThicknessFactor,int numSublayers,
     double sublayerRatio,int sidewallCellEntityId,
@@ -96,35 +96,35 @@ SV_EXPORT_VMTK_UTILS int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh
     int useConstantThickness,
     std::string layertThicknessArrayName);
 
-SV_EXPORT_VMTK_UTILS int VMTKUtils_AppendData(vtkUnstructuredGrid *meshFromTetGen,
+VTKSV1MESHMESHUTILS_EXPORT int VMTKUtils_AppendData(vtkUnstructuredGrid *meshFromTetGen,
     vtkUnstructuredGrid *boundaryMesh,
     vtkUnstructuredGrid *surfaceWithSize,
     vtkUnstructuredGrid *newMeshVolume,
     vtkPolyData *newMeshSurface,
     int newRegionBoundaryLayer);
 
-SV_EXPORT_VMTK_UTILS int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom,
+VTKSV1MESHMESHUTILS_EXPORT int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom,
     vtkPolyData *originalgeom,
     std::string regionName);
 
-SV_EXPORT_VMTK_UTILS int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom,
+VTKSV1MESHMESHUTILS_EXPORT int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom,
     vtkPolyData *originalgeom,
     std::string regionName,
     vtkIdList *excluedList);
 
-SV_EXPORT_VMTK_UTILS int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom,
+VTKSV1MESHMESHUTILS_EXPORT int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom,
     vtkPolyData *originalgeom,
     std::string regionName,
     vtkIdList *onlyList,
     int dummy);
 
-SV_EXPORT_VMTK_UTILS void VMTKUtils_ReorderTetElements(vtkUnstructuredGrid* mesh);
+VTKSV1MESHMESHUTILS_EXPORT void VMTKUtils_ReorderTetElements(vtkUnstructuredGrid* mesh);
 
-SV_EXPORT_VMTK_UTILS int VMTKUtils_CreateBoundaryLayerSurfaceAndCaps(vtkUnstructuredGrid* boundaryMesh, int modelID, 
+VTKSV1MESHMESHUTILS_EXPORT int VMTKUtils_CreateBoundaryLayerSurfaceAndCaps(vtkUnstructuredGrid* boundaryMesh, int modelID, 
     vtkUnstructuredGrid* surfaceWithSize, vtkSmartPointer<vtkPolyData>& boundaryMeshSurface, vtkSmartPointer<vtkPolyData>& surfaceMeshCaps,
     vtkSmartPointer<vtkUnstructuredGrid>& boundaryMeshVolume);
 
-SV_EXPORT_VMTK_UTILS int VMTKUtils_CreateNewBoundaryLayerRegion(vtkUnstructuredGrid* meshFromTetGen, vtkUnstructuredGrid *surfaceWithSize,
+VTKSV1MESHMESHUTILS_EXPORT int VMTKUtils_CreateNewBoundaryLayerRegion(vtkUnstructuredGrid* meshFromTetGen, vtkUnstructuredGrid *surfaceWithSize,
   vtkUnstructuredGrid *newMeshVolume, vtkPolyData* newMeshSurface, vtkSmartPointer<vtkUnstructuredGrid>& boundaryMeshVolume,
   vtkSmartPointer<vtkPolyData>& boundaryMeshSurface);
 
