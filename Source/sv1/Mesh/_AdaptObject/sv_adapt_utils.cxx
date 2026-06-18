@@ -58,10 +58,11 @@
 #include "vtkPolygon.h"
 #include "vtkIdList.h"
 #include "vtkTetra.h"
+#include "vtkPolyData.h"
 
 #include "sv_eispack.h"
 
-#include "simvascular_solverio.h"
+#include "cvSolverIO.h"
 
 #include <sys/stat.h>
 
@@ -1308,11 +1309,6 @@ int AdaptUtils_convertToVTK(vtkUnstructuredGrid *mesh,vtkPolyData *surfaceMesh,t
       vtpAdaptPointIds->InsertValue(pointMapping[i],i+1);
     }
   }
-
-  std::cout<<"Converting Elements to Adapt VTK Structures..."<<endl;
-  adaptTetPointIds->SetNumberOfIds(4);
-  globalId=1;
-  for (i=0;i< numAdaptTets;i++)
   {
     for (j=0; j< outmesh->numberofcorners;j++)
     {
@@ -1340,31 +1336,32 @@ int AdaptUtils_convertToVTK(vtkUnstructuredGrid *mesh,vtkPolyData *surfaceMesh,t
   facePointIds->SetNumberOfIds(3);
 
   count=0;
-  for (i=0;i< numAdaptFaces;i++)
-  {
-    for (j=0; j<3;j++)
-    {
-      facePointIds->SetId(j,pointMapping[outmesh->trifacelist[i*3+j]]);
-    }
+  // TODO: Fix this to work with new tetgen structures
+  // for (i=0;i< numAdaptFaces;i++)
+  // {
+  //   for (j=0; j<3;j++)
+  //   {
+  //     facePointIds->SetId(j,pointMapping[outmesh->trifacelist[i*3+j]]);
+  //   }
 
-    adaptFaces->InsertNextCell(facePointIds);
+  //   adaptFaces->InsertNextCell(facePointIds);
 
-    if (outmesh->adjtetlist[2*i] >= numAdaptTets || outmesh->adjtetlist[2*i] <= 0)
-    {
-      vtpAdaptFaceIds->InsertValue(i,adaptGlobalElementIds->GetValue(outmesh->adjtetlist[2*i+1]));
-      count++;
-    }
-    else if (outmesh->adjtetlist[2*i+1] >= numAdaptTets || outmesh->adjtetlist[2*i+1] <= 0)
-    {
-      vtpAdaptFaceIds->InsertValue(i,adaptGlobalElementIds->GetValue(outmesh->adjtetlist[2*i]));
-      count++;
-    }
+  //   if (outmesh->adjtetlist[2*i] >= numAdaptTets || outmesh->adjtetlist[2*i] <= 0)
+  //   {
+  //     vtpAdaptFaceIds->InsertValue(i,adaptGlobalElementIds->GetValue(outmesh->adjtetlist[2*i+1]));
+  //     count++;
+  //   }
+  //   else if (outmesh->adjtetlist[2*i+1] >= numAdaptTets || outmesh->adjtetlist[2*i+1] <= 0)
+  //   {
+  //     vtpAdaptFaceIds->InsertValue(i,adaptGlobalElementIds->GetValue(outmesh->adjtetlist[2*i]));
+  //     count++;
+  //   }
 
-    else
-    {
-      vtpAdaptFaceIds->InsertValue(i,adaptGlobalElementIds->GetValue(outmesh->adjtetlist[2*i+1]));
-    }
-  }
+  //   else
+  //   {
+  //     vtpAdaptFaceIds->InsertValue(i,adaptGlobalElementIds->GetValue(outmesh->adjtetlist[2*i+1]));
+  //   }
+  // }
 
   //Create a polydata grid and link scalar information to nodes and elements
   surfaceMesh->SetPoints(vtpAdaptPoints);
