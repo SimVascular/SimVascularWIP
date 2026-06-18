@@ -32,7 +32,7 @@
 #ifndef SV4GUI_MODELELEMENT_H
 #define SV4GUI_MODELELEMENT_H
 
-#include <sv4guiModuleModelExports.h>
+#include <vtkSV4ModelCommonModule.h>
 
 #define __CVMISC_UTILS_H //avoid including sv_misc_utils.h from sv_SolidModel.h
 #include "sv_SolidModel.h"
@@ -46,7 +46,7 @@
 #include <vtkSmartPointer.h>
 #include <map>
 
-class SV4GUIMODULEMODEL_EXPORT sv4guiModelElement
+class VTKSV4MODELCOMMON_EXPORT sv4guiModelElement
 {
 
 public:
@@ -280,7 +280,7 @@ public:
     int GetNumSampling();
 
     virtual sv4guiModelElement* CreateModelElement(std::vector<mitk::DataNode::Pointer> segNodes, 
-        int numSamplingPts, svLoftingParam *param, PolyDataSolidCheckResults& check_results, 
+        int numSamplingPts, svLoftingParam *param, PolyDataCheckResults& check_results, 
         int* stats = nullptr, double maxDist = 1.0, int noInterOut = 1, double tol = 1e-6, unsigned int t = 0)
         {
           return nullptr;

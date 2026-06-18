@@ -32,7 +32,7 @@
 #ifndef SV4GUI_MODELVTKMAPPER3D_H
 #define SV4GUI_MODELVTKMAPPER3D_H
 
-#include <sv4guiModuleModelExports.h>
+#include <vtkSV4ModelCommonModule.h>
 
 #include "sv4gui_Model.h"
 
@@ -94,7 +94,7 @@ typedef std::tuple<vtkOpenGLPolyDataMapper*, vtkActor*, bool> FaceMapperActor;
   * @ingroup Mapper
   */
 
-class SV4GUIMODULEMODEL_EXPORT sv4guiModelVtkMapper3D : public mitk::VtkMapper
+class VTKSV4MODELCOMMON_EXPORT sv4guiModelVtkMapper3D : public mitk::VtkMapper
 {
 public:
 

@@ -32,14 +32,14 @@
 #ifndef SV4GUI_MODEL_H
 #define SV4GUI_MODEL_H
 
-#include <sv4guiModuleModelExports.h>
+#include <vtkSV4ModelCommonModule.h>
 
 #include "sv4gui_ModelElement.h"
 #include "sv4gui_ModelOperation.h"
 
 #include "mitkBaseData.h"
 
-class SV4GUIMODULEMODEL_EXPORT sv4guiModel : public mitk::BaseData
+class VTKSV4MODELCOMMON_EXPORT sv4guiModel : public mitk::BaseData
 {
 public:
 

@@ -1,4 +1,3 @@
-set(vtkSV4ModelCommon_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/sv4guiModuleModelExports.h)
 set(vtkSV4ModelCommon_HEADERS
     sv4gui_ModelDataInteractor.h
     sv4gui_ModelElementAnalytic.h
@@ -16,7 +15,6 @@ set(vtkSV4ModelCommon_HEADERS
     sv4gui_ModelObjectFactory.h
     sv4gui_ModelLegacyIO.h
     sv4gui_Model.h
-    ${vtkSV4ModelCommon_EXPORT_HEADER}
 )
 
 set(vtkSV4ModelCommon_SOURCES
@@ -42,7 +40,5 @@ vtk_module_add_module(VTK::SV4ModelCommon
     HEADERS ${vtkSV4ModelCommon_HEADERS}
     SOURCES ${vtkSV4ModelCommon_SOURCES}
 )
-generate_export_header(VTK::SV4ModelCommon
-    BASE_NAME "SV4GUIMODULEMODEL"
-    EXPORT_FILE_NAME ${vtkSV4ModelCommon_EXPORT_HEADER}
-)
+
+vtk_module_link(VTK::SV4ModelCommon PUBLIC Qt6::Widgets)
