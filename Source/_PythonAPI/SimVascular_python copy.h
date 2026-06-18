@@ -29,57 +29,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MESHING_PY_MODULE_H
-#define MESHING_PY_MODULE_H 
-
-#include "SimVascular.h"
-
-#include "vtkSVPythonAPIModule.h"
+#ifndef SIMVASCULAR_PYTHON_H
 
 #include "Python.h"
-#include "sv_MeshObject.h"
-#include "sv4gui_Mesh.h"
-#include "sv4gui_MitkMesh.h"
+#define SV_PYTHON_OK          Py_BuildValue("N",PyBool_FromLong(1))
+#define SV_PYTHON_ERROR       Py_BuildValue("N",PyBool_FromLong(0))
 
-extern "C" VTKSVPYTHONAPI_EXPORT int Mesh_pyInit();
 
-typedef cvMeshObject * (*CreateMesherObjectFunction)();
-
-extern "C" VTKSVPYTHONAPI_EXPORT void PyAPI_InitMeshSim(CreateMesherObjectFunction createObject);
-
-//-----------------
-// PyMeshingSeries
-//-----------------
-// The meshing.Series class is used to store data for
-// time-varying meshes.
-//
-// In SV time-varying meshe are stored in the sv4guiMitkMesh class. 
-//
-typedef struct PyMeshingSeries
-{
-  PyObject_HEAD
-  sv4guiMitkMesh::Pointer meshingGroupPointer;
-  sv4guiMitkMesh* meshingGroup;
-  int id;
-  std::string fileName;
-} PyMeshingSeries;
-
-// [TODO:DaveP] why is this in the header, it is not
-// referenced anywhere else.
-//
-/*
-extern "C" VTKSVPYTHONAPI_EXPORT typedef struct {
-  PyObject_HEAD
-  cvMeshObject* meshObject;
-} pyMeshObject;
-*/
-
-#if PYTHON_MAJOR_VERSION == 2
-PyMODINIT_FUNC  initpyMesh();
-#endif
-#if PYTHON_MAJOR_VERSION == 3
-PyMODINIT_FUNC  PyInit_PyMeshing();
-#endif
-
-#endif 
+#endif  /* SIMVASCULAR_PYTHON_H */
 

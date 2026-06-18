@@ -292,8 +292,8 @@ Mesher_get_mesh(PyMeshingMesher* self, PyObject* args)
       return nullptr;
   }
 
-  auto vtkUnstructuredGrid = mesh->GetVtkUnstructuredGrid();
-  return vtkPythonUtil::GetObjectFromPointer(vtkUnstructuredGrid);
+  // auto vtkUnstructuredGrid = mesh->GetVtkUnstructuredGrid();
+  return vtkPythonUtil::GetObjectFromPointer(mesh);
 }
 
 //---------------------------

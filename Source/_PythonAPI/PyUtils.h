@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-#include "svPythonAPIExports.h"
+#include "vtkSVPythonAPIModule.h"
 
 #include "Python.h"
 #include "vtkPythonUtil.h"
@@ -53,7 +53,7 @@
 // This class is used to manage argument formats for API methods 
 // and error reporting.
 //
-class SV_EXPORT_PYTHON_API PyUtilApiFunction
+class VTKSVPYTHONAPI_EXPORT PyUtilApiFunction
 {
   public:
       PyUtilApiFunction(const std::string& format, PyObject* pyRunTimeErr, const char* funcName);

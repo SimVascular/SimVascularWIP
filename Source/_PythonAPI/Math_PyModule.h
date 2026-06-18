@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-#include "svPythonAPIExports.h"
+#include "vtkSVPythonAPIModule.h"
 
 #include "Python.h"
 

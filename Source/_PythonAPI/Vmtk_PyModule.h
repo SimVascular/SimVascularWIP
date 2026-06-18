@@ -34,11 +34,11 @@
 
 #include "SimVascular.h"
 
-#include "svPythonAPIExports.h"
+#include "vtkSVPythonAPIModule.h"
 
 #include "Python.h"
 
-extern "C" SV_EXPORT_PYTHON_API int Vmtkutils_pyInit();
+extern "C" VTKSVPYTHONAPI_EXPORT int Vmtkutils_pyInit();
 
 #if PYTHON_MAJOR_VERSION == 2
 PyMODINIT_FUNC  initpyVMTKUtils();
