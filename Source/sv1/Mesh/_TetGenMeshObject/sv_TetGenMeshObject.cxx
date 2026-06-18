@@ -33,10 +33,11 @@
 
 #include "sv_TetGenMeshObject.h"
 #include "sv_SolidModel.h"
-DBL_EPSILON
 #include "sv_polydatasolid_utils.h"
 
 #include "sv_tetgenmesh_utils.h"
+
+#include "sv_vtk_utils.h"
 
 #include "sv_sys_geom.h"
 #include "vtkGeometryFilter.h"
@@ -56,11 +57,14 @@ DBL_EPSILON
 #include "vtkAppendPolyData.h"
 #include "vtkPolyDataConnectivityFilter.h"
 #include "vtkCenterOfMass.h"
+#include "vtkCellData.h"
+#include "vtkFeatureEdges.h"
+#include "vtkPointData.h"
+#include "vtkPointLocator.h"
 
-#ifdef SV_USE_VMTK
-  #include "sv_vmtk_utils.h"
-  #include "vtkvmtkPolyDataToUnstructuredGridFilter.h"
-#endif
+#include "sv_vmtk_utils.h"
+#include "vtkvmtkPolyDataToUnstructuredGridFilter.h"
+
 
 #ifdef SV_USE_MMG
   #include "sv_mmg_mesh_utils.h"
@@ -459,7 +463,7 @@ bool cvTetGenMeshObject::HasVolumeMesh()
  * @return the mesh if executed correctly
  */
 
-cvUnstructuredGrid* cvTetGenMeshObject::GetUnstructuredGrid() {
+vtkUnstructuredGrid* cvTetGenMeshObject::GetUnstructuredGrid() {
 
   // recall the node numbers start at 1 in the P_id,
   // but in vtkPolyData file they start at 0.
@@ -469,11 +473,7 @@ cvUnstructuredGrid* cvTetGenMeshObject::GetUnstructuredGrid() {
     return nullptr;
   }
 
-  cvUnstructuredGrid *result = nullptr;
-
-  result = new cvUnstructuredGrid(volumemesh_);
-
-  return result;
+  return volumemesh_;
 
 }
 /**
@@ -2079,7 +2079,6 @@ int cvTetGenMeshObject::GenerateBoundaryLayerMesh()
  */
 int cvTetGenMeshObject::GenerateAndMeshCaps()
 {
-#ifdef SV_USE_VMTK
   vtkSmartPointer<vtkIdList> excluded =
     vtkSmartPointer<vtkIdList>::New();
   int marker;
@@ -2166,10 +2165,6 @@ int cvTetGenMeshObject::GenerateAndMeshCaps()
     fprintf(stderr,"Problem with cap remeshing\n");
     return SV_ERROR;
   }
-#else
-  fprintf(stderr,"Cannot generate and mesh caps without VMTK\n");
-  return SV_ERROR;
-#endif
 
   // Add wall id back on to the surface
   vtkSmartPointer<vtkIntArray> wallIds = vtkSmartPointer<vtkIntArray>::New();
