@@ -43,12 +43,11 @@
 #define __CVTETGENMESHSYSTEM_H
 
 #include "SimVascular.h"
-#include "svTetGenMeshExports.h" // For exports
+#include "vtkSV1MeshTetGenMeshObjectModule.h" // For exports
 #include "sv_MeshSystem.h"
 #include "sv_TetGenMeshObject.h"
-#include "sv_FactoryRegistrar.h"
 
-class SV_EXPORT_TETGEN_MESH cvTetGenMeshSystem : public cvMeshSystem {
+class VTKSV1MESHTETGENMESHOBJECT_EXPORT cvTetGenMeshSystem : public cvMeshSystem {
 
 public:
   cvTetGenMeshSystem();
