@@ -32,13 +32,13 @@
 #ifndef SV4GUI_MITKSIMJOBIO_H
 #define SV4GUI_MITKSIMJOBIO_H
 
-#include <sv4guiModuleSimulationExports.h>
+#include <vtkSV4SimulationModule.h>
 
 #include "mitkAbstractFileIO.h"
 #include <tinyxml2.h>
 #include "sv4gui_SimJob.h"
 
-class SV4GUIMODULESIMULATION_EXPORT sv4guiMitkSimJobIO : public mitk::AbstractFileIO
+class VTKSV4SIMULATION_EXPORT sv4guiMitkSimJobIO : public mitk::AbstractFileIO
 {
 public:
 
