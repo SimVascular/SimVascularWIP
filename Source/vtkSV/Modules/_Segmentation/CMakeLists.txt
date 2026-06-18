@@ -44,3 +44,8 @@ vtk_module_add_module(VTK::SVSegmentation
     HEADERS ${vtkSVSegmentation_HEADERS}
     SOURCES ${vtkSVSegmentation_SOURCES}
 )
+
+vtk_module_include(VTK::SVSegmentation
+    PUBLIC
+    ${VMTK_INCLUDE_DIRS}
+)
