@@ -32,7 +32,7 @@
 #ifndef SV4GUI_MODELUTILS_H
 #define SV4GUI_MODELUTILS_H
 
-#include <sv4guiModuleModelExports.h>
+#include <vtkSV4ModelCommonModule.h>
 
 #include "sv4gui_Contour.h"
 #include "sv4gui_ContourGroup.h"
@@ -40,7 +40,7 @@
 #include "sv4gui_ModelElementPolyData.h"
 #include "sv_PolyDataSolid.h"
 
-class SV4GUIMODULEMODEL_EXPORT sv4guiModelUtils
+class VTKSV4MODELCOMMON_EXPORT sv4guiModelUtils
 {
 
 public:
@@ -50,7 +50,7 @@ public:
 
     static sv4guiModelElementPolyData* CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, 
         int numSamplingPts, 
-        PolyDataSolidCheckResults& check_results,
+        PolyDataCheckResults& check_results,
         int stats[], svLoftingParam *param, unsigned int t = 0, int noInterOut = 1, 
         double tol = 1e-6);
 

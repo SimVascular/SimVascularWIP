@@ -34,6 +34,9 @@
 #include "sv4gui_Math3.h"
 #include "sv4gui_ModelUtils.h"
 
+#include "sv_vtk_utils.h"
+#include "sv_vmtk_utils.h"
+
 #include "sv_PolyDataSolid.h"
 #include "sv_polydatasolid_utils.h"
 #ifdef SV_USE_VMTK
@@ -54,6 +57,9 @@
 #include <vtkButterflySubdivisionFilter.h>
 #include <vtkWindowedSincPolyDataFilter.h>
 #include <vtkDensifyPolyData.h>
+
+#include <vtkCellData.h>
+
 
 #include <iostream>
 
@@ -913,7 +919,7 @@ sv4guiModelElement* sv4guiModelElementPolyData::CreateModelElement()
 }
 
 sv4guiModelElement* sv4guiModelElementPolyData::CreateModelElement(std::vector<mitk::DataNode::Pointer> segNodes, 
-    int numSamplingPts, svLoftingParam *param, PolyDataSolidCheckResults& check_results, int* stats, 
+    int numSamplingPts, svLoftingParam *param, PolyDataCheckResults& check_results, int* stats, 
     double maxDist, int noInterOut, double tol, unsigned int t)
 {
     return sv4guiModelUtils::CreateModelElementPolyData(segNodes,numSamplingPts,check_results,stats,param,t,noInterOut,tol);

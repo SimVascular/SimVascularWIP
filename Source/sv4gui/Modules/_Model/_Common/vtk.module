@@ -19,7 +19,7 @@ DEPENDS
     VTK::RenderingCore
     VTK::RenderingOpenGL2
     VTK::SV1Geometry
-    VTK::SV1MeshVMTKUtils
+    VTK::SV1MeshMeshUtils
     VTK::SV1ModelPolyDataSolidModel
     VTK::SV1ModelSolidModel
     VTK::SV3Path

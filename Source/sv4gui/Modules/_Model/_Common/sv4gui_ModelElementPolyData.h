@@ -32,7 +32,7 @@
 #ifndef SV4GUI_MODELELEMENTPOLYDATA_H
 #define SV4GUI_MODELELEMENTPOLYDATA_H
 
-#include <sv4guiModuleModelExports.h>
+#include <vtkSV4ModelCommonModule.h>
 
 #include "sv4gui_ModelElement.h"
 #include "sv_PolyDataSolid.h"
@@ -42,7 +42,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkPlanes.h>
 
-class SV4GUIMODULEMODEL_EXPORT sv4guiModelElementPolyData : public sv4guiModelElement
+class VTKSV4MODELCOMMON_EXPORT sv4guiModelElementPolyData : public sv4guiModelElement
 {
 public:
 
@@ -121,7 +121,7 @@ public:
     static sv4guiModelElement* CreateModelElement();
 
     virtual sv4guiModelElement* CreateModelElement(std::vector<mitk::DataNode::Pointer> segNodes, 
-        int numSamplingPts, svLoftingParam *param, PolyDataSolidCheckResults& check_results, 
+        int numSamplingPts, svLoftingParam *param, PolyDataCheckResults& check_results, 
         int* stats = nullptr, double maxDist = 1.0, int noInterOut = 1, double tol = 1e-6, unsigned int t = 0) override;
 
     virtual sv4guiModelElement* CreateModelElementByBlend(std::vector<sv4guiModelElement::svBlendParamRadius*> blendRadii

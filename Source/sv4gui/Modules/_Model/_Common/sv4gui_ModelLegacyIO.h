@@ -34,13 +34,13 @@
 
 #include "sv4gui_ModelElementFactory.h"
 
-#include <sv4guiModuleModelExports.h>
+#include <vtkSV4ModelCommonModule.h>
 
 #include "mitkDataNode.h"
 #include "mitkDataStorage.h"
 #include <QString>
 
-class SV4GUIMODULEMODEL_EXPORT sv4guiModelLegacyIO
+class VTKSV4MODELCOMMON_EXPORT sv4guiModelLegacyIO
 {
 public:
 
