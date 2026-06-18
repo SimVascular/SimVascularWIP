@@ -54,6 +54,10 @@
 #include "sv_polydatasolid_utils.h"
 #include "sv_occtsolid_utils.h"
 
+#include "vtkCleanPolyData.h"
+#include "vtkPolyDataNormals.h"
+#include "sv_vtk_utils.h"
+
 #include "sv_sys_geom.h"
 #include <string.h>
 #include <assert.h>
