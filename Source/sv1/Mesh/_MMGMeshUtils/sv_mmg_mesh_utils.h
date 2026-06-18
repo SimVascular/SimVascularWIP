@@ -33,28 +33,29 @@
 #define __CVMMG_MESH_UTILS_H
 
 #include "SimVascular.h"
-#include "svMMGExports.h" // For exports
+#include "vtkSV1MeshMMGMeshUtilsModule.h" // For exports
 
 #include "sv_PolyData.h"
 #include "vtkPolyData.h"
 #include "vtkUnstructuredGrid.h"
+#include "vtkEdgeTable.h"
 
 #include "mmg/mmgs/libmmgs.h"
 
-SV_EXPORT_MMG int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatasolid,
+VTKSV1MESHMMGMESHUTILS_EXPORT int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatasolid,
     double hmin, double hmax, double hausd, double angle, double hgrad,
     int useSizingFunction, vtkDoubleArray *meshSizingFunction, int numAddedRefines);
 
-SV_EXPORT_MMG int MMGUtils_ConvertToVTK(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatasolid);
+VTKSV1MESHMMGMESHUTILS_EXPORT int MMGUtils_ConvertToVTK(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatasolid);
 
-SV_EXPORT_MMG int MMGUtils_SurfaceRemeshing(vtkPolyData *surface, double hmin, double hmax, double hausd, double angle, double hgrad, int useSizingFunction, vtkDoubleArray *meshSizingFunction, int numAddedRefines);
+VTKSV1MESHMMGMESHUTILS_EXPORT int MMGUtils_SurfaceRemeshing(vtkPolyData *surface, double hmin, double hmax, double hausd, double angle, double hgrad, int useSizingFunction, vtkDoubleArray *meshSizingFunction, int numAddedRefines);
 
-SV_EXPORT_MMG int MMGUtils_PassCellArray(vtkPolyData *newgeom,
+VTKSV1MESHMMGMESHUTILS_EXPORT int MMGUtils_PassCellArray(vtkPolyData *newgeom,
     vtkPolyData *originalgeom,std::string newName,std::string originalName);
 
-SV_EXPORT_MMG int MMGUtils_PassPointArray(vtkPolyData *newgeom,
+VTKSV1MESHMMGMESHUTILS_EXPORT int MMGUtils_PassPointArray(vtkPolyData *newgeom,
     vtkPolyData *originalgeom,std::string newName,std::string originalName);
 
-SV_EXPORT_MMG int MMGUtils_BuildRidgeTable(vtkPolyData *polydatasolid, vtkEdgeTable *ridges, std::string ridgePtArrayName);
+VTKSV1MESHMMGMESHUTILS_EXPORT int MMGUtils_BuildRidgeTable(vtkPolyData *polydatasolid, vtkEdgeTable *ridges, std::string ridgePtArrayName);
 #endif // __Mmgmesh_Init
 

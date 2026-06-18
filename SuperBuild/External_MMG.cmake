@@ -1,6 +1,7 @@
 set(MMG_VERSION "5.3.9")
 set(MMG_INSTALL_DIR ${CMAKE_BINARY_DIR}/MMG-install)
 set(MMG_DIR ${MMG_INSTALL_DIR}/lib/cmake/mmg)
+set(MMG_INCLUDE_DIR ${MMG_INSTALL_DIR}/include)
 
 ExternalProject_Add(MMG
   GIT_REPOSITORY "https://github.com/MmgTools/mmg.git"
