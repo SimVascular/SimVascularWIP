@@ -20,7 +20,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 find_package(Python 3.12 COMPONENTS Development.Module REQUIRED)
 
 # Find Qt
-find_package(Qt6 6.10 COMPONENTS Core CoreTools Gui Widgets REQUIRED)
+find_package(Qt6 6.10 COMPONENTS Core CoreTools Gui Widgets Xml REQUIRED)
 
 #-----------------------------------------------------------------------------
 # Superbuild
@@ -43,8 +43,14 @@ include(${ITK_USE_FILE})
 
 find_package(VTK REQUIRED)
 
+find_package(VMTK REQUIRED)
+
 find_package(MITK REQUIRED)
 
 find_package(tinyxml2 REQUIRED)
+
+find_package(OpenCASCADE REQUIRED)
+
+find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
 add_subdirectory(Source)
