@@ -7,4 +7,6 @@ GROUPS
     SV1
 DEPENDS
     VTK::SVCore
+    VTK::SV1MeshAdaptObject
+    VTK::SV1MeshMeshUtils
     VTK::CommonCore

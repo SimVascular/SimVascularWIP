@@ -46,7 +46,7 @@
 #define __CVTETGENADAPT_H
 
 #include "SimVascular.h"
-#include "svTetGenAdaptorExports.h"
+#include "vtkSV1MeshTetGenAdaptModule.h"
 
 #include "sv_AdaptObject.h"
 //
@@ -78,7 +78,7 @@
 //
 
 
-class SV_EXPORT_TETGEN_ADAPTOR cvTetGenAdapt: public cvAdaptObject {
+class VTKSV1MESHTETGENADAPT_EXPORT cvTetGenAdapt: public cvAdaptObject {
 
   typedef struct AdaptOptions {
     int poly_;
