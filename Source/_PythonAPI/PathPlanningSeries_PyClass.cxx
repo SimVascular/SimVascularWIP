@@ -36,12 +36,9 @@
 //
 //     paths = pathplanning.Series()
 //
-// The SV path group code this interfaces to resides in sv4gui/Modules/Path/Common which
-// uses MITK manage time-varying meshes.
 
 #include "sv3_PathGroup.h"
 #include "sv3_PathIO.h"
-#include "sv4gui_PathLegacyIO.h"
 
 using sv3::PathGroup;
 
@@ -77,12 +74,8 @@ PathSeriesUtil_read(char* fileName, bool legacyFile)
   std::vector<sv3::PathGroup*> pathGroups;
 
   try {
-      if (legacyFile) {
-          pathGroups = sv4guiPathLegacyIO::CreateGroupFromFile(fileName);
-      } else {
           auto pathGroup = sv3::PathIO().ReadFile(fileName);
           pathGroups.push_back(pathGroup);
-      }
       if (pathGroups.size() == 0) {
           api.error("Error reading file '" + std::string(fileName) + "'.");
       }

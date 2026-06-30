@@ -5,7 +5,7 @@ set(vtkSVPythonAPI_HEADERS
     Math_PyModule.h
     # Meshing_PyModule.h
     MeshUtils_PyModule.h
-    # PathPlanning_PyModule.h
+    PathPlanning_PyModule.h
     # PyUtils.h
     # Modeling_PyModule.h
     # Simulation_PyModule.h
@@ -19,7 +19,7 @@ set(vtkSVPythonAPI_SOURCES
     Math_PyModule.cxx
     # Meshing_PyModule.cxx
     MeshUtils_PyModule.cxx
-    # PathPlanning_PyModule.cxx
+    PathPlanning_PyModule.cxx
     # PyUtils.cxx
     # Modeling_PyModule.cxx
     # Simulation_PyModule.cxx
