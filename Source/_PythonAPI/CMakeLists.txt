@@ -1,5 +1,5 @@
 set(vtkSVPythonAPI_HEADERS
-    # Imaging_PyModule.h
+    Imaging_PyModule.h
     # Segmentation_PyModule.h
     # Geometry_PyModule.h
     Math_PyModule.h
@@ -13,7 +13,7 @@ set(vtkSVPythonAPI_HEADERS
 )
 
 set(vtkSVPythonAPI_SOURCES
-    # Imaging_PyModule.cxx
+    Imaging_PyModule.cxx
     # Segmentation_PyModule.cxx
     # Geometry_PyModule.cxx
     Math_PyModule.cxx

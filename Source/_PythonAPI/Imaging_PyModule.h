@@ -39,19 +39,24 @@
 #include "Python.h"
 
 // #include "sv4gui_ProjectManager.h"
-#include <mitkImage.h>
-#include <mitkDataNode.h>
+// #include <mitkImage.h>
+// #include <mitkDataNode.h>
+
+#include <itkImage.h>
+#include <itkVector.h>
 
 //---------
 // PyImage
 //---------
 // Define the SV Python Image class.
 //
+using ImageType = itk::Image<int, 3>;
+using VectorType = itk::Vector<float, 3>;
+
 typedef struct
 {
   PyObject_HEAD
-  mitk::DataNode::Pointer image_node;
-  mitk::Image::Pointer image_data;
+  ImageType::Pointer image; 
   int id;
 } PyImage;
 
