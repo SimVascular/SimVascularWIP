@@ -90,28 +90,28 @@ typedef struct {
 // After copying the PyPolygonSegmentation data that the API
 // user will access is set.
 //
-void PyPolygonCopySegmentationData(sv4guiContour* sv4Contour, PyObject* contourObj)
-{
-  auto contour = ((PySegmentation*)contourObj)->contour;
-  PySegmentationCopySv4ContourData(sv4Contour, contour);
+// void PyPolygonCopySegmentationData(sv4guiContour* sv4Contour, PyObject* contourObj)
+// {
+//   auto contour = ((PySegmentation*)contourObj)->contour;
+//   PySegmentationCopySv4ContourData(sv4Contour, contour);
 
-  // Set PyPolygonSegmentation data.
-  //
-  auto polygonContour = (PyPolygonSegmentation*)contourObj;
-  polygonContour->center = contour->GetCenterPoint();
+//   // Set PyPolygonSegmentation data.
+//   //
+//   auto polygonContour = (PyPolygonSegmentation*)contourObj;
+//   polygonContour->center = contour->GetCenterPoint();
 
-  double normal[3];
-  contour->GetPlaneGeometry()->GetNormal(normal);
-  polygonContour->normal = {normal[0], normal[1], normal[2]};
+//   double normal[3];
+//   contour->GetPlaneGeometry()->GetNormal(normal);
+//   polygonContour->normal = {normal[0], normal[1], normal[2]};
 
-  // Copy control points omittinng the first two which
-  // are the polygon center and scaling factor.
-  //
-  auto controlPoints = contour->GetControlPoints();
-  for (int i = 2; i < controlPoints.size(); i++) {
-      polygonContour->controlPoints.push_back(controlPoints[i]);
-  }
-}
+//   // Copy control points omittinng the first two which
+//   // are the polygon center and scaling factor.
+//   //
+//   auto controlPoints = contour->GetControlPoints();
+//   for (int i = 2; i < controlPoints.size(); i++) {
+//       polygonContour->controlPoints.push_back(controlPoints[i]);
+//   }
+// }
 
 //-----------------------
 // PyPolygonGenerateData
@@ -328,7 +328,7 @@ PyPolygonSegmentationInit(PyPolygonSegmentation* self, PyObject* args, PyObject 
   // Create the ContourPolygon object.
   //
   self->super.contour = new sv3::ContourPolygon();
-  self->super.CopySv4ContourData = PyPolygonCopySegmentationData;
+  // self->super.CopySv4ContourData = PyPolygonCopySegmentationData;
   self->planeDistTol = 1e-6;
 
   if ((args == nullptr) && (kwargs == nullptr)) {

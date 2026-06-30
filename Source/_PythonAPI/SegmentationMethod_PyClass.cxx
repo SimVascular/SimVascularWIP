@@ -37,6 +37,7 @@
 #include <math.h>
 #include <string>
 #include <structmember.h>
+#include <set>
 
 // Define a map between contour kernel name and enum type.
 //

@@ -67,11 +67,11 @@ typedef struct {
 // PyThresholdCopySegmentationData
 //---------------------------------
 //
-void PyThresholdCopySegmentationData(sv4guiContour* sv4Contour, PyObject* contourObj)
-{
-  auto contour = ((PySegmentation*)contourObj)->contour;
-  PySegmentationCopySv4ContourData(sv4Contour, contour);
-}
+// void PyThresholdCopySegmentationData(sv4guiContour* sv4Contour, PyObject* contourObj)
+// {
+//   auto contour = ((PySegmentation*)contourObj)->contour;
+//   PySegmentationCopySv4ContourData(sv4Contour, contour);
+// }
 
 
 thresholdContour* CreateThresholdContour()
@@ -115,7 +115,7 @@ PyThresholdSegmentationInit(PyThresholdSegmentation* self, PyObject* args, PyObj
   static int numObjs = 1;
   //std::cout << "[PyThresholdSegmentationInit] New Threshold Segmentation object: " << numObjs << std::endl;
   self->super.contour = new thresholdContour();
-  self->super.CopySv4ContourData = PyThresholdCopySegmentationData;
+  // self->super.CopySv4ContourData = PyThresholdCopySegmentationData;
   numObjs += 1;
   return 0;
 }
