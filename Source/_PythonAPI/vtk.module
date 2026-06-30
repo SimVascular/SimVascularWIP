@@ -10,8 +10,7 @@ DEPENDS
     VTK::SVCore
     VTK::SV1Geometry
     VTK::SV1MeshMeshObject
+    VTK::SV1MeshMeshUtils
     VTK::SV1MeshMMGMeshUtils
     VTK::SV1ModelOCCTSolidModel
-    VTK::SV4MeshCommon
-    VTK::SV4ModelCommon
-    VTK::SV4ModelOCCT
+    VTK::SV3Segmentation
