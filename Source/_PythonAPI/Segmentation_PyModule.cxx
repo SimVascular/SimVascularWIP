@@ -72,8 +72,6 @@
 #include "sv3_ThresholdContour.h"
 #include "Segmentation_PyModule.h"
 
-#include "sv4gui_ContourCircle.h"
-
 #include "sv3_PathElement.h"
 
 #include "sv3_SegmentationUtils.h"
@@ -100,7 +98,7 @@ static PyObject * PyRunTimeErr;
 // Prototypes for creating Python segmentation objects.
 static PySegmentation* PyCreateSegmentationType();
 static PyObject * PyCreateSegmentation(cKernelType contourType);
-PyObject * PyCreateSegmentation(sv4guiContour* contour);
+// PyObject * PyCreateSegmentation(sv4guiContour* contour);
 //static PyObject * PyCreateSegmentation(sv3::Contour* contour);
 
 // Include implementations for the 'SegmentationMethod' and 'Segmentation' classes.
@@ -108,9 +106,15 @@ PyObject * PyCreateSegmentation(sv4guiContour* contour);
 #include "SegmentationSubdivisionType_PyClass.cxx"
 #include "Segmentation_PyClass.cxx"
 
+#pragma message "TEST:" PYTHON_MAJOR_VERSION
+
 //////////////////////////////////////////////////////
 //        U t i l i t y     F u n c t i o n s       //
 //////////////////////////////////////////////////////
+
+// Note (Jared): I am commenting this out for now to remove the dependency on sv4.
+// In the future we should implement this at read time (i.e. read an sv4 file directly)
+// into an sv3::Contour object
 
 //----------------------------------
 // PySegmentationCopySv4ContourData
@@ -121,10 +125,10 @@ PyObject * PyCreateSegmentation(sv4guiContour* contour);
 // This is needed when reading in a contour group which creates
 // sv4guiContour objects not sv3::Contour objects.
 //
-void PySegmentationCopySv4ContourData(sv4guiContour* sv4Contour, sv3::Contour* contour)
-{
-  sv4Contour->CopyContourData(contour);
-}
+// void PySegmentationCopySv4ContourData(sv4guiContour* sv4Contour, sv3::Contour* contour)
+// {
+//   sv4Contour->CopyContourData(contour);
+// }
 
 //////////////////////////////////////////////////////
 //          M o d u l e  M e t h o d s              //
@@ -286,7 +290,7 @@ PyCreateSegmentation(cKernelType contourType)
 //   Contour types: Circle, Ellipse, Polygon, SplinePolygon, TensionPolygon and Contour
 //
 PyObject *
-PyCreateSegmentation(sv4guiContour* contour)
+PyCreateSegmentation(sv3::Contour* contour)
 {
   auto kernel = contour->GetKernel();
   auto ctype = contour->GetType();
@@ -303,7 +307,8 @@ PyCreateSegmentation(sv4guiContour* contour)
 
   // Add data from the sv4guiContour to the sv3::contour object.
   auto pyContour = (PySegmentation*)contourObj;
-  pyContour->CopySv4ContourData(contour, contourObj);
+  // pyContour->CopySv4ContourData(contour, contourObj);
+  pyContour->contour = contour;
 
   return contourObj;
 }

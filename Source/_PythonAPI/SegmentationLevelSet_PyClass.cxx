@@ -67,11 +67,11 @@ typedef struct {
 // PyLevelSetCopySegmentationData
 //--------------------------------
 //
-void PyLevelSetCopySegmentationData(sv4guiContour* sv4Contour,  PyObject* contourObj)
-{
-  auto contour = ((PySegmentation*)contourObj)->contour;
-  PySegmentationCopySv4ContourData(sv4Contour, contour);
-}
+// void PyLevelSetCopySegmentationData(sv4guiContour* sv4Contour,  PyObject* contourObj)
+// {
+//   auto contour = ((PySegmentation*)contourObj)->contour;
+//   PySegmentationCopySv4ContourData(sv4Contour, contour);
+// }
 
 //////////////////////////////////////////////////////
 //          C l a s s    M e t h o d s              //
@@ -110,7 +110,7 @@ PyLevelSetSegmentationInit(PyLevelSetSegmentation* self, PyObject* args, PyObjec
   static int numObjs = 1;
   //std::cout << "[PyLevelSetSegmentationInit] New LevelSet Segmentation object: " << numObjs << std::endl;
   self->super.contour = new sv3::levelSetContour();
-  self->super.CopySv4ContourData = PyLevelSetCopySegmentationData;
+  // self->super.CopySv4ContourData = PyLevelSetCopySegmentationData;
   numObjs += 1;
   return 0;
 }

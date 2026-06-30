@@ -39,8 +39,10 @@
 // The SV segmentation (contour groups) code this interfaces to resides in sv4gui/Modules/Segmentation/Common
 // which uses MITK manage time-varying contour groups.
 
-#include "sv4gui_ContourGroupIO.h"
-#include "sv4gui_SegmentationLegacyIO.h"
+// #include "sv4gui_ContourGroupIO.h"
+// #include "sv4gui_SegmentationLegacyIO.h"
+
+#include "sv3_ContourGroup.h"
 
 //----------------------
 // PySegmentationSeries
@@ -51,8 +53,8 @@ extern "C" VTKSVPYTHONAPI_EXPORT typedef struct
 {
   PyObject_HEAD
   int id;
-  sv4guiContourGroup::Pointer contourGroupPointer;
-  sv4guiContourGroup* contourGroup;
+  // sv3::ContourGroup::Pointer contourGroupPointer;
+  std::unique_ptr<sv3::ContourGroup> contourGroup;
 } PySegmentationSeries;
 
 // nate: this pointer seems to duplicate the other and differ only by being static
@@ -69,17 +71,17 @@ extern "C" VTKSVPYTHONAPI_EXPORT typedef struct
 //
 // If 'legacyFile' is true then read in legacy files.
 //
-static sv4guiContourGroup::Pointer
+static std::unique_ptr<sv3::ContourGroup>
 SegmentationSeriesUtils_read(char* fileName, bool legacyFile)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
-  sv4guiContourGroup::Pointer groupPtr;
+  std::unique_ptr<sv3::ContourGroup> groupPtr;
 
   try {
       if (legacyFile) {
-          groupPtr = sv4guiSegmentationLegacyIO().CreateGroupFromFile(std::string(fileName));
+          groupPtr = sv3::ContourGroup::CreateGroupFromLegacyFile(std::string(fileName));
       } else {
-          groupPtr = sv4guiContourGroupIO().CreateGroupFromFile(std::string(fileName));
+          groupPtr = sv3::ContourGroup::CreateGroupFromFile(std::string(fileName));
       }
   } catch (...) {
       api.error("Error reading the contour group file '" + std::string(fileName) + "'.");
@@ -118,8 +120,7 @@ SegmentationSeries_get_num_segmentations(PySegmentationSeries* self, PyObject* a
      return api.argsError();
   }
 
-  auto contourGroup = self->contourGroup;
-  int numTimes = contourGroup->GetTimeSize();
+  int numTimes = self->contourGroup->GetTimeSize();
 
   // Check for valid time.
   if ((time < 0) || (time > numTimes-1)) {
@@ -128,7 +129,7 @@ SegmentationSeries_get_num_segmentations(PySegmentationSeries* self, PyObject* a
       return nullptr;
   }
 
-  int numSegs = contourGroup->GetSize(time);
+  int numSegs = self->contourGroup->GetSize(time);
   return Py_BuildValue("i", numSegs);
 }
 
@@ -147,8 +148,7 @@ PyDoc_STRVAR(SegmentationSeries_get_num_times_doc,
 static PyObject *
 SegmentationSeries_get_num_times(PySegmentationSeries* self, PyObject* args)
 {
-  auto contourGroup = self->contourGroup;
-  int numTimeSteps = contourGroup->GetTimeSize();
+  int numTimeSteps = self->contourGroup->GetTimeSize();
   return Py_BuildValue("i", numTimeSteps);
 }
 
@@ -185,8 +185,7 @@ SegmentationSeries_get_segmentation(PySegmentationSeries* self, PyObject* args, 
      return api.argsError();
   }
 
-  auto contourGroup = self->contourGroup;
-  int numTimes = contourGroup->GetTimeSize();
+  int numTimes = self->contourGroup->GetTimeSize();
 
   // Check for valid time.
   if ((time < 0) || (time > numTimes-1)) {
@@ -196,7 +195,7 @@ SegmentationSeries_get_segmentation(PySegmentationSeries* self, PyObject* args, 
   }
 
   // Check the segmentation ID.
-  int numConts = contourGroup->GetSize(time);
+  int numConts = self->contourGroup->GetSize(time);
   if ((id < 0) || (id > numConts-1)) {
       api.error("The 'id' argument '" + std::to_string(time) + "' is must be between 0 and " +
         std::to_string(numConts-1));
@@ -205,7 +204,7 @@ SegmentationSeries_get_segmentation(PySegmentationSeries* self, PyObject* args, 
 
   // Get the contour for the given id and time.
   //
-  sv4guiContour* contour = contourGroup->GetContour(id, time);
+  sv3::Contour* contour = self->contourGroup->GetContour(id, time);
 
   if (contour == nullptr) {
       api.error("ERROR getting the contour for the 'id=" + std::to_string(id) + "' and 'time=" + std::to_string(time) + "'.");
@@ -260,8 +259,8 @@ SegmentationSeries_read(PySegmentationSeries* self, PyObject* args, PyObject* kw
       legacyFile = PyObject_IsTrue(legacyArg);
   }
 
-  self->contourGroupPointer = SegmentationSeriesUtils_read(fileName, legacyFile);
-  self->contourGroup = dynamic_cast<sv4guiContourGroup*>(self->contourGroupPointer.GetPointer());
+  self->contourGroup = SegmentationSeriesUtils_read(fileName, legacyFile);
+  // self->contourGroup = dynamic_cast<sv4guiContourGroup*>(self->contourGroupPointer.GetPointer());
   int numSegs = self->contourGroup->GetSize(0);
   if (numSegs == 0) {
       api.error("Error reading the segmentation series file '" + std::string(fileName) + "'.");
@@ -295,7 +294,7 @@ SegmentationSeries_write(PySegmentationSeries* self, PyObject* args)
   }
 
   try {
-      sv4guiContourGroupIO::WriteToFile(self->contourGroup, fileName);
+      sv3::ContourGroup::WriteToFile(self->contourGroup.get(), fileName);
   } catch (const std::exception& readException) {
       api.error("Error writing contour group to the file '" + std::string(fileName) + "': " + readException.what());
       return nullptr;
@@ -388,8 +387,7 @@ PySegmentationSeriesInit(PySegmentationSeries* self, PyObject* args, PyObject* k
   // Read in a contour group file.
   //
   if (fileName != nullptr) {
-      self->contourGroupPointer = SegmentationSeriesUtils_read(fileName, legacyFile);
-      self->contourGroup = dynamic_cast<sv4guiContourGroup*>(self->contourGroupPointer.GetPointer());
+      self->contourGroup = SegmentationSeriesUtils_read(fileName, legacyFile);
       int numSegs = self->contourGroup->GetSize(0);
       if (numSegs == 0) {
           api.error("Error reading the segmentation series file '" + std::string(fileName) + "'.");
@@ -401,8 +399,7 @@ PySegmentationSeriesInit(PySegmentationSeries* self, PyObject* args, PyObject* k
   // is immediately called after it is created. 
   //
   if (self->contourGroup == nullptr) { 
-      self->contourGroupPointer = sv4guiContourGroup::New();
-      self->contourGroup = dynamic_cast<sv4guiContourGroup*>(self->contourGroupPointer.GetPointer());
+      self->contourGroup = std::make_unique<sv3::ContourGroup>();
   }
 
   numObjs += 1;
@@ -473,8 +470,8 @@ SetSegmentationSeriesTypeFields(PyTypeObject& contourType)
 
 // nate: is this needed? CreatePySegmentationSeries(sv4guiContourGroup* contourGroup)
 #include "vtkSVPythonAPIModule.h"
-VTKSVPYTHONAPI_EXPORT PyObject *
-CreatePySegmentationSeries(sv4guiContourGroup::Pointer contourGroup)
+VTKSVPYTHONAPI_EXPORT PyObject*
+CreatePySegmentationSeries(std::unique_ptr<sv3::ContourGroup> contourGroup)
 {
   //std::cout << "[CreatePySegmentationSeries] Create ContourGroup object ... " << std::endl;
   auto contourGroupObj = PyObject_CallObject((PyObject*)&PySegmentationSeriesType, nullptr);
@@ -482,7 +479,7 @@ CreatePySegmentationSeries(sv4guiContourGroup::Pointer contourGroup)
 
   if (contourGroup != nullptr) {
       //delete pyContourGroup->contourGroup;
-      pyContourGroup->contourGroup = contourGroup;
+      pyContourGroup->contourGroup = std::move(contourGroup);
   }
   return contourGroupObj;
 }

@@ -38,7 +38,7 @@
 
 #include "Python.h"
 #include "sv3_Contour.h"
-#include "sv4gui_ContourGroup.h"
+#include "sv3_ContourGroup.h"
 
 // Segmentation references Path objects.
 #include "PathPlanning_PyModule.h"
@@ -47,13 +47,13 @@
 //#define US_MODULE_NAME 
 
 // Needed for the dmd module.
-extern VTKSVPYTHONAPI_EXPORT PyObject * PyCreateSegmentation(sv4guiContour* contour);
+extern VTKSVPYTHONAPI_EXPORT PyObject * PyCreateSegmentation(sv3::Contour* contour);
 
-PyObject* CreatePySegmentationSeries(sv4guiContourGroup* contourGroup);
+PyObject* CreatePySegmentationSeries(std::unique_ptr<sv3::ContourGroup> contourGroup);
 
 // Define the signature for the function used to copy sv4guiContour 
 // object data to sv3::Contour objects.
-typedef void (*CopySegmentationDataFunc)(sv4guiContour* sv4Contour, PyObject*);
+// typedef void (*CopySegmentationDataFunc)(sv4guiContour* sv4Contour, PyObject*);
 
 //----------------
 // PySegmentation
@@ -68,7 +68,7 @@ extern "C" VTKSVPYTHONAPI_EXPORT typedef struct
 {
   PyObject_HEAD
   sv3::Contour* contour;
-  CopySegmentationDataFunc CopySv4ContourData;
+  // CopySegmentationDataFunc CopySv4ContourData;
   int id;
 } PySegmentation;
 
