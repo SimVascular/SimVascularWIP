@@ -1,0 +1,17 @@
+NAME
+    VTK::SVMisc
+LIBRARY_NAME
+    vtkSVMisc
+GROUPS
+    SV
+    VTKSV
+DEPENDS
+    VTK::CommonCore
+    VTK::FiltersModeling
+    VTK::FiltersTexture
+    VTK::ParallelCore
+    VTK::RenderingLabel
+    VTK::SVCommon
+    VTK::SVCore
+    VTK::SVGeometry
+    VTK::SVIO

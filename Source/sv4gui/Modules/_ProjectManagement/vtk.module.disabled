@@ -1,0 +1,20 @@
+NAME
+    VTK::SV4ProjectManagement
+LIBRARY_NAME
+    vtkSV4ProjectManagement
+GROUPS
+    SV
+    SV4GUI
+DEPENDS
+  VTK::CommonDataModel
+  VTK::IOXML
+  VTK::SV4Common
+  VTK::SV4ImageProcessing
+  VTK::SV4Mesh
+  VTK::SV4Model
+  VTK::SV4MultiPhysics
+  VTK::SV4Path
+  VTK::SV4ROMSimulation
+  VTK::SV4Segmentation
+  VTK::SV4Simulation
+  VTK::SVCore

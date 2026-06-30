@@ -1,0 +1,12 @@
+NAME
+    VTK::SV4MachineLearning
+LIBRARY_NAME
+    vtkSV4MachineLearning
+GROUPS
+    SV
+    SV4GUI
+EXCLUDE_WRAP
+DEPENDS
+    VTK::SVCore
+    VTK::SV4Path
+    VTK::SV4Segmentation

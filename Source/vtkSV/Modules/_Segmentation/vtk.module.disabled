@@ -1,0 +1,23 @@
+NAME
+    VTK::SVSegmentation
+LIBRARY_NAME
+    vtkSVSegmentation
+GROUPS
+    SV
+    VTKSV
+DEPENDS
+    VTK::CommonCore
+    VTK::CommonDataModel
+    VTK::CommonExecutionModel
+    VTK::CommonMath
+    VTK::CommonMisc
+    VTK::CommonTransforms
+    VTK::FiltersCore
+    VTK::FiltersGeneral
+    VTK::FiltersGeometry
+    VTK::FiltersSources
+    VTK::SVCommon
+    VTK::SVCore
+    VTK::SVIO
+    VTK::SVMisc
+    VTK::SVParameterization

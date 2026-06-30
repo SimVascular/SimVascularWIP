@@ -13,7 +13,20 @@ runs.
 
 ---
 
-## Dependencies
+## System Dependencies
+
+### Python (system)
+|                |                                                     |
+|----------------|-----------------------------------------------------|
+| **Version**    | 3.12                                                |
+| **Components** | Development                                         |
+| **How found**  | `find_package(Python)` before the superbuild branch |
+
+Python is not built by the superbuild. It must be installed on the host and
+locatable by CMake. `Python_DIR` is forwarded from the superbuild configure into
+the inner SimVascular build.
+
+---
 
 ### Qt6 (system)
 | | |
@@ -26,9 +39,9 @@ Qt6 is not built by the superbuild. It must be installed on the host and
 locatable by CMake. `Qt6_DIR` is forwarded from the superbuild configure into
 the inner SimVascular build.
 
----
+## Superbuild Dependencies
 
-### VTK 9.3.1
+## VTK 9.3.1
 | | |
 |---|---|
 | **Source** | https://gitlab.kitware.com/vtk/vtk.git `v9.3.1` |

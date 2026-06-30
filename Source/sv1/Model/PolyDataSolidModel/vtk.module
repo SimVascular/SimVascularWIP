@@ -1,0 +1,24 @@
+NAME
+    VTK::SV1ModelPolyDataSolidModel
+LIBRARY_NAME
+    vtkSV1ModelPolyDataSolidModel
+GROUPS
+    SV
+    SV1
+DEPENDS
+  VTK::CommonCore
+  VTK::CommonDataModel
+  VTK::CommonExecutionModel
+  VTK::CommonTransforms
+  VTK::FiltersCore
+  VTK::FiltersGeneral
+  VTK::FiltersGeometry
+  VTK::FiltersSources
+  VTK::IOGeometry
+  VTK::IOLegacy
+  VTK::IOPLY
+  VTK::IOXML
+  VTK::SV1Geometry
+  VTK::SV1ModelSolidModel
+  VTK::SVBoolean
+  VTK::SVCore

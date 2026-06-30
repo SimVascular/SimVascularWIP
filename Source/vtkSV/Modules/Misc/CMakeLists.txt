@@ -1,0 +1,52 @@
+set(vtkSVMisc_HEADERS
+    vtkSVIntegrateAttributes.h
+    vtkSVCleanUnstructuredGrid.h
+    vtkSVSurfaceMapper.h
+    vtkSVLoftSplineSurface.h
+    vtkSVGetBoundaryFaces.h
+    vtkSVHausdorffDistance.h
+    vtkSVGetSphereRegions.h
+    vtkSVFillHolesWithIdsFilter.h
+    vtkSVIntegrateFlowThroughSurface.h
+    vtkSVPlacePointsOnS2.h
+    vtkSVCellComplexThinner.h
+    vtkSVPickPointSeedSelector.h
+    vtkSVOpenProfilesSeedSelector.h
+    vtkSVPolyDataSurfaceInspector.h
+    vtkSVSurfaceVectors.h
+    vtkSVSeedSelector.h
+    vtkSVIdListSeedSelector.h
+    vtkSVFindSeparateRegions.h
+    vtkSVPolyDataEdgeSplitter.h
+    vtkSVFindGeodesicPath.h
+    vtkSVPassDataArray.h
+)
+
+set(vtkSVMisc_SOURCES
+    vtkSVIdListSeedSelector.cxx
+    vtkSVHausdorffDistance.cxx
+    vtkSVCleanUnstructuredGrid.cxx
+    vtkSVPickPointSeedSelector.cxx
+    vtkSVPolyDataSurfaceInspector.cxx
+    vtkSVFindSeparateRegions.cxx
+    vtkSVLoftSplineSurface.cxx
+    vtkSVGetBoundaryFaces.cxx
+    vtkSVPlacePointsOnS2.cxx
+    vtkSVIntegrateAttributes.cxx
+    vtkSVPolyDataEdgeSplitter.cxx
+    vtkSVSurfaceMapper.cxx
+    vtkSVPassDataArray.cxx
+    vtkSVSeedSelector.cxx
+    vtkSVFillHolesWithIdsFilter.cxx
+    vtkSVIntegrateFlowThroughSurface.cxx
+    vtkSVCellComplexThinner.cxx
+    vtkSVGetSphereRegions.cxx
+    vtkSVSurfaceVectors.cxx
+    vtkSVFindGeodesicPath.cxx
+    vtkSVOpenProfilesSeedSelector.cxx
+)
+
+vtk_module_add_module(VTK::SVMisc
+    HEADERS ${vtkSVMisc_HEADERS}
+    SOURCES ${vtkSVMisc_SOURCES}
+)

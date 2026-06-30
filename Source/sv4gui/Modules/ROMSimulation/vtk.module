@@ -1,0 +1,14 @@
+NAME
+    VTK::SV4ROMSimulation
+LIBRARY_NAME
+    vtkSV4ROMSimulation
+GROUPS
+    SV
+    SV4GUI
+DEPENDS
+  VTK::CommonCore
+  VTK::CommonDataModel
+  VTK::IOXML
+  VTK::SV1Geometry
+  VTK::SV4Common
+  VTK::SV4Segmentation

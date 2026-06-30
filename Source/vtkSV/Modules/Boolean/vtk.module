@@ -1,0 +1,12 @@
+NAME
+    VTK::SVBoolean
+LIBRARY_NAME
+    vtkSVBoolean
+GROUPS
+    SV
+    VTKSV
+DEPENDS
+    VTK::SVCore
+    VTK::CommonCore
+    VTK::SVCommon
+    VTK::SVIO

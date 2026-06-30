@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<template >
+    <format version="1.0" />
+    <section name="Time Step">
+        <param name="Number of Timesteps" value="" type="int" />
+        <param name="Time Step Size" value="" type="double" />
+        <param name="Spectral radius of infinite time step" value="0.5" type="double" />
+    </section>
+    <section name="Output">
+        <param name="Save results in folder" value="N-procs" type="text"/>
+        <param name="Increment in saving restart files" value="10" type="int" />
+        <param name="Start saving after time step" value="1" type="int" />
+        <param name="Save results to VTK format" value="true" type="enum" enum_list="true;false"/>
+        <param name="Name prefix of saved VTK files" value="result" type="text"/>
+        <param name="Increment in saving VTK files" value="10" type="int" />
+    </section>
+    <section name="Nonlinear Solver">
+        <param name="Min iterations" value="3" type="int" />
+        <param name="Max iterations" value="12" type="int" />
+        <param name="Tolerance" value="1e-5" type="double" />
+        <param name="Backflow stabilization coefficient" value="0.2" type="double" />
+    </section>
+    <section name="Linear Solver">
+        <param name="Solver" value="NS" type="enum" enum_list="NS;GMRES;CG" />
+        <param name="Max iterations" value="15" type="int" />
+        <param name="NS GM max iterations" value="10" type="int" />
+        <param name="NS GM tolerance" value="1e-3" type="double" />
+        <param name="NS CG max iterations" value="300" type="int" />
+        <param name="NS CG tolerance" value="1e-3" type="double" />
+        <param name="Krylov space dimension" value="200" type="int" />
+        <param name="Tolerance" value="1e-4" type="double" />
+        <param name="Absolute tolerance" value="1e-10" type="double" />
+    </section>
+</template>

@@ -1,0 +1,31 @@
+NAME
+    VTK::SV4ModelCommon
+LIBRARY_NAME
+    vtkSV4ModelCommon
+GROUPS
+    SV
+    SV4GUI
+DEPENDS
+    VTK::CommonCore
+    VTK::CommonDataModel
+    VTK::CommonMisc
+    VTK::FiltersCore
+    VTK::FiltersExtraction
+    VTK::FiltersGeneral
+    VTK::FiltersGeometry
+    VTK::FiltersModeling
+    VTK::FiltersSources
+    VTK::IOXML
+    VTK::RenderingCore
+    VTK::RenderingOpenGL2
+    VTK::SV1Geometry
+    VTK::SV1MeshVMTKUtils
+    VTK::SV1ModelPolyDataSolidModel
+    VTK::SV1ModelSolidModel
+    VTK::SV3Path
+    VTK::SV4Common
+    VTK::SV4Path
+    VTK::SV4Segmentation
+    VTK::SVCommon
+    VTK::SVCore
+    VTK::SVNURBS

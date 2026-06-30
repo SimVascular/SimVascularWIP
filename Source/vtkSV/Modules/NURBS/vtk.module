@@ -1,0 +1,13 @@
+NAME
+    VTK::SVNURBS
+LIBRARY_NAME
+    vtkSVNURBS
+GROUPS
+    SV
+    VTKSV
+DEPENDS
+    VTK::CommonCore
+    VTK::SVCommon
+    VTK::SVCore
+    VTK::SVIO
+    VTK::SVMisc

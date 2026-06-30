@@ -1,0 +1,14 @@
+NAME
+    VTK::SV4Common
+LIBRARY_NAME
+    vtkSV4Common
+GROUPS
+    SV
+    SV4GUI
+DEPENDS
+    VTK::CommonComputationalGeometry
+    VTK::CommonCore
+    VTK::CommonDataModel
+    VTK::FiltersCore
+    VTK::SV3Path
+    VTK::SVCore

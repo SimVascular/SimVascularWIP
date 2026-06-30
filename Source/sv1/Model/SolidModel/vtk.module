@@ -1,0 +1,9 @@
+NAME
+    VTK::SV1ModelSolidModel
+LIBRARY_NAME
+    vtkSV1ModelSolidModel
+GROUPS
+    SV
+    SV1
+DEPENDS
+    VTK::SVCore

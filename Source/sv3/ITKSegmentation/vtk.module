@@ -1,0 +1,23 @@
+NAME
+    VTK::SV3ITKSegmentation
+LIBRARY_NAME
+    vtkSV3ITKSegmentation
+GROUPS
+    SV
+    SV3
+EXCLUDE_WRAP
+DEPENDS
+    VTK::CommonComputationalGeometry
+    VTK::CommonCore
+    VTK::CommonDataModel
+    VTK::CommonMath
+    VTK::FiltersCore
+    VTK::FiltersGeneral
+    VTK::FiltersSources
+    VTK::IOImage
+    VTK::ImagingCore
+    VTK::ImagingStencil
+    VTK::InteractionImage
+    VTK::RenderingCore
+    VTK::SV1ModelSolidModel
+    VTK::SVCore

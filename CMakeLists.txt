@@ -16,6 +16,9 @@ endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Find Python
+find_package(Python 3.12 COMPONENTS Development.Module REQUIRED)
+
 # Find Qt
 find_package(Qt6 6.10 COMPONENTS Core CoreTools Gui Widgets REQUIRED)
 
@@ -24,6 +27,8 @@ find_package(Qt6 6.10 COMPONENTS Core CoreTools Gui Widgets REQUIRED)
 #-----------------------------------------------------------------------------
 option(SimVascular_SUPERBUILD "Build SimVascular and its external dependencies via CMake superbuild." ON)
 mark_as_advanced(SimVascular_SUPERBUILD)
+
+option(SV_WRAP_PYTHON "Build SimVascular Python Bindings" ON)
 
 if(SimVascular_SUPERBUILD)
   add_subdirectory(SuperBuild)
@@ -39,5 +44,7 @@ include(${ITK_USE_FILE})
 find_package(VTK REQUIRED)
 
 find_package(MITK REQUIRED)
+
+find_package(tinyxml2 REQUIRED)
 
 add_subdirectory(Source)

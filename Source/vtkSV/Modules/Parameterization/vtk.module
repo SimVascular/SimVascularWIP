@@ -1,0 +1,24 @@
+NAME
+    VTK::SVParameterization
+LIBRARY_NAME
+    vtkSVParameterization
+GROUPS
+    SV
+    VTKSV
+DEPENDS
+    VTK::CommonCore
+    VTK::CommonDataModel
+    VTK::CommonExecutionModel
+    VTK::CommonMath
+    VTK::CommonMisc
+    VTK::CommonTransforms
+    VTK::FiltersCore
+    VTK::FiltersGeneral
+    VTK::FiltersGeometry
+    VTK::FiltersModeling
+    VTK::IOXML
+    VTK::SVCommon
+    VTK::SVGeometry
+    VTK::SVIO
+    VTK::SVMisc
+    VTK::SVNURBS

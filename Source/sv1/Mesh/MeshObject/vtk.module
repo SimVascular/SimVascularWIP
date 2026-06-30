@@ -1,0 +1,10 @@
+NAME
+    VTK::SV1MeshMeshObject
+LIBRARY_NAME
+    vtkSV1MeshMeshObject
+GROUPS
+    SV
+    SV1
+DEPENDS
+    VTK::SV1ModelSolidModel
+    VTK::SVCore

@@ -1,0 +1,10 @@
+NAME
+    VTK::SV1MeshTetGenMeshObject
+LIBRARY_NAME
+    vtkSV1MeshTetGenMeshObject
+GROUPS
+    SV
+    SV1
+DEPENDS
+    VTK::SVCore
+    VTK::CommonCore

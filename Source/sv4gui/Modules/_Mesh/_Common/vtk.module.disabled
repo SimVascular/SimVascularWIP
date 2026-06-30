@@ -1,0 +1,26 @@
+NAME
+    VTK::SV4MeshCommon
+LIBRARY_NAME
+    vtkSV4MeshCommon
+GROUPS
+    SV
+    SV4GUI
+DEPENDS
+    VTK::CommonCore
+    VTK::CommonDataModel
+    VTK::CommonMisc
+    VTK::FiltersCore
+    VTK::FiltersExtraction
+    VTK::FiltersGeneral
+    VTK::FiltersGeometry
+    VTK::IOXML
+    VTK::RenderingCore
+    VTK::RenderingOpenGL2
+    VTK::SV1MeshTetGenAdapt
+    VTK::SV1MeshTetGenMeshObject
+    VTK::SV1ModelPolyDataSolidModel
+    VTK::SV4Common
+    VTK::SV4ModelCommon
+    VTK::SV4Path
+    VTK::SV4Segmentation
+    VTK::SVCore

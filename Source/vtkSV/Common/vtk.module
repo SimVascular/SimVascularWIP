@@ -1,0 +1,14 @@
+NAME
+    VTK::SVCommon
+LIBRARY_NAME
+    vtkSVCommon
+GROUPS
+    SV
+    VTKSV
+DEPENDS
+    VTK::CommonCore
+    VTK::FiltersExtraction
+    VTK::FiltersSources
+    VTK::InteractionStyle
+    VTK::RenderingCore
+    VTK::SVCore
