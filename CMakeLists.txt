@@ -45,7 +45,7 @@ find_package(VTK REQUIRED)
 
 find_package(VMTK REQUIRED)
 
-find_package(MITK REQUIRED)
+# find_package(MITK REQUIRED)
 
 find_package(tinyxml2 REQUIRED)
 

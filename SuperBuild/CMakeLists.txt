@@ -48,8 +48,8 @@ list(APPEND SimVascular_DEPENDENCIES tinyxml2)
 include(${CMAKE_CURRENT_SOURCE_DIR}/External_VMTK.cmake)
 list(APPEND SimVascular_DEPENDENCIES VMTK)
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/External_MITK.cmake)
-list(APPEND SimVascular_DEPENDENCIES MITK)
+# include(${CMAKE_CURRENT_SOURCE_DIR}/External_MITK.cmake)
+# list(APPEND SimVascular_DEPENDENCIES MITK)
 
 #-----------------------------------------------------------------------------
 # Arguments forwarded to the inner (non-superbuild) SimVascular configure
@@ -63,7 +63,7 @@ set(SimVascular_superbuild_ep_args
   -DGDCM_DIR:PATH=${GDCM_DIR}
   -DHDF5_DIR:PATH=${HDF5_DIR}
   -DITK_DIR:PATH=${ITK_DIR}
-  -DMITK_DIR:PATH=${MITK_DIR}
+  # -DMITK_DIR:PATH=${MITK_DIR}
   -DOpenCASCADE_DIR:PATH=${OpenCASCADE_DIR}
   -DMMG_DIR:PATH=${MMG_DIR}
   -DMMG_INCLUDE_DIR:PATH=${MMG_INCLUDE_DIR}
