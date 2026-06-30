@@ -52,11 +52,11 @@ typedef struct {
 // PyCircleCopySegmentationData
 //------------------------------
 //
-void PyCircleCopySegmentationData(sv4guiContour* sv4Contour, PyObject* contourObj)
-{
-  auto contour = ((PySegmentation*)contourObj)->contour;
-  PySegmentationCopySv4ContourData(sv4Contour, contour);
-}
+// void PyCircleCopySegmentationData(sv4guiContour* sv4Contour, PyObject* contourObj)
+// {
+//   auto contour = ((PySegmentation*)contourObj)->contour;
+//   PySegmentationCopySv4ContourData(sv4Contour, contour);
+// }
 
 //////////////////////////////////////////////////////
 //          C l a s s    M e t h o d s              //
@@ -422,7 +422,7 @@ PyCircleSegmentationInit(PyCircleSegmentation* self, PyObject* args, PyObject *k
 
   // Create the circle contour.
   self->super.contour = new sv3::circleContour();
-  self->super.CopySv4ContourData = PyCircleCopySegmentationData;
+  // self->super.CopySv4ContourData = PyCircleCopySegmentationData;
   auto circleContour = dynamic_cast<sv3::circleContour*>(self->super.contour);
 
   // Set circle data if it has been given.

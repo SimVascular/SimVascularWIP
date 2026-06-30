@@ -59,20 +59,20 @@ typedef struct {
 // PyContourCopySegmentationData
 //-------------------------------
 //
-void PyContourCopySegmentationData(sv4guiContour* sv4Contour, PyObject* contourObj)
-{
-  auto svContour = ((PySegmentation*)contourObj)->contour;
-  PySegmentationCopySv4ContourData(sv4Contour, svContour);
+// void PyContourCopySegmentationData(sv4guiContour* sv4Contour, PyObject* contourObj)
+// {
+//   auto svContour = ((PySegmentation*)contourObj)->contour;
+//   PySegmentationCopySv4ContourData(sv4Contour, svContour);
 
-  // Set PyContourSegmentation data.
-  //
-  auto contour = (PyContourSegmentation*)contourObj;
-  contour->center = svContour->GetCenterPoint();
+//   // Set PyContourSegmentation data.
+//   //
+//   auto contour = (PyContourSegmentation*)contourObj;
+//   contour->center = svContour->GetCenterPoint();
 
-  double normal[3];
-  svContour->GetPlaneGeometry()->GetNormal(normal);
-  contour->normal = {normal[0], normal[1], normal[2]};
-}
+//   double normal[3];
+//   svContour->GetPlaneGeometry()->GetNormal(normal);
+//   contour->normal = {normal[0], normal[1], normal[2]};
+// }
 
 //-----------------------
 // PyContourGenerateData
@@ -259,7 +259,7 @@ PyContourSegmentationInit(PyContourSegmentation* self, PyObject* args, PyObject 
   // Create the SV Contour object.
   //
   self->super.contour = new sv3::Contour();
-  self->super.CopySv4ContourData = PyContourCopySegmentationData;
+  // self->super.CopySv4ContourData = PyContourCopySegmentationData;
   self->planeDistTol = 1e-6;
 
   if ((args == nullptr) && (kwargs == nullptr)) {

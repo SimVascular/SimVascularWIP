@@ -41,7 +41,7 @@
 #include "vtkSmartPointer.h"
 #include "vtkPolyData.h"
 #include "sv3_Contour.h"
-#include "sv4gui_ContourGroup.h"
+#include "sv3_ContourGroup.h"
 
 #include <array>
 #include <map>

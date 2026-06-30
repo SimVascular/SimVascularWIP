@@ -83,28 +83,28 @@ typedef struct {
 // PySplinePolygonCopySegmentationData
 //-------------------------------------
 //
-void PySplinePolygonCopySegmentationData(sv4guiContour* sv4Contour, PyObject* contourObj)
-{
-  auto contour = ((PySegmentation*)contourObj)->contour;
-  PySegmentationCopySv4ContourData(sv4Contour, contour);
+// void PySplinePolygonCopySegmentationData(sv4guiContour* sv4Contour, PyObject* contourObj)
+// {
+//   auto contour = ((PySegmentation*)contourObj)->contour;
+//   PySegmentationCopySv4ContourData(sv4Contour, contour);
 
-  // Set PySplinePolygonSegmentation data.
-  //
-  auto polygonContour = (PySplinePolygonSegmentation*)contourObj;
-  polygonContour->center = contour->GetCenterPoint();
+//   // Set PySplinePolygonSegmentation data.
+//   //
+//   auto polygonContour = (PySplinePolygonSegmentation*)contourObj;
+//   polygonContour->center = contour->GetCenterPoint();
 
-  double normal[3];
-  contour->GetPlaneGeometry()->GetNormal(normal);
-  polygonContour->normal = {normal[0], normal[1], normal[2]};
+//   double normal[3];
+//   contour->GetPlaneGeometry()->GetNormal(normal);
+//   polygonContour->normal = {normal[0], normal[1], normal[2]};
 
-  // Copy control points omittinng the first two which
-  // are the polygon center and scaling factor.
-  //
-  auto controlPoints = contour->GetControlPoints();
-  for (int i = 2; i < controlPoints.size(); i++) {
-      polygonContour->controlPoints.push_back(controlPoints[i]);
-  }
-}
+//   // Copy control points omittinng the first two which
+//   // are the polygon center and scaling factor.
+//   //
+//   auto controlPoints = contour->GetControlPoints();
+//   for (int i = 2; i < controlPoints.size(); i++) {
+//       polygonContour->controlPoints.push_back(controlPoints[i]);
+//   }
+// }
 
 //-----------------------------
 // PySplinePolygonGenerateData
@@ -506,7 +506,7 @@ PySplinePolygonSegmentationInit(PySplinePolygonSegmentation* self, PyObject* arg
   }
 
   self->super.contour = new sv3::ContourSplinePolygon();
-  self->super.CopySv4ContourData = PySplinePolygonCopySegmentationData;
+  // self->super.CopySv4ContourData = PySplinePolygonCopySegmentationData;
   self->planeDistTol = 1e-6;
 
   if ((args == nullptr) && (kwargs == nullptr)) {
