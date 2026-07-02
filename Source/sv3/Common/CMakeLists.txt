@@ -11,4 +11,4 @@ vtk_module_add_module(VTK::SV3Common
     SOURCES ${vtkSV3Common_SOURCES}
 )
 
-vtk_module_link(VTK::SV3Common PUBLIC tinyxml2)  # todo superbuild
+vtk_module_link(VTK::SV3Common PUBLIC tinyxml2::tinyxml2)
