@@ -14,6 +14,7 @@ set(ep_common_cmake_args
   -DCMAKE_CXX_STANDARD_REQUIRED:BOOL=ON
   -DCMAKE_CXX_EXTENSIONS:BOOL=OFF
   -DBUILD_TESTING:BOOL=OFF
+  -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 )
 
 #-----------------------------------------------------------------------------
