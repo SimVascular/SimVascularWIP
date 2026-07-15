@@ -50,14 +50,13 @@
 #include "Geometry_PyModule.h"
 #include "sv_sys_geom.h"
 #include "sv_SolidModel.h"
-#include "Modeling_PyModule.h"
 #include "sv_integrate_surface.h"
 
 #include "sv_vtk_utils.h"
+#include "vtkCellData.h"
 #include "vtkSmartPointer.h"
 #include "PyUtils.h"
 #include "vtkPythonUtil.h"
-#include "sv4gui_ModelUtils.h"
 
 // Needed for Windows
 #ifdef GetObject
@@ -95,6 +94,48 @@ GetVtkPolyData(PyUtilApiFunction& api, PyObject* obj)
       api.error("The polydata argument is not a vtkPolyData object.");
   }
   return polydata;
+}
+
+//----------------------
+// CreatePolyDataByBlend
+//----------------------
+// Blend a surface across the shared edge of two faces identified by
+// faceID1 and faceID2, within the given radius.
+//
+// Ported from sv4guiModelUtils::CreatePolyDataByBlend()
+// (Source/sv4gui/Modules/_Model/_Common/sv4gui_ModelUtils.cxx) to remove
+// this module's dependency on sv4gui/MITK; the sv4gui version is a thin
+// wrapper around the same sys_geom_ calls used here.
+//
+static vtkPolyData*
+CreatePolyDataByBlend(vtkPolyData* vpdsrc, int faceID1, int faceID2, double radius, int numBlendIters,
+    int numSubblendIters, int numSubdivisionIters, int numCgSmoothIters, int numLapSmoothIters,
+    double targetDecimation)
+{
+  if (vpdsrc == nullptr) {
+      return nullptr;
+  }
+
+  cvPolyData srcCvPolyData(vpdsrc);
+  cvPolyData* dst = nullptr;
+  int faceIDs[2] = {faceID1, faceID2};
+
+  if (sys_geom_set_array_for_local_op_face_blend(&srcCvPolyData, &dst, "ModelFaceID", faceIDs, 2, radius,
+        "ActiveCells", 1) != SV_OK) {
+      return nullptr;
+  }
+
+  cvPolyData* dst2 = nullptr;
+
+  if (sys_geom_local_blend(dst, &dst2, numBlendIters, numSubblendIters, numSubdivisionIters, numCgSmoothIters,
+        numLapSmoothIters, targetDecimation, nullptr, "ActiveCells") != SV_OK) {
+      return nullptr;
+  }
+
+  vtkPolyData* vpd = dst2->GetVtkPolyData();
+  vpd->GetCellData()->RemoveArray("ActiveCells");
+
+  return vpd;
 }
 
 //--------------------
@@ -448,18 +489,8 @@ Geom_local_blend(PyObject* self, PyObject* args, PyObject* kwargs)
   std::cout << "[Geom_local_blend] targetDecimation: " << targetDecimation << std::endl;
   #endif
 
-  // Set svBlendParam parameters.
-  sv4guiModelElement::svBlendParam params;
-  params.numblenditers = numBlendIters;
-  params.numsubblenditers = numSubblendIters;
-  params.numsubdivisioniters = numSubdivisionIters;
-  params.numcgsmoothiters = numCgSmoothIters;
-  params.numlapsmoothiters = numLapSmoothIters;
-  params.targetdecimation = targetDecimation;
-
   // Compute data needed for blending.
   //
-  std::vector<sv4guiModelElement::svBlendParamRadius> blendRadii;
   vtkSmartPointer<vtkPolyData> lastsurfPolydata = surfPolydata;
   int numFaces = PyList_Size(facesArg);
   for (int i = 0; i < numFaces; i++) {
@@ -475,9 +506,8 @@ Geom_local_blend(PyObject* self, PyObject* args, PyObject* kwargs)
           return nullptr;
       }
 
-      blendRadii.push_back(sv4guiModelElement::svBlendParamRadius(faceID1, faceID2, radius));
-
-      lastsurfPolydata = sv4guiModelUtils::CreatePolyDataByBlend(lastsurfPolydata, faceID1, faceID2, radius, &params);
+      lastsurfPolydata = CreatePolyDataByBlend(lastsurfPolydata, faceID1, faceID2, radius, numBlendIters,
+          numSubblendIters, numSubdivisionIters, numCgSmoothIters, numLapSmoothIters, targetDecimation);
 
       if (lastsurfPolydata == nullptr) {
           api.error("Failed creating blend data.");
