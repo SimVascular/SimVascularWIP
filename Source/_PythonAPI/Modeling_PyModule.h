@@ -36,11 +36,10 @@
 
 #include "vtkSVPythonAPIModule.h"
 
-#include "sv4gui_Model.h"
+#include "sv3_ModelGroup.h"
 #include "sv_SolidModel.h"
 
-// Need to define this when including sv4gui_ModelIO.h..
-//nate#define US_MODULE_NAME 
+#include <memory>
 
 #include "Python.h"
 
@@ -57,7 +56,7 @@ extern "C" VTKSVPYTHONAPI_EXPORT void PyAPI_InitParasolid(CreateSolidModelObject
 
 SolidModel_KernelT VTKSVPYTHONAPI_EXPORT ModelingKernelNameToEnum(std::string name);
 
-VTKSVPYTHONAPI_EXPORT PyObject* CreatePyModelingSeries(sv4guiModel::Pointer solidGroup);
+VTKSVPYTHONAPI_EXPORT PyObject* CreatePyModelingSeries(std::unique_ptr<sv3::ModelGroup> solidGroup);
 VTKSVPYTHONAPI_EXPORT PyObject* CreatePyModelingModelObject(cvSolidModel* solidModel);
 
 //-----------------
@@ -74,18 +73,17 @@ typedef struct {
 } PyModelingModel;
 
 //-----------------
-// PyModelingSeries 
+// PyModelingSeries
 //-----------------
 // The modeling.Series class is used to store data for
 // time-varying models.
 //
-// In SV time-varying meshe are stored in the sv4guiModel class. 
+// Time-varying models are stored in the sv3::ModelGroup class.
 //
-typedef struct PyModelingSeries 
+typedef struct PyModelingSeries
 {
   PyObject_HEAD
-  sv4guiModel::Pointer solidGroupPointer;
-  sv4guiModel* solidGroup;
+  std::unique_ptr<sv3::ModelGroup> solidGroup;
   int id;
 } PyModelingSeries;
 
