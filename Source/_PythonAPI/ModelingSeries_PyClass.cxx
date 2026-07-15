@@ -36,10 +36,11 @@
 //
 //     models = modeling.Series()
 //
-// The SV modeling group code this interfaces to resides in sv4gui/Modules/Modeling/Common which
-// uses MITK manage time-varying meshes.
+// The SV modeling group code this interfaces to resides in sv3/Model, a
+// lightweight, MITK-free replacement for the sv4gui/Modules/Modeling/Common
+// classes that used MITK to manage time-varying models.
 //
-#include "sv4gui_ModelIO.h"
+#include "sv3_ModelGroup.h"
 
 //////////////////////////////////////////////////////
 //          U t i l i t y  F u n c t i o n s        //
@@ -48,26 +49,24 @@
 //---------------------
 // ModelingSeries_read
 //---------------------
-// Read in an SV .mdl file and create a sv4guiModel::Pointer object
+// Read in an SV .mdl file and create a sv3::ModelGroup object
 // from its contents.
 //
-sv4guiModel::Pointer
+std::unique_ptr<sv3::ModelGroup>
 ModelingSeries_read(char* fileName)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
   //std::cout << "[ModelingSeries_read] File name: " << fileName << std::endl;
-  sv4guiModel::Pointer group;
+  std::unique_ptr<sv3::ModelGroup> group;
 
   try {
-      group = sv4guiModelIO().CreateGroupFromFile(std::string(fileName));
+      group = sv3::ModelGroup::CreateGroupFromFile(std::string(fileName));
   } catch (...) {
       api.error("Error reading the model group file '" + std::string(fileName) + "'.");
       return nullptr;
   }
 
-  auto solidGroup = dynamic_cast<sv4guiModel*>(group.GetPointer());
-  int numSolids = solidGroup->GetTimeSize();
-  //std::cout << "[ModelingSeries_read] Number of solids: " << numSolids << std::endl;
+  //std::cout << "[ModelingSeries_read] Number of solids: " << group->GetTimeSize() << std::endl;
 
   return group;
 }
@@ -93,7 +92,7 @@ PyDoc_STRVAR(ModelingSeries_get_num_times_doc,
 static PyObject *
 ModelingSeries_get_num_times(PyModelingSeries* self, PyObject* args)
 {
-  auto solidGroup = self->solidGroup;
+  auto& solidGroup = self->solidGroup;
   int numSolidModels = solidGroup->GetTimeSize();
   return Py_BuildValue("i", numSolidModels);
 }
@@ -128,7 +127,7 @@ ModelingSeries_get_model(PyModelingSeries* self, PyObject* args, PyObject* kwarg
 
   // Check for valid index.
   //
-  auto solidGroup = self->solidGroup;
+  auto& solidGroup = self->solidGroup;
   int numSolids = solidGroup->GetTimeSize();
 
   if ((index < 0) || (index > numSolids-1)) {
@@ -190,11 +189,10 @@ ModelingSeries_write(PyModelingSeries* self, PyObject* args, PyObject* kwargs)
       return api.argsError();
   }
 
-  auto modelGroup = self->solidGroup;
   std::string fileName(fileNameArg);
 
   try {
-      sv4guiModelIO().WriteGroupToFile(modelGroup, fileName);
+      sv3::ModelGroup::WriteToFile(self->solidGroup.get(), fileName);
   } catch (const std::exception& readException) {
       api.error("Error writing modeling group to the file '" + std::string(fileName) + "': " + readException.what());
       return nullptr;
@@ -290,10 +288,9 @@ PyModelingSeriesInit(PyModelingSeries* self, PyObject* args)
       return 1;
   }
   if (fileName != nullptr) {
-      self->solidGroupPointer = ModelingSeries_read(fileName);
-      self->solidGroup = dynamic_cast<sv4guiModel*>(self->solidGroupPointer.GetPointer());
+      self->solidGroup = ModelingSeries_read(fileName);
   } else {
-      self->solidGroup = sv4guiModel::New();
+      self->solidGroup = std::make_unique<sv3::ModelGroup>();
   }
   if (self->solidGroup == nullptr) {
       std::cout << "[PyModelingSeriesInit] ERROR reading File name: " << fileName << std::endl;
@@ -330,8 +327,6 @@ static void
 PyModelingSeriesDealloc(PyModelingSeries* self)
 {
   //std::cout << "[PyModelingSeriesDealloc] Free PyModelingSeries" << std::endl;
-  // Can't delete solidGroup because it has a protected detructor.
-  //delete self->solidGroup;
   Py_TYPE(self)->tp_free(self);
 }
 
@@ -366,13 +361,12 @@ SetModelingSeriesTypeFields(PyTypeObject& solidType)
 // for the PyModelingSeriesType.solidGroup data.
 //
 PyObject *
-CreatePyModelingSeries(sv4guiModel::Pointer solidGroup)
+CreatePyModelingSeries(std::unique_ptr<sv3::ModelGroup> solidGroup)
 {
   auto modelingSeriesObj = PyObject_CallObject((PyObject*)&PyModelingSeriesType, nullptr);
   auto pyModelingSeries = (PyModelingSeries*)modelingSeriesObj;
   if (solidGroup != nullptr) {
-      //delete pyModelingSeries->solidGroup;
-      pyModelingSeries->solidGroup = solidGroup;
+      pyModelingSeries->solidGroup = std::move(solidGroup);
   }
 
   return modelingSeriesObj;

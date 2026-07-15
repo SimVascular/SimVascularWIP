@@ -36,7 +36,6 @@
 
 #include "sv_sys_geom.h"
 
-#include "sv4gui_ModelUtils.h"
 #include <vtkMath.h>
 #include "vtkSVGlobals.h"
 #include "vtkSVNURBSSurface.h"
@@ -45,6 +44,9 @@
 
 #include "vtkCellData.h"
 #include "vtkCellLocator.h"
+#include "vtkCleanPolyData.h"
+#include "vtkFillHolesFilter.h"
+#include "vtkPolyDataNormals.h"
 
 //-----------------
 // PyPolyDataSolid
@@ -58,6 +60,243 @@ typedef struct {
 //////////////////////////////////////////////////////
 //          U t i l i t i e s                       //
 //////////////////////////////////////////////////////
+
+//----------------------------------------------------
+//   L o c a l   s v 4 g u i M o d e l U t i l s      //
+//   p o r t s                                       //
+//----------------------------------------------------
+// The functions below are ported from sv4guiModelUtils
+// (Source/sv4gui/Modules/_Model/_Common/sv4gui_ModelUtils.cxx) to remove
+// this module's dependency on sv4gui/MITK. They are thin wrappers around
+// sys_geom_ and VTK calls, unchanged from the sv4gui originals.
+
+//--------
+// Orient
+//--------
+static vtkPolyData*
+Orient(vtkPolyData* inpd)
+{
+  auto cleaner = vtkSmartPointer<vtkCleanPolyData>::New();
+  cleaner->PointMergingOn();
+  cleaner->ConvertLinesToPointsOff();
+  cleaner->ConvertPolysToLinesOff();
+  cleaner->SetInputData(inpd);
+  cleaner->Update();
+
+  auto orienter = vtkSmartPointer<vtkPolyDataNormals>::New();
+  orienter->SetInputData(cleaner->GetOutput());
+  orienter->AutoOrientNormalsOn();
+  orienter->ComputePointNormalsOff();
+  orienter->FlipNormalsOn();
+  orienter->SplittingOff();
+  orienter->ComputeCellNormalsOn();
+  orienter->ConsistencyOn();
+  orienter->NonManifoldTraversalOff();
+  orienter->Update();
+
+  vtkPolyData* outpd = vtkPolyData::New();
+  outpd->DeepCopy(orienter->GetOutput());
+  return outpd;
+}
+
+//-----------
+// FillHoles
+//-----------
+static vtkPolyData*
+FillHoles(vtkPolyData* inpd)
+{
+  auto filler = vtkSmartPointer<vtkFillHolesFilter>::New();
+  filler->SetHoleSize(filler->GetHoleSizeMaxValue());
+  filler->SetInputData(inpd);
+  filler->Update();
+  return Orient(filler->GetOutput());
+}
+
+//------------------
+// FillHolesWithIDs
+//------------------
+static vtkPolyData*
+FillHolesWithIDs(vtkPolyData* inpd, int fillID, int fillType)
+{
+  cvPolyData* cvpd = new cvPolyData(inpd);
+  int numFilled = 0;
+  cvPolyData* tmpcvpd;
+
+  if (sys_geom_cap_with_ids(cvpd, &tmpcvpd, fillID, numFilled, fillType) != SV_OK) {
+    return nullptr;
+  }
+
+  if (tmpcvpd == nullptr) {
+    return nullptr;
+  }
+
+  vtkPolyData* outpd = Orient(tmpcvpd->GetVtkPolyData());
+  delete tmpcvpd;
+  return outpd;
+}
+
+//------------------------------------
+// CreateOrientOpenPolySolidVessel
+//------------------------------------
+static vtkPolyData*
+CreateOrientOpenPolySolidVessel(vtkPolyData* inpd)
+{
+  int originalCellNumber = inpd->GetNumberOfCells();
+
+  vtkPolyData* tmppd = FillHoles(inpd);
+
+  auto nrmls = vtkSmartPointer<vtkPolyDataNormals>::New();
+  nrmls->SplittingOff();
+  nrmls->ConsistencyOn();
+  nrmls->AutoOrientNormalsOn();
+  nrmls->ComputeCellNormalsOn();
+  nrmls->ComputePointNormalsOff();
+  nrmls->SetInputData(tmppd);
+  nrmls->Update();
+
+  vtkPolyData* outpd = vtkPolyData::New();
+  outpd->DeepCopy(nrmls->GetOutput());
+
+  for (int i = outpd->GetNumberOfCells()-1; i >= originalCellNumber; i--) {
+    if (outpd->GetCellType(i) == VTK_TRIANGLE) {
+      outpd->DeleteCell(i);
+    }
+  }
+  outpd->RemoveDeletedCells();
+
+  tmppd->Delete();
+
+  return outpd;
+}
+
+//------------------------------------
+// CreateOrientClosedPolySolidVessel
+//------------------------------------
+static vtkPolyData*
+CreateOrientClosedPolySolidVessel(vtkPolyData* inpd)
+{
+  int fillID = 0;
+  int fillType = 0;
+
+  vtkPolyData* tmppd = FillHolesWithIDs(inpd, fillID, fillType);
+
+  auto nrmls = vtkSmartPointer<vtkPolyDataNormals>::New();
+  nrmls->SplittingOff();
+  nrmls->ConsistencyOn();
+  nrmls->AutoOrientNormalsOn();
+  nrmls->ComputeCellNormalsOn();
+  nrmls->ComputePointNormalsOff();
+  nrmls->SetInputData(tmppd);
+  nrmls->Update();
+
+  vtkPolyData* outpd = vtkPolyData::New();
+  outpd->DeepCopy(nrmls->GetOutput());
+
+  tmppd->Delete();
+
+  return outpd;
+}
+
+//---------------
+// DeleteRegions
+//---------------
+static bool
+DeleteRegions(vtkSmartPointer<vtkPolyData> inpd, std::vector<int> regionIDs)
+{
+  if (inpd == nullptr) {
+    return false;
+  }
+
+  std::string arrayname = "ModelFaceID";
+  if (!inpd->GetCellData()->HasArray(arrayname.c_str())) {
+    return false;
+  }
+
+  for (int i = 0; i < regionIDs.size(); i++) {
+    auto boundaryRegions = vtkIntArray::SafeDownCast(inpd->GetCellData()->GetScalars("ModelFaceID"));
+    inpd->BuildLinks();
+
+    for (vtkIdType cellId = 0; cellId < inpd->GetNumberOfCells(); cellId++) {
+      if (boundaryRegions->GetValue(cellId) == regionIDs[i]) {
+        inpd->DeleteCell(cellId);
+      }
+    }
+
+    inpd->RemoveDeletedCells();
+  }
+
+  return true;
+}
+
+//------------------
+// OrientVtkPolyData
+//------------------
+static vtkSmartPointer<vtkPolyData>
+OrientVtkPolyData(vtkSmartPointer<vtkPolyData> inpd)
+{
+  auto cleaner = vtkSmartPointer<vtkCleanPolyData>::New();
+  cleaner->PointMergingOn();
+  cleaner->ConvertLinesToPointsOff();
+  cleaner->ConvertPolysToLinesOff();
+  cleaner->SetInputDataObject(inpd);
+  cleaner->Update();
+
+  auto orienter = vtkSmartPointer<vtkPolyDataNormals>::New();
+  orienter->SetInputDataObject(cleaner->GetOutput());
+  orienter->AutoOrientNormalsOn();
+  orienter->ComputePointNormalsOff();
+  orienter->SplittingOff();
+  orienter->ComputeCellNormalsOn();
+  orienter->ConsistencyOn();
+  orienter->NonManifoldTraversalOff();
+  orienter->Update();
+
+  return orienter->GetOutput();
+}
+
+//-------------------
+// CreateCenterlines
+//-------------------
+// Compute the centerlines for the input surface model between the given
+// source and target point IDs.
+//
+static vtkPolyData*
+CreateCenterlines(vtkPolyData* inpd, vtkIdList* sourcePtIds, vtkIdList* targetPtIds)
+{
+  if (inpd == nullptr) {
+    return nullptr;
+  }
+
+  cvPolyData* src = new cvPolyData(inpd);
+  cvPolyData* tempCenterlines = nullptr;
+  cvPolyData* voronoi = nullptr;
+
+  int numSourcePts = sourcePtIds->GetNumberOfIds();
+  int* sources = new int[numSourcePts];
+  for (int i = 0; i < numSourcePts; i++) {
+    sources[i] = sourcePtIds->GetId(i);
+  }
+
+  int numTargetPts = targetPtIds->GetNumberOfIds();
+  int* targets = new int[numTargetPts];
+  for (int i = 0; i < numTargetPts; i++) {
+    targets[i] = targetPtIds->GetId(i);
+  }
+
+  if (sys_geom_centerlines(src, sources, numSourcePts, targets, numTargetPts, &tempCenterlines, &voronoi) != SV_OK) {
+    delete src;
+    delete [] sources;
+    delete [] targets;
+    return nullptr;
+  }
+
+  delete src;
+  delete voronoi;
+  delete [] sources;
+  delete [] targets;
+
+  return tempCenterlines->GetVtkPolyData();
+}
 
 //------------------------------
 // CreateVtkPolyDataFromContour
@@ -98,7 +337,7 @@ CreateVtkPolyDataFromContour(vtkPolyData* contour)
 //-------------------
 // CreateLoftSurface
 //-------------------
-// This replicates sv4guiModelUtils::CreateLoftSurface() defined
+// This replicates CreateLoftSurface() defined
 // in sv4gui/Modules/Model/Common/sv4gui_ModelUtils.cxx.
 //
 static vtkPolyData*
@@ -204,9 +443,9 @@ CreateLoftSurface(std::vector<vtkPolyData*> contourSet, int numSamplingPts, svLo
     } else {
 
       if (addCaps == 1) {
-        outpd = sv4guiModelUtils::CreateOrientClosedPolySolidVessel(dst->GetVtkPolyData());
+        outpd = CreateOrientClosedPolySolidVessel(dst->GetVtkPolyData());
       } else {
-        outpd = sv4guiModelUtils::CreateOrientOpenPolySolidVessel(dst->GetVtkPolyData());
+        outpd = CreateOrientOpenPolySolidVessel(dst->GetVtkPolyData());
       }
     }
 
@@ -249,9 +488,9 @@ CreateLoftSurface(std::vector<vtkPolyData*> contourSet, int numSamplingPts, svLo
 
       } else {
         if(addCaps==1) {
-          outpd = sv4guiModelUtils::CreateOrientClosedPolySolidVessel(dst->GetVtkPolyData());
+          outpd = CreateOrientClosedPolySolidVessel(dst->GetVtkPolyData());
         } else {
-          outpd = sv4guiModelUtils::CreateOrientOpenPolySolidVessel(dst->GetVtkPolyData());
+          outpd = CreateOrientOpenPolySolidVessel(dst->GetVtkPolyData());
         }
       }
     }
@@ -562,7 +801,7 @@ ModelingPolyData_compute_boundary_faces(PyModelingModel* self, PyObject* args, P
 //---------------------
 // compute_centerlines
 //---------------------
-// The following code replicates sv4guiModelUtils::CreateCenterlines().
+// The following code replicates CreateCenterlines().
 //
 PyDoc_STRVAR(ModelingPolyData_compute_centerlines_doc,
   "compute_centerlines(inlet_ids, outlet_ids, use_face_ids=False)  \n\
@@ -712,7 +951,7 @@ ModelingPolyData_compute_centerlines(PyModelingModel* self, PyObject* args, PyOb
   if (useFaceIds) { 
 
     // Remove the cells defining the model caps.
-    sv4guiModelUtils::DeleteRegions(inpd, cap_ids);
+    DeleteRegions(inpd, cap_ids);
 
     cvPolyData *src = new cvPolyData(inpd);
     auto cleaned = sys_geom_Clean(src);
@@ -771,7 +1010,7 @@ ModelingPolyData_compute_centerlines(PyModelingModel* self, PyObject* args, PyOb
       }
     }
 
-    centerlines = sv4guiModelUtils::CreateCenterlines(capped->GetVtkPolyData(), sourcePtIds, targetPtIds);
+    centerlines = CreateCenterlines(capped->GetVtkPolyData(), sourcePtIds, targetPtIds);
 
     delete [] capCenterIds;
     delete capped;
@@ -796,7 +1035,7 @@ ModelingPolyData_compute_centerlines(PyModelingModel* self, PyObject* args, PyOb
       std::cout << "[centerlines]   pt: " << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
     }
 
-    centerlines = sv4guiModelUtils::CreateCenterlines(fullpd, sourcePtIds, targetPtIds);
+    centerlines = CreateCenterlines(fullpd, sourcePtIds, targetPtIds);
   }
 
 
@@ -854,7 +1093,7 @@ ModelingPolyData_delete_faces(PyModelingModel* self, PyObject* args, PyObject* k
 
   // [TODO:DaveP] The DeleteFaces() function deletes cells, not faces.
   //
-  // Implement this copying sv4guiModelUtils::DeleteRegions().
+  // Implement this copying DeleteRegions().
   /*
   auto model = self->solidModel;
   if (model->DeleteFaces(faceList.size(), faceList.data()) != SV_OK) {
@@ -869,7 +1108,7 @@ ModelingPolyData_delete_faces(PyModelingModel* self, PyObject* args, PyObject* k
 // ModelingPolyData_create_vessel_model
 //--------------------------------------
 // This method attempts to reproduce the calling sequence from the
-// sv4guiModelUtils::CreateModelElementPolyData() method in
+// CreateModelElementPolyData() method in
 // sv4gui/Modules/Model/Common/sv4gui_ModelUtils.cxx used to create
 // a solid model from segmentation contours for multiple vessels.
 //
@@ -967,7 +1206,7 @@ ModelingPolyData_create_vessel_model(PyModelingModel* self, PyObject* args, PyOb
   auto forClean = vtkSmartPointer<vtkPolyData>::New();
   forClean->DeepCopy(dst->GetVtkPolyData());
   auto nowClean = vtkSmartPointer<vtkPolyData>::New();
-  nowClean = sv4guiModelUtils::OrientVtkPolyData(forClean);
+  nowClean = OrientVtkPolyData(forClean);
   solidvpd->DeepCopy(nowClean);;
 
   self->solidModel->SetVtkPolyDataObject(solidvpd);

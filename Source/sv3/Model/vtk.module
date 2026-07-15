@@ -1,19 +1,17 @@
 NAME
-    VTK::SVPythonAPI
+    VTK::SV3Model
 LIBRARY_NAME
-    vtkSVPythonAPI
+    vtkSV3Model
 GROUPS
     SV
+    SV3
 DEPENDS
     VTK::CommonCore
     VTK::CommonDataModel
-    VTK::SVCore
+    VTK::FiltersCore
     VTK::SV1Geometry
-    VTK::SV1MeshMeshObject
-    VTK::SV1MeshMeshUtils
-    VTK::SV1MeshMMGMeshUtils
     VTK::SV1ModelSolidModel
     VTK::SV1ModelPolyDataSolidModel
     VTK::SV1ModelOCCTSolidModel
-    VTK::SV3Model
     VTK::SV3Segmentation
+    VTK::SVCore

@@ -36,7 +36,6 @@
 #include <XCAFApp_Application.hxx>
 #include <XCAFDoc_DocumentTool.hxx>
 #include "Standard_Version.hxx"
-#include "sv4gui_RegisterOCCTFunction.h"
 
 //-------------
 // PyOcctSolid
@@ -184,9 +183,6 @@ InitOcct()
     fprintf(stdout,"OCCT XDE is not setup correctly, file i/o and register of solid will not work correctly.\n");
   }
   //printf("%-12s %s\n","[InitOcct] Python API OpenCASCADE version:", OCC_VERSION_COMPLETE);
-
-  // Register the file extensions: brep, step, iges and stl.
-  auto registerFunction = new sv4guiRegisterOCCTFunction();
 }
 
 
