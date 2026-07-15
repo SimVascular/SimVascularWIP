@@ -33,13 +33,12 @@
 //
 //     oneD_sim = simulation.ROM()
 
-#include "sv4gui_ROMSimulationPython.h"
-
 #include <map>
+#include <set>
 #include <fstream>
 
 //-----------------
-// PySimulationROM 
+// PySimulationROM
 //-----------------
 // Define the SV Python simulation.ROM class.
 //
@@ -50,6 +49,87 @@ typedef struct
 } PySimulationROM;
 
 #include "SimulationROMParams_PyClass.cxx"
+
+//-------------------------------
+// ROMSimulationPythonInterface
+//-------------------------------
+// Collects the named parameter values passed as **kwargs to the
+// 'sv_rom_simulation' Python package's 'run_from_c()' function used
+// to generate 0D/1D solver input files.
+//
+// Ported from sv4guiROMSimulationPython/sv4guiROMSimulationPythonParamNames
+// (Source/sv4gui/_Plugins/org.sv.gui.qt.romsimulation/sv4gui_ROMSimulationPython.h/.cxx)
+// to remove this module's dependency on sv4gui/MITK/Qt. Only the parameter-
+// collection methods used by the functions below are kept; the sv4gui class
+// also has GenerateMesh()/GenerateSolverInput() methods that run the Python
+// scripts directly and pop up Qt message boxes on error, but this module
+// already implements its own version of that in ROMSim_GenerateSolverInput()
+// below, so those methods aren't needed here.
+//
+class ROMSimulationPythonInterfaceParamNames
+{
+  public:
+    const std::string BOUNDARY_SURFACE_DIR = "boundary_surfaces_directory";
+    const std::string DENSITY = "density";
+    const std::string CENTERLINES_INPUT_FILE = "centerlines_input_file";
+    const std::string COMPUTE_MESH = "compute_mesh";
+    const std::string INFLOW_INPUT_FILE = "inflow_input_file";
+    const std::string ELEMENT_SIZE = "element_size";
+
+    const std::string LINEAR_MATERIAL_EHR = "linear_material_ehr";
+    const std::string LINEAR_MATERIAL_PRESSURE = "linear_material_pressure";
+
+    const std::string MATERIAL_MODEL = "material_model";
+    const std::string MESH_OUTPUT_FILE = "mesh_output_file";
+    const std::string MODEL_NAME = "model_name";
+    const std::string MODEL_ORDER = "model_order";
+    const std::string NUM_TIME_STEPS = "num_time_steps";
+
+    const std::string OLUFSEN_MATERIAL_K1 = "olufsen_material_k1";
+    const std::string OLUFSEN_MATERIAL_K2 = "olufsen_material_k2";
+    const std::string OLUFSEN_MATERIAL_K3 = "olufsen_material_k3";
+    const std::string OLUFSEN_MATERIAL_EXP = "olufsen_material_exp";
+    const std::string OLUFSEN_MATERIAL_PRESSURE = "olufsen_material_pressure";
+
+    const std::string OUTFLOW_BC_INPUT_FILE = "outflow_bc_input_file";
+    const std::string OUTFLOW_BC_TYPE = "outflow_bc_type";
+    const std::string OUTLET_FACE_NAMES_INPUT_FILE = "outlet_face_names_input_file";
+    const std::string OUTPUT_DIRECTORY = "output_directory";
+
+    const std::string SAVE_DATA_FREQUENCY = "save_data_frequency";
+    const std::string SEG_MIN_NUM = "seg_min_num";
+    const std::string SEG_SIZE_ADAPTIVE = "seg_size_adaptive";
+    const std::string SOLVER_OUTPUT_FILE = "solver_output_file";
+    const std::string TIME_STEP = "time_step";
+    const std::string UNIFORM_BC = "uniform_bc";
+    const std::string UNITS = "units";
+    const std::string VISCOSITY = "viscosity";
+};
+
+class ROMSimulationPythonInterface
+{
+  public:
+    ROMSimulationPythonInterfaceParamNames m_ParameterNames;
+    std::map<std::string, std::string> m_ParameterValues;
+
+    bool AddParameter(const std::string& name, const std::string& value)
+    {
+      m_ParameterValues.insert(std::pair<std::string,std::string>(name, value));
+      return SV_OK;
+    }
+
+    bool AddParameterList(const std::string& name, const std::vector<std::string>& values)
+    {
+      std::string list = "";
+      std::string sep;
+      for (auto value : values) {
+          list += sep + value;
+          sep = ",";
+      }
+      m_ParameterValues.insert(std::pair<std::string,std::string>(name, list));
+      return SV_OK;
+    }
+};
 
 //////////////////////////////////////////////////////
 //          U t i l i t y  F u n c t i o n s        //
@@ -126,7 +206,7 @@ namespace ROMSim_Parameters {
 //----------------------
 // Copy the input flow file to the output directory.
 void
-ROMSim_WriteFlowFile(sv4guiROMSimulationPython& pythonInterface, std::vector<std::map<std::string,std::string>>& bcValues, 
+ROMSim_WriteFlowFile(ROMSimulationPythonInterface& pythonInterface, std::vector<std::map<std::string,std::string>>& bcValues, 
     std::string& outputDir)
 {
   using namespace ROMSim_Parameters;
@@ -162,7 +242,7 @@ ROMSim_WriteFlowFile(sv4guiROMSimulationPython& pythonInterface, std::vector<std
 // ROMSim_WriteRCRFile  
 //---------------------
 //
-bool ROMSim_WriteRCRFile(sv4guiROMSimulationPython& pythonInterface, std::vector<std::map<std::string,std::string>>& bcValues,
+bool ROMSim_WriteRCRFile(ROMSimulationPythonInterface& pythonInterface, std::vector<std::map<std::string,std::string>>& bcValues,
     std::string& outputDir)
 {
   using namespace ROMSim_Parameters;
@@ -213,7 +293,7 @@ bool ROMSim_WriteRCRFile(sv4guiROMSimulationPython& pythonInterface, std::vector
 // ROMSim_WriteResistanceFile 
 //----------------------------
 //
-bool ROMSim_WriteResistanceFile(sv4guiROMSimulationPython& pythonInterface, std::vector<std::map<std::string,std::string>>& bcValues,
+bool ROMSim_WriteResistanceFile(ROMSimulationPythonInterface& pythonInterface, std::vector<std::map<std::string,std::string>>& bcValues,
     std::string& outputDir)
 {
   using namespace ROMSim_Parameters;
@@ -253,7 +333,7 @@ bool ROMSim_WriteResistanceFile(sv4guiROMSimulationPython& pythonInterface, std:
 // Add parameter values from the 'ROMParameters.BoundaryConditions' object.
 //
 void
-ROMSim_AddBoundaryConditionParameters(sv4guiROMSimulationPython& pythonInterface, PyObject* modelObj, std::string& outputDir)
+ROMSim_AddBoundaryConditionParameters(ROMSimulationPythonInterface& pythonInterface, PyObject* modelObj, std::string& outputDir)
 {
   using namespace ROMSim_Parameters;
   auto params = pythonInterface.m_ParameterNames;
@@ -299,7 +379,7 @@ ROMSim_AddBoundaryConditionParameters(sv4guiROMSimulationPython& pythonInterface
 //---------------------------
 //
 void
-ROMSim_AddFluidParameters(sv4guiROMSimulationPython& pythonInterface, PyObject* fluidObj)
+ROMSim_AddFluidParameters(ROMSimulationPythonInterface& pythonInterface, PyObject* fluidObj)
 {
   using namespace ROMSim_Parameters;
   auto params = pythonInterface.m_ParameterNames;
@@ -316,10 +396,10 @@ ROMSim_AddFluidParameters(sv4guiROMSimulationPython& pythonInterface, PyObject* 
 //------------------------------
 // ROMSim_AddMaterialParameters 
 //------------------------------
-// Add material properties to sv4guiROMSimulationPython..
+// Add material properties to ROMSimulationPythonInterface.
 //
 void
-ROMSim_AddMaterialParameters(sv4guiROMSimulationPython& pythonInterface, PyObject* materialObj)
+ROMSim_AddMaterialParameters(ROMSimulationPythonInterface& pythonInterface, PyObject* materialObj)
 {
   using namespace ROMSim_Parameters;
   auto params = pythonInterface.m_ParameterNames;
@@ -366,7 +446,7 @@ ROMSim_AddMaterialParameters(sv4guiROMSimulationPython& pythonInterface, PyObjec
 //--------------------------
 //
 void
-ROMSim_AddMeshParameters(sv4guiROMSimulationPython& pythonInterface, PyObject* meshObj)
+ROMSim_AddMeshParameters(ROMSimulationPythonInterface& pythonInterface, PyObject* meshObj)
 {
   using namespace ROMSim_Parameters;
   auto params = pythonInterface.m_ParameterNames;
@@ -387,7 +467,7 @@ ROMSim_AddMeshParameters(sv4guiROMSimulationPython& pythonInterface, PyObject* m
 // Add parameter values from the 'ROMParameters.ModelParameters' object.
 //
 void
-ROMSim_AddModelParameters(sv4guiROMSimulationPython& pythonInterface, PyObject* modelObj, std::string& outputDir)
+ROMSim_AddModelParameters(ROMSimulationPythonInterface& pythonInterface, PyObject* modelObj, std::string& outputDir)
 {
   using namespace ROMSim_Parameters;
   auto params = pythonInterface.m_ParameterNames;
@@ -420,7 +500,7 @@ ROMSim_AddModelParameters(sv4guiROMSimulationPython& pythonInterface, PyObject* 
 // Add solution paramaters. 
 //
 void
-ROMSim_AddSolutionParameters(sv4guiROMSimulationPython& pythonInterface, PyObject* solutionObj, const int modelOrder)
+ROMSim_AddSolutionParameters(ROMSimulationPythonInterface& pythonInterface, PyObject* solutionObj, const int modelOrder)
 {
   using namespace ROMSim_Parameters;
   auto params = pythonInterface.m_ParameterNames;
@@ -449,7 +529,7 @@ ROMSim_AddSolutionParameters(sv4guiROMSimulationPython& pythonInterface, PyObjec
 // This is similar to the sv4guiROMSimulationPython::GenerateSolverInput() method.
 //
 void
-ROMSim_GenerateSolverInput(sv4guiROMSimulationPython& pythonInterface, std::string& outputDir)
+ROMSim_GenerateSolverInput(ROMSimulationPythonInterface& pythonInterface, std::string& outputDir)
 {
   using namespace ROMSim_Parameters;
   auto params = pythonInterface.m_ParameterNames;
@@ -552,7 +632,7 @@ ROMSim_GenerateSolverInput(sv4guiROMSimulationPython& pythonInterface, std::stri
 //----------------------------
 // ROMSim_write_input_file 
 //----------------------------
-// This method uses a sv4guiROMSimulationPython() object to collect
+// This method uses a ROMSimulationPythonInterface() object to collect
 // parameter values and is similar to sv4guiROMSimulationView::CreateDataFiles().
 //
 PyDoc_STRVAR(ROMSim_write_input_file_doc,
@@ -583,9 +663,9 @@ ROMSim_write_input_file(PySimulationROM* self, PyObject* args, PyObject* kwargs)
       return api.argsError();
   }
 
-  // Create the 'sv4guiROMSimulationPython' object used to Set the 
+  // Create the 'ROMSimulationPythonInterface' object used to Set the
   // parameters used by the Python script.
-  auto pythonInterface = sv4guiROMSimulationPython();
+  auto pythonInterface = ROMSimulationPythonInterface();
   auto params = pythonInterface.m_ParameterNames;
 
   // Set model order.
