@@ -38,8 +38,9 @@
 
 #include "Python.h"
 #include "sv_MeshObject.h"
-#include "sv4gui_Mesh.h"
-#include "sv4gui_MitkMesh.h"
+#include "sv3_MeshGroup.h"
+
+#include <memory>
 
 extern "C" VTKSVPYTHONAPI_EXPORT int Mesh_pyInit();
 
@@ -53,13 +54,12 @@ extern "C" VTKSVPYTHONAPI_EXPORT void PyAPI_InitMeshSim(CreateMesherObjectFuncti
 // The meshing.Series class is used to store data for
 // time-varying meshes.
 //
-// In SV time-varying meshe are stored in the sv4guiMitkMesh class. 
+// Time-varying meshes are stored in the sv3::MeshGroup class.
 //
 typedef struct PyMeshingSeries
 {
   PyObject_HEAD
-  sv4guiMitkMesh::Pointer meshingGroupPointer;
-  sv4guiMitkMesh* meshingGroup;
+  std::unique_ptr<sv3::MeshGroup> meshingGroup;
   int id;
   std::string fileName;
 } PyMeshingSeries;

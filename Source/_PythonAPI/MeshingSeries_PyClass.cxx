@@ -36,14 +36,15 @@
 //
 //     meshes = meshing.Series()
 //
-// The SV meshing group code this interfaces to resides in sv4gui/Modules/Mesh/Common which
-// uses MITK manage time-varying meshes.
+// The SV meshing group code this interfaces to resides in sv3/Mesh, a
+// lightweight, MITK-free replacement for the sv4gui/Modules/Mesh/Common
+// classes that used MITK to manage time-varying meshes.
 //
-#include "sv4gui_MitkMeshIO.h"
-#include "sv4gui_Model.h"
+#include "sv3_MeshGroup.h"
+#include "sv3_ModelGroup.h"
 
 extern PyObject* PyTetGenOptionsCreateFromList(std::vector<std::string>& optionList);
-extern sv4guiModel::Pointer ModelingSeries_read(char* fileName);
+extern std::unique_ptr<sv3::ModelGroup> ModelingSeries_read(char* fileName);
 
 //////////////////////////////////////////////////////
 //          U t i l i t y  F u n c t i o n s        //
@@ -55,17 +56,17 @@ extern sv4guiModel::Pointer ModelingSeries_read(char* fileName);
 // Read in an SV .msh file and create a MeshingSeries object
 // from its contents.
 //
-static sv4guiMitkMesh::Pointer
+static std::unique_ptr<sv3::MeshGroup>
 MeshingSeriesRead(char* fileName)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
-  sv4guiMitkMesh::Pointer group;
+  std::unique_ptr<sv3::MeshGroup> group;
   bool readSurfaceMesh = false;
   bool readVolumeMesh = false;
 
   // Read in the .msh file.
   try {
-      group = sv4guiMitkMeshIO::ReadFromFile(std::string(fileName), readSurfaceMesh, readVolumeMesh);
+      group = sv3::MeshGroup::CreateGroupFromFile(std::string(fileName), readSurfaceMesh, readVolumeMesh);
   } catch (...) {
       api.error("Error reading the mesh group file '" + std::string(fileName) + "'.");
       return nullptr;
@@ -89,7 +90,7 @@ MeshingSeriesRead(char* fileName)
 // the SV project's Models directory.
 //
 bool
-MeshingSeriesSetModel(PyUtilApiFunction& api, cvMeshObject* mesher, sv4guiMitkMesh* meshingGroup,
+MeshingSeriesSetModel(PyUtilApiFunction& api, cvMeshObject* mesher, sv3::MeshGroup* meshingGroup,
     int index, std::string fileName, std::map<std::string,int>& faceIDMap)
 {
 
@@ -108,12 +109,11 @@ MeshingSeriesSetModel(PyUtilApiFunction& api, cvMeshObject* mesher, sv4guiMitkMe
   fileName.erase(strIndex);
   auto modelDirName = fileName + "Models/";
   fileName = modelDirName + modelName + ".mdl";
-  sv4guiModel::Pointer solidGroupPtr = ModelingSeries_read(const_cast<char*>(fileName.c_str()));
-  if (solidGroupPtr == nullptr) {
+  auto solidGroup = ModelingSeries_read(const_cast<char*>(fileName.c_str()));
+  if (solidGroup == nullptr) {
       api.error("Unable to read the model file '" + fileName + "' used by the mesher.");
       return false;
   }
-  auto solidGroup = dynamic_cast<sv4guiModel*>(solidGroupPtr.GetPointer());
 
   // Check for valid index.
   int numSolids = solidGroup->GetTimeSize();
@@ -225,7 +225,7 @@ MeshingSeries_get_mesh(PyMeshingSeries* self, PyObject* args, PyObject* kwargs)
      return api.argsError();
   }
 
-  auto meshingGroup = self->meshingGroup;
+  auto& meshingGroup = self->meshingGroup;
   int numSeries = meshingGroup->GetTimeSize();
   //std::cout << "[MeshingSeries_get_mesh] time: " << time << std::endl;
 
@@ -237,7 +237,7 @@ MeshingSeries_get_mesh(PyMeshingSeries* self, PyObject* args, PyObject* kwargs)
   }
 
   // Get the mesh for the given time index.
-  sv4guiMesh* guiMesh = meshingGroup->GetMesh(time);
+  sv3::Mesh* guiMesh = meshingGroup->GetMesh(time);
   if (guiMesh == nullptr) {
       api.error("ERROR getting the mesh for the 'time' argument '" + std::to_string(time) + "'.");
       return nullptr;
@@ -266,7 +266,7 @@ MeshingSeries_get_mesh(PyMeshingSeries* self, PyObject* args, PyObject* kwargs)
   // Set the solid model associated with the mesher.
   std::map<std::string,int> faceIDMap;
   auto fileName = self->fileName;
-  if (!MeshingSeriesSetModel(api, mesher, meshingGroup, time, fileName, faceIDMap)) {
+  if (!MeshingSeriesSetModel(api, mesher, meshingGroup.get(), time, fileName, faceIDMap)) {
       return nullptr;
   }
 
@@ -323,11 +323,10 @@ MeshingSeries_write(PyMeshingSeries* self, PyObject* args, PyObject* kwargs)
       return api.argsError();
   }
 
-  auto meshGroup = self->meshingGroup;
   std::string fileName(fileNameArg);
 
  try {
-      sv4guiMitkMeshIO().WriteGroupToFile(meshGroup, fileName);
+      sv3::MeshGroup::WriteToFile(self->meshingGroup.get(), fileName);
   } catch (const std::exception& readException) {
       api.error("Error writing meshing group to the file '" + std::string(fileName) + "': " + readException.what());
       return nullptr;
@@ -424,11 +423,10 @@ PyMeshingSeriesInit(PyMeshingSeries* self, PyObject* args)
   }
 
   if (fileName != nullptr) {
-      self->meshingGroupPointer = MeshingSeriesRead(fileName);
-      self->meshingGroup = dynamic_cast<sv4guiMitkMesh*>(self->meshingGroupPointer.GetPointer());
+      self->meshingGroup = MeshingSeriesRead(fileName);
       self->fileName = std::string(fileName);
   } else {
-      self->meshingGroup = sv4guiMitkMesh::New();
+      self->meshingGroup = std::make_unique<sv3::MeshGroup>();
   }
 
   if (self->meshingGroup == nullptr) {
@@ -465,8 +463,6 @@ static void
 PyMeshingSeriesDealloc(PyMeshingSeries* self)
 {
   //std::cout << "[PyMeshingSeriesDealloc] Free PyMeshingSeries" << std::endl;
-  // Can't delete meshingGroup because it has a protected detructor.
-  //delete self->meshingGroup;
   Py_TYPE(self)->tp_free(self);
 }
 
@@ -501,7 +497,7 @@ SetMeshingSeriesTypeFields(PyTypeObject& solidType)
 // for the PyMeshingSeriesType.meshingGroup data.
 //
 PyObject *
-CreatePyMeshingSeries(sv4guiMitkMesh::Pointer meshingGroup)
+CreatePyMeshingSeries(std::unique_ptr<sv3::MeshGroup> meshingGroup)
 {
   //std::cout << std::endl;
   //std::cout << "========== CreatePyMeshingSeries ==========" << std::endl;
@@ -510,8 +506,7 @@ CreatePyMeshingSeries(sv4guiMitkMesh::Pointer meshingGroup)
   auto pyMeshingSeries = (PyMeshingSeries*)meshingSeriesObj;
 
   if (meshingGroup != nullptr) {
-      //delete pyMeshingSeries->meshingGroup;
-      pyMeshingSeries->meshingGroup = meshingGroup;
+      pyMeshingSeries->meshingGroup = std::move(meshingGroup);
   }
 
   return meshingSeriesObj;

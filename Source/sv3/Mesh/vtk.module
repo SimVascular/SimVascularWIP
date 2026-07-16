@@ -1,0 +1,12 @@
+NAME
+    VTK::SV3Mesh
+LIBRARY_NAME
+    vtkSV3Mesh
+GROUPS
+    SV
+    SV3
+DEPENDS
+    VTK::CommonCore
+    VTK::CommonDataModel
+    VTK::IOXML
+    VTK::SVCore

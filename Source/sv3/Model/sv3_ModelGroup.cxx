@@ -8,8 +8,10 @@ using sv3::ModelGroup;
 using sv3::ModelElement;
 
 ModelGroup::ModelGroup()
-    : m_Type()
+    : m_Type(), m_Models(1)
 {
+    // A freshly-constructed group starts with one (empty) timestep, matching
+    // sv4guiModel::InitializeEmpty(), called from its default constructor.
 }
 
 void ModelGroup::Expand(unsigned int timeSteps)
