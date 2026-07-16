@@ -35,7 +35,9 @@
 //
 // The 'meshing.TetGen' class inherits from the 'meshing.Mesher' base class.
 
-#include "sv4gui_ModelUtils.h"
+#include "sv_sys_geom.h"
+#include "sv_vmtk_utils.h"
+#include "vtkIdList.h"
 
 //-----------------
 // PyMeshingTetGen
@@ -165,6 +167,129 @@ GenerateLocalSizeArray(PyUtilApiFunction& api, cvTetGenMeshObject* mesher, PyObj
   }
 }
 
+//----------------------------------------------------
+//   L o c a l   s v 4 g u i M o d e l U t i l s      //
+//   p o r t s                                       //
+//----------------------------------------------------
+// The functions below are ported from sv4guiModelUtils
+// (Source/sv4gui/Modules/_Model/_Common/sv4gui_ModelUtils.cxx) to remove
+// this module's dependency on sv4gui/MITK. They are thin wrappers around
+// sys_geom_ calls, unchanged from the sv4gui originals.
+
+//-------------------
+// CreateCenterlines
+//-------------------
+// Compute the centerlines for the input surface model between the given
+// source and target point IDs.
+//
+static vtkPolyData*
+CreateCenterlines(vtkPolyData* inpd, vtkIdList* sourcePtIds, vtkIdList* targetPtIds)
+{
+  if (inpd == nullptr) {
+    return nullptr;
+  }
+
+  cvPolyData* src = new cvPolyData(inpd);
+  cvPolyData* tempCenterlines = nullptr;
+  cvPolyData* voronoi = nullptr;
+
+  int numSourcePts = sourcePtIds->GetNumberOfIds();
+  int* sources = new int[numSourcePts];
+  for (int i = 0; i < numSourcePts; i++) {
+    sources[i] = sourcePtIds->GetId(i);
+  }
+
+  int numTargetPts = targetPtIds->GetNumberOfIds();
+  int* targets = new int[numTargetPts];
+  for (int i = 0; i < numTargetPts; i++) {
+    targets[i] = targetPtIds->GetId(i);
+  }
+
+  if (sys_geom_centerlines(src, sources, numSourcePts, targets, numTargetPts, &tempCenterlines, &voronoi) != SV_OK) {
+    delete src;
+    delete [] sources;
+    delete [] targets;
+    return nullptr;
+  }
+
+  delete src;
+  delete voronoi;
+  delete [] sources;
+  delete [] targets;
+
+  return tempCenterlines->GetVtkPolyData();
+}
+
+//-------------------
+// CreateCenterlines
+//-------------------
+// Compute the centerlines for a surface model, automatically deriving the
+// source/target points from the model's caps.
+//
+static vtkPolyData*
+CreateCenterlines(vtkPolyData* inpd)
+{
+  cvPolyData* src = new cvPolyData(inpd);
+  cvPolyData* cleaned = nullptr;
+  cvPolyData* capped = nullptr;
+  int numCapCenterIds;
+  int* capCenterIds = nullptr;
+
+  cleaned = sys_geom_Clean(src);
+
+  if (sys_geom_cap_for_centerlines(cleaned, &capped, &numCapCenterIds, &capCenterIds, 1) != SV_OK) {
+    delete cleaned;
+    if (capped != nullptr) {
+      delete capped;
+    }
+    return nullptr;
+  }
+
+  if (numCapCenterIds < 2) {
+    delete cleaned;
+    if (capped != nullptr) {
+      delete capped;
+    }
+    return nullptr;
+  }
+  delete cleaned;
+
+  auto sourcePtIds = vtkSmartPointer<vtkIdList>::New();
+  sourcePtIds->InsertNextId(capCenterIds[0]);
+  auto targetPtIds = vtkSmartPointer<vtkIdList>::New();
+  for (int i = 1; i < numCapCenterIds; i++) {
+    targetPtIds->InsertNextId(capCenterIds[i]);
+  }
+
+  delete [] capCenterIds;
+
+  auto centerlines = CreateCenterlines(capped->GetVtkPolyData(), sourcePtIds, targetPtIds);
+  delete capped;
+
+  return centerlines;
+}
+
+//------------------------------
+// CalculateDistanceToCenterlines
+//------------------------------
+static vtkPolyData*
+CalculateDistanceToCenterlines(vtkPolyData* centerlines, vtkPolyData* original)
+{
+  if (centerlines == nullptr || original == nullptr) {
+    return nullptr;
+  }
+
+  cvPolyData* src = new cvPolyData(original);
+  cvPolyData* lines = new cvPolyData(centerlines);
+  cvPolyData* distance = nullptr;
+
+  if (sys_geom_distancetocenterlines(src, lines, &distance) != SV_OK) {
+    return nullptr;
+  }
+
+  return distance->GetVtkPolyData();
+}
+
 //----------------------------
 // GenerateRadiusMeshingArray
 //----------------------------
@@ -198,7 +323,7 @@ GenerateRadiusMeshingArray(PyUtilApiFunction& api, cvTetGenMeshObject* mesher, P
   GetRadiusMeshingValues(options, &scale, &centerlines);
   if (centerlines == nullptr) {
       if (RadiusMeshingComputeCenterlinesIsOn(options)) {
-          centerlines = sv4guiModelUtils::CreateCenterlines(solid->GetVtkPolyData());
+          centerlines = CreateCenterlines(solid->GetVtkPolyData());
           if (centerlines == nullptr) {
               api.error("Unable to compute centerlines for radius-based meshing.");
               return;
@@ -214,7 +339,7 @@ GenerateRadiusMeshingArray(PyUtilApiFunction& api, cvTetGenMeshObject* mesher, P
   // This returns a new vtkPolyData with the solid model surface geometry and
   // a point data array named 'DistanceToCenterlines'.
   //
-  auto distance = sv4guiModelUtils::CalculateDistanceToCenterlines(centerlines, solid->GetVtkPolyData());
+  auto distance = CalculateDistanceToCenterlines(centerlines, solid->GetVtkPolyData());
   if (distance == nullptr) {
       api.error("Unable to compute the distance to centerlines for radius-based meshing.");
       return;

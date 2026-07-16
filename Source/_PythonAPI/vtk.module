@@ -9,11 +9,15 @@ DEPENDS
     VTK::CommonDataModel
     VTK::SVCore
     VTK::SV1Geometry
+    VTK::SV1MeshAdaptObject
     VTK::SV1MeshMeshObject
     VTK::SV1MeshMeshUtils
     VTK::SV1MeshMMGMeshUtils
+    VTK::SV1MeshTetGenAdapt
+    VTK::SV1MeshTetGenMeshObject
     VTK::SV1ModelSolidModel
     VTK::SV1ModelPolyDataSolidModel
     VTK::SV1ModelOCCTSolidModel
+    VTK::SV3Mesh
     VTK::SV3Model
     VTK::SV3Segmentation

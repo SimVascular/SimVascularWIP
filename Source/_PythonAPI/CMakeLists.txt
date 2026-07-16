@@ -3,7 +3,7 @@ set(vtkSVPythonAPI_HEADERS
     Segmentation_PyModule.h
     Geometry_PyModule.h
     Math_PyModule.h
-    # Meshing_PyModule.h
+    Meshing_PyModule.h
     MeshUtils_PyModule.h
     PathPlanning_PyModule.h
     PyUtils.h
@@ -17,7 +17,7 @@ set(vtkSVPythonAPI_SOURCES
     Segmentation_PyModule.cxx
     Geometry_PyModule.cxx
     Math_PyModule.cxx
-    # Meshing_PyModule.cxx
+    Meshing_PyModule.cxx
     MeshUtils_PyModule.cxx
     PathPlanning_PyModule.cxx
     PyUtils.cxx
