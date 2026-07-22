@@ -30,6 +30,8 @@ mark_as_advanced(SimVascular_SUPERBUILD)
 
 option(SV_WRAP_PYTHON "Build SimVascular Python Bindings" ON)
 
+option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+
 if(SimVascular_SUPERBUILD)
   add_subdirectory(SuperBuild)
   return()
