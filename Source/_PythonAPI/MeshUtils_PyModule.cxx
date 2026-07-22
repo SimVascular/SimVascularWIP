@@ -34,6 +34,7 @@
 // [TODO:DaveP] This should be incorporated into the meshing module?
 //
 #include "SimVascular.h"
+#include "SimVascular_python.h"
 #include "Python.h"
 
 #include "sv_vmtk_utils.h"

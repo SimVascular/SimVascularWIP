@@ -52,5 +52,6 @@ find_package(tinyxml2 REQUIRED)
 find_package(OpenCASCADE REQUIRED)
 
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+set(PYTHON_MAJOR_VERSION ${Python3_VERSION_MAJOR})
 
 add_subdirectory(Source)

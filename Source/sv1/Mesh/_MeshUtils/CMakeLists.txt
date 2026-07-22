@@ -18,3 +18,13 @@ vtk_module_include(VTK::SV1MeshMeshUtils
     ${TETGEN_INCLUDE_DIR}
     ${VMTK_INCLUDE_DIRS}
 )
+
+vtk_module_link(VTK::SV1MeshMeshUtils PUBLIC
+    vtkvmtkCommon
+    vtkvmtkComputationalGeometry
+    vtkvmtkDifferentialGeometry
+    vtkvmtkIO
+    vtkvmtkMisc
+    vtkvmtkSegmentation
+    ${TETGEN_LIBRARY}
+)

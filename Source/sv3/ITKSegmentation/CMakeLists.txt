@@ -37,4 +37,4 @@ vtk_module_add_module(VTK::SV3ITKSegmentation
     SOURCES ${vtkSV3ITKSegmentation_SOURCES}
 )
 
-vtk_module_link(VTK::SV3ITKSegmentation PUBLIC ITKCommon ITKVTK)
+vtk_module_link(VTK::SV3ITKSegmentation PUBLIC ${ITK_LIBRARIES})

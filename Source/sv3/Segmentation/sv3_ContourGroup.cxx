@@ -12,6 +12,12 @@
 
 using sv3::ContourGroup;
 
+ContourGroup::ContourGroup()
+    : m_Contours(1), m_PathID(-1), m_PathName(""), m_ResliceSize(5.0),
+      m_LoftingParam(new svLoftingParam())
+{
+}
+
 void ContourGroup::Expand(unsigned int timeSteps) {
     unsigned int oldSize = m_Contours.size();
     if (timeSteps > oldSize) {
@@ -113,7 +119,7 @@ static void set_string_from_attribute(
   value = std::string(qvalue);
 }
 
-static std::unique_ptr<sv3::ContourGroup> CreateGroupFromFile(const std::string& fileName) {
+std::unique_ptr<ContourGroup> ContourGroup::CreateGroupFromFile(const std::string& fileName) {
 #define n_debug_CreateGroupFromFile
 #ifdef debug_CreateGroupFromFile
   std::string msg("[sv4guiContourGroupIO::CreateGroupFromFile] ");
@@ -363,7 +369,7 @@ static std::unique_ptr<sv3::ContourGroup> CreateGroupFromFile(const std::string&
   ;
 }
 
-static std::unique_ptr<sv3::ContourGroup> CreateGroupFromLegacyFile(const std::string& fileName) {
+std::unique_ptr<ContourGroup> ContourGroup::CreateGroupFromLegacyFile(const std::string& fileName) {
 
     auto contourGroup = std::make_unique<sv3::ContourGroup>();
   
@@ -448,7 +454,7 @@ static std::unique_ptr<sv3::ContourGroup> CreateGroupFromLegacyFile(const std::s
 //-------------
 // Write a ContourGroup to a file.
 //
-static void WriteToFile(const ContourGroup* group, const std::string &fileName) {
+void ContourGroup::WriteToFile(const ContourGroup* group, const std::string &fileName) {
 #define n_debug_WriteToFile
 #ifdef debug_WriteToFile
   std::string msg("[sv4guiContourGroupIO::WriteToFile] ");

@@ -21,3 +21,5 @@ vtk_module_include(VTK::SV1MeshAdaptObject
     PUBLIC
     ${TETGEN_INCLUDE_DIR}
 )
+
+vtk_module_link(VTK::SV1MeshAdaptObject PUBLIC ${TETGEN_LIBRARY})
