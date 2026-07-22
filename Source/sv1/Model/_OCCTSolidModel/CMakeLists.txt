@@ -17,3 +17,5 @@ vtk_module_include(VTK::SV1ModelOCCTSolidModel
     PUBLIC
     ${OpenCASCADE_INCLUDE_DIR}
 )
+
+vtk_module_link(VTK::SV1ModelOCCTSolidModel PUBLIC ${OpenCASCADE_LIBRARIES})

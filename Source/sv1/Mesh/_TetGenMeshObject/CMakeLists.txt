@@ -17,3 +17,5 @@ vtk_module_include(VTK::SV1MeshTetGenMeshObject
     ${TETGEN_INCLUDE_DIR}
     ${VMTK_INCLUDE_DIRS}
 )
+
+vtk_module_link(VTK::SV1MeshTetGenMeshObject PUBLIC ${TETGEN_LIBRARY})

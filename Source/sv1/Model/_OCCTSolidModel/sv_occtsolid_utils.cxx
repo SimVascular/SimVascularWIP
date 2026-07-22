@@ -1346,7 +1346,7 @@ int OCCTUtils_SetOrientation(TopoDS_Shape &shape,TopoDS_Shape &face,int &orienta
  */
 //
 int OCCTUtils_ReLabelFace(TopoDS_Shape &shape, Handle(XCAFDoc_ShapeTool) &shapetool,
-    TDF_Label &shapelabel, int &id)
+    TDF_Label &shapelabel, const int id)
 {
   if (shape.IsNull()) {
     fprintf(stderr,"Face is nullptr, cannot add\n");
