@@ -21,4 +21,4 @@ vtk_module_add_module(VTK::SV3Path
     SOURCES ${vtkSV3Path_SOURCES}
 )
 
-vtk_module_link(VTK::SV3Path PUBLIC tinyxml2)  # todo superbuild
+vtk_module_link(VTK::SV3Path PUBLIC tinyxml2::tinyxml2)  # todo superbuild
