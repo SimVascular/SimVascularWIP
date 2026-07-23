@@ -12,3 +12,5 @@ vtk_module_add_module(VTK::SV3Mesh
     HEADERS ${vtkSV3Mesh_HEADERS}
     SOURCES ${vtkSV3Mesh_SOURCES}
 )
+
+vtk_module_link(VTK::SV3Mesh PUBLIC tinyxml2::tinyxml2)  # todo superbuild
