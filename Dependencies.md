@@ -19,12 +19,12 @@ runs.
 |                |                                                     |
 |----------------|-----------------------------------------------------|
 | **Version**    | 3.12                                                |
-| **Components** | Development                                         |
+| **Components** | Development.Module                                  |
 | **How found**  | `find_package(Python)` before the superbuild branch |
 
 Python is not built by the superbuild. It must be installed on the host and
-locatable by CMake. `Python_DIR` is forwarded from the superbuild configure into
-the inner SimVascular build.
+locatable by CMake. `Python_EXECUTABLE` is forwarded from the superbuild
+configure into the inner SimVascular build.
 
 ---
 
@@ -32,21 +32,21 @@ the inner SimVascular build.
 | | |
 |---|---|
 | **Version** | 6.10+ (host-provided) |
-| **Components** | Core, CoreTools, Gui, Widgets |
+| **Components** | Core, CoreTools, Gui, Widgets, Xml |
 | **How found** | `find_package(Qt6)` before the superbuild branch |
 
 Qt6 is not built by the superbuild. It must be installed on the host and
 locatable by CMake. `Qt6_DIR` is forwarded from the superbuild configure into
-the inner SimVascular build.
+the inner SimVascular build, and into VTK, ITK, and VMTK.
 
 ## Superbuild Dependencies
 
-## VTK 9.3.1
+### VTK 9.3.1
 | | |
 |---|---|
 | **Source** | https://gitlab.kitware.com/vtk/vtk.git `v9.3.1` |
 | **Superbuild deps** | none |
-| **Key flags** | `BUILD_SHARED_LIBS=ON`, `VTK_SMP_IMPLEMENTATION_TYPE=Sequential` |
+| **Key flags** | `BUILD_SHARED_LIBS=ON`, `VTK_SMP_IMPLEMENTATION_TYPE=Sequential`, `VTK_WRAP_PYTHON=ON`, `VTK_GROUP_ENABLE_Qt=YES` |
 
 The Sequential SMP backend is pinned to work around a Windows/MSVC linker bug
 (`LNK2019: vtkSMPToolsImpl::IsParallelScope`) present in VTK 9.3.x.
@@ -58,11 +58,11 @@ The Sequential SMP backend is pinned to work around a Windows/MSVC linker bug
 |---|---|
 | **Source** | https://github.com/malaterre/GDCM.git `v3.0.10` |
 | **Superbuild deps** | none |
-| **Key flags** | `BUILD_SHARED_LIBS=ON`, `CMAKE_POSITION_INDEPENDENT_CODE=ON`, `GDCM_BUILD_APPLICATIONS=ON` |
+| **Key flags** | `BUILD_SHARED_LIBS=ON`, `CMAKE_POSITION_INDEPENDENT_CODE=ON`, `GDCM_BUILD_APPLICATIONS=ON`, `GDCM_USE_VTK=OFF` |
 
-GDCM provides DICOM read/write support. It is built without VTK integration at
-this level; VTK-aware DICOM features are accessed through ITK's VtkGlue module
-and MITK. VTK and GDCM have no mutual dependency and build in parallel.
+GDCM provides DICOM read/write support. It is built without VTK integration;
+VTK-aware DICOM features are accessed through ITK's VtkGlue module. VTK and
+GDCM have no mutual dependency and build in parallel.
 
 ---
 
@@ -73,11 +73,9 @@ and MITK. VTK and GDCM have no mutual dependency and build in parallel.
 | **Superbuild deps** | none |
 | **Key flags** | `BUILD_SHARED_LIBS=ON`, `HDF5_BUILD_CPP_LIB=ON`, `HDF5_BUILD_HL_LIB=ON`, `HDF5_ENABLE_Z_LIB_SUPPORT=ON` |
 
-HDF5 provides the file format backing for scientific data storage used by both
-ITK and MITK. The C++ wrapper (`HDF5_BUILD_CPP_LIB`) and High Level API
-(`HDF5_BUILD_HL_LIB`) are required by ITK's HDF5-based IO modules. HDF5 has
-no dependency on any other superbuild package and builds in parallel with VTK
-and GDCM.
+HDF5 provides the file format backing for scientific data storage used by
+ITK's HDF5-based IO modules. It has no dependency on any other superbuild
+package and builds in parallel with VTK and GDCM.
 
 ---
 
@@ -86,7 +84,7 @@ and GDCM.
 |---|---|
 | **Source** | https://github.com/InsightSoftwareConsortium/ITK.git `v5.4.0` |
 | **Superbuild deps** | VTK, GDCM, HDF5 |
-| **Key flags** | `ITK_USE_SYSTEM_GDCM=ON`, `ITK_USE_SYSTEM_HDF5=ON`, `Module_ITKReview=ON`, `Module_ITKVtkGlue=ON` |
+| **Key flags** | `ITK_USE_SYSTEM_GDCM=ON`, `ITK_USE_SYSTEM_HDF5=ON`, `Module_ITKReview=1`, `Module_ITKVtkGlue=1`, `Module_GrowCut=ON` |
 
 `ITK_USE_SYSTEM_GDCM` and `ITK_USE_SYSTEM_HDF5` disable ITK's bundled copies
 in favour of the versions built above. `Module_ITKVtkGlue` enables the
@@ -95,24 +93,85 @@ depends on VTK in the superbuild.
 
 ---
 
-### MITK 2024.06
+### OpenCASCADE 7.6.0
 | | |
 |---|---|
-| **Source** | https://github.com/MITK/MITK.git `v2024.06` |
-| **Superbuild deps** | VTK, ITK, GDCM, HDF5 |
-| **Key flags** | `MITK_BUILD_EXAMPLES=OFF`, `MITK_BUILD_TESTING=OFF` |
+| **Source** | https://github.com/Open-Cascade-SAS/OCCT.git `V7_6_0` |
+| **Superbuild deps** | VTK |
+| **Key flags** | `BUILD_SHARED_LIBS=ON`, `USE_VTK=ON`, `BUILD_MODULE_Visualization=ON`, `BUILD_MODULE_ApplicationFramework=ON`, `BUILD_MODULE_Draw=OFF` |
 
-MITK receives `VTK_DIR`, `ITK_DIR`, `GDCM_DIR`, `HDF5_DIR`, and `Qt6_DIR` so
-that it links against the same library versions built by the superbuild rather
-than any copies found on the host system.
+OpenCASCADE provides the solid modeling kernel. It links against the VTK
+build above via `3RDPARTY_VTK_DIR`/`3RDPARTY_VTK_INCLUDE_DIR`/
+`3RDPARTY_VTK_LIBRARY_DIR` rather than any VTK found on the host.
+
+---
+
+### MMG 5.3.9
+| | |
+|---|---|
+| **Source** | https://github.com/MmgTools/mmg.git `v5.3.9` |
+| **Superbuild deps** | none |
+| **Key flags** | `LIBMMG2D_SHARED=OFF`, `LIBMMG3D_SHARED=OFF`, `LIBMMGS_SHARED=OFF`, `LIBMMG_SHARED=OFF`, `CMAKE_C_FLAGS=-fcommon` |
+
+MMG provides mesh adaptation/remeshing. Built as static libraries.
+`-fcommon` works around tentative-definition linking issues under modern GCC.
+
+---
+
+### TetGen 1.5.1
+| | |
+|---|---|
+| **Source** | https://github.com/TetGen/TetGen.git `v1.5.1` |
+| **Superbuild deps** | none |
+| **Key flags** | `BUILD_SHARED_LIBS=OFF`, `CMAKE_POSITION_INDEPENDENT_CODE=ON` |
+
+TetGen has no CMake install rules of its own, so the superbuild's
+`INSTALL_COMMAND` manually copies `tetgen.h` and the built static library
+into `TetGen-install/`.
+
+---
+
+### tinyxml2 10.0.0
+| | |
+|---|---|
+| **Source** | https://github.com/leethomason/tinyxml2.git `10.0.0` |
+| **Superbuild deps** | none |
+| **Key flags** | `BUILD_SHARED_LIBS=ON`, `tinyxml2_BUILD_TESTING=OFF` |
+
+tinyxml2 provides XML parsing used by the `sv3` path/mesh/common data model
+IO code. It exports the imported target `tinyxml2::tinyxml2` (not a bare
+`tinyxml2` target) via its CMake package config.
+
+---
+
+### VMTK (pinned commit `6c189dd`)
+| | |
+|---|---|
+| **Source** | https://github.com/vmtk/vmtk.git `6c189dd6ee644a466498bd382b0c19229f20daa5` |
+| **Superbuild deps** | VTK, ITK |
+| **Key flags** | `USE_SYSTEM_VTK=ON`, `USE_SYSTEM_ITK=ON`, `VMTK_USE_ITK=ON`, `VMTK_WRAP_PYTHON=OFF`, `VMTK_BUILD_TETGEN=OFF` |
+
+VMTK provides vascular-modeling filters built on top of the VTK/ITK builds
+above. Its own Python wrapping and bundled TetGen are disabled since
+SimVascular wraps VMTK itself and builds TetGen separately.
+
+---
+
+### MITK — currently disabled
+
+`External_MITK.cmake` still exists in the superbuild but is commented out of
+`SuperBuild/CMakeLists.txt` and is not built. It previously provided the
+sv4gui desktop application framework; the corresponding SimVascular modules
+have been disabled to allow the project to build without it (see the
+`remove_mitk` branch).
 
 ---
 
 ## Build Order
 
-VTK, GDCM, and HDF5 have no inter-dependency and build in parallel. ITK
-requires all three before it can configure. MITK requires VTK, ITK, GDCM, and
-HDF5. SimVascular is the final step.
+VTK, GDCM, HDF5, MMG, TetGen, and tinyxml2 have no inter-dependency and build
+in parallel. ITK requires VTK, GDCM, and HDF5. OpenCASCADE and VMTK each
+require VTK; VMTK additionally requires ITK. SimVascular is the final step.
 
 ```mermaid
 graph TD
@@ -122,28 +181,37 @@ graph TD
     GDCM["GDCM 3.0.10"]:::built
     HDF5["HDF5 1.14.3"]:::built
     ITK["ITK 5.4.0"]:::built
-    MITK["MITK 2024.06"]:::built
+    OCC["OpenCASCADE 7.6.0"]:::built
+    MMG["MMG 5.3.9"]:::built
+    TetGen["TetGen 1.5.1"]:::built
+    tinyxml2["tinyxml2 10.0.0"]:::built
+    VMTK["VMTK"]:::built
     SV["SimVascular"]:::project
 
-    Qt6 -->|Qt6_DIR| MITK
+    Qt6 -->|Qt6_DIR| VTK
+    Qt6 -->|Qt6_DIR| ITK
+    Qt6 -->|Qt6_DIR| VMTK
     Qt6 -->|Qt6_DIR| SV
 
     VTK -->|VTK_DIR| ITK
-    VTK -->|VTK_DIR| MITK
+    VTK -->|3RDPARTY_VTK_DIR| OCC
+    VTK -->|VTK_DIR| VMTK
     VTK -->|VTK_DIR| SV
 
     GDCM -->|GDCM_DIR| ITK
-    GDCM -->|GDCM_DIR| MITK
     GDCM -->|GDCM_DIR| SV
 
     HDF5 -->|HDF5_DIR| ITK
-    HDF5 -->|HDF5_DIR| MITK
     HDF5 -->|HDF5_DIR| SV
 
-    ITK -->|ITK_DIR| MITK
+    ITK -->|ITK_DIR| VMTK
     ITK -->|ITK_DIR| SV
 
-    MITK -->|MITK_DIR| SV
+    OCC -->|OpenCASCADE_DIR| SV
+    MMG -->|MMG_DIR| SV
+    TetGen -->|TETGEN_INCLUDE_DIR/LIBRARY| SV
+    tinyxml2 -->|tinyxml2_DIR| SV
+    VMTK -->|VMTK_DIR| SV
 
     classDef system fill:#dde,stroke:#667
     classDef built  fill:#dfd,stroke:#484
@@ -154,7 +222,7 @@ graph TD
 
 | Wave | Projects | Prerequisite |
 |------|----------|-------------|
-| 1 | VTK, GDCM, HDF5 | — |
-| 2 | ITK | VTK + GDCM + HDF5 |
-| 3 | MITK | VTK + ITK + GDCM + HDF5 |
+| 1 | VTK, GDCM, HDF5, MMG, TetGen, tinyxml2 | — |
+| 2 | ITK, OpenCASCADE | VTK (+ GDCM, HDF5 for ITK) |
+| 3 | VMTK | VTK + ITK |
 | 4 | SimVascular | all |
