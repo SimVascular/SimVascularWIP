@@ -106,8 +106,6 @@ static PyObject * PyCreateSegmentation(cKernelType contourType);
 #include "SegmentationSubdivisionType_PyClass.cxx"
 #include "Segmentation_PyClass.cxx"
 
-#pragma message "TEST:" PYTHON_MAJOR_VERSION
-
 //////////////////////////////////////////////////////
 //        U t i l i t y     F u n c t i o n s       //
 //////////////////////////////////////////////////////
@@ -534,4 +532,3 @@ PyMODINIT_FUNC initPySegmentation()
 
 }
 #endif
-

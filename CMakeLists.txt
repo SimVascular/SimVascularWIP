@@ -17,7 +17,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Find Python
-find_package(Python 3.12 COMPONENTS Development.Module REQUIRED)
+find_package(Python 3.12...<3.13 COMPONENTS Interpreter Development.Module REQUIRED)
 
 # Find Qt
 find_package(Qt6 6.10 COMPONENTS Core CoreTools Gui Widgets Xml REQUIRED)
@@ -53,7 +53,7 @@ find_package(tinyxml2 REQUIRED)
 
 find_package(OpenCASCADE REQUIRED)
 
-find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+find_package(Python3 3.12...<3.13 COMPONENTS Interpreter Development REQUIRED)
 set(PYTHON_MAJOR_VERSION ${Python3_VERSION_MAJOR})
 
 add_subdirectory(Source)

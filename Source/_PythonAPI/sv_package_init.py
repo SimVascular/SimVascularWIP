@@ -45,31 +45,44 @@ _SV_PYTHON_API_MODULES = [
 ]
 
 
+def _lib_names():
+    # Shared-library naming differs per platform: libvtkSVPythonAPI.so on
+    # Linux, libvtkSVPythonAPI.dylib on macOS, vtkSVPythonAPI.dll on Windows.
+    if os.name == "nt":
+        return ("vtkSVPythonAPI.dll",)
+    if sys.platform == "darwin":
+        # .so is also tried on macOS since some build/packaging setups force
+        # that suffix even there.
+        return ("libvtkSVPythonAPI.dylib", "libvtkSVPythonAPI.so")
+    return ("libvtkSVPythonAPI.so",)
+
+
 def _find_lib_path():
-    lib_name = ("" if os.name == "nt" else "lib") + "vtkSVPythonAPI" + (".dll" if os.name == "nt" else ".so")
+    lib_names = _lib_names()
     here = os.path.dirname(os.path.abspath(__file__))
 
     # Candidate locations relative to this file, covering the layouts we
     # know about. This file currently lives at
     # <build-or-install-prefix>/lib/pythonX.Y/site-packages/sv/__init__.py,
-    # with libvtkSVPythonAPI.so three directories up, in .../lib/. A Slicer
+    # with the library three directories up, in .../lib/. A Slicer
     # extension will likely place things differently once this actually
     # gets built against Slicer's VTK -- add that layout here once known.
-    for candidate in (
-        os.path.join(here, "..", "..", "..", lib_name),  # .../lib/<name> (current layout)
-        os.path.join(here, "..", lib_name),               # a flatter, single-directory layout
-        os.path.join(here, lib_name),                     # right next to this file
+    for directory in (
+        os.path.join(here, "..", "..", ".."),  # .../lib/<name> (current layout)
+        os.path.join(here, ".."),              # a flatter, single-directory layout
+        here,                                  # right next to this file
     ):
-        candidate = os.path.normpath(candidate)
-        if os.path.exists(candidate):
-            return candidate
+        for lib_name in lib_names:
+            candidate = os.path.normpath(os.path.join(directory, lib_name))
+            if os.path.exists(candidate):
+                return candidate
 
     # Fall back to letting the OS loader search its normal paths (RPATH,
-    # LD_LIBRARY_PATH/PATH, ldconfig cache, etc). Works if whatever packages
-    # this for its target environment (e.g. a Slicer extension) sets one of
-    # those up, which is the standard way to make a bundled shared library
-    # findable.
-    return lib_name
+    # LD_LIBRARY_PATH/DYLD_LIBRARY_PATH/PATH, ldconfig cache, etc). Works if
+    # whatever packages this for its target environment (e.g. a Slicer
+    # extension) sets one of those up, which is the standard way to make a
+    # bundled shared library findable.
+    return lib_names[0]
 
 
 _LIB_PATH = _find_lib_path()
@@ -106,4 +119,4 @@ def _load_extension_modules():
 
 
 _load_extension_modules()
-del _load_extension_modules, _find_lib_path, _LIB_PATH, _SV_PYTHON_API_MODULES
+del _load_extension_modules, _find_lib_path, _lib_names, _LIB_PATH, _SV_PYTHON_API_MODULES
