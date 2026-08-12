@@ -32,6 +32,7 @@
 #include "SimVascular.h"
 
 #include "sv_ggems.h"
+#include <algorithm>
 #include <math.h>
 
 /*=========================  ggemsGeometrical Procedures =======================
@@ -126,7 +127,7 @@ Rdouble ggemsgeo_solid_angle(int n_vert,           /* number of vertices */
     l1 = ggemsGeoVecLen(&n1);
     l2 = ggemsGeoVecLen(&n2);
     s = ggemsGeoDotProd(&n1, &n2) / (l1 * l2);
-    ang = acos(std::max(-1.0, ((1.0) < (s) ? (1.0) : (s))));
+    ang = acos(std::max(-1.0, std::min(1.0, s)));
     s = ggemsGeoTripleProd(&b, &a, &plane);
     area += s > 0.0 ? PI - ang : PI + ang;
 

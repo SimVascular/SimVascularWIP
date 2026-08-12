@@ -36,6 +36,7 @@
 #include <map>
 #include <set>
 #include <fstream>
+#include <sstream>
 
 //-----------------
 // PySimulationROM
@@ -834,4 +835,3 @@ SetPyROMSimTypeFields(PyTypeObject& romSimType)
   romSimType.tp_methods = PyROMSimMethods;
   romSimType.tp_members = PyROMSimMembers;
 }
-

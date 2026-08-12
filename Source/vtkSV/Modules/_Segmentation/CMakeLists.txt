@@ -49,3 +49,12 @@ vtk_module_include(VTK::SVSegmentation
     PUBLIC
     ${VMTK_INCLUDE_DIRS}
 )
+
+vtk_module_link(VTK::SVSegmentation PUBLIC
+    vtkvmtkCommon
+    vtkvmtkComputationalGeometry
+    vtkvmtkDifferentialGeometry
+    vtkvmtkIO
+    vtkvmtkMisc
+    vtkvmtkSegmentation
+)

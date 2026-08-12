@@ -7,5 +7,9 @@ GROUPS
     SV1
 DEPENDS
     VTK::CommonCore
+    VTK::CommonDataModel
+    VTK::FiltersGeneral
+    VTK::FiltersGeometry
+    VTK::IOXML
     VTK::SVCore
     VTK::SV1MeshMeshObject
