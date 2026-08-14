@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Smoke test: verifies the SimVascular `sv` Python extension module imports
-and exposes its expected submodules. Run via test_python_api.sh so
-LD_LIBRARY_PATH is set correctly.
+and exposes its expected submodules. Run via test_python_api.sh so the
+platform's shared-library search path (LD_LIBRARY_PATH/DYLD_LIBRARY_PATH/
+PATH) is set correctly.
 """
 
 import sys
