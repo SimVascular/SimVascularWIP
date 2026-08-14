@@ -19,13 +19,20 @@ the whole process — configuring and building it builds every dependency
 followed by SimVascular itself.
 
 ```bash
-mkdir -p ../simwip && cd ../simwip
+cmake -S . -B ../simwip -DQt6_DIR=/path/to/Qt6/lib/cmake/Qt6
 
-cmake ../SimVascularWIP \
-  -DQt6_DIR=/path/to/Qt/6.10.x/gcc_64/lib/cmake/Qt6
-
-make -j$(nproc)
+cmake --build ../simwip --parallel
 ```
+
+`Qt6_DIR` points at the `lib/cmake/Qt6` directory of your Qt6 install; its
+exact location depends on how Qt was installed, e.g.
+`C:\Qt\6.10.0\msvc2019_64\lib\cmake\Qt6` on Windows,
+`/path/to/Qt/6.10.0/gcc_64/lib/cmake/Qt6` on Linux, or
+`/path/to/Qt/6.10.0/macos/lib/cmake/Qt6` on macOS.
+
+`cmake --build ... --parallel` dispatches to whatever build tool the
+generator selected (Make, Ninja, MSBuild, Xcode, ...) and picks a sensible
+parallelism level automatically; pass `--parallel N` to pin it to `N` jobs.
 
 Useful CMake options (pass as `-D<OPTION>=<VALUE>`):
 
