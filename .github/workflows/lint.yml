@@ -1,0 +1,92 @@
+name: Lint
+
+# Lints only what a PR actually touches, not the whole tree: most of
+# Source/ (sv1/, sv4gui/, vtkSV/) is untouched legacy code that predates
+# this fork and doesn't conform to .clang-format/ruff.toml. Re-formatting
+# it wholesale is a separate, deliberate effort — this workflow just keeps
+# new/changed code from adding to the mess.
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: lint-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  clang-format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install clang-format
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-format
+
+      - name: Fetch PR base
+        run: git fetch --depth=1 origin "${{ github.event.pull_request.base.sha }}"
+
+      - name: Check formatting of changed lines
+        run: |
+          set -euo pipefail
+
+          # Ubuntu sometimes only installs the versioned binary
+          # (git-clang-format-18) without a generic `git-clang-format`
+          # symlink, depending on the alternatives setup on the runner
+          # image, so fall back to searching for it.
+          GIT_CLANG_FORMAT="$(command -v git-clang-format || true)"
+          if [ -z "$GIT_CLANG_FORMAT" ]; then
+            GIT_CLANG_FORMAT="$(ls /usr/bin/git-clang-format-* 2>/dev/null | sort -V | tail -1)"
+          fi
+          if [ -z "$GIT_CLANG_FORMAT" ]; then
+            echo "::error::git-clang-format not found alongside clang-format"
+            exit 1
+          fi
+
+          "$GIT_CLANG_FORMAT" --binary clang-format --diff \
+            "${{ github.event.pull_request.base.sha }}" > clang-format.diff || true
+
+          if [ -s clang-format.diff ] && \
+             ! grep -q "no modified files to format" clang-format.diff; then
+            echo "::error::clang-format found style issues in changed lines. Run 'git-clang-format ${{ github.event.pull_request.base.sha }}' locally and commit the result."
+            cat clang-format.diff
+            exit 1
+          fi
+
+          echo "No clang-format issues in changed lines."
+
+  ruff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install ruff
+        run: pip install "ruff>=0.6"
+
+      - name: Lint changed Python files
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+
+          git fetch --depth=1 origin "$BASE_SHA"
+
+          mapfile -t files < <(git diff --name-only --diff-filter=ACMR "$BASE_SHA" -- '*.py')
+
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "No Python files changed."
+            exit 0
+          fi
+
+          printf '%s\n' "${files[@]}"
+          ruff check "${files[@]}"
+          ruff format --check --diff "${files[@]}"
