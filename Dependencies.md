@@ -97,12 +97,40 @@ depends on VTK in the superbuild.
 | | |
 |---|---|
 | **Source** | https://github.com/Open-Cascade-SAS/OCCT.git `V7_6_0` |
-| **Superbuild deps** | VTK |
+| **Superbuild deps** | VTK; FreeType (Windows only) |
 | **Key flags** | `BUILD_SHARED_LIBS=ON`, `USE_VTK=ON`, `BUILD_MODULE_Visualization=ON`, `BUILD_MODULE_ApplicationFramework=ON`, `BUILD_MODULE_Draw=OFF` |
 
 OpenCASCADE provides the solid modeling kernel. It links against the VTK
 build above via `3RDPARTY_VTK_DIR`/`3RDPARTY_VTK_INCLUDE_DIR`/
 `3RDPARTY_VTK_LIBRARY_DIR` rather than any VTK found on the host.
+
+OCCT's own defaults for `INSTALL_DIR_LIB`/`INSTALL_DIR_INCLUDE`/
+`INSTALL_DIR_CMAKE`/`INSTALL_DIR_BIN` differ by platform (e.g.
+`INSTALL_DIR_BIN` is `bin` on Unix but `win64/vc14/bin` on Windows) — all
+four are pinned explicitly to a fixed, platform-independent layout so
+`OpenCASCADE_DIR` and downstream DLL/`.so` search paths are consistent
+everywhere.
+
+`BUILD_MODULE_Visualization` hard-requires FreeType (font/text rendering),
+found via CMake's `find_package(Freetype)`. On Linux/macOS this normally
+resolves against a system FreeType dev package; Windows has no equivalent,
+so `External_FreeType.cmake` vendors it and `External_OpenCASCADE.cmake`
+points OCCT at it directly via `3RDPARTY_FREETYPE_*` (Windows only — see
+`if(WIN32)` in `SuperBuild/CMakeLists.txt`).
+
+---
+
+### FreeType 2.13.3 (Windows only)
+| | |
+|---|---|
+| **Source** | https://github.com/freetype/freetype.git `VER-2-13-3` |
+| **Superbuild deps** | none |
+| **Key flags** | `BUILD_SHARED_LIBS=ON`, `FT_DISABLE_{ZLIB,BZIP2,PNG,HARFBUZZ,BROTLI}=ON` |
+
+Built only on Windows, solely to satisfy OpenCASCADE's Visualization module
+(see above). All optional codec dependencies are disabled since OCCT only
+needs core glyph-outline rendering. Not built on Linux/macOS, where a system
+FreeType install is assumed.
 
 ---
 
@@ -169,9 +197,10 @@ have been disabled to allow the project to build without it (see the
 
 ## Build Order
 
-VTK, GDCM, HDF5, MMG, TetGen, and tinyxml2 have no inter-dependency and build
-in parallel. ITK requires VTK, GDCM, and HDF5. OpenCASCADE and VMTK each
-require VTK; VMTK additionally requires ITK. SimVascular is the final step.
+VTK, GDCM, HDF5, MMG, TetGen, tinyxml2, and (Windows only) FreeType have no
+inter-dependency and build in parallel. ITK requires VTK, GDCM, and HDF5.
+OpenCASCADE requires VTK (plus FreeType on Windows); VMTK requires VTK and
+ITK. SimVascular is the final step.
 
 ```mermaid
 graph TD
@@ -182,6 +211,7 @@ graph TD
     HDF5["HDF5 1.14.3"]:::built
     ITK["ITK 5.4.0"]:::built
     OCC["OpenCASCADE 7.6.0"]:::built
+    FreeType["FreeType 2.13.3&#10;(Windows only)"]:::built
     MMG["MMG 5.3.9"]:::built
     TetGen["TetGen 1.5.1"]:::built
     tinyxml2["tinyxml2 10.0.0"]:::built
@@ -207,6 +237,7 @@ graph TD
     ITK -->|ITK_DIR| VMTK
     ITK -->|ITK_DIR| SV
 
+    FreeType -->|3RDPARTY_FREETYPE_*| OCC
     OCC -->|OpenCASCADE_DIR| SV
     MMG -->|MMG_DIR| SV
     TetGen -->|TETGEN_INCLUDE_DIR/LIBRARY| SV
@@ -222,7 +253,7 @@ graph TD
 
 | Wave | Projects | Prerequisite |
 |------|----------|-------------|
-| 1 | VTK, GDCM, HDF5, MMG, TetGen, tinyxml2 | — |
-| 2 | ITK, OpenCASCADE | VTK (+ GDCM, HDF5 for ITK) |
+| 1 | VTK, GDCM, HDF5, MMG, TetGen, tinyxml2, FreeType (Windows only) | — |
+| 2 | ITK, OpenCASCADE | VTK (+ GDCM, HDF5 for ITK; + FreeType on Windows for OpenCASCADE) |
 | 3 | VMTK | VTK + ITK |
 | 4 | SimVascular | all |

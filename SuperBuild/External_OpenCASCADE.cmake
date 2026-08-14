@@ -2,6 +2,24 @@ set(OpenCASCADE_VERSION "7.6.0")
 set(OpenCASCADE_INSTALL_DIR ${CMAKE_BINARY_DIR}/OpenCASCADE-install)
 set(OpenCASCADE_DIR ${OpenCASCADE_INSTALL_DIR}/lib/cmake/opencascade)
 
+# OCCT's Visualization module requires FreeType. Linux/macOS normally find a
+# system install via find_package(Freetype); Windows has none, so a vendored
+# FreeType (see External_FreeType.cmake) is pointed to explicitly instead.
+set(OpenCASCADE_FreeType_ARGS "")
+set(OpenCASCADE_FreeType_DEPENDS "")
+if(WIN32)
+  set(OpenCASCADE_FreeType_ARGS
+    -D3RDPARTY_FREETYPE_DIR:PATH=${FreeType_INSTALL_DIR}
+    -D3RDPARTY_FREETYPE_INCLUDE_DIR_ft2build:PATH=${FreeType_INSTALL_DIR}/include/freetype2
+    -D3RDPARTY_FREETYPE_INCLUDE_DIR_freetype2:PATH=${FreeType_INSTALL_DIR}/include/freetype2
+    -D3RDPARTY_FREETYPE_LIBRARY:FILEPATH=${FreeType_INSTALL_DIR}/lib/freetype.lib
+    -D3RDPARTY_FREETYPE_LIBRARY_DIR:PATH=${FreeType_INSTALL_DIR}/lib
+    -D3RDPARTY_FREETYPE_DLL:FILEPATH=${FreeType_INSTALL_DIR}/bin/freetype.dll
+    -D3RDPARTY_FREETYPE_DLL_DIR:PATH=${FreeType_INSTALL_DIR}/bin
+  )
+  set(OpenCASCADE_FreeType_DEPENDS FreeType)
+endif()
+
 ExternalProject_Add(OpenCASCADE
   GIT_REPOSITORY "https://github.com/Open-Cascade-SAS/OCCT.git"
   GIT_TAG        "V7_6_0"
@@ -27,8 +45,11 @@ ExternalProject_Add(OpenCASCADE
     -D3RDPARTY_VTK_LIBRARY_DIR:PATH=${VTK_INSTALL_DIR}/lib
     -DINSTALL_DIR_LIB:STRING=lib
     -DINSTALL_DIR_INCLUDE:STRING=include/opencascade
+    -DINSTALL_DIR_CMAKE:STRING=lib/cmake/opencascade
+    -DINSTALL_DIR_BIN:STRING=bin
+    ${OpenCASCADE_FreeType_ARGS}
   INSTALL_DIR ${OpenCASCADE_INSTALL_DIR}
-  DEPENDS VTK
+  DEPENDS VTK ${OpenCASCADE_FreeType_DEPENDS}
   USES_TERMINAL_DOWNLOAD 1
   USES_TERMINAL_UPDATE   1
   USES_TERMINAL_BUILD    1

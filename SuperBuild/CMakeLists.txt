@@ -34,6 +34,11 @@ list(APPEND SimVascular_DEPENDENCIES HDF5)
 include(${CMAKE_CURRENT_SOURCE_DIR}/External_ITK.cmake)
 list(APPEND SimVascular_DEPENDENCIES ITK)
 
+if(WIN32)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/External_FreeType.cmake)
+  list(APPEND SimVascular_DEPENDENCIES FreeType)
+endif()
+
 include(${CMAKE_CURRENT_SOURCE_DIR}/External_OpenCASCADE.cmake)
 list(APPEND SimVascular_DEPENDENCIES OpenCASCADE)
 
