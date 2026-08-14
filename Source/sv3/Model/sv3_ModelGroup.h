@@ -20,10 +20,10 @@ class VTKSV3MODEL_EXPORT ModelGroup {
 public:
     ModelGroup();
 
-    ModelGroup(const ModelGroup&) = delete;
-    ModelGroup& operator=(const ModelGroup&) = delete;
-    ModelGroup(ModelGroup&&) = default;
-    ModelGroup& operator=(ModelGroup&&) = default;
+    ModelGroup(const ModelGroup &) = delete;
+    ModelGroup &operator=(const ModelGroup &) = delete;
+    ModelGroup(ModelGroup &&) = default;
+    ModelGroup &operator=(ModelGroup &&) = default;
 
     std::string GetType() const { return m_Type; }
     void SetType(const std::string& type) { m_Type = type; }

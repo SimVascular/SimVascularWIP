@@ -291,21 +291,30 @@ PyDoc_STRVAR(use_isotropic_meshing_doc,
 PyDoc_STRVAR(use_multiple_steps_doc, "If True then use multiple simlation steps.");
 
 static PyMemberDef PyTetGenAdaptOptMembers[] = {
-    // {TetGenAdaptOption::end_step, T_INT, offsetof(PyMeshingTetGenAdaptOpt, end_step), 0, end_step_doc},
+    // {TetGenAdaptOption::end_step, T_INT, offsetof(PyMeshingTetGenAdaptOpt,
+    // end_step), 0, end_step_doc},
 
-    // {TetGenAdaptOption::max_edge_size, T_DOUBLE, offsetof(PyMeshingTetGenAdaptOpt, max_edge_size), 0, max_edge_size_doc},
+    // {TetGenAdaptOption::max_edge_size, T_DOUBLE,
+    // offsetof(PyMeshingTetGenAdaptOpt, max_edge_size), 0, max_edge_size_doc},
 
-    // {TetGenAdaptOption::min_edge_size, T_DOUBLE, offsetof(PyMeshingTetGenAdaptOpt, min_edge_size), 0, min_edge_size_doc},
+    // {TetGenAdaptOption::min_edge_size, T_DOUBLE,
+    // offsetof(PyMeshingTetGenAdaptOpt, min_edge_size), 0, min_edge_size_doc},
 
-    // {TetGenAdaptOption::start_step, T_INT, offsetof(PyMeshingTetGenAdaptOpt, start_step), 0, "Simulation start step"},
+    // {TetGenAdaptOption::start_step, T_INT, offsetof(PyMeshingTetGenAdaptOpt,
+    // start_step), 0, "Simulation start step"},
 
-    // {TetGenAdaptOption::step_increment, T_INT, offsetof(PyMeshingTetGenAdaptOpt, step_increment), 0, "Simulation step increment."},
+    // {TetGenAdaptOption::step_increment, T_INT,
+    // offsetof(PyMeshingTetGenAdaptOpt, step_increment), 0, "Simulation step
+    // increment."},
 
-    // {TetGenAdaptOption::use_multiple_steps, T_BOOL, offsetof(PyMeshingTetGenAdaptOpt, use_multiple_steps), 0, use_multiple_steps_doc},
+    // {TetGenAdaptOption::use_multiple_steps, T_BOOL,
+    // offsetof(PyMeshingTetGenAdaptOpt, use_multiple_steps), 0,
+    // use_multiple_steps_doc},
 
-    // {TetGenAdaptOption::use_isotropic_meshing, T_BOOL, offsetof(PyMeshingTetGenAdaptOpt, use_isotropic_meshing), READONLY, use_isotropic_meshing_doc},
-    {nullptr}
-};
+    // {TetGenAdaptOption::use_isotropic_meshing, T_BOOL,
+    // offsetof(PyMeshingTetGenAdaptOpt, use_isotropic_meshing), READONLY,
+    // use_isotropic_meshing_doc},
+    {nullptr}};
 
 ////////////////////////////////////////////////////////
 //          C l a s s    G e t / S e t                //
