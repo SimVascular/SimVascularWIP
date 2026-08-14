@@ -63,10 +63,9 @@ vtkSmartPointer<vtkUnstructuredGrid> VTKSVCORE_EXPORT
 VtkUtils_ThresholdUgrid(const double lower, const double upper,
                         const std::string &data_name, vtkDataObject *vtk_data);
 
-vtkSmartPointer<vtkPolyData> VTKSVCORE_EXPORT
-VtkUtils_ThresholdSurface(const double lower, const double upper,
-                          const std::string &data_name,
-                          vtkDataObject *vtk_data);
+vtkSmartPointer<vtkPolyData> VTKSVCORE_EXPORT VtkUtils_ThresholdSurface(
+    const double lower, const double upper, const std::string &data_name,
+    vtkDataObject *vtk_data);
 
 int VTKSVCORE_EXPORT VtkUtils_FixTopology(vtkPolyData *pd, double tol);
 
@@ -131,8 +130,9 @@ int VTKSVCORE_EXPORT VtkUtils_UGCheckArrayName(vtkUnstructuredGrid *object,
                                                std::string arrayname);
 
 void VTKSVCORE_EXPORT VtkUtils_write_vtu(vtkUnstructuredGrid *ugrid,
-                        const std::string file_name);
+                                         const std::string file_name);
 
-void VTKSVCORE_EXPORT VtkUtils_write_vtp(vtkPolyData *polydata, const std::string file_name);
+void VTKSVCORE_EXPORT VtkUtils_write_vtp(vtkPolyData *polydata,
+                                         const std::string file_name);
 
 #endif

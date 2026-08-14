@@ -49,7 +49,8 @@
 // Needed for the dmd module.
 extern VTKSVPYTHONAPI_EXPORT PyObject * PyCreateSegmentation(sv3::Contour* contour);
 
-VTKSVPYTHONAPI_EXPORT PyObject* CreatePySegmentationSeries(std::unique_ptr<sv3::ContourGroup> contourGroup);
+VTKSVPYTHONAPI_EXPORT PyObject *
+CreatePySegmentationSeries(std::unique_ptr<sv3::ContourGroup> contourGroup);
 
 // Define the signature for the function used to copy sv4guiContour 
 // object data to sv3::Contour objects.
