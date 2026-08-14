@@ -47,6 +47,11 @@ using sv3::PathElement;
 using sv3::SegmentationUtils;
 using sv3::thresholdContour;
 
+// somehow GetClassName is getting set to GetClassNameA on Windows
+#ifdef GetClassName
+#undef GetClassName
+#endif
+
 thresholdContour::thresholdContour() : Contour() {
   m_forceClosed = true;
   m_thresholdValue = 0.;

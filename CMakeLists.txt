@@ -16,6 +16,12 @@ endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+if(MSVC)
+  # MSVC only defines M_PI/M_E/etc. from <cmath> when this is set; glibc/libc++
+  # expose them unconditionally, which is why this was never needed elsewhere.
+  add_compile_definitions(_USE_MATH_DEFINES)
+endif()
+
 # Find Python
 find_package(Python 3.12...<3.13 COMPONENTS Interpreter Development.Module REQUIRED)
 

@@ -20,6 +20,11 @@ class VTKSV3MESH_EXPORT MeshGroup {
 public:
     MeshGroup();
 
+    MeshGroup(const MeshGroup&) = delete;
+    MeshGroup& operator=(const MeshGroup&) = delete;
+    MeshGroup(MeshGroup&&) = default;
+    MeshGroup& operator=(MeshGroup&&) = default;
+
     std::string GetType() const { return m_Type; }
     void SetType(const std::string& type) { m_Type = type; }
 

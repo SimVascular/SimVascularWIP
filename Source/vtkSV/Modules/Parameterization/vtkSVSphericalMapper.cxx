@@ -60,6 +60,7 @@
 #include "vtkSVPlacePointsOnS2.h"
 
 #include <cmath>
+#include <cstring>
 #include <iostream>
 #include <sstream>
 
@@ -1112,6 +1113,24 @@ int vtkSVSphericalMapper::CalculateSquareEdgeLengths(vtkPolyData *lines,
   }
 
   return SV_OK;
+}
+
+// ----------------------
+// PDCheckArrayName
+// ----------------------
+int vtkSVSphericalMapper::PDCheckArrayName(vtkPolyData *pd, int datatype,
+                                           std::string arrayname) {
+  vtkDataSetAttributes *data =
+      (datatype == 0) ? static_cast<vtkDataSetAttributes *>(pd->GetPointData())
+                      : static_cast<vtkDataSetAttributes *>(pd->GetCellData());
+
+  for (int i = 0; i < data->GetNumberOfArrays(); i++) {
+    if (!strcmp(data->GetArrayName(i), arrayname.c_str())) {
+      return SV_OK;
+    }
+  }
+
+  return SV_ERROR;
 }
 
 // ----------------------

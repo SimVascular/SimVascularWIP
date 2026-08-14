@@ -50,6 +50,11 @@ using sv3::Contour;
 using sv3::PathElement;
 using sv3::SegmentationUtils;
 
+// somehow GetClassName is getting set to GetClassNameA on Windows
+#ifdef GetClassName
+#undef GetClassName
+#endif
+
 circleContour::circleContour() : Contour() {
   m_Method = "Manual";
   m_Type = "Circle";

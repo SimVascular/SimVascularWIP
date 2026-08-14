@@ -34,6 +34,12 @@
 #include <cmath>
 
 using sv3::ContourPolygon;
+
+// somehow GetClassName is getting set to GetClassNameA on Windows
+#ifdef GetClassName
+#undef GetClassName
+#endif
+
 ContourPolygon::ContourPolygon() : Contour() {
   m_Method = "Manual";
   m_Type = "Polygon";
