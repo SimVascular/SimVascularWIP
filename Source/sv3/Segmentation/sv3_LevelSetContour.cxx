@@ -50,6 +50,11 @@ using sv3::levelSetContour;
 using sv3::PathElement;
 using sv3::SegmentationUtils;
 
+// somehow GetClassName is getting set to GetClassNameA on Windows
+#ifdef GetClassName
+#undef GetClassName
+#endif
+
 levelSetContour::levelSetContour() : Contour() { m_forceClosed = true; }
 
 levelSetContour::levelSetContour(const levelSetContour &other) : Contour() {

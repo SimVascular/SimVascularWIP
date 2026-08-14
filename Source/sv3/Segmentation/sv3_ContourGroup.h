@@ -89,6 +89,11 @@ class VTKSV3SEGMENTATION_EXPORT ContourGroup {
 public:
     ContourGroup();
 
+    ContourGroup(const ContourGroup&) = delete;
+    ContourGroup& operator=(const ContourGroup&) = delete;
+    ContourGroup(ContourGroup&&) = default;
+    ContourGroup& operator=(ContourGroup&&) = default;
+
     std::string GetPathName() const { return m_PathName; }
     void SetPathName(std::string name) { m_PathName = name; }
 

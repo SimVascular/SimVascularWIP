@@ -59,11 +59,11 @@ int VTKSVCORE_EXPORT VtkUtils_NewVtkPolyDataLines(vtkPolyData **pd, int numPts,
 // same (potentially redundant) point set, and just change the id's
 // that get used by Lines and Polys.
 
-vtkSmartPointer<vtkUnstructuredGrid>
+vtkSmartPointer<vtkUnstructuredGrid> VTKSVCORE_EXPORT
 VtkUtils_ThresholdUgrid(const double lower, const double upper,
                         const std::string &data_name, vtkDataObject *vtk_data);
 
-vtkSmartPointer<vtkPolyData>
+vtkSmartPointer<vtkPolyData> VTKSVCORE_EXPORT
 VtkUtils_ThresholdSurface(const double lower, const double upper,
                           const std::string &data_name,
                           vtkDataObject *vtk_data);
@@ -130,9 +130,9 @@ int VTKSVCORE_EXPORT VtkUtils_UGCheckArrayName(vtkUnstructuredGrid *object,
                                                int datatype,
                                                std::string arrayname);
 
-void VtkUtils_write_vtu(vtkUnstructuredGrid *ugrid,
+void VTKSVCORE_EXPORT VtkUtils_write_vtu(vtkUnstructuredGrid *ugrid,
                         const std::string file_name);
 
-void VtkUtils_write_vtp(vtkPolyData *polydata, const std::string file_name);
+void VTKSVCORE_EXPORT VtkUtils_write_vtp(vtkPolyData *polydata, const std::string file_name);
 
 #endif
