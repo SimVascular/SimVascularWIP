@@ -97,7 +97,14 @@ def _load_extension_modules():
     #
     # PyDLL (not CDLL) keeps the GIL held across the call, which these need
     # since they call straight back into the Python C API.
-    lib = ctypes.PyDLL(_LIB_PATH)
+    #
+    # winmode=0 restores the pre-3.8 DLL search behavior on Windows (search
+    # PATH, among other directories) instead of ctypes' post-3.8 default,
+    # which ignores PATH entirely and only finds dependencies registered via
+    # os.add_dll_directory(). Without it, loading vtkSVPythonAPI.dll fails to
+    # resolve its own dependency DLLs even when they're on PATH. Ignored on
+    # non-Windows platforms.
+    lib = ctypes.PyDLL(_LIB_PATH, winmode=0)
 
     for name, init_func_name in _SV_PYTHON_API_MODULES:
         init_func = getattr(lib, init_func_name, None)
