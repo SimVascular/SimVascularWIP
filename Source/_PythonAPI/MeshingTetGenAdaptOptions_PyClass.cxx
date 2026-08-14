@@ -290,7 +290,6 @@ PyDoc_STRVAR(use_isotropic_meshing_doc,
 
 PyDoc_STRVAR(use_multiple_steps_doc, "If True then use multiple simlation steps.");
 
-// compilation error from here
 static PyMemberDef PyTetGenAdaptOptMembers[] = {
     // {TetGenAdaptOption::end_step, T_INT, offsetof(PyMeshingTetGenAdaptOpt, end_step), 0, end_step_doc},
 
@@ -305,7 +304,7 @@ static PyMemberDef PyTetGenAdaptOptMembers[] = {
     // {TetGenAdaptOption::use_multiple_steps, T_BOOL, offsetof(PyMeshingTetGenAdaptOpt, use_multiple_steps), 0, use_multiple_steps_doc},
 
     // {TetGenAdaptOption::use_isotropic_meshing, T_BOOL, offsetof(PyMeshingTetGenAdaptOpt, use_isotropic_meshing), READONLY, use_isotropic_meshing_doc},
-    // {nullptr, nullptr}
+    {nullptr}
 };
 
 ////////////////////////////////////////////////////////
