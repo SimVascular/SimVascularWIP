@@ -1,0 +1,25 @@
+# Matches the formatting already used in the actively-maintained parts of
+# this tree (Source/Core, Source/sv3, Source/_PythonAPI): 2-space indent,
+# 80-column limit, attached braces, right-aligned pointers/references
+# (`Type *name`), space before parens only on control statements. This is
+# LLVM's default style almost verbatim; the options below are pinned
+# explicitly so the intent survives a future clang-format default change.
+BasedOnStyle: LLVM
+Language: Cpp
+Standard: c++17
+
+IndentWidth: 2
+ColumnLimit: 80
+UseTab: Never
+
+BreakBeforeBraces: Attach
+AccessModifierOffset: -2
+
+PointerAlignment: Right
+ReferenceAlignment: Right
+
+SpaceBeforeParens: ControlStatements
+AlignAfterOpenBracket: Align
+
+SortIncludes: true
+IncludeBlocks: Preserve

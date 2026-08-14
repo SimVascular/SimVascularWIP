@@ -1,0 +1,24 @@
+# Matches the style already used by Source/_PythonAPI/sv_package_init.py and
+# Testing/PythonAPI/test_python_api.py: 4-space indent, double quotes,
+# ~88-column lines. `ruff format` is Black-compatible and reproduces that
+# style directly, so no formatter overrides are needed below.
+target-version = "py312"
+line-length = 88
+
+[lint]
+# Pyflakes + pycodestyle (ruff's default set), plus import-sort (imports in
+# this repo are already alphabetized) and pyupgrade (keep syntax current for
+# the pinned py312 target).
+select = ["E", "F", "W", "I", "UP"]
+
+[lint.isort]
+known-first-party = ["sv"]
+
+[lint.per-file-ignores]
+# Pyflakes false-positives "undefined name" for module-level names that are
+# used inside a nested function but also `del`-ed later in the module (see
+# https://github.com/PyCQA/pyflakes/issues -- del unbinds the name for the
+# whole scope's analysis, not just after the del line). This file `del`s its
+# helper names/functions deliberately, to keep the installed `sv` package's
+# namespace limited to the submodules it assembles.
+"Source/_PythonAPI/sv_package_init.py" = ["F821"]

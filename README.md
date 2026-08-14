@@ -68,3 +68,22 @@ arguments if your layout differs:
 ```bash
 Testing/PythonAPI/test_python_api.sh <SIMWIP_ROOT> [BUILD_DIR]
 ```
+
+## Linting
+
+The `Lint` GitHub Actions workflow (`.github/workflows/lint.yml`) checks
+pull requests with `clang-format` (C++, via `.clang-format`) and `ruff`
+(Python, via `ruff.toml`). Both only look at lines/files a PR actually
+changes — most of `Source/sv1` and `Source/sv4gui` predates this fork and
+doesn't conform, so the whole tree isn't linted, only new/changed code.
+
+To check or fix formatting locally before pushing:
+
+```bash
+# C++ — only the lines changed since a given base ref/commit
+git-clang-format <base-ref>
+
+# Python
+ruff check <changed files>
+ruff format <changed files>
+```

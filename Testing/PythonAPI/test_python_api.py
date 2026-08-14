@@ -3,6 +3,7 @@
 and exposes its expected submodules. Run via test_python_api.sh so
 LD_LIBRARY_PATH is set correctly.
 """
+
 import sys
 
 if len(sys.argv) != 2:

@@ -25,6 +25,7 @@ sys.modules under the desired dotted name. That works in any CPython
 interpreter, embedded or not, and doesn't depend on which VTK build
 libvtkSVPythonAPI happens to be linked against.
 """
+
 import ctypes
 import os
 import sys
@@ -69,8 +70,8 @@ def _find_lib_path():
     # gets built against Slicer's VTK -- add that layout here once known.
     for directory in (
         os.path.join(here, "..", "..", ".."),  # .../lib/<name> (current layout)
-        os.path.join(here, ".."),              # a flatter, single-directory layout
-        here,                                  # right next to this file
+        os.path.join(here, ".."),  # a flatter, single-directory layout
+        here,  # right next to this file
     ):
         for lib_name in lib_names:
             candidate = os.path.normpath(os.path.join(directory, lib_name))
@@ -119,4 +120,10 @@ def _load_extension_modules():
 
 
 _load_extension_modules()
-del _load_extension_modules, _find_lib_path, _lib_names, _LIB_PATH, _SV_PYTHON_API_MODULES
+del (
+    _load_extension_modules,
+    _find_lib_path,
+    _lib_names,
+    _LIB_PATH,
+    _SV_PYTHON_API_MODULES,
+)
