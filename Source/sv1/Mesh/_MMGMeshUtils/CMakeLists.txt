@@ -18,6 +18,6 @@ vtk_module_include(VTK::SV1MeshMMGMeshUtils
 
 get_filename_component(MMG_LIB_DIR "${MMG_INCLUDE_DIR}/../lib" ABSOLUTE)
 vtk_module_link(VTK::SV1MeshMMGMeshUtils PUBLIC
-    ${MMG_LIB_DIR}/libmmgs.a
-    ${MMG_LIB_DIR}/libmmg.a
+    ${MMG_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}mmgs${CMAKE_STATIC_LIBRARY_SUFFIX}
+    ${MMG_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}mmg${CMAKE_STATIC_LIBRARY_SUFFIX}
 )
