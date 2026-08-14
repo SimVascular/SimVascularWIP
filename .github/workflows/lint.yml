@@ -49,8 +49,13 @@ jobs:
           "$GIT_CLANG_FORMAT" --binary clang-format --diff \
             "${{ github.event.pull_request.base.sha }}" > clang-format.diff || true
 
-          if [ -s clang-format.diff ] && \
-             ! grep -q "no modified files to format" clang-format.diff; then
+          # git-clang-format prints an informational "nothing to do" message
+          # (its exact wording has changed across clang-format versions,
+          # e.g. "no modified files to format" vs "clang-format did not
+          # modify any files") rather than exiting nonzero or leaving the
+          # diff empty, so check for an actual unified diff instead of
+          # matching one specific message.
+          if grep -q '^diff --git' clang-format.diff; then
             echo "::error::clang-format found style issues in changed lines. Run 'git-clang-format ${{ github.event.pull_request.base.sha }}' locally and commit the result."
             cat clang-format.diff
             exit 1
