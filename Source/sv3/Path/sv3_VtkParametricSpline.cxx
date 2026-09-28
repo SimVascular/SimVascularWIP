@@ -30,11 +30,17 @@
  */
 
 #include "sv3_VtkParametricSpline.h"
+#include "vtkObjectFactory.h"
 #include "vtkPoints.h"
 #include "vtkSmartPointer.h"
 #include "vtkSpline.h"
 
 using sv3::VtkParametricSpline;
+
+namespace sv3 {
+vtkStandardNewMacro(VtkParametricSpline);
+}
+
 VtkParametricSpline::VtkParametricSpline() {}
 
 VtkParametricSpline::~VtkParametricSpline() {}

@@ -41,13 +41,21 @@ namespace sv3 {
 
 class VTKSV3PATH_EXPORT VtkParametricSpline : public vtkParametricSpline {
 public:
-  VtkParametricSpline();
-
-  ~VtkParametricSpline();
+  static VtkParametricSpline *New();
+  vtkTypeMacro(VtkParametricSpline, vtkParametricSpline);
 
   void Evaluate(double t, double Pt[3]);
 
   void EvaluateByLengthFactor(double t, double Pt[3]);
+
+protected:
+  VtkParametricSpline();
+
+  ~VtkParametricSpline() override;
+
+private:
+  VtkParametricSpline(const VtkParametricSpline &) = delete;
+  void operator=(const VtkParametricSpline &) = delete;
 };
 } // namespace sv3
 #endif // SV3_VTKPARAMETRICSPLINE_H

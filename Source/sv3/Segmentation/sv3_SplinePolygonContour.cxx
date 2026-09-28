@@ -38,6 +38,7 @@
 #include "sv3_VtkParametricSpline.h"
 #include "sv_Math.h"
 
+#include "vtkNew.h"
 #include "vtkSplineFilter.h"
 
 #include <iostream>
@@ -115,7 +116,7 @@ Contour *ContourSplinePolygon::CreateByFitting(Contour *contour,
   if (inputPointNumber < 3)
     return contour->Clone();
 
-  sv3::VtkParametricSpline *svpp = new sv3::VtkParametricSpline();
+  vtkNew<sv3::VtkParametricSpline> svpp;
   svpp->ParameterizeByLengthOn();
 
   if (contour->IsClosed())
