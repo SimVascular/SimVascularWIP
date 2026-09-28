@@ -35,6 +35,7 @@
 #include "sv3_VtkParametricSpline.h"
 #include "vtkParametricSpline.h"
 #include "vtkPoints.h"
+#include "vtkNew.h"
 #include "vtkSmartPointer.h"
 #include "vtkSpline.h"
 #include <array>
@@ -144,7 +145,7 @@ void Spline::Update() {
   double length;
   m_SplinePoints.clear();
 
-  VtkParametricSpline *svpp = new VtkParametricSpline();
+  vtkNew<VtkParametricSpline> svpp;
   svpp->ParameterizeByLengthOff();
 
   if (m_Closed) {
