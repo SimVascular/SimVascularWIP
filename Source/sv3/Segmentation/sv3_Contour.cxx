@@ -123,7 +123,7 @@ void Contour::SetContourID(int contourID) { m_ContourID = contourID; }
 void Contour::SetPlaneGeometry(vtkPlane *planeGeometry) {
 
   if (planeGeometry != nullptr) {
-    m_vtkPlaneGeometry = vtkPlane::New();
+    m_vtkPlaneGeometry = vtkSmartPointer<vtkPlane>::New();
     m_vtkPlaneGeometry->SetOrigin(planeGeometry->GetOrigin());
     m_vtkPlaneGeometry->SetNormal(planeGeometry->GetNormal());
   } else {
@@ -593,8 +593,8 @@ void Contour::SetPathPoint(PathElement::PathPoint pathPoint) {
   std::array<double, 3> spacing;
   spacing.fill(0.1);
 
-  m_vtkPlaneGeometry =
-      SegmentationUtils::CreatePlaneGeometry(pathPoint, spacing, 1.0);
+  m_vtkPlaneGeometry.TakeReference(
+      SegmentationUtils::CreatePlaneGeometry(pathPoint, spacing, 1.0));
 }
 
 int Contour::GetPathPosID() { return m_PathPoint.id; }

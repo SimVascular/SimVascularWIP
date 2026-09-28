@@ -286,7 +286,7 @@ protected:
 
   bool m_Finished;
 
-  vtkPlane *m_vtkPlaneGeometry;
+  vtkSmartPointer<vtkPlane> m_vtkPlaneGeometry;
 
   std::array<double, 3> m_CenterPoint;
 
