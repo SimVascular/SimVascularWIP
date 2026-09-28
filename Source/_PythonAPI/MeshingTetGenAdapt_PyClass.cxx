@@ -417,6 +417,7 @@ PyTetGenAdaptNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
   //std::cout << "[PyTetGenAdaptNew] PyTetGenAdaptNew " << std::endl;
   auto self = (PyMeshingAdaptive*)type->tp_alloc(type, 0);
   if (self != nullptr) {
+      PyUtilTrackOwnedState((PyObject*)self, PyMeshingAdaptiveRelease);
       //self->super.id = 2;
   }
   return (PyObject*)self;
@@ -429,6 +430,7 @@ PyTetGenAdaptNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyTetGenAdaptDealloc(PyTetGenAdapt* self)
 {
+  PyUtilUntrackOwnedState((PyObject*)self);
   //std::cout << "[PyTetGenAdaptDealloc] Free PyTetGenAdapt" << std::endl;
   delete self->super.adaptive_mesher;
   Py_TYPE(self)->tp_free(self);

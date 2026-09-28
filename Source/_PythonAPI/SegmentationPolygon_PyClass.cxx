@@ -371,6 +371,7 @@ PyPolygonSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
   //std::cout << "[PyPolygonSegmentationNew] PyPolygonSegmentationNew " << std::endl;
   auto self = (PyPolygonSegmentation*)type->tp_alloc(type, 0);
   if (self != nullptr) {
+      PyUtilTrackOwnedState((PyObject*)self, PySegmentationRelease);
       //self->super.id = 2;
   }
   return (PyObject *) self;
@@ -383,6 +384,7 @@ PyPolygonSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyPolygonSegmentationDealloc(PyPolygonSegmentation* self)
 {
+  PyUtilUntrackOwnedState((PyObject*)self);
   //std::cout << "[PyPolygonSegmentationDealloc] Free PyPolygonSegmentation" << std::endl;
   delete self->super.contour;
   Py_TYPE(self)->tp_free(self);

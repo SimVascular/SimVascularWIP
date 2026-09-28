@@ -549,6 +549,7 @@ PySplinePolygonSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwd
   //std::cout << "[PySplinePolygonSegmentationNew] PySplinePolygonSegmentationNew " << std::endl;
   auto self = (PySplinePolygonSegmentation*)type->tp_alloc(type, 0);
   if (self != nullptr) {
+      PyUtilTrackOwnedState((PyObject*)self, PySegmentationRelease);
       //self->super.id = 2;
   }
   return (PyObject *) self;
@@ -561,6 +562,7 @@ PySplinePolygonSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwd
 static void
 PySplinePolygonSegmentationDealloc(PySplinePolygonSegmentation* self)
 {
+  PyUtilUntrackOwnedState((PyObject*)self);
   //std::cout << "[PySplinePolygonSegmentationDealloc] Free PySplinePolygonSegmentation" << std::endl;
   delete self->super.contour;
   Py_TYPE(self)->tp_free(self);

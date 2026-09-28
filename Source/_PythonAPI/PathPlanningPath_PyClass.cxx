@@ -1055,6 +1055,19 @@ PyPathInit(PyPath* self, PyObject* args, PyObject *kwds)
   return 0;
 }
 
+//--------------
+// PyPathRelease
+//--------------
+// Free the path element a path object owns; see PyUtilTrackOwnedState().
+//
+static void
+PyPathRelease(PyObject* obj)
+{
+  auto self = (PyPath*)obj;
+  delete self->path;
+  self->path = nullptr;
+}
+
 //-----------
 // PyPathNew
 //-----------
@@ -1067,6 +1080,7 @@ PyPathNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
   //std::cout << "[PyPathNew] PyPathNew " << std::endl;
   auto self = (PyPath*)type->tp_alloc(type, 0);
   if (self != nullptr) {
+      PyUtilTrackOwnedState((PyObject*)self, PyPathRelease);
       self->id = 1;
   }
 
@@ -1080,6 +1094,7 @@ PyPathNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyPathDealloc(PyPath* self)
 {
+  PyUtilUntrackOwnedState((PyObject*)self);
   //std::cout << "[PyPathDealloc] Free PyPath" << std::endl;
   delete self->path;
   Py_TYPE(self)->tp_free(self);

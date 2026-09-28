@@ -130,6 +130,7 @@ PyThresholdSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
   //std::cout << "[PyThresholdSegmentationNew] PyThresholdSegmentationNew " << std::endl;
   auto self = (PyThresholdSegmentation*)type->tp_alloc(type, 0);
   if (self != nullptr) {
+      PyUtilTrackOwnedState((PyObject*)self, PySegmentationRelease);
       //self->super.id = 2;
   }
   return (PyObject *) self;
@@ -142,6 +143,7 @@ PyThresholdSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyThresholdSegmentationDealloc(PyThresholdSegmentation* self)
 {
+  PyUtilUntrackOwnedState((PyObject*)self);
   //std::cout << "[PyThresholdSegmentationDealloc] Free PyThresholdSegmentation" << std::endl;
   delete self->super.contour;
   Py_TYPE(self)->tp_free(self);

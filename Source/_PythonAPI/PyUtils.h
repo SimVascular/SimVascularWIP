@@ -135,4 +135,25 @@ void PyUtilSetLoftParams(PyUtilApiFunction& api, PyObject* loftOpts, svLoftingPa
 
 void PyUtilSetupApiFunction(const char* functionName, std::string& format, std::string& msg);
 
+//-----------------------------------
+// C++ state owned by Python objects
+//-----------------------------------
+// Python objects that own C++ objects (a contour, path, solid model, mesher,
+// ...) register themselves when created, with a function that frees that
+// state, and unregister when deallocated. PyUtilReleaseOwnedState() frees
+// the state of every object still registered: the sv package calls it at
+// interpreter exit, because applications embedding Python (e.g. 3D Slicer)
+// may never deallocate objects still referenced at exit, which would leave
+// the C++ objects, and the VTK objects they hold, alive past the interpreter
+// (reported by vtkDebugLeaks). The Python objects stay valid afterwards,
+// with their owned pointers set to null.
+//
+using PyUtilReleaseFunction = void (*)(PyObject* obj);
+
+void PyUtilTrackOwnedState(PyObject* obj, PyUtilReleaseFunction release);
+
+void PyUtilUntrackOwnedState(PyObject* obj);
+
+extern "C" VTKSVPYTHONAPI_EXPORT void PyUtilReleaseOwnedState();
+
 #endif 

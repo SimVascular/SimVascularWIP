@@ -149,6 +149,7 @@ PyParasolidSolidNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
   //std::cout << "[PyParasolidSolidNew] PyParasolidSolidNew " << std::endl;
   auto self = (PyParasolidSolid*)type->tp_alloc(type, 0);
   if (self != nullptr) {
+      PyUtilTrackOwnedState((PyObject*)self, PyModelingModelRelease);
       //self->super.id = 2;
   }
   return (PyObject *) self;
@@ -161,6 +162,7 @@ PyParasolidSolidNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyParasolidSolidDealloc(PyParasolidSolid* self)
 {
+  PyUtilUntrackOwnedState((PyObject*)self);
   //std::cout << "[PyParasolidSolidDealloc] Free PyParasolidSolid" << std::endl;
   delete self->super.solidModel;
   Py_TYPE(self)->tp_free(self);

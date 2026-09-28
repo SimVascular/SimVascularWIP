@@ -304,8 +304,11 @@ PyCreateSegmentation(sv3::Contour* contour)
   auto contourObj = PyCreateSegmentation(kernel);
 
   // Add data from the sv4guiContour to the sv3::contour object.
+  // The new object takes ownership of the contour, replacing the
+  // one its constructor created.
   auto pyContour = (PySegmentation*)contourObj;
   // pyContour->CopySv4ContourData(contour, contourObj);
+  delete pyContour->contour;
   pyContour->contour = contour;
 
   return contourObj;

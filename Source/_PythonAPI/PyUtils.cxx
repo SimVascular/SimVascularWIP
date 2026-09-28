@@ -36,6 +36,58 @@
 
 #include "vtkCellData.h"
 
+#include <unordered_map>
+
+//////////////////////////////////////////////////////
+//          C++ state owned by Python objects       //
+//////////////////////////////////////////////////////
+
+// The objects registered with PyUtilTrackOwnedState(), and how to free
+// the C++ state each one owns.
+//
+static std::unordered_map<PyObject*, PyUtilReleaseFunction>&
+PyUtilOwnedStateRegistry()
+{
+  static std::unordered_map<PyObject*, PyUtilReleaseFunction> registry;
+  return registry;
+}
+
+//-----------------------
+// PyUtilTrackOwnedState
+//-----------------------
+//
+void
+PyUtilTrackOwnedState(PyObject* obj, PyUtilReleaseFunction release)
+{
+  PyUtilOwnedStateRegistry()[obj] = release;
+}
+
+//-------------------------
+// PyUtilUntrackOwnedState
+//-------------------------
+//
+void
+PyUtilUntrackOwnedState(PyObject* obj)
+{
+  PyUtilOwnedStateRegistry().erase(obj);
+}
+
+//-------------------------
+// PyUtilReleaseOwnedState
+//-------------------------
+//
+void
+PyUtilReleaseOwnedState()
+{
+  // Take the registry's contents first, so releasing can't affect the
+  // iteration and the objects are no longer tracked afterwards.
+  std::unordered_map<PyObject*, PyUtilReleaseFunction> owners;
+  owners.swap(PyUtilOwnedStateRegistry());
+  for (const auto& owner : owners) {
+      owner.second(owner.first);
+  }
+}
+
 //////////////////////////////////////////////////////
 //             PyUtilApiFunction                    //
 //////////////////////////////////////////////////////

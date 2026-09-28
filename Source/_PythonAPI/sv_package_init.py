@@ -26,6 +26,7 @@ interpreter, embedded or not, and doesn't depend on which VTK build
 libvtkSVPythonAPI happens to be linked against.
 """
 
+import atexit
 import ctypes
 import glob
 import os
@@ -128,6 +129,16 @@ def _load_extension_modules():
         module.__package__ = "sv"
         sys.modules["sv." + name] = module
         globals()[name] = module
+
+    # Free the C++ state (contours, paths, models, meshers, ...) of sv
+    # objects still alive at interpreter exit. Applications embedding Python,
+    # such as 3D Slicer, may never deallocate objects still referenced then,
+    # which would otherwise leave that state -- and the VTK objects it holds --
+    # alive past the interpreter, where vtkDebugLeaks reports it.
+    release_owned_state = getattr(lib, "PyUtilReleaseOwnedState", None)
+    if release_owned_state is not None:
+        release_owned_state.restype = None
+        atexit.register(release_owned_state)
 
 
 _load_extension_modules()

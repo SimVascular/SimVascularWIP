@@ -462,6 +462,9 @@ PyCircleSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 {
   //std::cout << "[PyCircleSegmentationNew] New CircleSegmentation " << std::endl;
   auto self = (PyCircleSegmentation*)type->tp_alloc(type, 0);
+  if (self != nullptr) {
+      PyUtilTrackOwnedState((PyObject*)self, PySegmentationRelease);
+  }
   if (self == nullptr) {
       std::cout << "[PyCircleSegmentationNew] ERROR: alloc failed." << std::endl;
       return nullptr;
@@ -476,6 +479,7 @@ PyCircleSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 static void
 PyCircleSegmentationDealloc(PyCircleSegmentation* self)
 {
+  PyUtilUntrackOwnedState((PyObject*)self);
   //std::cout << "[PyCircleSegmentationDealloc] **** Free PyCircleSegmentation ****" << std::endl;
   delete self->super.contour;
   //auto circleContour = dynamic_cast<sv3::circleContour*>(self->super.contour);

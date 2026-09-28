@@ -730,6 +730,9 @@ PyMeshingTetGenNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   //std::cout << "[PyMeshingTetGenNew] PyMeshingTetGenNew " << std::endl;
   auto self = (PyMeshingMesher*)type->tp_alloc(type, 0);
+  if (self != nullptr) {
+      PyUtilTrackOwnedState((PyObject*)self, PyMeshingMesherRelease);
+  }
 
   // [TODO:DaveP] Keep this for now, maybe want to add something here later.
   if (self != nullptr) {
@@ -745,6 +748,7 @@ PyMeshingTetGenNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyMeshingTetGenDealloc(PyMeshingTetGen* self)
 {
+  PyUtilUntrackOwnedState((PyObject*)self);
   //std::cout << "[PyMeshingTetGenDealloc] Free PyMeshingTetGen" << std::endl;
   delete self->super.mesher;
   Py_TYPE(self)->tp_free(self);
