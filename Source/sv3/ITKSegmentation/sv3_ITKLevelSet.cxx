@@ -66,6 +66,7 @@
 #include <vtkImageStencil.h>
 #include <vtkPolyDataToImageStencil.h>
 #include <vtkTransformPolyDataFilter.h>
+#include <iostream>
 
 cvITKLevelSet::cvITKLevelSet() {
 

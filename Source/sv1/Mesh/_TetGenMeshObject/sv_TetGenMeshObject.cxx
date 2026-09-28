@@ -73,6 +73,7 @@
 #include <array>
 #include <set>
 #include <math.h>
+#include <iostream>
 
 // -----------
 // cvTetGenMeshObject for python
@@ -2335,7 +2336,7 @@ int cvTetGenMeshObject::ResetOriginalRegions(std::string regionName)
  */
 int cvTetGenMeshObject::Adapt()
 {
-  cout<<"Starting Adaptive Mesh..."<<endl;
+  std::cout<<"Starting Adaptive Mesh..."<<std::endl;
   tetgenbehavior* newtgb = new tetgenbehavior;
 
   newtgb->refine=1;
@@ -2364,7 +2365,7 @@ int cvTetGenMeshObject::Adapt()
     return SV_ERROR;
   }
 
-  cout<<"Done with Adaptive Mesh..."<<endl;
+  std::cout<<"Done with Adaptive Mesh..."<<std::endl;
 
   if (outmesh_ == nullptr) {
     return SV_ERROR;

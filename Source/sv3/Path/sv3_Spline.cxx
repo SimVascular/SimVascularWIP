@@ -40,6 +40,7 @@
 #include <array>
 #include <cmath>
 #include <vector>
+#include <iostream>
 using sv3::Spline;
 using sv3::VtkParametricSpline;
 Spline::Spline() : m_FurtherSubdivisionNumber(10) {}

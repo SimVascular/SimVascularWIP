@@ -354,7 +354,7 @@ int vtkSVFindGeodesicPath::FindClosestBoundaryPoint() {
 
   // Set end pt id to the point with the minimum distance
   this->EndPtId = minId;
-  std::cout << "What is closest: " << minId << endl;
+  std::cout << "What is closest: " << minId << std::endl;
 
   return SV_OK;
 }

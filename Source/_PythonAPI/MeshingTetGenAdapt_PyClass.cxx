@@ -35,6 +35,8 @@
 
 #include "sv_TetGenAdapt.h"
 
+#include <iostream>
+
 //----------------------
 // PyMeshingTetGenAdapt
 //----------------------

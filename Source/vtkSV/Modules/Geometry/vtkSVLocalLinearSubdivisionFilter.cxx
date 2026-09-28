@@ -40,6 +40,8 @@
 #include "vtkSVGlobals.h"
 #include "vtkSmartPointer.h"
 
+#include <iostream>
+
 // ----------------------
 // StandardNewMacro
 // ----------------------

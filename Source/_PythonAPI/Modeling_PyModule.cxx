@@ -60,6 +60,7 @@
 
 #include "Python.h"
 #include <structmember.h>
+#include <iostream>
 #include "vtkPythonUtil.h"
 
 #if PYTHON_MAJOR_VERSION == 3

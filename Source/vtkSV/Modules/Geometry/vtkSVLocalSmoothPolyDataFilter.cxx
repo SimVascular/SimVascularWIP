@@ -50,6 +50,8 @@
 #include "vtkSVGeneralUtils.h"
 #include "vtkSVGlobals.h"
 
+#include <iostream>
+
 vtkStandardNewMacro(vtkSVLocalSmoothPolyDataFilter);
 
 // The following code defines a helper class for performing mesh smoothing
@@ -239,7 +241,7 @@ int vtkSVLocalSmoothPolyDataFilter::RequestData(
   }
   if (this->UsePointArray) {
     if (this->SmoothPointArrayName == nullptr) {
-      std::cout << "No PointArrayName given." << endl;
+      std::cout << "No PointArrayName given." << std::endl;
       this->SetErrorCode(vtkErrorCode::UserError + 1);
       return SV_ERROR;
     }
@@ -251,7 +253,7 @@ int vtkSVLocalSmoothPolyDataFilter::RequestData(
   }
   if (this->UseCellArray) {
     if (this->SmoothCellArrayName == nullptr) {
-      std::cout << "No PointArrayName given." << endl;
+      std::cout << "No PointArrayName given." << std::endl;
       this->SetErrorCode(vtkErrorCode::UserError + 1);
       return SV_ERROR;
     }

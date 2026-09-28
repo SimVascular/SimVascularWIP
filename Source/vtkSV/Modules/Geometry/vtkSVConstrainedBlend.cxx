@@ -262,14 +262,14 @@ int vtkSVConstrainedBlend::Decimate(vtkPolyData *pd) {
   if (this->UsePointArray) {
     if (this->GetArrays(pd, 0) != 1) {
       std::cout << "No Point Array Named " << this->PointArrayName
-                << " on surface" << endl;
+                << " on surface" << std::endl;
       return SV_ERROR;
     }
   }
   if (this->UseCellArray) {
     if (this->GetArrays(pd, 1) != 1) {
       std::cout << "No Point Array Named " << this->CellArrayName
-                << " on surface" << endl;
+                << " on surface" << std::endl;
       return SV_ERROR;
     }
   }
@@ -299,14 +299,14 @@ int vtkSVConstrainedBlend::Subdivide(vtkPolyData *pd) {
   if (this->UsePointArray) {
     if (this->GetArrays(pd, 0) != 1) {
       std::cout << "No Point Array Named " << this->PointArrayName
-                << " on surface" << endl;
+                << " on surface" << std::endl;
       return SV_ERROR;
     }
   }
   if (this->UseCellArray) {
     if (this->GetArrays(pd, 1) != 1) {
       std::cout << "No Point Array Named " << this->CellArrayName
-                << " on surface" << endl;
+                << " on surface" << std::endl;
       return SV_ERROR;
     }
   }

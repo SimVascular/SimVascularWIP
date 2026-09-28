@@ -52,6 +52,8 @@
 
 #include "vtkXMLPolyDataWriter.h"
 
+#include <iostream>
+
 // ----------------------
 // StandardNewMacro
 // ----------------------
@@ -301,7 +303,7 @@ int vtkSVMultiplePolyDataIntersectionFilter::ExecuteIntersection(
 
           if ((numPts == 0 || numLines == 0)) {
             std::cout << "NO INTERSECTION FOR OBJECTS " << i << " AND " << j
-                      << endl;
+                      << std::endl;
 
           } else {
             this->inResult[i] = 1;
@@ -436,13 +438,13 @@ void vtkSVMultiplePolyDataIntersectionFilter::SetSurfaceId(vtkPolyData *input,
 // PrintTable
 // ----------------------
 void vtkSVMultiplePolyDataIntersectionFilter::PrintTable(int numInputs) {
-  std::cout << "INTERSECTION TABLE" << endl;
+  std::cout << "INTERSECTION TABLE" << std::endl;
   for (int i = 0; i < numInputs; i++) {
     std::cout << " ";
     for (int j = 0; j < numInputs; j++) {
       std::cout << this->IntersectionTable[i][j] << " ";
     }
-    std::cout << " " << endl;
+    std::cout << " " << std::endl;
   }
 }
 
@@ -647,11 +649,11 @@ void vtkSVMultiplePolyDataIntersectionFilter::PrintSelf(ostream &os,
   this->Superclass::PrintSelf(os, indent);
 
   os << "ParallelStreaming:" << (this->ParallelStreaming ? "On" : "Off")
-     << endl;
+     << std::endl;
   os << "UserManagedInputs:" << (this->UserManagedInputs ? "On" : "Off")
-     << endl;
-  os << "AssignSurfaceIds:" << (this->AssignSurfaceIds ? "On" : "Off") << endl;
-  os << "PassInfoAsGlobal:" << (this->PassInfoAsGlobal ? "On" : "Off") << endl;
+     << std::endl;
+  os << "AssignSurfaceIds:" << (this->AssignSurfaceIds ? "On" : "Off") << std::endl;
+  os << "PassInfoAsGlobal:" << (this->PassInfoAsGlobal ? "On" : "Off") << std::endl;
 }
 
 // ----------------------

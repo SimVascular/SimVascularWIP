@@ -29,6 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <iostream>
+
 // The functions defined here implement the SV Python API circle segmentation class.
 //
 // The class name is 'segmentation.Circle'.

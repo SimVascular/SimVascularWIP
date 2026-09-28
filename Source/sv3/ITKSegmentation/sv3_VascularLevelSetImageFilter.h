@@ -35,6 +35,8 @@
 #include "itkSegmentationLevelSetImageFilter.h"
 #include "sv3_VascularLevelSetFunction.h"
 
+#include <iostream>
+
 namespace itk {
 template <typename TInputImage, typename TFeatureImage,
           typename TOutputPixelType = float>

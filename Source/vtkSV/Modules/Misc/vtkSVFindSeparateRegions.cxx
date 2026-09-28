@@ -156,11 +156,11 @@ int vtkSVFindSeparateRegions::PrepFilter() {
 
   if (this->GetCellArray(this->WorkPd) != SV_OK) {
     std::cout << "No Cell Array Named " << this->CellArrayName << " on surface"
-              << endl;
+              << std::endl;
     return SV_ERROR;
   }
   if (this->OutPointArrayName == nullptr) {
-    std::cout << "Need name for output point data information" << endl;
+    std::cout << "Need name for output point data information" << std::endl;
     return SV_ERROR;
   }
 

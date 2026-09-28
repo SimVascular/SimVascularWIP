@@ -37,6 +37,7 @@
 // and is not exposed, i.e. can't be used like mesher = Mesher().
 
 #include <functional>
+#include <iostream>
 
 #include "sv_TetGenMeshObject.h"
 #include "vtkPolyDataNormals.h"

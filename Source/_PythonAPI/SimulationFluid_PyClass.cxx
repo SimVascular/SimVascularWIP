@@ -29,6 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <iostream>
+
 // The functions defined here implement the SV Python API 'simulation' module 'Fluid' class. 
 //
 //     fluid_sim = simulation.Fluid()

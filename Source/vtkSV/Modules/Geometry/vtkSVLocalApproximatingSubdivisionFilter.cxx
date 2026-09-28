@@ -61,6 +61,8 @@
 #include "vtkSVGeneralUtils.h"
 #include "vtkSVGlobals.h"
 
+#include <iostream>
+
 // ----------------------
 // Constructor
 // ----------------------
@@ -136,14 +138,14 @@ int vtkSVLocalApproximatingSubdivisionFilter::RequestData(
 
   if (this->UsePointArray) {
     if (this->SubdividePointArrayName == nullptr) {
-      std::cout << "No PointArrayName given." << endl;
+      std::cout << "No PointArrayName given." << std::endl;
       this->SetErrorCode(vtkErrorCode::UserError + 1);
       return SV_ERROR;
     }
   }
   if (this->UseCellArray) {
     if (this->SubdivideCellArrayName == nullptr) {
-      std::cout << "No CellArrayName given." << endl;
+      std::cout << "No CellArrayName given." << std::endl;
       this->SetErrorCode(vtkErrorCode::UserError + 1);
       return SV_ERROR;
     }
@@ -497,7 +499,7 @@ void vtkSVLocalApproximatingSubdivisionFilter::PrintSelf(ostream &os,
   this->Superclass::PrintSelf(os, indent);
 
   os << indent << "Number of subdivisions: " << this->NumberOfSubdivisions
-     << endl;
+     << std::endl;
 }
 
 // ----------------------

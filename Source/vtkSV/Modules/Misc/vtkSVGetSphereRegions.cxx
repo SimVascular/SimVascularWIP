@@ -138,29 +138,29 @@ int vtkSVGetSphereRegions::RequestData(vtkInformation *vtkNotUsed(request),
   }
 
   if (this->PointArrayName == nullptr) {
-    std::cout << "No PointArrayName given." << endl;
+    std::cout << "No PointArrayName given." << std::endl;
     this->SetErrorCode(vtkErrorCode::UserError + 1);
     return SV_ERROR;
   }
   if (this->CellArrayName == nullptr) {
-    std::cout << "No CellArrayName given." << endl;
+    std::cout << "No CellArrayName given." << std::endl;
     this->SetErrorCode(vtkErrorCode::UserError + 1);
     return SV_ERROR;
   }
   if (this->GetArrays(input, 0) != 1) {
     std::cout << "No Point Array Named " << this->PointArrayName
-              << " on surface" << endl;
+              << " on surface" << std::endl;
     this->SetErrorCode(vtkErrorCode::UserError + 1);
     return SV_ERROR;
   }
   if (this->GetArrays(input, 1) != 1) {
     std::cout << "No Cell Array Named " << this->CellArrayName << " on surface"
-              << endl;
+              << std::endl;
     this->SetErrorCode(vtkErrorCode::UserError + 1);
     return SV_ERROR;
   }
   if (this->OutCellArrayName == 0) {
-    std::cout << "Need array name for output cell data" << endl;
+    std::cout << "Need array name for output cell data" << std::endl;
     this->SetErrorCode(vtkErrorCode::UserError + 1);
     return SV_ERROR;
   }

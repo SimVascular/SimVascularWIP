@@ -29,6 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <iostream>
+
 // Define the Python 'meshing.MeshSimOptions' class that encapsulates the parameters
 // used for generating a mesh using MeshSim. Options are stored as Python class attributes
 // and are set directly in the object created from that class.

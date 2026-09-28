@@ -41,6 +41,7 @@
 #include "vtkSVGlobals.h"
 
 #include <algorithm>
+#include <iostream>
 
 // ----------------------
 // StandardNewMacro

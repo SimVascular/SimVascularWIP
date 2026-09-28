@@ -31,6 +31,8 @@
 
 #include "sv3_ITKLset_ExtraUtils.h"
 
+#include <iostream>
+
 #ifndef WIN32
 using std::isdigit;
 #endif

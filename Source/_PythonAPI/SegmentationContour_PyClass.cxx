@@ -29,6 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <iostream>
+
 // This is the implementation for the SV Python API contour segmentation class.
 //
 // The class name is 'segmentation.Contour'.

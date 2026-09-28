@@ -56,6 +56,7 @@
 #include <vtkXMLImageDataWriter.h>
 #include <vtkPlaneSource.h>
 #include <vtkImageReslice.h>
+#include <iostream>
 
 #include "itkImageToVTKImageFilter.h"
 #include "itkImageFileReader.h"
