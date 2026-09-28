@@ -153,8 +153,12 @@ public:
 
   //@{
   /// \brief Get dimensions of this structured points dataset.
-  virtual int *GetDimensions() override {
-    return vtkStructuredGrid::GetDimensions();
+  // Newer VTK (9.6+) dropped vtkStructuredGrid's int *GetDimensions(), so
+  // this is no longer an override: fill a member buffer from the
+  // GetDimensions(int[3]) overload that every supported VTK has instead.
+  int *GetDimensions() VTK_SIZEHINT(3) {
+    this->GetDimensions(this->DimensionsBuffer);
+    return this->DimensionsBuffer;
   }
   virtual void GetDimensions(int dim[3]) override {
     vtkStructuredGrid::GetDimensions(dim);
@@ -176,6 +180,8 @@ protected:
   }
 
 private:
+  int DimensionsBuffer[3] = {0, 0, 0};
+
   vtkSVControlGrid(const vtkSVControlGrid &); // Not implemented.
   void operator=(const vtkSVControlGrid &);   // Not implemented.
 };
