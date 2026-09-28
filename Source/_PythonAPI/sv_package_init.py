@@ -27,6 +27,7 @@ libvtkSVPythonAPI happens to be linked against.
 """
 
 import ctypes
+import glob
 import os
 import sys
 
@@ -63,13 +64,16 @@ def _find_lib_path():
     here = os.path.dirname(os.path.abspath(__file__))
 
     # Candidate locations relative to this file, covering the layouts we
-    # know about. This file currently lives at
+    # know about. This file lives at
     # <build-or-install-prefix>/lib/pythonX.Y/site-packages/sv/__init__.py,
-    # with the library three directories up, in .../lib/. A Slicer
-    # extension will likely place things differently once this actually
-    # gets built against Slicer's VTK -- add that layout here once known.
+    # with the library three directories up, in .../lib/ by default, or in
+    # .../lib/Slicer-X.Y/ when built for a Slicer extension (see
+    # SV_INSTALL_LIBRARY_DIR). On Windows the library is a DLL in bin/ and is
+    # found through PATH by the fallback below.
+    lib_dir = os.path.join(here, "..", "..", "..")
     for directory in (
-        os.path.join(here, "..", "..", ".."),  # .../lib/<name> (current layout)
+        lib_dir,  # .../lib/<name> (default layout)
+        *sorted(glob.glob(os.path.join(lib_dir, "Slicer-*"))),  # Slicer extension
         os.path.join(here, ".."),  # a flatter, single-directory layout
         here,  # right next to this file
     ):
