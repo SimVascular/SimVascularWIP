@@ -39,7 +39,7 @@
 #include "vtkDataSetSurfaceFilter.h"
 #include "vtkErrorCode.h"
 #include "vtkExecutive.h"
-#include "vtkIdFilter.h"
+#include "vtkSVIdFilter.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkIntArray.h"

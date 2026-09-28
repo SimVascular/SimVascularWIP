@@ -40,7 +40,7 @@
 #include "vtkDataSetSurfaceFilter.h"
 #include "vtkErrorCode.h"
 #include "vtkExecutive.h"
-#include "vtkIdFilter.h"
+#include "vtkSVIdFilter.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkIntArray.h"
@@ -355,7 +355,7 @@ int vtkSVParameterizeVolumeOnPolycube::RunFilter() {
   // std::string filename5 = "/Users/adamupdegrove/Desktop/tmp/Mapped_Out2.vtp";
   // vtkSVIOUtils::WriteVTPFile(filename5, mappedSurface);
 
-  vtkNew(vtkIdFilter, ider2);
+  vtkNew(vtkSVIdFilter, ider2);
   ider2->SetInputData(mappedSurface);
   ider2->SetCellIdsArrayName("TmpInternalIds");
   ider2->Update();
@@ -415,7 +415,7 @@ int vtkSVParameterizeVolumeOnPolycube::RunFilter() {
     groupIdsArray->FillComponent(0, groupId);
     realHexMesh->GetCellData()->AddArray(groupIdsArray);
 
-    vtkNew(vtkIdFilter, ider3);
+    vtkNew(vtkSVIdFilter, ider3);
     ider3->SetInputData(realHexMesh);
     ider3->SetCellIdsArrayName(this->GridIdsArrayName);
     ider3->Update();

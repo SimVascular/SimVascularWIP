@@ -37,7 +37,7 @@
 #include "vtkDataSetSurfaceFilter.h"
 #include "vtkErrorCode.h"
 #include "vtkFeatureEdges.h"
-#include "vtkIdFilter.h"
+#include "vtkSVIdFilter.h"
 #include "vtkIdList.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"

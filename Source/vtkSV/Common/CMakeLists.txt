@@ -15,5 +15,6 @@ set(vtkSVCommon_SOURCES
 
 vtk_module_add_module(VTK::SVCommon
     HEADERS ${vtkSVCommon_HEADERS}
+    NOWRAP_HEADERS vtkSVIdFilter.h
     SOURCES ${vtkSVCommon_SOURCES}
 )
