@@ -1317,13 +1317,13 @@ void r8mat_print_some ( int m, int n, double a[], int ilo, int jlo, int ihi,
   int j2hi;
   int j2lo;
 
-  cout << "\n";
-  cout << title << "\n";
+  std::cout << "\n";
+  std::cout << title << "\n";
 
   if ( m <= 0 || n <= 0 )
   {
-    cout << "\n";
-    cout << "  (None)\n";
+    std::cout << "\n";
+    std::cout << "  (None)\n";
     return;
   }
 //
@@ -1335,20 +1335,20 @@ void r8mat_print_some ( int m, int n, double a[], int ilo, int jlo, int ihi,
     j2hi = i4_min ( j2hi, n );
     j2hi = i4_min ( j2hi, jhi );
 
-    cout << "\n";
+    std::cout << "\n";
 //
 //  For each column J in the current range...
 //
 //  Write the header.
 //
-    cout << "  Col:    ";
+    std::cout << "  Col:    ";
     for ( j = j2lo; j <= j2hi; j++ )
     {
-      cout << setw(7) << j - 1 << "       ";
+      std::cout << setw(7) << j - 1 << "       ";
     }
-    cout << "\n";
-    cout << "  Row\n";
-    cout << "\n";
+    std::cout << "\n";
+    std::cout << "  Row\n";
+    std::cout << "\n";
 //
 //  Determine the range of the rows in this strip.
 //
@@ -1360,12 +1360,12 @@ void r8mat_print_some ( int m, int n, double a[], int ilo, int jlo, int ihi,
 //
 //  Print out (up to) 5 entries in row I, that lie in the current strip.
 //
-      cout << setw(5) << i - 1 << ": ";
+      std::cout << setw(5) << i - 1 << ": ";
       for ( j = j2lo; j <= j2hi; j++ )
       {
-        cout << setw(12) << a[i-1+(j-1)*m] << "  ";
+        std::cout << setw(12) << a[i-1+(j-1)*m] << "  ";
       }
-      cout << "\n";
+      std::cout << "\n";
     }
   }
 
@@ -1499,12 +1499,12 @@ void r8vec_print ( int n, double a[], std::string title )
 {
   int i;
 
-  cout << "\n";
-  cout << title << "\n";
-  cout << "\n";
+  std::cout << "\n";
+  std::cout << title << "\n";
+  std::cout << "\n";
   for ( i = 0; i < n; i++ )
   {
-    cout << "  " << setw(8)  << i
+    std::cout << "  " << setw(8)  << i
          << ": " << setw(14) << a[i]  << "\n";
   }
 

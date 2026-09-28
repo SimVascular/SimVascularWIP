@@ -35,6 +35,8 @@
 #include "itkExpNegativeImageFilter.h"
 #include "sv3_VascularLevelSetFunction.h"
 
+#include <iostream>
+
 namespace itk {
 
 template <typename TImageType, typename TFeatureImageType = TImageType>

@@ -29,6 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <iostream>
+
 // The functions defined here implement the SV Python API 'Segmentation' class.
 //
 // The 'Segmentation' class is used to store segmentation data. It is base class

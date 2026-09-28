@@ -48,6 +48,8 @@
 
 #include "vnl/vnl_math.h"
 
+#include <iostream>
+
 namespace itk {
 
 /*

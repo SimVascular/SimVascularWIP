@@ -162,20 +162,20 @@ int vtkSVConstrainedSmoothing::RequestData(vtkInformation *vtkNotUsed(request),
     }
     if (this->GetArrays(input, 0) != 1) {
       std::cout << "No Point Array Named " << this->PointArrayName
-                << " on surface" << endl;
+                << " on surface" << std::endl;
       this->SetErrorCode(vtkErrorCode::UserError + 1);
       return SV_ERROR;
     }
   }
   if (this->UseCellArray) {
     if (this->CellArrayName == nullptr) {
-      std::cout << "No CellArrayName given." << endl;
+      std::cout << "No CellArrayName given." << std::endl;
       this->SetErrorCode(vtkErrorCode::UserError + 1);
       return SV_ERROR;
     }
     if (this->GetArrays(input, 1) != 1) {
       std::cout << "No Cell Array Named " << this->CellArrayName
-                << " on surface" << endl;
+                << " on surface" << std::endl;
       this->SetErrorCode(vtkErrorCode::UserError + 1);
       return SV_ERROR;
     }

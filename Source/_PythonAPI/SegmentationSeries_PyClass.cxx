@@ -44,6 +44,8 @@
 
 #include "sv3_ContourGroup.h"
 
+#include <iostream>
+
 //----------------------
 // PySegmentationSeries
 //----------------------

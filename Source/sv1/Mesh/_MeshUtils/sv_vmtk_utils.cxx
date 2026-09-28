@@ -67,6 +67,7 @@
 #include <vtkLongArray.h>
 #include <vtkCellLocator.h>
 #include <vtkPolygon.h>
+#include <iostream>
 
 
 #include "vtkvmtkPolyDataSurfaceRemeshing.h"
@@ -294,7 +295,7 @@ int sys_geom_centerline_sections(cvPolyData *lines_in, cvPolyData *surface_in, c
 
   vtkNew(vtkvmtkPolyDataCenterlineSections, cross_sections);
   try {
-    std::cout<<"Calculating CenterlineSections..."<<endl;
+    std::cout<<"Calculating CenterlineSections..."<<std::endl;
     cross_sections->SetInputData(surf);
     cross_sections->SetCenterlines(cent);
     cross_sections->Update();

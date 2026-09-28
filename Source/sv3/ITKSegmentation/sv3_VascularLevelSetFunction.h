@@ -40,6 +40,8 @@
 #include "itkSegmentationLevelSetFunction.h"
 #include "itkVector.h"
 
+#include <iostream>
+
 namespace itk {
 template <typename TImageType, typename TFeatureImageType = TImageType>
 class ITK_EXPORT VascularLevelSetFunction

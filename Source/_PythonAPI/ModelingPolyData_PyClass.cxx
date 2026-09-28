@@ -37,6 +37,7 @@
 #include "sv_sys_geom.h"
 
 #include <vtkMath.h>
+#include <iostream>
 #include "vtkSVGlobals.h"
 #include "vtkSVNURBSSurface.h"
 #include "sv_vmtk_utils.h"

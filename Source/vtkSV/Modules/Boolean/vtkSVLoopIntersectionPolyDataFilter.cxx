@@ -75,6 +75,7 @@
 
 #include <list>
 #include <map>
+#include <iostream>
 
 //----------------------------------------------------------------------------
 // Helper typedefs and data structures.

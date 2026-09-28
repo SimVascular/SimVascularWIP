@@ -72,6 +72,7 @@
 #include "vtkSVUpdeSmoothing.h"
 
 #include <algorithm>
+#include <iostream>
 
 // ----------------------
 // StandardNewMacro
@@ -1010,7 +1011,7 @@ int vtkSVNewParameterizeSurfaceOnPolycube::FormNURBSSurface() {
   if (polycubeDivisions == nullptr) {
     std::cerr << "Array with name PolycubeDivivisions needs to be present on "
                  "volume polycube"
-              << endl;
+              << std::endl;
     return SV_ERROR;
   }
   if (polycubeDivisions->GetNumberOfTuples() != numGroups ||
@@ -1018,7 +1019,7 @@ int vtkSVNewParameterizeSurfaceOnPolycube::FormNURBSSurface() {
     std::cerr << "PolycubeDivisions array has "
               << polycubeDivisions->GetNumberOfTuples() << " tuples and  "
               << polycubeDivisions->GetNumberOfComponents() << ". Expected "
-              << numGroups << " tuples, and 4 components" << endl;
+              << numGroups << " tuples, and 4 components" << std::endl;
     return SV_ERROR;
   }
 
@@ -1026,7 +1027,7 @@ int vtkSVNewParameterizeSurfaceOnPolycube::FormNURBSSurface() {
                                           this->GroupIdsArrayName) != SV_OK) {
     std::cerr << "Group Ids Array with name GroupIds does not exist on volume "
                  "polycube"
-              << endl;
+              << std::endl;
     return SV_OK;
   }
 
@@ -1034,7 +1035,7 @@ int vtkSVNewParameterizeSurfaceOnPolycube::FormNURBSSurface() {
                                           this->GridIdsArrayName) != SV_OK) {
     std::cerr << "Grid point ids array with name GridIds does not exist on "
                  "volume polycube"
-              << endl;
+              << std::endl;
     return SV_OK;
   }
 
@@ -1053,13 +1054,13 @@ int vtkSVNewParameterizeSurfaceOnPolycube::FormNURBSSurface() {
     if (whl_divs[0] == -1.0) {
       std::cerr << "Field data array PolycubeDivisions did not have divisions "
                    "for group number "
-                << groupId << endl;
+                << groupId << std::endl;
       return SV_ERROR;
     }
 
     std::cout << "SETTING UP AND LOFTING GROUP: " << groupId
               << " DIMS: " << whl_divs[1] << " " << whl_divs[2] << " "
-              << whl_divs[3] << endl;
+              << whl_divs[3] << std::endl;
 
     // Threshold out each group
     vtkNew(vtkPolyData, thresholdPd);
@@ -1104,7 +1105,7 @@ int vtkSVNewParameterizeSurfaceOnPolycube::FormNURBSSurface() {
         realPtId = ptIds->LookupValue(ptId);
 
         if (realPtId == -1) {
-          std::cerr << "BOTTOM EDGE DIDN'T WORK" << endl;
+          std::cerr << "BOTTOM EDGE DIDN'T WORK" << std::endl;
           return SV_ERROR;
         } else {
           thresholdPd->GetPoint(realPtId, pt);
@@ -1126,7 +1127,7 @@ int vtkSVNewParameterizeSurfaceOnPolycube::FormNURBSSurface() {
         realPtId = ptIds->LookupValue(ptId);
 
         if (realPtId == -1) {
-          std::cerr << "RIGHT EDGE DIDN'T WORK" << endl;
+          std::cerr << "RIGHT EDGE DIDN'T WORK" << std::endl;
           return SV_ERROR;
         } else {
           thresholdPd->GetPoint(realPtId, pt);
@@ -1148,7 +1149,7 @@ int vtkSVNewParameterizeSurfaceOnPolycube::FormNURBSSurface() {
         realPtId = ptIds->LookupValue(ptId);
 
         if (realPtId == -1) {
-          std::cerr << "TOP EDGE DIDN'T WORK" << endl;
+          std::cerr << "TOP EDGE DIDN'T WORK" << std::endl;
           return SV_ERROR;
         } else {
           thresholdPd->GetPoint(realPtId, pt);
@@ -1171,7 +1172,7 @@ int vtkSVNewParameterizeSurfaceOnPolycube::FormNURBSSurface() {
         realPtId = ptIds->LookupValue(ptId);
 
         if (realPtId == -1) {
-          std::cerr << "LEFT EDGE DIDN'T WORK" << endl;
+          std::cerr << "LEFT EDGE DIDN'T WORK" << std::endl;
           return SV_ERROR;
         } else {
           thresholdPd->GetPoint(realPtId, pt);
@@ -1294,13 +1295,13 @@ int vtkSVNewParameterizeSurfaceOnPolycube::FormNURBSSurface() {
     if (whl_divs[0] == -1.0) {
       std::cerr << "Field data array PolycubeDivisions did not have divisions "
                    "for group number "
-                << groupId << endl;
+                << groupId << std::endl;
       return SV_ERROR;
     }
 
     std::cout << "SETTING UP AND LOFTING GROUP: " << groupId
               << " DIMS: " << whl_divs[1] << " " << whl_divs[2] << " "
-              << whl_divs[3] << endl;
+              << whl_divs[3] << std::endl;
 
     // Threshold out each group
     vtkNew(vtkPolyData, thresholdPd);
@@ -1357,7 +1358,7 @@ int vtkSVNewParameterizeSurfaceOnPolycube::FormNURBSSurface() {
         realPtId = ptIds->LookupValue(ptId);
 
         if (realPtId == -1) {
-          std::cerr << "BOTTOM CAP DIDN'T WORK" << endl;
+          std::cerr << "BOTTOM CAP DIDN'T WORK" << std::endl;
           return SV_ERROR;
         } else {
           thresholdPd->GetPoint(realPtId, pt);
@@ -1380,7 +1381,7 @@ int vtkSVNewParameterizeSurfaceOnPolycube::FormNURBSSurface() {
         realPtId = ptIds->LookupValue(ptId);
 
         if (realPtId == -1) {
-          std::cerr << "TOP CAP DIDN'T WORK" << endl;
+          std::cerr << "TOP CAP DIDN'T WORK" << std::endl;
           return SV_ERROR;
         } else {
           thresholdPd->GetPoint(realPtId, pt);

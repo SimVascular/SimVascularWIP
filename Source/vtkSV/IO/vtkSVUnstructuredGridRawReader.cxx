@@ -51,6 +51,7 @@
 #include <cctype>
 #include <stdexcept>
 #include <string>
+#include <iostream>
 
 // ----------------------
 // StandardNewMacro
@@ -271,7 +272,7 @@ void vtkSVUnstructuredGridRawReader::PrintSelf(ostream &os, vtkIndent indent) {
   os << indent << "Merging: " << (this->Merging ? "On\n" : "Off\n");
   os << indent << "Locator: ";
   if (this->Locator) {
-    this->Locator->PrintSelf(os << endl, indent.GetNextIndent());
+    this->Locator->PrintSelf(os << std::endl, indent.GetNextIndent());
   } else {
     os << "(none)\n";
   }

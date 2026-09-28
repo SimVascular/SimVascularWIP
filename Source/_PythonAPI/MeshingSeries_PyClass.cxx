@@ -43,6 +43,8 @@
 #include "sv3_MeshGroup.h"
 #include "sv3_ModelGroup.h"
 
+#include <iostream>
+
 extern PyObject* PyTetGenOptionsCreateFromList(std::vector<std::string>& optionList);
 extern std::unique_ptr<sv3::ModelGroup> ModelingSeries_read(char* fileName);
 

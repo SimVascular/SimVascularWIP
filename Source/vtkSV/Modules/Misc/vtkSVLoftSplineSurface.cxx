@@ -265,16 +265,16 @@ void vtkSVLoftSplineSurface::PrintSelf(ostream &os, vtkIndent indent) {
   this->Superclass::PrintSelf(os, indent);
 
   os << "ParallelStreaming:" << (this->ParallelStreaming ? "On" : "Off")
-     << endl;
+     << std::endl;
   os << "UserManagedInputs:" << (this->UserManagedInputs ? "On" : "Off")
-     << endl;
+     << std::endl;
   os << "UseLinearSampleAlongLength:"
-     << (this->UseLinearSampleAlongLength ? "On" : "Off") << endl;
-  os << "UseFFT:" << (this->UseFFT ? "On" : "Off") << endl;
-  os << "NumLinearPtsAlongLength: " << this->NumLinearPtsAlongLength << endl;
-  os << "NumModes: " << this->NumModes << endl;
-  os << "NumOutPtsInSegs: " << this->NumOutPtsInSegs << endl;
-  os << "NumOutPtsAlongLength: " << this->NumOutPtsAlongLength << endl;
+     << (this->UseLinearSampleAlongLength ? "On" : "Off") << std::endl;
+  os << "UseFFT:" << (this->UseFFT ? "On" : "Off") << std::endl;
+  os << "NumLinearPtsAlongLength: " << this->NumLinearPtsAlongLength << std::endl;
+  os << "NumModes: " << this->NumModes << std::endl;
+  os << "NumOutPtsInSegs: " << this->NumOutPtsInSegs << std::endl;
+  os << "NumOutPtsAlongLength: " << this->NumOutPtsAlongLength << std::endl;
 }
 
 // ----------------------

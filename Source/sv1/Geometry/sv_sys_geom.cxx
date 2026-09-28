@@ -71,6 +71,7 @@
 #include <vtkSVLoopIntersectionPolyDataFilter.h>
 #include <vtkSVMultiplePolyDataIntersectionFilter.h>
 #include <vtkSVNURBSSurface.h>
+#include <iostream>
 
 #define vtkNew(type, name)                                                     \
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()

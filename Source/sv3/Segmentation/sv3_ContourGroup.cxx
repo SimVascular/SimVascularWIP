@@ -9,6 +9,7 @@
 
 #include <fstream>
 #include <regex>
+#include <iostream>
 
 using sv3::ContourGroup;
 

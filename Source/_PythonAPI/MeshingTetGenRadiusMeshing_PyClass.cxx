@@ -29,6 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <iostream>
+
 // ****** this is not used *****
 
 // Define the Python 'meshing.TetGenRadiusBased' class that encapsulates the parameters

@@ -54,6 +54,8 @@
 
 #include "vtkSVGlobals.h"
 
+#include <iostream>
+
 // ----------------------
 // StandardNewMacro
 // ----------------------
@@ -1156,5 +1158,5 @@ void vtkSVIntegrateAttributes::PrintSelf(ostream &os, vtkIndent indent) {
   this->Superclass::PrintSelf(os, indent);
 
   os << indent << "IntegrationDimension: " << this->IntegrationDimension
-     << endl;
+     << std::endl;
 }

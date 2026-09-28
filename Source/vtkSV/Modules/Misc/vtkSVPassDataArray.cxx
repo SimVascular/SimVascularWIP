@@ -169,7 +169,7 @@ int vtkSVPassDataArray::PrepFilter() {
     if (vtkSVGeneralUtils::CheckArrayExists(this->SourcePd, 0,
                                             this->PassArrayName) != SV_OK) {
       std::cout << "No Point Array Named " << this->PassArrayName
-                << " on surface" << endl;
+                << " on surface" << std::endl;
       return SV_ERROR;
     }
     // Get data array
@@ -182,7 +182,7 @@ int vtkSVPassDataArray::PrepFilter() {
     if (vtkSVGeneralUtils::CheckArrayExists(this->SourcePd, 1,
                                             this->PassArrayName) != SV_OK) {
       std::cout << "No Cell Array Named " << this->PassArrayName
-                << " on surface" << endl;
+                << " on surface" << std::endl;
       return SV_ERROR;
     }
     // Get data array

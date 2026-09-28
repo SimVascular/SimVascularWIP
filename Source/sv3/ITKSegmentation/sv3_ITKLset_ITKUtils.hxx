@@ -50,6 +50,7 @@
 
 #include <vtkImageCast.h>
 #include <vtkTypeTraits.h>
+#include <iostream>
 namespace cvITKLSUtil {
 
 /* ITK Only Methods */

@@ -39,6 +39,8 @@
 #include "sv_vmtk_utils.h"
 #include "vtkIdList.h"
 
+#include <iostream>
+
 //-----------------
 // PyMeshingTetGen
 //-----------------

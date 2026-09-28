@@ -34,6 +34,8 @@
 
 #include "sv3_VascularPhaseOneLevelSetImageFilter.h"
 
+#include <iostream>
+
 namespace itk {
 template <typename TInputImage, typename TFeatureImage, typename TOutputType>
 VascularPhaseOneLevelSetImageFilter<TInputImage, TFeatureImage, TOutputType>::

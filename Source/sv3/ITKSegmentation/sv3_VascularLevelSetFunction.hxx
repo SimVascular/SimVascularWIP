@@ -32,6 +32,8 @@
 #ifndef VASCULARLEVELSETFUNCTION_HXX_
 #define VASCULARLEVELSETFUNCTION_HXX_
 
+#include <iostream>
+
 namespace itk {
 template <typename TImageType, typename TFeatureImageType>
 const typename VascularLevelSetFunction<

@@ -35,6 +35,8 @@
 #include "sv3_VascularLevelSetImageFilter.h"
 #include "sv3_VascularPhaseTwoLevelSetFunction.h"
 
+#include <iostream>
+
 namespace itk {
 template <typename TInputImage, typename TFeatureImage,
           typename TOutputPixelType = float>

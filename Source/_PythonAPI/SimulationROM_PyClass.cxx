@@ -37,6 +37,7 @@
 #include <set>
 #include <fstream>
 #include <sstream>
+#include <iostream>
 
 //-----------------
 // PySimulationROM

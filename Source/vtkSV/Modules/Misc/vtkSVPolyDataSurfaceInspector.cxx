@@ -44,6 +44,8 @@
 
 #include "vtkSVGlobals.h"
 
+#include <iostream>
+
 vtkStandardNewMacro(vtkSVPolyDataSurfaceInspector);
 
 vtkSVPolyDataSurfaceInspector::vtkSVPolyDataSurfaceInspector() {
@@ -209,33 +211,33 @@ void vtkSVPolyDataSurfaceInspector::PrintSelf(ostream &os, vtkIndent indent) {
 
   os << indent
      << "Number of elements                : " << this->NumberOfElements
-     << endl;
+     << std::endl;
   os << indent
      << "Number of points                  :   " << this->NumberOfPoints
-     << endl;
+     << std::endl;
   os << indent << "Number of edges                   : " << this->NumberOfEdges
-     << endl;
+     << std::endl;
 
   os << indent
      << "Number of open edges              : " << this->NumberOfOpenEdges
-     << endl;
+     << std::endl;
   os << indent << "Number of non-triangular elements : "
-     << this->NumberOfNonTriangularElements << endl;
+     << this->NumberOfNonTriangularElements << std::endl;
   os << indent
      << "Number of non-manifold elements   : " << this->NumberOfNonManifoldEdges
-     << endl;
+     << std::endl;
 
   os << indent << "Surface genus                     : " << this->SurfaceGenus
-     << endl;
+     << std::endl;
   os << indent
      << "Number of connected regions       : " << this->NumberOfConnectedRegions
-     << endl;
+     << std::endl;
   os << indent << "Number of holes                   : " << this->NumberOfHoles
-     << endl;
+     << std::endl;
 
   os << indent << "Check number of connected regions : "
-     << this->CheckNumberOfConnectedRegions << endl;
+     << this->CheckNumberOfConnectedRegions << std::endl;
   os << indent
      << "Check number of holes             : " << this->CheckNumberOfHoles
-     << endl;
+     << std::endl;
 }

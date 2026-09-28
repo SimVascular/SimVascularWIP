@@ -240,7 +240,7 @@ int vtkGetBoundaryFaces::RequestData(vtkInformation *vtkNotUsed(request),
     }
   }
   if (extraregion) {
-    std::cout << "I am incrementing region" << endl;
+    std::cout << "I am incrementing region" << std::endl;
     reg++;
   }
 

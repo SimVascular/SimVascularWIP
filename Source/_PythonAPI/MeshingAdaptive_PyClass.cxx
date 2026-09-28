@@ -36,6 +36,8 @@
 #include "sv_AdaptObject.h"
 #include "sv_MeshSystem.h"
 
+#include <iostream>
+
 //------------------------
 // PyMeshingAdaptive
 //------------------------

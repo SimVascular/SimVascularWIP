@@ -38,6 +38,7 @@
 #include <vtkSpline.h>
 #include <vtkCardinalSpline.h>
 #include <vtkKochanekSpline.h>
+#include <iostream>
 
 
 
@@ -244,16 +245,16 @@ void sys_geom_SplineInterpolate(SplinePoints *input, int type,
     break;
 
   default:
-    cerr << "   ERROR >>>> In sys_geom_SplineInterpolate(...)" << endl;
-    cerr << "              Unknown interpolation method requested." << endl;
+    std::cerr << "   ERROR >>>> In sys_geom_SplineInterpolate(...)" << std::endl;
+    std::cerr << "              Unknown interpolation method requested." << std::endl;
     return;
   }
 
   dimensions = input->dim;
 
   if ((dimensions > MAX_DIM) || (dimensions < 1)) {
-    cerr << "   ERROR >>>> In sys_geom_SplineInterpolate(...)" << endl;
-    cerr << "              Invalid number of dimensions." << endl;
+    std::cerr << "   ERROR >>>> In sys_geom_SplineInterpolate(...)" << std::endl;
+    std::cerr << "              Invalid number of dimensions." << std::endl;
     return;
   }
 

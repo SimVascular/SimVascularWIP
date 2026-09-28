@@ -48,6 +48,8 @@
 #include "vtkSmartPointer.h"
 #include "vtkTriangle.h"
 
+#include <iostream>
+
 // ----------------------
 // StandardNewMacro
 // ----------------------
@@ -225,7 +227,7 @@ int vtkSVLocalQuadricDecimation::RequestData(
 
   if (this->UsePointArray) {
     if (this->DecimatePointArrayName == nullptr) {
-      std::cout << "No DecimatePointArrayName given." << endl;
+      std::cout << "No DecimatePointArrayName given." << std::endl;
       return SV_ERROR;
     }
     if (this->GetDecimateArrays(input, 0) != 1) {
@@ -235,7 +237,7 @@ int vtkSVLocalQuadricDecimation::RequestData(
   }
   if (this->UseCellArray) {
     if (this->DecimateCellArrayName == nullptr) {
-      std::cout << "No DecimateCellArrayName given." << endl;
+      std::cout << "No DecimateCellArrayName given." << std::endl;
       return SV_ERROR;
     }
     if (this->GetDecimateArrays(input, 1) != 1) {

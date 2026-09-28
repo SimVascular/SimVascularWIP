@@ -129,11 +129,11 @@ static void svPythonPrependPath(const char* dir)
 
 int PythonShell_Init(int argc, char *argv[])
 {
-  cout << "\n" <<endl;
-  cout << "SimVascular Python Shell" << endl;
-  cout << "Copyright (c) Stanford University, The Regents of the University" << endl;
-  cout << "              of California, and others.  All Rights Reserved.";
-  cout << "\n" << endl;
+  std::cout << "\n" <<std::endl;
+  std::cout << "SimVascular Python Shell" << std::endl;
+  std::cout << "Copyright (c) Stanford University, The Regents of the University" << std::endl;
+  std::cout << "              of California, and others.  All Rights Reserved.";
+  std::cout << "\n" << std::endl;
 
   // SETTING UP A PYTHON SHELL THE WAY VTK DOES FOR TESTING.
   // SHOULD BE FINE SEEING
