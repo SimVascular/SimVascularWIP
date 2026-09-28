@@ -309,6 +309,9 @@ PyContourSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 {
   //std::cout << "[PyContourSegmentationNew] New ContourSegmentation " << std::endl;
   auto self = (PyContourSegmentation*)type->tp_alloc(type, 0);
+  if (self != nullptr) {
+      PyUtilTrackOwnedState((PyObject*)self, PySegmentationRelease);
+  }
   if (self == nullptr) {
       std::cout << "[PyContourSegmentationNew] ERROR: alloc failed." << std::endl;
       return nullptr;
@@ -323,6 +326,7 @@ PyContourSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 static void
 PyContourSegmentationDealloc(PyContourSegmentation* self)
 {
+  PyUtilUntrackOwnedState((PyObject*)self);
   //std::cout << "[PyContourSegmentationDealloc] **** Free PyContourSegmentation ****" << std::endl;
   delete self->super.contour;
   Py_TYPE(self)->tp_free(self);

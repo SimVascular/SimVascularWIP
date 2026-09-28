@@ -225,8 +225,13 @@ SegmentationSeries_get_segmentation(PySegmentationSeries* self, PyObject* args, 
   #endif
 
   // Create a PyContour object from the SV Contour object
-  // and return it as a PyObject*.
-  return PyCreateSegmentation(contour);
+  // and return it as a PyObject*. The contour belongs to the
+  // series, so the new object gets its own copy.
+  auto contourCopy = contour->Clone();
+  if (contourCopy == nullptr) {
+      contourCopy = new sv3::Contour(*contour);
+  }
+  return PyCreateSegmentation(contourCopy);
 }
 
 //-------------------------

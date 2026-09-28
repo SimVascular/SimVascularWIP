@@ -963,6 +963,19 @@ static PyTypeObject PyMeshingAdaptiveType = {
   sizeof(PyMeshingAdaptive)
 };
 
+//-------------------------
+// PyMeshingAdaptiveRelease
+//-------------------------
+// Free the adaptive mesh object an adaptive mesher object (of any kernel) owns; see PyUtilTrackOwnedState().
+//
+static void
+PyMeshingAdaptiveRelease(PyObject* obj)
+{
+  auto self = (PyMeshingAdaptive*)obj;
+  delete self->adaptive_mesher;
+  self->adaptive_mesher = nullptr;
+}
+
 // Include derived mesh generator classes.
 #include "MeshingTetGenAdapt_PyClass.cxx"
 

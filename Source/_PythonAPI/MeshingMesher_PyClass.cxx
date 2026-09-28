@@ -1166,6 +1166,19 @@ PyMesherCtorMapType PyMesherCtorMap = {
   //{cvMeshObject::KernelType::KERNEL_TETGEN, []()->PyObject* {return PyObject_CallObject((PyObject*)&PyMeshingTetGenType, nullptr);}},
 };
 
+//-----------------------
+// PyMeshingMesherRelease
+//-----------------------
+// Free the mesh object a mesher object (of any kernel) owns; see PyUtilTrackOwnedState().
+//
+static void
+PyMeshingMesherRelease(PyObject* obj)
+{
+  auto self = (PyMeshingMesher*)obj;
+  delete self->mesher;
+  self->mesher = nullptr;
+}
+
 // Include derived mesh generator classes.
 #include "MeshingTetGen_PyClass.cxx"
 #include "MeshingMeshSim_PyClass.cxx"

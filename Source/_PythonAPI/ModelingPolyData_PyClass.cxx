@@ -1397,6 +1397,7 @@ PyPolyDataSolidNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
   //std::cout << "[PyPolyDataSolidNew] PyPolyDataSolidNew " << std::endl;
   auto self = (PyPolyDataSolid*)type->tp_alloc(type, 0);
   if (self != nullptr) {
+      PyUtilTrackOwnedState((PyObject*)self, PyModelingModelRelease);
       //self->super.id = 2;
   }
   return (PyObject *) self;
@@ -1409,6 +1410,7 @@ PyPolyDataSolidNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyPolyDataSolidDealloc(PyPolyDataSolid* self)
 {
+  PyUtilUntrackOwnedState((PyObject*)self);
   //std::cout << "[PyPolyDataSolidDealloc] Free PyPolyDataSolid" << std::endl;
   delete self->super.solidModel;
   Py_TYPE(self)->tp_free(self);
