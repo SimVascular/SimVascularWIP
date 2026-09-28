@@ -2,6 +2,17 @@ set(VTK_VERSION "9.3.1")
 set(VTK_INSTALL_DIR ${CMAKE_BINARY_DIR}/VTK-install)
 set(VTK_DIR ${VTK_INSTALL_DIR}/lib/cmake/vtk-9.3)
 
+# The Qt module group and Qt6_DIR are only needed for the (currently unused,
+# see Dependencies.md) sv4gui/MITK desktop GUI's Qt-integrated VTK widgets.
+set(VTK_Qt_ARGS "")
+if(SV_BUILD_QT)
+  set(VTK_Qt_ARGS
+    -DVTK_GROUP_ENABLE_Qt:STRING=YES
+    -DVTK_QT_VERSION:STRING=6
+    -DQt6_DIR:PATH=${Qt6_DIR}
+  )
+endif()
+
 ExternalProject_Add(VTK
   GIT_REPOSITORY "https://gitlab.kitware.com/vtk/vtk.git"
   GIT_TAG        "v${VTK_VERSION}"
@@ -21,9 +32,7 @@ ExternalProject_Add(VTK
     -DVTK_BUILD_DOCUMENTATION:BOOL=OFF
     -DBUILD_SHARED_LIBS:BOOL=ON
     -DVTK_SMP_IMPLEMENTATION_TYPE:STRING=Sequential
-    -DVTK_GROUP_ENABLE_Qt:STRING=YES
-    -DVTK_QT_VERSION:STRING=6
-    -DQt6_DIR:PATH=${Qt6_DIR}
+    ${VTK_Qt_ARGS}
     -DVTK_WRAP_PYTHON:BOOL=ON
     -DPython_EXECUTABLE:PATH=${Python_EXECUTABLE}
     -DPython3_EXECUTABLE:FILEPATH=${Python_EXECUTABLE}

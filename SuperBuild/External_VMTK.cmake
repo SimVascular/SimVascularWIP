@@ -1,6 +1,11 @@
 set(VMTK_INSTALL_DIR ${CMAKE_BINARY_DIR}/VMTK-install)
 set(VMTK_DIR ${VMTK_INSTALL_DIR}/lib)
 
+set(VMTK_Qt_ARGS "")
+if(SV_BUILD_QT)
+  set(VMTK_Qt_ARGS -DQt6_DIR:PATH=${Qt6_DIR})
+endif()
+
 ExternalProject_Add(VMTK
   GIT_REPOSITORY "https://github.com/vmtk/vmtk.git"
   GIT_TAG        "6c189dd6ee644a466498bd382b0c19229f20daa5"
@@ -19,7 +24,7 @@ ExternalProject_Add(VMTK
     -DVTK_DIR:PATH=${VTK_DIR}
     -DUSE_SYSTEM_ITK:BOOL=ON
     -DITK_DIR:PATH=${ITK_DIR}
-    -DQt6_DIR:PATH=${Qt6_DIR}
+    ${VMTK_Qt_ARGS}
     -DVMTK_BUILD_TESTING:BOOL=OFF
     -DVMTK_BUILD_TETGEN:BOOL=OFF
     -DVTK_VMTK_WRAP_PYTHON:BOOL=OFF

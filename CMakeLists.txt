@@ -25,9 +25,6 @@ endif()
 # Find Python
 find_package(Python 3.12...<3.13 COMPONENTS Interpreter Development.Module REQUIRED)
 
-# Find Qt
-find_package(Qt6 6.10 COMPONENTS Core CoreTools Gui Widgets Xml REQUIRED)
-
 #-----------------------------------------------------------------------------
 # Superbuild
 #-----------------------------------------------------------------------------
@@ -38,6 +35,19 @@ option(SV_WRAP_PYTHON "Build SimVascular Python Bindings" ON)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
+# Qt6 is only needed by the sv4gui/MITK desktop GUI and the Qt-integrated
+# VTK/ITK/VMTK modules it would use -- none of which Source/CMakeLists.txt's
+# vtk_module_find_modules() scan currently builds (sv4gui has no vtk.module
+# marker; see Dependencies.md). A plain `sv` Python module build needs none
+# of it. Default ON to keep existing full-GUI/MITK-era workflows unchanged;
+# pass -DSV_BUILD_QT=OFF for a Qt-free, Python-only build.
+option(SV_BUILD_QT "Require/build Qt6 for the desktop GUI and Qt-integrated VTK/ITK/VMTK modules." ON)
+mark_as_advanced(SV_BUILD_QT)
+
+if(SV_BUILD_QT)
+  find_package(Qt6 6.10 COMPONENTS Core CoreTools Gui Widgets Xml REQUIRED)
+endif()
+
 if(SimVascular_SUPERBUILD)
   add_subdirectory(SuperBuild)
   return()
@@ -46,6 +56,16 @@ endif()
 #-----------------------------------------------------------------------------
 # The following is only executed when NOT building via the superbuild
 #-----------------------------------------------------------------------------
+# VTK's module CMake macros (vtk_module_build() et al., used by
+# Source/CMakeLists.txt) assume GNUInstallDirs has already run and default
+# their install destinations from CMAKE_INSTALL_LIBDIR/BINDIR/INCLUDEDIR.
+# Without this, those variables are empty, and e.g. the default
+# CMAKE_DESTINATION ("${CMAKE_INSTALL_LIBDIR}/cmake/<package>") collapses to
+# a leading-slash "/cmake/<package>" that CMake's IS_ABSOLUTE treats as an
+# absolute path, failing with "The `CMAKE_DESTINATION` must not be an
+# absolute path."
+include(GNUInstallDirs)
+
 find_package(ITK REQUIRED)
 include(${ITK_USE_FILE})
 

@@ -6,11 +6,19 @@
 - A C/C++17 compiler
 - Git
 - Python 3.12 (with development headers)
-- Qt6 6.10+ (Core, CoreTools, Gui, Widgets, Xml) — not built by the superbuild, must be pre-installed
+- Qt6 6.10+ (Core, CoreTools, Gui, Widgets, Xml) — not built by the superbuild, must be pre-installed unless `SV_BUILD_QT=OFF` (see below)
 
 Everything else (VTK, GDCM, HDF5, ITK, OpenCASCADE, MMG, TetGen, tinyxml2,
 VMTK) is fetched and built from source by the CMake superbuild. See
 `Dependencies.md` for version pins and per-dependency notes.
+
+### Qt-free, Python-only builds
+
+Qt6 is only needed by the desktop GUI and the Qt-integrated VTK/ITK/VMTK
+modules it uses — neither of which the current build actually produces (see
+`Dependencies.md`). If all you need is the `sv` Python module
+(`SV_WRAP_PYTHON`, the default), pass `-DSV_BUILD_QT=OFF` and drop
+`-DQt6_DIR=...` entirely; no Qt6 install is required at all in that case.
 
 ## Building
 
@@ -40,6 +48,7 @@ Useful CMake options (pass as `-D<OPTION>=<VALUE>`):
 |---|---|---|
 | `SimVascular_SUPERBUILD` | `ON` | Build dependencies via superbuild. Set `OFF` only if all deps are already installed and their `*_DIR` variables are supplied. |
 | `SV_WRAP_PYTHON` | `ON` | Build the `sv` Python extension module. |
+| `SV_BUILD_QT` | `ON` | Require Qt6 and build the Qt-integrated VTK/ITK/VMTK modules it enables. Set `OFF` for a Qt-free, Python-only build (see above). |
 | `BUILD_SHARED_LIBS` | `ON` | Build shared vs. static libraries. |
 | `CMAKE_BUILD_TYPE` | `Release` | Standard CMake build type. |
 
