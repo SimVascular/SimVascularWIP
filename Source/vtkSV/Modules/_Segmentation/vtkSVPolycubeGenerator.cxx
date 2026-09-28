@@ -38,7 +38,7 @@
 #include "vtkDataSetSurfaceFilter.h"
 #include "vtkErrorCode.h"
 #include "vtkIdList.h"
-#include "vtkIdFilter.h"
+#include "vtkSVIdFilter.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
 #include "vtkSmartPointer.h"
@@ -422,7 +422,7 @@ int vtkSVPolycubeGenerator::GetVolumePolycube()
 
     paraHexMesh->GetCellData()->AddArray(groupIdsArray);
 
-    vtkNew(vtkIdFilter, ider);
+    vtkNew(vtkSVIdFilter, ider);
     ider->SetInputData(paraHexMesh);
     ider->SetCellIdsArrayName(this->GridIdsArrayName);
     ider->Update();

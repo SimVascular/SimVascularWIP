@@ -43,7 +43,7 @@
 #include "vtkEdgeTable.h"
 #include "vtkErrorCode.h"
 #include "vtkIdList.h"
-#include "vtkIdFilter.h"
+#include "vtkSVIdFilter.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkMath.h"

@@ -50,7 +50,7 @@
 #include "vtkDataSet.h"
 #include "vtkDataSetSurfaceFilter.h"
 #include "vtkExtractGeometry.h"
-#include "vtkIdFilter.h"
+#include "vtkSVIdFilter.h"
 #include "vtkIdList.h"
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
@@ -414,7 +414,7 @@ int vtkSVGeneralUtils::GetClosestPointConnectedRegion(vtkPolyData *inPd,
 // ----------------------
 int vtkSVGeneralUtils::GiveIds(vtkPolyData *pd, std::string arrayName) {
   // Send through Id filter
-  vtkNew(vtkIdFilter, ider);
+  vtkNew(vtkSVIdFilter, ider);
   ider->SetInputData(pd);
   ider->SetPointIdsArrayName(arrayName.c_str());
   ider->Update();

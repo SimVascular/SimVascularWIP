@@ -33,7 +33,7 @@
 
 #include "vtkCellData.h"
 #include "vtkErrorCode.h"
-#include "vtkIdFilter.h"
+#include "vtkSVIdFilter.h"
 #include "vtkIdList.h"
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
@@ -227,7 +227,7 @@ int vtkSVPlanarMapper::PrepFilter() {
                                           this->InternalIdsArrayName)) {
     this->RemoveInternalIds = 0;
   } else {
-    vtkNew(vtkIdFilter, ider);
+    vtkNew(vtkSVIdFilter, ider);
     ider->SetInputData(this->WorkPd);
     ider->SetCellIdsArrayName(this->InternalIdsArrayName);
     ider->Update();

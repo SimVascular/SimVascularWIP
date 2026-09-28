@@ -40,7 +40,7 @@
 #include "vtkErrorCode.h"
 #include "vtkExecutive.h"
 #include "vtkFeatureEdges.h"
-#include "vtkIdFilter.h"
+#include "vtkSVIdFilter.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkMath.h"
