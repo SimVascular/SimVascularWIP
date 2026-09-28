@@ -360,7 +360,7 @@ int vtkSVParameterizeVolumeOnPolycube::RunFilter() {
   ider2->SetCellIdsArrayName("TmpInternalIds");
   ider2->Update();
   vtkDataArray *tmpArray =
-      ider2->GetOutput()->GetPointData()->GetArray("TmpInternalIds");
+      ider2->GetPolyDataOutput()->GetPointData()->GetArray("TmpInternalIds");
   mappedSurface->GetPointData()->AddArray(tmpArray);
 
   vtkNew(vtkAppendFilter, surfaceAppender);
