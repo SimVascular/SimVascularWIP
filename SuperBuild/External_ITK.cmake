@@ -2,6 +2,11 @@ set(ITK_VERSION "5.4.0")
 set(ITK_INSTALL_DIR ${CMAKE_BINARY_DIR}/ITK-install)
 set(ITK_DIR ${ITK_INSTALL_DIR}/lib/cmake/ITK-5.4)
 
+set(ITK_Qt_ARGS "")
+if(SV_BUILD_QT)
+  set(ITK_Qt_ARGS -DQt6_DIR:PATH=${Qt6_DIR})
+endif()
+
 ExternalProject_Add(ITK
   GIT_REPOSITORY "https://github.com/InsightSoftwareConsortium/ITK.git"
   GIT_TAG        "v${ITK_VERSION}"
@@ -25,7 +30,7 @@ ExternalProject_Add(ITK
     -DModule_ITKVtkGlue=1
     -DModule_GrowCut:BOOL=ON
     -DVTK_DIR:PATH=${VTK_DIR}
-    -DQt6_DIR:PATH=${Qt6_DIR}
+    ${ITK_Qt_ARGS}
   INSTALL_DIR ${ITK_INSTALL_DIR}
   USES_TERMINAL_DOWNLOAD 1
   USES_TERMINAL_UPDATE   1

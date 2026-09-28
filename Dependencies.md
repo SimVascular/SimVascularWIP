@@ -28,16 +28,22 @@ configure into the inner SimVascular build.
 
 ---
 
-### Qt6 (system)
+### Qt6 (system, optional)
 | | |
 |---|---|
 | **Version** | 6.10+ (host-provided) |
 | **Components** | Core, CoreTools, Gui, Widgets, Xml |
-| **How found** | `find_package(Qt6)` before the superbuild branch |
+| **How found** | `find_package(Qt6)` before the superbuild branch, gated by `SV_BUILD_QT` (default `ON`) |
 
-Qt6 is not built by the superbuild. It must be installed on the host and
-locatable by CMake. `Qt6_DIR` is forwarded from the superbuild configure into
-the inner SimVascular build, and into VTK, ITK, and VMTK.
+Qt6 is only needed by the desktop GUI and the Qt-integrated VTK/ITK/VMTK
+modules it uses (`VTK_GROUP_ENABLE_Qt`, etc.) — neither of which
+`Source/CMakeLists.txt`'s `vtk_module_find_modules()` scan currently builds
+(sv4gui has no `vtk.module` marker; see "MITK" below). It is not built by the
+superbuild; when `SV_BUILD_QT=ON` it must be installed on the host and
+locatable by CMake, and `Qt6_DIR` is forwarded from the superbuild configure
+into the inner SimVascular build, and into VTK, ITK, and VMTK. Set
+`SV_BUILD_QT=OFF` to skip all of that and build without Qt6 at all (e.g. for
+a Python-only `sv` module build).
 
 ## Superbuild Dependencies
 
@@ -204,7 +210,7 @@ ITK. SimVascular is the final step.
 
 ```mermaid
 graph TD
-    Qt6([Qt6&#10;system]):::system
+    Qt6(["Qt6&#10;system, optional (SV_BUILD_QT)"]):::system
 
     VTK["VTK 9.3.1"]:::built
     GDCM["GDCM 3.0.10"]:::built
@@ -218,10 +224,10 @@ graph TD
     VMTK["VMTK"]:::built
     SV["SimVascular"]:::project
 
-    Qt6 -->|Qt6_DIR| VTK
-    Qt6 -->|Qt6_DIR| ITK
-    Qt6 -->|Qt6_DIR| VMTK
-    Qt6 -->|Qt6_DIR| SV
+    Qt6 -.->|"Qt6_DIR (SV_BUILD_QT=ON)"| VTK
+    Qt6 -.->|"Qt6_DIR (SV_BUILD_QT=ON)"| ITK
+    Qt6 -.->|"Qt6_DIR (SV_BUILD_QT=ON)"| VMTK
+    Qt6 -.->|"Qt6_DIR (SV_BUILD_QT=ON)"| SV
 
     VTK -->|VTK_DIR| ITK
     VTK -->|3RDPARTY_VTK_DIR| OCC

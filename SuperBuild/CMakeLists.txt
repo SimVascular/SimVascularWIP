@@ -63,7 +63,7 @@ list(APPEND SimVascular_DEPENDENCIES VMTK)
 set(SimVascular_superbuild_ep_args
   -DSimVascular_SUPERBUILD:BOOL=OFF
   -DSV_WRAP_PYTHON:BOOL=${SV_WRAP_PYTHON}
-  -DQt6_DIR:PATH=${Qt6_DIR}
+  -DSV_BUILD_QT:BOOL=${SV_BUILD_QT}
   -DPython_EXECUTABLE:PATH=${Python_EXECUTABLE}
   -DPython3_EXECUTABLE:FILEPATH=${Python_EXECUTABLE}
   -DPython3_ROOT_DIR:PATH=${Python_ROOT_DIR}
@@ -80,6 +80,9 @@ set(SimVascular_superbuild_ep_args
   -Dtinyxml2_DIR:PATH=${tinyxml2_DIR}
   -DVMTK_DIR:PATH=${VMTK_DIR}
 )
+if(SV_BUILD_QT)
+  list(APPEND SimVascular_superbuild_ep_args -DQt6_DIR:PATH=${Qt6_DIR})
+endif()
 
 ExternalProject_Add(SimVascular
   SOURCE_DIR ${CMAKE_SOURCE_DIR}
