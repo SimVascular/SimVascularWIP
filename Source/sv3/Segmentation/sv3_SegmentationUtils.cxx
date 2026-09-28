@@ -287,7 +287,6 @@ vtkPlane *
 SegmentationUtils::CreatePlaneGeometry(sv3::PathElement::PathPoint pathPoint,
                                        std::array<double, 3> spacing,
                                        double size) {
-  vtkTransform *tr = GetvtkTransform(pathPoint);
   vtkPlane *planegeometry = vtkPlane::New();
 
   planegeometry->SetOrigin(pathPoint.pos[0], pathPoint.pos[1],
