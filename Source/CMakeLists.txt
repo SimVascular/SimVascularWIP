@@ -5,9 +5,18 @@ vtk_module_scan(
         MODULE_FILES ${module_files}
         PROVIDES_MODULES modules
 )
+# Install destination of SimVascular's shared libraries, which VTK's module
+# macros also mirror in the build tree. An application embedding SimVascular
+# can put them where its loader looks, e.g. a Slicer extension's
+# lib/Slicer-X.Y; the Python modules get an RPATH pointing there.
+set(SV_INSTALL_LIBRARY_DIR "${CMAKE_INSTALL_LIBDIR}" CACHE STRING
+        "Install destination for SimVascular's shared libraries, relative to the install prefix.")
+mark_as_advanced(SV_INSTALL_LIBRARY_DIR)
+
 vtk_module_build(
         MODULES ${modules}
         INSTALL_EXPORT VTKSV
+        LIBRARY_DESTINATION ${SV_INSTALL_LIBRARY_DIR}
 )
 
 
@@ -18,6 +27,7 @@ if (${SV_WRAP_PYTHON})
             BUILD_PYI_FILES ON
             INSTALL_HEADERS OFF
             MODULE_DESTINATION ${python_destination}
+            LIBRARY_DESTINATION ${SV_INSTALL_LIBRARY_DIR}
             PYTHON_PACKAGE "sv"
     )
 
