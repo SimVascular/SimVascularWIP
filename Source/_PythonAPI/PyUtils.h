@@ -148,11 +148,11 @@ void PyUtilSetupApiFunction(const char* functionName, std::string& format, std::
 // (reported by vtkDebugLeaks). The Python objects stay valid afterwards,
 // with their owned pointers set to null.
 //
-using PyUtilReleaseFunction = void (*)(PyObject* obj);
+using PyUtilReleaseFunction = void (*)(PyObject *obj);
 
-void PyUtilTrackOwnedState(PyObject* obj, PyUtilReleaseFunction release);
+void PyUtilTrackOwnedState(PyObject *obj, PyUtilReleaseFunction release);
 
-void PyUtilUntrackOwnedState(PyObject* obj);
+void PyUtilUntrackOwnedState(PyObject *obj);
 
 extern "C" VTKSVPYTHONAPI_EXPORT void PyUtilReleaseOwnedState();
 

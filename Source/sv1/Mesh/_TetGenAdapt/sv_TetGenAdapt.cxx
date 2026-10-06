@@ -677,21 +677,26 @@ int cvTetGenAdapt::SetMetric(char *input,int option, int strategy)
   }
   break;
   default : {
-      std::cout<<"Valid metric option not given!"<<std::endl;
-      std::cout<<"\nSpecify a correct (adaptation) option (1-4):"<<std::endl;
-      std::cout<<"\n1: Read average speed from file and then calculate hessian from";
-      std::cout<<"	average speed";
-      std::cout<<" simulation)"<<std::endl;
-      std::cout<<"2: Read average speed from vtu mesh and then calculate hessian from ";
-      std::cout<<"average speed";
-      std::cout<<" simulation)"<<std::endl;
-      std::cout<<"3: Read solution from vtu mesh, calculate avg. magnitude of";
-      std::cout<<" velocity over specified timestep range. Must provide";
-      std::cout<<" cylinder_results as one vtu with all timesteps. Hessian is";
-      std::cout<<"	then calculated from avg. magnitude of velocity."<<std::endl;
-      std::cout<<"4: Read array from mesh, and specify mesh metric with this array."<<std::endl;
+    std::cout << "Valid metric option not given!" << std::endl;
+    std::cout << "\nSpecify a correct (adaptation) option (1-4):" << std::endl;
+    std::cout
+        << "\n1: Read average speed from file and then calculate hessian from";
+    std::cout << "	average speed";
+    std::cout << " simulation)" << std::endl;
+    std::cout << "2: Read average speed from vtu mesh and then calculate "
+                 "hessian from ";
+    std::cout << "average speed";
+    std::cout << " simulation)" << std::endl;
+    std::cout << "3: Read solution from vtu mesh, calculate avg. magnitude of";
+    std::cout << " velocity over specified timestep range. Must provide";
+    std::cout << " cylinder_results as one vtu with all timesteps. Hessian is";
+    std::cout << "	then calculated from avg. magnitude of velocity."
+              << std::endl;
+    std::cout
+        << "4: Read array from mesh, and specify mesh metric with this array."
+        << std::endl;
 
-      return SV_ERROR;
+    return SV_ERROR;
   }
   break;
   }

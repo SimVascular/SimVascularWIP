@@ -698,12 +698,11 @@ PySegmentationInit(PySegmentation* self, PyObject* args, PyObject *kwds)
 //----------------------
 // PySegmentationRelease
 //----------------------
-// Free the contour a segmentation object (of any segmentation type) owns; see PyUtilTrackOwnedState().
+// Free the contour a segmentation object (of any segmentation type) owns; see
+// PyUtilTrackOwnedState().
 //
-static void
-PySegmentationRelease(PyObject* obj)
-{
-  auto self = (PySegmentation*)obj;
+static void PySegmentationRelease(PyObject *obj) {
+  auto self = (PySegmentation *)obj;
   delete self->contour;
   self->contour = nullptr;
 }
@@ -722,8 +721,8 @@ PySegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
   //std::cout << "[PySegmentationNew] PySegmentationNew " << std::endl;
   auto self = (PySegmentation*)type->tp_alloc(type, 0);
   if (self != nullptr) {
-      PyUtilTrackOwnedState((PyObject*)self, PySegmentationRelease);
-      //self->id = 1;
+    PyUtilTrackOwnedState((PyObject *)self, PySegmentationRelease);
+    // self->id = 1;
   }
 
   return (PyObject *) self;
@@ -736,7 +735,7 @@ PySegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PySegmentationDealloc(PySegmentation* self)
 {
-  PyUtilUntrackOwnedState((PyObject*)self);
+  PyUtilUntrackOwnedState((PyObject *)self);
   //std::cout << "[PySegmentationDealloc] " << std::endl;
   //std::cout << "[PySegmentationDealloc] *********  F r e e   P y S e g m e n t a t i o n  *********  " << self->id << std::endl;
   //std::cout << "[PySegmentationDealloc] " << std::endl;

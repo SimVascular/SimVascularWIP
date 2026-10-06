@@ -43,9 +43,9 @@
 #include "SimVascular.h"
 #include "SimVascular_python.h"
 
+#include <iostream>
 #include <stdio.h>
 #include <string.h>
-#include <iostream>
 
 #include "sv_PolyData.h"
 #include "Geometry_PyModule.h"

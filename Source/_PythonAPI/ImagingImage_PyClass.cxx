@@ -49,14 +49,14 @@
 
 #include <tinyxml2.h>
 
+#include <iostream>
 #include <vtkDoubleArray.h>
 #include <vtkImageData.h>
+#include <vtkImageReslice.h>
+#include <vtkPlaneSource.h>
 #include <vtkPointData.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkXMLImageDataWriter.h>
-#include <vtkPlaneSource.h>
-#include <vtkImageReslice.h>
-#include <iostream>
 
 #include "itkImageToVTKImageFilter.h"
 #include "itkImageFileReader.h"

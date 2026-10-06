@@ -652,8 +652,10 @@ void vtkSVMultiplePolyDataIntersectionFilter::PrintSelf(ostream &os,
      << std::endl;
   os << "UserManagedInputs:" << (this->UserManagedInputs ? "On" : "Off")
      << std::endl;
-  os << "AssignSurfaceIds:" << (this->AssignSurfaceIds ? "On" : "Off") << std::endl;
-  os << "PassInfoAsGlobal:" << (this->PassInfoAsGlobal ? "On" : "Off") << std::endl;
+  os << "AssignSurfaceIds:" << (this->AssignSurfaceIds ? "On" : "Off")
+     << std::endl;
+  os << "PassInfoAsGlobal:" << (this->PassInfoAsGlobal ? "On" : "Off")
+     << std::endl;
 }
 
 // ----------------------

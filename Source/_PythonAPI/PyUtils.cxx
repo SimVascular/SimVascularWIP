@@ -45,10 +45,9 @@
 // The objects registered with PyUtilTrackOwnedState(), and how to free
 // the C++ state each one owns.
 //
-static std::unordered_map<PyObject*, PyUtilReleaseFunction>&
-PyUtilOwnedStateRegistry()
-{
-  static std::unordered_map<PyObject*, PyUtilReleaseFunction> registry;
+static std::unordered_map<PyObject *, PyUtilReleaseFunction> &
+PyUtilOwnedStateRegistry() {
+  static std::unordered_map<PyObject *, PyUtilReleaseFunction> registry;
   return registry;
 }
 
@@ -56,9 +55,7 @@ PyUtilOwnedStateRegistry()
 // PyUtilTrackOwnedState
 //-----------------------
 //
-void
-PyUtilTrackOwnedState(PyObject* obj, PyUtilReleaseFunction release)
-{
+void PyUtilTrackOwnedState(PyObject *obj, PyUtilReleaseFunction release) {
   PyUtilOwnedStateRegistry()[obj] = release;
 }
 
@@ -66,9 +63,7 @@ PyUtilTrackOwnedState(PyObject* obj, PyUtilReleaseFunction release)
 // PyUtilUntrackOwnedState
 //-------------------------
 //
-void
-PyUtilUntrackOwnedState(PyObject* obj)
-{
+void PyUtilUntrackOwnedState(PyObject *obj) {
   PyUtilOwnedStateRegistry().erase(obj);
 }
 
@@ -76,15 +71,13 @@ PyUtilUntrackOwnedState(PyObject* obj)
 // PyUtilReleaseOwnedState
 //-------------------------
 //
-void
-PyUtilReleaseOwnedState()
-{
+void PyUtilReleaseOwnedState() {
   // Take the registry's contents first, so releasing can't affect the
   // iteration and the objects are no longer tracked afterwards.
-  std::unordered_map<PyObject*, PyUtilReleaseFunction> owners;
+  std::unordered_map<PyObject *, PyUtilReleaseFunction> owners;
   owners.swap(PyUtilOwnedStateRegistry());
-  for (const auto& owner : owners) {
-      owner.second(owner.first);
+  for (const auto &owner : owners) {
+    owner.second(owner.first);
   }
 }
 

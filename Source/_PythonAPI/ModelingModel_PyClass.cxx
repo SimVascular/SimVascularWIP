@@ -386,12 +386,11 @@ PyTypeObject PyModelingModelType = {
 //-----------------------
 // PyModelingModelRelease
 //-----------------------
-// Free the solid model a modeling object (of any kernel) owns; see PyUtilTrackOwnedState().
+// Free the solid model a modeling object (of any kernel) owns; see
+// PyUtilTrackOwnedState().
 //
-static void
-PyModelingModelRelease(PyObject* obj)
-{
-  auto self = (PyModelingModel*)obj;
+static void PyModelingModelRelease(PyObject *obj) {
+  auto self = (PyModelingModel *)obj;
   delete self->solidModel;
   self->solidModel = nullptr;
 }

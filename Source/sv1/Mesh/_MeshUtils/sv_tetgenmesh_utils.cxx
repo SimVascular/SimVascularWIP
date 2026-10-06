@@ -330,8 +330,8 @@ int TGenUtils_ConvertVolumeToTetGen(vtkUnstructuredGrid *mesh,vtkPolyData *surfa
   boundaryScalars = vtkIntArray::SafeDownCast(surfaceMesh->GetCellData()->GetArray("ModelFaceID"));
   errorMetricArray = vtkDoubleArray::SafeDownCast(mesh->GetPointData()->GetArray("errormetric"));
 
-  std::cout<<"Num Cells "<<numTets<<std::endl;
-  std::cout<<"Num Points "<<numPoints<<std::endl;
+  std::cout << "Num Cells " << numTets << std::endl;
+  std::cout << "Num Points " << numPoints << std::endl;
   inmesh->firstnumber = 0;
   inmesh->numberofcorners = 4;
   inmesh->numberoftetrahedra = numTets;
@@ -341,7 +341,7 @@ int TGenUtils_ConvertVolumeToTetGen(vtkUnstructuredGrid *mesh,vtkPolyData *surfa
   inmesh->numberofpointmtrs = 1;
   inmesh->pointmtrlist = new REAL[numPoints*inmesh->numberofpointmtrs];
 
-  std::cout<<"Converting to Adapt Points..."<<std::endl;
+  std::cout << "Converting to Adapt Points..." << std::endl;
   for (i = 0; i < numPoints; i++)
   {
     uPoints->GetPoint(i,tetPts);
@@ -351,7 +351,7 @@ int TGenUtils_ConvertVolumeToTetGen(vtkUnstructuredGrid *mesh,vtkPolyData *surfa
     inmesh->pointmtrlist[i] = errorMetricArray->GetValue(i);
   }
 
-  std::cout<<"Converting to Adapt Tets..."<<std::endl;
+  std::cout << "Converting to Adapt Tets..." << std::endl;
   for (i=0,uTets->InitTraversal();uTets->GetNextCell(npts,pts);i++)
   {
     for (j = 0;j < npts;j++)
@@ -1229,8 +1229,9 @@ int TGenUtils_SetSizeFunctionArray(vtkPolyData *polydatasolid,
     }
     if (min < size)
     {
-      std::cout<<"Given mesh size is smaller than minimum radius!!"<<std::endl;
-      std::cout<<"Setting new mesh size to minimum radius :)"<<std::endl;
+      std::cout << "Given mesh size is smaller than minimum radius!!"
+                << std::endl;
+      std::cout << "Setting new mesh size to minimum radius :)" << std::endl;
       size = min;
     }
 

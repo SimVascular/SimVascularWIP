@@ -59,9 +59,9 @@
 #endif
 
 #include "Python.h"
-#include <structmember.h>
-#include <iostream>
 #include "vtkPythonUtil.h"
+#include <iostream>
+#include <structmember.h>
 
 #if PYTHON_MAJOR_VERSION == 3
 #include "PyVTKObject.h"

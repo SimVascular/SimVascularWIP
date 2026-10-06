@@ -271,7 +271,8 @@ void vtkSVLoftSplineSurface::PrintSelf(ostream &os, vtkIndent indent) {
   os << "UseLinearSampleAlongLength:"
      << (this->UseLinearSampleAlongLength ? "On" : "Off") << std::endl;
   os << "UseFFT:" << (this->UseFFT ? "On" : "Off") << std::endl;
-  os << "NumLinearPtsAlongLength: " << this->NumLinearPtsAlongLength << std::endl;
+  os << "NumLinearPtsAlongLength: " << this->NumLinearPtsAlongLength
+     << std::endl;
   os << "NumModes: " << this->NumModes << std::endl;
   os << "NumOutPtsInSegs: " << this->NumOutPtsInSegs << std::endl;
   os << "NumOutPtsAlongLength: " << this->NumOutPtsAlongLength << std::endl;

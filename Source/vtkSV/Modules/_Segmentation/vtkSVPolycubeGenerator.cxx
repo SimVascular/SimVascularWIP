@@ -38,9 +38,9 @@
 #include "vtkDataSetSurfaceFilter.h"
 #include "vtkErrorCode.h"
 #include "vtkIdList.h"
-#include "vtkSVIdFilter.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
+#include "vtkSVIdFilter.h"
 #include "vtkSmartPointer.h"
 #include "vtkSortDataArray.h"
 

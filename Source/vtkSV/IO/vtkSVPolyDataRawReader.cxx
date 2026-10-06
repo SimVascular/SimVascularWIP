@@ -49,9 +49,9 @@
 
 #include <algorithm>
 #include <cctype>
+#include <iostream>
 #include <stdexcept>
 #include <string>
-#include <iostream>
 
 // ----------------------
 // StandardNewMacro

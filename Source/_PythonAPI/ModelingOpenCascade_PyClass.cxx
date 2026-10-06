@@ -105,8 +105,8 @@ PyOcctSolidNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
   //std::cout << "[PyOcctSolidNew] PyOcctSolidNew " << std::endl;
   auto self = (PyOcctSolid*)type->tp_alloc(type, 0);
   if (self != nullptr) {
-      PyUtilTrackOwnedState((PyObject*)self, PyModelingModelRelease);
-      //self->super.id = 2;
+    PyUtilTrackOwnedState((PyObject *)self, PyModelingModelRelease);
+    // self->super.id = 2;
   }
   return (PyObject *) self;
 }
@@ -118,7 +118,7 @@ PyOcctSolidNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyOcctSolidDealloc(PyOcctSolid* self)
 {
-  PyUtilUntrackOwnedState((PyObject*)self);
+  PyUtilUntrackOwnedState((PyObject *)self);
   //std::cout << "[PyOcctSolidDealloc] Free PyOcctSolid" << std::endl;
   delete self->super.solidModel;
   Py_TYPE(self)->tp_free(self);

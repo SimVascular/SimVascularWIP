@@ -1169,12 +1169,11 @@ PyMesherCtorMapType PyMesherCtorMap = {
 //-----------------------
 // PyMeshingMesherRelease
 //-----------------------
-// Free the mesh object a mesher object (of any kernel) owns; see PyUtilTrackOwnedState().
+// Free the mesh object a mesher object (of any kernel) owns; see
+// PyUtilTrackOwnedState().
 //
-static void
-PyMeshingMesherRelease(PyObject* obj)
-{
-  auto self = (PyMeshingMesher*)obj;
+static void PyMeshingMesherRelease(PyObject *obj) {
+  auto self = (PyMeshingMesher *)obj;
   delete self->mesher;
   self->mesher = nullptr;
 }

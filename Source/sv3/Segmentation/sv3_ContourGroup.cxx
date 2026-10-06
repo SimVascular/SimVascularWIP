@@ -6,10 +6,9 @@
 #include "sv3_LevelSetContour.h"
 #include "sv3_SplinePolygonContour.h"
 
-
 #include <fstream>
-#include <regex>
 #include <iostream>
+#include <regex>
 
 using sv3::ContourGroup;
 

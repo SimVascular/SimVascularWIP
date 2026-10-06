@@ -1336,11 +1336,11 @@ void r8mat_print_some ( int m, int n, double a[], int ilo, int jlo, int ihi,
     j2hi = i4_min ( j2hi, jhi );
 
     std::cout << "\n";
-//
-//  For each column J in the current range...
-//
-//  Write the header.
-//
+    //
+    //  For each column J in the current range...
+    //
+    //  Write the header.
+    //
     std::cout << "  Col:    ";
     for ( j = j2lo; j <= j2hi; j++ )
     {
@@ -1349,9 +1349,9 @@ void r8mat_print_some ( int m, int n, double a[], int ilo, int jlo, int ihi,
     std::cout << "\n";
     std::cout << "  Row\n";
     std::cout << "\n";
-//
-//  Determine the range of the rows in this strip.
-//
+    //
+    //  Determine the range of the rows in this strip.
+    //
     i2lo = i4_max ( ilo, 1 );
     i2hi = i4_min ( ihi, m );
 
@@ -1360,12 +1360,11 @@ void r8mat_print_some ( int m, int n, double a[], int ilo, int jlo, int ihi,
 //
 //  Print out (up to) 5 entries in row I, that lie in the current strip.
 //
-      std::cout << setw(5) << i - 1 << ": ";
-      for ( j = j2lo; j <= j2hi; j++ )
-      {
-        std::cout << setw(12) << a[i-1+(j-1)*m] << "  ";
-      }
-      std::cout << "\n";
+std::cout << setw(5) << i - 1 << ": ";
+for (j = j2lo; j <= j2hi; j++) {
+  std::cout << setw(12) << a[i - 1 + (j - 1) * m] << "  ";
+}
+std::cout << "\n";
     }
   }
 
@@ -1504,8 +1503,7 @@ void r8vec_print ( int n, double a[], std::string title )
   std::cout << "\n";
   for ( i = 0; i < n; i++ )
   {
-    std::cout << "  " << setw(8)  << i
-         << ": " << setw(14) << a[i]  << "\n";
+    std::cout << "  " << setw(8) << i << ": " << setw(14) << a[i] << "\n";
   }
 
   return;
