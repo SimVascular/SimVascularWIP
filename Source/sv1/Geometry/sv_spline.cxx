@@ -34,13 +34,11 @@
 #include <cmath>
 #include <cstdio>
 
-#include <vtkPolyData.h>
-#include <vtkSpline.h>
+#include <iostream>
 #include <vtkCardinalSpline.h>
 #include <vtkKochanekSpline.h>
-#include <iostream>
-
-
+#include <vtkPolyData.h>
+#include <vtkSpline.h>
 
 int sys_geom_splinePtsToPathPlan(vtkPolyData *pd, int numOutputPts,
                                  char *filename, int flag) {
@@ -245,15 +243,18 @@ void sys_geom_SplineInterpolate(SplinePoints *input, int type,
     break;
 
   default:
-    std::cerr << "   ERROR >>>> In sys_geom_SplineInterpolate(...)" << std::endl;
-    std::cerr << "              Unknown interpolation method requested." << std::endl;
+    std::cerr << "   ERROR >>>> In sys_geom_SplineInterpolate(...)"
+              << std::endl;
+    std::cerr << "              Unknown interpolation method requested."
+              << std::endl;
     return;
   }
 
   dimensions = input->dim;
 
   if ((dimensions > MAX_DIM) || (dimensions < 1)) {
-    std::cerr << "   ERROR >>>> In sys_geom_SplineInterpolate(...)" << std::endl;
+    std::cerr << "   ERROR >>>> In sys_geom_SplineInterpolate(...)"
+              << std::endl;
     std::cerr << "              Invalid number of dimensions." << std::endl;
     return;
   }

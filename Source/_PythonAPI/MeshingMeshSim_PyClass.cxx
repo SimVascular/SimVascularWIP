@@ -577,7 +577,7 @@ PyMeshingMeshSimNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   auto self = (PyMeshingMesher*)type->tp_alloc(type, 0);
   if (self != nullptr) {
-      PyUtilTrackOwnedState((PyObject*)self, PyMeshingMesherRelease);
+    PyUtilTrackOwnedState((PyObject *)self, PyMeshingMesherRelease);
   }
   return (PyObject*)self;
 }
@@ -589,7 +589,7 @@ PyMeshingMeshSimNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyMeshingMeshSimDealloc(PyMeshingMeshSim* self)
 {
-  PyUtilUntrackOwnedState((PyObject*)self);
+  PyUtilUntrackOwnedState((PyObject *)self);
   delete self->super.mesher;
   Py_TYPE(self)->tp_free(self);
 }

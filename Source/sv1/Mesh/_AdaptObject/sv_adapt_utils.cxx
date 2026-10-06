@@ -64,8 +64,8 @@
 
 #include "cvSolverIO.h"
 
-#include <sys/stat.h>
 #include <iostream>
+#include <sys/stat.h>
 
 #ifdef WIN32
 void  bzero(void* ptr, size_t sz) {
@@ -230,7 +230,7 @@ int AdaptUtils_getHessian(vtkDoubleArray *Hessians,vtkIdType v, double T[3][3])
 {
   if (Hessians->GetNumberOfComponents() == 0)
   {
-    std::cout<<"ERROR: No values in Hessian array"<<std::endl;
+    std::cout << "ERROR: No values in Hessian array" << std::endl;
   }
 
   T[0][0] = Hessians->GetComponent(v,0);
@@ -1274,7 +1274,7 @@ int AdaptUtils_convertToVTK(vtkUnstructuredGrid *mesh,vtkPolyData *surfaceMesh,t
   bool *pointOnSurface = new bool[numAdaptPts];
   int *pointMapping = new int[numAdaptPts];
 
-  std::cout<<"Converting Points to adapt VTK Structures..."<<std::endl;
+  std::cout << "Converting Points to adapt VTK Structures..." << std::endl;
   globalId = 1;
   adaptPoints->SetNumberOfPoints(numAdaptPts);
   for (i=0;i< numAdaptPts; i++)

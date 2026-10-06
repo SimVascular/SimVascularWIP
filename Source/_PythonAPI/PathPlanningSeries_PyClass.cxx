@@ -774,10 +774,8 @@ PyPathSeriesInit(PyPathSeries* self, PyObject* args, PyObject* kwargs)
 //--------------------
 // Free the path group a path series object owns; see PyUtilTrackOwnedState().
 //
-static void
-PyPathSeriesRelease(PyObject* obj)
-{
-  auto self = (PyPathSeries*)obj;
+static void PyPathSeriesRelease(PyObject *obj) {
+  auto self = (PyPathSeries *)obj;
   delete self->pathGroup;
   self->pathGroup = nullptr;
 }
@@ -794,8 +792,8 @@ PyPathSeriesNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
   //std::cout << "[PyPathSeriesNew] PyPathSeriesNew " << std::endl;
   auto self = (PyPath*)type->tp_alloc(type, 0);
   if (self != nullptr) {
-      PyUtilTrackOwnedState((PyObject*)self, PyPathSeriesRelease);
-      self->id = 1;
+    PyUtilTrackOwnedState((PyObject *)self, PyPathSeriesRelease);
+    self->id = 1;
   }
   return (PyObject*)self;
 }
@@ -807,7 +805,7 @@ PyPathSeriesNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyPathSeriesDealloc(PyPathSeries* self)
 {
-  PyUtilUntrackOwnedState((PyObject*)self);
+  PyUtilUntrackOwnedState((PyObject *)self);
   //std::cout << "[PyPathSeriesDealloc] **** Free PyPathSeries **** " << std::endl;
   delete self->pathGroup;
   Py_TYPE(self)->tp_free(self);

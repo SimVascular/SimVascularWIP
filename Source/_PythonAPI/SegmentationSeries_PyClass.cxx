@@ -229,7 +229,7 @@ SegmentationSeries_get_segmentation(PySegmentationSeries* self, PyObject* args, 
   // series, so the new object gets its own copy.
   auto contourCopy = contour->Clone();
   if (contourCopy == nullptr) {
-      contourCopy = new sv3::Contour(*contour);
+    contourCopy = new sv3::Contour(*contour);
   }
   return PyCreateSegmentation(contourCopy);
 }

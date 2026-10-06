@@ -125,8 +125,8 @@ PyLevelSetSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
   //std::cout << "[PyLevelSetSegmentationNew] PyLevelSetSegmentationNew " << std::endl;
   auto self = (PyLevelSetSegmentation*)type->tp_alloc(type, 0);
   if (self != nullptr) {
-      PyUtilTrackOwnedState((PyObject*)self, PySegmentationRelease);
-      //self->super.id = 2;
+    PyUtilTrackOwnedState((PyObject *)self, PySegmentationRelease);
+    // self->super.id = 2;
   }
   return (PyObject *) self;
 }
@@ -138,7 +138,7 @@ PyLevelSetSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyLevelSetSegmentationDealloc(PyLevelSetSegmentation* self)
 {
-  PyUtilUntrackOwnedState((PyObject*)self);
+  PyUtilUntrackOwnedState((PyObject *)self);
   //std::cout << "[PyLevelSetSegmentationDealloc] Free PyLevelSetSegmentation" << std::endl;
   delete self->super.contour;
   Py_TYPE(self)->tp_free(self);

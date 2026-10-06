@@ -48,9 +48,9 @@
 #include "itkBinaryThresholdImageFilter.h"
 #include "itkMultiplyImageFilter.h"
 
+#include <iostream>
 #include <vtkImageCast.h>
 #include <vtkTypeTraits.h>
-#include <iostream>
 namespace cvITKLSUtil {
 
 /* ITK Only Methods */

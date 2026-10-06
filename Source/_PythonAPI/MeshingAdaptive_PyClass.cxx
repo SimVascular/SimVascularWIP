@@ -966,12 +966,11 @@ static PyTypeObject PyMeshingAdaptiveType = {
 //-------------------------
 // PyMeshingAdaptiveRelease
 //-------------------------
-// Free the adaptive mesh object an adaptive mesher object (of any kernel) owns; see PyUtilTrackOwnedState().
+// Free the adaptive mesh object an adaptive mesher object (of any kernel) owns;
+// see PyUtilTrackOwnedState().
 //
-static void
-PyMeshingAdaptiveRelease(PyObject* obj)
-{
-  auto self = (PyMeshingAdaptive*)obj;
+static void PyMeshingAdaptiveRelease(PyObject *obj) {
+  auto self = (PyMeshingAdaptive *)obj;
   delete self->adaptive_mesher;
   self->adaptive_mesher = nullptr;
 }

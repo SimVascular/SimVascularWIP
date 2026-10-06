@@ -33,13 +33,13 @@
 
 #include "vtkCellData.h"
 #include "vtkErrorCode.h"
-#include "vtkSVIdFilter.h"
 #include "vtkIdList.h"
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
 #include "vtkPolyDataNormals.h"
+#include "vtkSVIdFilter.h"
 #include "vtkSmartPointer.h"
 #include "vtkUnstructuredGrid.h"
 

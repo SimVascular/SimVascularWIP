@@ -47,9 +47,9 @@
 #include "vtkXMLUnstructuredGridReader.h"
 #include "vtkXMLUnstructuredGridWriter.h"
 
+#include <iostream>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <iostream>
 
 struct stat info;
 // ----------------------
@@ -256,7 +256,8 @@ int vtkSVIOUtils::ReadInputFile(std::string inputFilename,
   }
   // Other file types are not supported
   else {
-    std::cout << "Unrecognized file extension, stl and vtp accepted" << std::endl;
+    std::cout << "Unrecognized file extension, stl and vtp accepted"
+              << std::endl;
     return SV_ERROR;
   }
 

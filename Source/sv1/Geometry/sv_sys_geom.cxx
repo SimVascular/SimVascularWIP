@@ -56,6 +56,7 @@
 #include <vtkTriangleFilter.h>
 #include <vtkXMLPolyDataWriter.h>
 
+#include <iostream>
 #include <vtkSVConstrainedBlend.h>
 #include <vtkSVConstrainedSmoothing.h>
 #include <vtkSVFindSeparateRegions.h>
@@ -71,7 +72,6 @@
 #include <vtkSVLoopIntersectionPolyDataFilter.h>
 #include <vtkSVMultiplePolyDataIntersectionFilter.h>
 #include <vtkSVNURBSSurface.h>
-#include <iostream>
 
 #define vtkNew(type, name)                                                     \
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()

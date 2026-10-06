@@ -33,15 +33,15 @@
 #include "sv_Math.h"
 
 #include "sv3_VtkParametricSpline.h"
+#include "vtkNew.h"
 #include "vtkParametricSpline.h"
 #include "vtkPoints.h"
-#include "vtkNew.h"
 #include "vtkSmartPointer.h"
 #include "vtkSpline.h"
 #include <array>
 #include <cmath>
-#include <vector>
 #include <iostream>
+#include <vector>
 using sv3::Spline;
 using sv3::VtkParametricSpline;
 Spline::Spline() : m_FurtherSubdivisionNumber(10) {}

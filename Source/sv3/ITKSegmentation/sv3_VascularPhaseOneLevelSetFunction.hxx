@@ -33,8 +33,8 @@
 #define __itkVascularPhaseOneLevelSetFunction_hxx
 
 #include "sv3_VascularPhaseOneLevelSetFunction.h"
-#include <math.h>
 #include <iostream>
+#include <math.h>
 
 #include "itkGradientImageFilter.h"
 #include "itkGradientMagnitudeImageFilter.h"

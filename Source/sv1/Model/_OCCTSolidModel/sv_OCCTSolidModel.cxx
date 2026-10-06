@@ -59,9 +59,9 @@
 #include "sv_vtk_utils.h"
 
 #include "sv_sys_geom.h"
-#include <string.h>
 #include <assert.h>
 #include <iostream>
+#include <string.h>
 
 #include "gp_Pnt.hxx"
 #include "gp_Ax2.hxx"

@@ -460,7 +460,7 @@ int vtkSVVesselNetworkDecomposerAndParameterizer::MergeCenterlines()
 {
   if (vtkSVGeneralUtils::CheckArrayExists(this->Centerlines, 1, this->GroupIdsArrayName) != SV_OK)
   {
-    std::cout<<"Splitting centerlines..."<<std::endl;
+    std::cout << "Splitting centerlines..." << std::endl;
     vtkNew(vtkSVCenterlineBranchSplitter, branchSplitter);
     branchSplitter->SetInputData(this->Centerlines);
     branchSplitter->SetGroupingModeToFirstPoint();

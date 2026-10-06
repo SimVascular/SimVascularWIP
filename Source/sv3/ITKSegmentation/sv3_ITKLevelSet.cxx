@@ -60,13 +60,13 @@
 #include "itkRGBPixel.h"
 
 // VTK Stuff
+#include <iostream>
 #include <vtkContourFilter.h>
 #include <vtkImageCast.h>
 #include <vtkImageChangeInformation.h>
 #include <vtkImageStencil.h>
 #include <vtkPolyDataToImageStencil.h>
 #include <vtkTransformPolyDataFilter.h>
-#include <iostream>
 
 cvITKLevelSet::cvITKLevelSet() {
 
