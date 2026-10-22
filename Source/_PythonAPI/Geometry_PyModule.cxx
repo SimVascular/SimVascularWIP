@@ -652,6 +652,10 @@ PyDoc_STRVAR(Geom_loft_doc,
    The surface is created using splines interpolating profile points along  \n\
    the its length and linearly interpolation around its profile.            \n\
    \n\
+   The profiles are not smoothed with an FFT: SimVascular's use_fft and     \n\
+   num_modes lofting parameters are not exposed, and lofting always uses    \n\
+   their default, no FFT smoothing.                                         \n\
+   \n\
    Args: \n\
      polydata_list (list[vtkPolyData]): The list of vtkPolyData objects     \n\
         representing the profile curves defining a surface.                 \n\
