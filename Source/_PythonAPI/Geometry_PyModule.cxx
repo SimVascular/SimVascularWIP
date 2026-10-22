@@ -321,7 +321,7 @@ Geom_align_profile(PyObject* self, PyObject* args, PyObject* kwargs)
   static char *keywords[] = {"reference", "align", "use_distance", nullptr};
   PyObject* refObj;
   PyObject* alignObj;
-  PyObject* distArg;
+  PyObject* distArg = Py_True;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &refObj, &alignObj, &PyBool_Type, &distArg)) {
       return api.argsError();
