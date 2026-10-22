@@ -76,7 +76,6 @@
 #include "vtkvmtkSimpleCapPolyData.h"
 #include "vtkvmtkAppendFilter.h"
 #include "vtkvmtkBoundaryLayerGenerator.h"
-#include "sv_polydatasolid_utils.h"
 #include "vtkvmtkPolyDataDistanceToCenterlines.h"
 #include "vtkvmtkPolyDataCenterlines.h"
 #include "vtkvmtkPolyDataCenterlineSections.h"

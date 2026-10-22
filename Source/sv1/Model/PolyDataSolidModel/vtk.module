@@ -19,6 +19,7 @@ DEPENDS
   VTK::IOPLY
   VTK::IOXML
   VTK::SV1Geometry
+  VTK::SV1MeshMeshUtils
   VTK::SV1ModelSolidModel
   VTK::SVBoolean
   VTK::SVCore

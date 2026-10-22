@@ -66,7 +66,6 @@
 
 #include "tetgen.h"
 
-#include "sv_polydatasolid_utils.h"
 
 #include "sv_vtk_utils.h"
 
