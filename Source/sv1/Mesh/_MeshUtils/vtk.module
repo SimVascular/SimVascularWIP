@@ -8,5 +8,11 @@ GROUPS
 DEPENDS
     VTK::SVCore
     VTK::SVMisc
-    VTK::SV1ModelPolyDataSolidModel
     VTK::CommonCore
+    VTK::CommonDataModel
+    VTK::CommonExecutionModel
+    VTK::FiltersCore
+    VTK::FiltersGeneral
+    VTK::FiltersGeometry
+    VTK::FiltersVerdict
+    VTK::IOXML
