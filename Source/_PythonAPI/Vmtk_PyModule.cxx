@@ -349,8 +349,16 @@ Vmtk_centerlines(PyObject* self, PyObject* args, PyObject* kwargs)
 
   // Check for IDs given as both sources and targets.
   //
+  // std::set_intersection needs sorted ranges.
+  //
+  std::vector<int> sortedSources(sources);
+  std::vector<int> sortedTargets(targets);
+  std::sort(sortedSources.begin(), sortedSources.end());
+  std::sort(sortedTargets.begin(), sortedTargets.end());
   std::vector<int> commonIds;
-  std::set_intersection(sources.begin(), sources.end(), targets.begin(), targets.end(), std::back_inserter(commonIds));
+  std::set_intersection(sortedSources.begin(), sortedSources.end(),
+                        sortedTargets.begin(), sortedTargets.end(),
+                        std::back_inserter(commonIds));
   if (commonIds.size() != 0) {
       std::ostringstream ids;
       std::copy(commonIds.begin(), commonIds.end()-1, std::ostream_iterator<int>(ids, ", "));
