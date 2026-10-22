@@ -66,7 +66,6 @@
 
 #include "tetgen.h"
 
-
 #include "sv_vtk_utils.h"
 
 #define MAXPATHLEN 1024

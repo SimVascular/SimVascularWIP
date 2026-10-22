@@ -69,21 +69,19 @@
 #include <vtkPointLocator.h>
 #include <vtkPolygon.h>
 
-#include "vtkvmtkPolyDataSurfaceRemeshing.h"
-#include "vtkvmtkPolyDataSizingFunction.h"
-#include "vtkvmtkSurfaceProjection.h"
-#include "vtkvmtkCapPolyData.h"
-#include "vtkvmtkSimpleCapPolyData.h"
 #include "vtkvmtkAppendFilter.h"
 #include "vtkvmtkBoundaryLayerGenerator.h"
-#include "vtkvmtkPolyDataDistanceToCenterlines.h"
-#include "vtkvmtkPolyDataCenterlines.h"
-#include "vtkvmtkPolyDataCenterlineSections.h"
-#include "vtkvmtkCenterlineBranchExtractor.h"
 #include "vtkvmtkCapPolyData.h"
-#include "vtkvmtkSimpleCapPolyData.h"
-#include "vtkvmtkPolyDataCenterlineGroupsClipper.h"
+#include "vtkvmtkCenterlineBranchExtractor.h"
 #include "vtkvmtkMergeCenterlines.h"
+#include "vtkvmtkPolyDataCenterlineGroupsClipper.h"
+#include "vtkvmtkPolyDataCenterlineSections.h"
+#include "vtkvmtkPolyDataCenterlines.h"
+#include "vtkvmtkPolyDataDistanceToCenterlines.h"
+#include "vtkvmtkPolyDataSizingFunction.h"
+#include "vtkvmtkPolyDataSurfaceRemeshing.h"
+#include "vtkvmtkSimpleCapPolyData.h"
+#include "vtkvmtkSurfaceProjection.h"
 #include "vtkvmtkUnstructuredGridTetraFilter.h"
 
 #define vtkNew(type,name) \
