@@ -206,11 +206,11 @@ ModelingModeler_approximate_curve(PyModelingModeler* self, PyObject* args, PyObj
   }
 
   std::cout << "[ModelingModeler_approximate_curve] Call MakeApproxCurveLoop." << std::endl;
-  cvPolyData cvPolyData(polydata);
-  if (model->MakeApproxCurveLoop(&cvPolyData, tolerance, closed) != SV_OK) {
-      Py_DECREF(pyModelingModelObj);
-      api.error("Error creating the approximate curve.");
-      return nullptr;
+  auto cvPolydata = vtkSmartPointer<cvPolyData>::Take(new cvPolyData(polydata));
+  if (model->MakeApproxCurveLoop(cvPolydata, tolerance, closed) != SV_OK) {
+    Py_DECREF(pyModelingModelObj);
+    api.error("Error creating the approximate curve.");
+    return nullptr;
   }
 
   return pyModelingModelObj;
@@ -587,11 +587,11 @@ ModelingModeler_interpolate_curve(PyModelingModeler* self, PyObject* args, PyObj
       closed = PyObject_IsTrue(closedArg);
   }
 
-  cvPolyData cvPolyData(polydata);
-  if (model->MakeInterpCurveLoop(&cvPolyData, closed) != SV_OK) {
-      Py_DECREF(pyModelingModelObj);
-      api.error("Error creating the interpolated curve.");
-      return nullptr;
+  auto cvPolydata = vtkSmartPointer<cvPolyData>::Take(new cvPolyData(polydata));
+  if (model->MakeInterpCurveLoop(cvPolydata, closed) != SV_OK) {
+    Py_DECREF(pyModelingModelObj);
+    api.error("Error creating the interpolated curve.");
+    return nullptr;
   }
 
   return pyModelingModelObj;

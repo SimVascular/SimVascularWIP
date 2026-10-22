@@ -208,14 +208,16 @@ CreateCenterlines(vtkPolyData* inpd, vtkIdList* sourcePtIds, vtkIdList* targetPt
   }
 
   if (sys_geom_centerlines(src, sources, numSourcePts, targets, numTargetPts, &tempCenterlines, &voronoi) != SV_OK) {
-    delete src;
+    src->Delete();
     delete [] sources;
     delete [] targets;
     return nullptr;
   }
 
-  delete src;
-  delete voronoi;
+  src->Delete();
+  if (voronoi != nullptr) {
+    voronoi->Delete();
+  }
   delete [] sources;
   delete [] targets;
 
@@ -240,21 +242,31 @@ CreateCenterlines(vtkPolyData* inpd)
   cleaned = sys_geom_Clean(src);
 
   if (sys_geom_cap_for_centerlines(cleaned, &capped, &numCapCenterIds, &capCenterIds, 1) != SV_OK) {
-    delete cleaned;
+    if (cleaned != nullptr) {
+      cleaned->Delete();
+    }
     if (capped != nullptr) {
-      delete capped;
+      if (capped != nullptr) {
+        capped->Delete();
+      }
     }
     return nullptr;
   }
 
   if (numCapCenterIds < 2) {
-    delete cleaned;
+    if (cleaned != nullptr) {
+      cleaned->Delete();
+    }
     if (capped != nullptr) {
-      delete capped;
+      if (capped != nullptr) {
+        capped->Delete();
+      }
     }
     return nullptr;
   }
-  delete cleaned;
+  if (cleaned != nullptr) {
+    cleaned->Delete();
+  }
 
   auto sourcePtIds = vtkSmartPointer<vtkIdList>::New();
   sourcePtIds->InsertNextId(capCenterIds[0]);
@@ -266,7 +278,9 @@ CreateCenterlines(vtkPolyData* inpd)
   delete [] capCenterIds;
 
   auto centerlines = CreateCenterlines(capped->GetVtkPolyData(), sourcePtIds, targetPtIds);
-  delete capped;
+  if (capped != nullptr) {
+    capped->Delete();
+  }
 
   return centerlines;
 }
