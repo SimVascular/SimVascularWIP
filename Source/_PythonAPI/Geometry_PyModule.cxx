@@ -53,13 +53,13 @@
 #include "sv_SolidModel.h"
 #include "sv_integrate_surface.h"
 
+#include "PyUtils.h"
 #include "sv_vtk_utils.h"
 #include "vtkCellData.h"
 #include "vtkIntArray.h"
 #include "vtkNew.h"
-#include "vtkSmartPointer.h"
-#include "PyUtils.h"
 #include "vtkPythonUtil.h"
+#include "vtkSmartPointer.h"
 
 // Needed for Windows
 #ifdef GetObject
@@ -99,22 +99,23 @@ GetVtkPolyData(PyUtilApiFunction& api, PyObject* obj)
   return polydata;
 }
 
-// The cell array marking the region of a local operation: 1 for cells in the region, 0 otherwise.
+// The cell array marking the region of a local operation: 1 for cells in the
+// region, 0 otherwise.
 static char ActiveCellsArrayName[] = "ActiveCells";
 
 //--------------------------
 // CreateActiveCellsSurface
 //--------------------------
-// Returns a copy of surface with an ActiveCellsArrayName cell array set to 1 at the cells
-// listed in cellIdsArg, a Python list of 0-based cell IDs.
+// Returns a copy of surface with an ActiveCellsArrayName cell array set to 1 at
+// the cells listed in cellIdsArg, a Python list of 0-based cell IDs.
 //
 static vtkSmartPointer<vtkPolyData>
-CreateActiveCellsSurface(PyUtilApiFunction& api, vtkPolyData* surface, PyObject* cellIdsArg)
-{
+CreateActiveCellsSurface(PyUtilApiFunction &api, vtkPolyData *surface,
+                         PyObject *cellIdsArg) {
   Py_ssize_t numCellIds = PyList_Size(cellIdsArg);
   if (numCellIds == 0) {
-      api.error("The 'cell_ids' argument is empty.");
-      return nullptr;
+    api.error("The 'cell_ids' argument is empty.");
+    return nullptr;
   }
 
   vtkIdType numCells = surface->GetNumberOfCells();
@@ -124,16 +125,18 @@ CreateActiveCellsSurface(PyUtilApiFunction& api, vtkPolyData* surface, PyObject*
   activeCells->Fill(0);
 
   for (Py_ssize_t i = 0; i < numCellIds; i++) {
-      long cellId = PyLong_AsLong(PyList_GetItem(cellIdsArg, i));
-      if (PyErr_Occurred()) {
-          PyErr_SetString(PyExc_ValueError, "The 'cell_ids' argument is not a list of ints.");
-          return nullptr;
-      }
-      if ((cellId < 0) || (cellId >= numCells)) {
-          api.error("The 'cell_ids' argument has the ID " + std::to_string(cellId) + ", which is not a cell of the surface.");
-          return nullptr;
-      }
-      activeCells->SetValue(cellId, 1);
+    long cellId = PyLong_AsLong(PyList_GetItem(cellIdsArg, i));
+    if (PyErr_Occurred()) {
+      PyErr_SetString(PyExc_ValueError,
+                      "The 'cell_ids' argument is not a list of ints.");
+      return nullptr;
+    }
+    if ((cellId < 0) || (cellId >= numCells)) {
+      api.error("The 'cell_ids' argument has the ID " + std::to_string(cellId) +
+                ", which is not a cell of the surface.");
+      return nullptr;
+    }
+    activeCells->SetValue(cellId, 1);
   }
 
   auto activeSurface = vtkSmartPointer<vtkPolyData>::New();
@@ -154,10 +157,10 @@ CreateActiveCellsSurface(PyUtilApiFunction& api, vtkPolyData* surface, PyObject*
 // wrapper around the same sys_geom_ calls used here.
 //
 static vtkSmartPointer<vtkPolyData>
-CreatePolyDataByBlend(vtkPolyData* vpdsrc, int faceID1, int faceID2, double radius, int numBlendIters,
-    int numSubblendIters, int numSubdivisionIters, int numCgSmoothIters, int numLapSmoothIters,
-    double targetDecimation)
-{
+CreatePolyDataByBlend(vtkPolyData *vpdsrc, int faceID1, int faceID2,
+                      double radius, int numBlendIters, int numSubblendIters,
+                      int numSubdivisionIters, int numCgSmoothIters,
+                      int numLapSmoothIters, double targetDecimation) {
   if (vpdsrc == nullptr) {
       return nullptr;
   }
@@ -172,12 +175,14 @@ CreatePolyDataByBlend(vtkPolyData* vpdsrc, int faceID1, int faceID2, double radi
   }
 
   cvPolyData* dst2 = nullptr;
-  auto status = sys_geom_local_blend(dst, &dst2, numBlendIters, numSubblendIters, numSubdivisionIters,
-      numCgSmoothIters, numLapSmoothIters, targetDecimation, nullptr, "ActiveCells");
+  auto status = sys_geom_local_blend(dst, &dst2, numBlendIters,
+                                     numSubblendIters, numSubdivisionIters,
+                                     numCgSmoothIters, numLapSmoothIters,
+                                     targetDecimation, nullptr, "ActiveCells");
   dst->Delete();
 
   if (status != SV_OK) {
-      return nullptr;
+    return nullptr;
   }
 
   vtkSmartPointer<vtkPolyData> vpd;
@@ -236,8 +241,7 @@ GetGeometryObjects(PyUtilApiFunction& api, PyObject* objList)
 // Geom_all_union
 //----------------
 //
-PyDoc_STRVAR(Geom_all_union_doc,
-  "all_union(surfaces, tolerance=0.0)  \n\
+PyDoc_STRVAR(Geom_all_union_doc, "all_union(surfaces, tolerance=0.0)  \n\
    \n\
    Union a list of closed surfaces, as SimVascular does to create a PolyData model from lofted \n\
    vessels.     \n\
@@ -254,42 +258,43 @@ PyDoc_STRVAR(Geom_all_union_doc,
    Returns (vtkPolyData): The vtkPolyData object of the unioned surfaces.     \n\
 ");
 
-static PyObject *
-Geom_all_union(PyObject* self, PyObject* args, PyObject* kwargs)
-{
+static PyObject *Geom_all_union(PyObject *self, PyObject *args,
+                                PyObject *kwargs) {
   auto api = PyUtilApiFunction("O!|d", PyRunTimeErr, __func__);
   static char *keywords[] = {"surfaces", "tolerance", nullptr};
-  PyObject* surfacesArg;
+  PyObject *surfacesArg;
   double tolerance = 0.0;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &surfacesArg, &tolerance)) {
-      return api.argsError();
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords,
+                                   &PyList_Type, &surfacesArg, &tolerance)) {
+    return api.argsError();
   }
 
   auto cvPolyDataList = GetGeometryObjects(api, surfacesArg);
   if (cvPolyDataList.size() == 0) {
-      return nullptr;
+    return nullptr;
   }
 
   // Surfaces that intersect no other are kept as separate pieces.
   int noIntersectionOutput = 1;
-  cvPolyData* result = nullptr;
-  auto status = sys_geom_all_union(cvPolyDataList.data(), cvPolyDataList.size(), noIntersectionOutput, tolerance,
-      &result);
+  cvPolyData *result = nullptr;
+  auto status = sys_geom_all_union(cvPolyDataList.data(), cvPolyDataList.size(),
+                                   noIntersectionOutput, tolerance, &result);
 
   for (auto cvPolydata : cvPolyDataList) {
-      delete cvPolydata;
+    delete cvPolydata;
   }
 
   if (status != SV_OK) {
-      if (result != nullptr) {
-          result->Delete();
-      }
-      api.error("The union operation has failed.");
-      return nullptr;
+    if (result != nullptr) {
+      result->Delete();
+    }
+    api.error("The union operation has failed.");
+    return nullptr;
   }
 
-  auto resultObj = vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
+  auto resultObj =
+      vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
   result->Delete();
   return resultObj;
 }
@@ -324,7 +329,7 @@ Geom_align_profile(PyObject* self, PyObject* args, PyObject* kwargs)
   static char *keywords[] = {"reference", "align", "use_distance", nullptr};
   PyObject* refObj;
   PyObject* alignObj;
-  PyObject* distArg = Py_True;
+  PyObject *distArg = Py_True;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &refObj, &alignObj, &PyBool_Type, &distArg)) {
       return api.argsError();
@@ -359,7 +364,8 @@ Geom_align_profile(PyObject* self, PyObject* args, PyObject* kwargs)
       return nullptr;
   }
 
-  auto resultObj = vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
+  auto resultObj =
+      vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
   result->Delete();
   return resultObj;
 }
@@ -510,7 +516,8 @@ Geom_interpolate_closed_curve(PyObject* self, PyObject* args, PyObject* kwargs)
       return nullptr;
   }
 
-  auto resultObj = vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
+  auto resultObj =
+      vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
   result->Delete();
   return resultObj;
 }
@@ -640,8 +647,7 @@ Geom_local_blend(PyObject* self, PyObject* args, PyObject* kwargs)
 // [TODO:DaveP] We may need to add input curve resampling and alignment here
 // in order to get lofting to work.
 //
-PyDoc_STRVAR(Geom_loft_doc,
-  "loft(polydata_list, loft_options) \n\
+PyDoc_STRVAR(Geom_loft_doc, "loft(polydata_list, loft_options) \n\
    \n\
    Create a lofted surface from a list of polydata curves.                  \n\
    \n\
@@ -746,7 +752,7 @@ Geom_loft(PyObject* self, PyObject* args, PyObject* kwargs)
                                     &result);
 
   for (auto cvPolydata : cvPolyDataList) {
-      cvPolydata->Delete();
+    cvPolydata->Delete();
   }
 
   if (status != SV_OK) {
@@ -755,7 +761,8 @@ Geom_loft(PyObject* self, PyObject* args, PyObject* kwargs)
       return nullptr;
   }
 
-  auto resultObj = vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
+  auto resultObj =
+      vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
   result->Delete();
   return resultObj;
 }
@@ -869,7 +876,7 @@ Geom_loft_nurbs(PyObject* self, PyObject* args, PyObject* kwargs)
           uKnotSpanType, vKnotSpanType, uParametricSpanType, vParametricSpanType, NURBSSurface, &result);
 
   for (auto cvPolydata : cvPolyDataList) {
-      cvPolydata->Delete();
+    cvPolydata->Delete();
   }
 
   if (status != SV_OK) {
@@ -878,7 +885,8 @@ Geom_loft_nurbs(PyObject* self, PyObject* args, PyObject* kwargs)
       return nullptr;
   }
 
-  auto resultObj = vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
+  auto resultObj =
+      vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
   result->Delete();
   return resultObj;
 }
@@ -895,103 +903,111 @@ struct SmoothingParameters {
 //------------------------
 // GetSmoothingParameters
 //------------------------
-// Reads the smoothing_parameters dict of the local smoothing functions into params, with the
-// defaults for any value not given. Returns false after setting the Python error if it is not valid.
+// Reads the smoothing_parameters dict of the local smoothing functions into
+// params, with the defaults for any value not given. Returns false after
+// setting the Python error if it is not valid.
 //
-static bool
-GetSmoothingParameters(PyUtilApiFunction& api, PyObject* smoothingParamArg, SmoothingParameters& params)
-{
+static bool GetSmoothingParameters(PyUtilApiFunction &api,
+                                   PyObject *smoothingParamArg,
+                                   SmoothingParameters &params) {
   // Check that a non-empty dict has been passed.
   int numItems = PyDict_Size(smoothingParamArg);
   if (numItems == 0) {
-      api.error("The 'smooth_method' argument is empty.");
-      return false;
+    api.error("The 'smooth_method' argument is empty.");
+    return false;
   }
 
   // Get smoothing method.
   auto methodItem = PyDict_GetItemString(smoothingParamArg, "method");
   if (methodItem == nullptr) {
-      api.error("The 'smooth_parameters' argument has no 'method' key.");
-      return false;
+    api.error("The 'smooth_parameters' argument has no 'method' key.");
+    return false;
   }
   params.method = std::string(PyUnicode_AsUTF8(methodItem));
 
   // Get number of iterations.
   auto item = PyDict_GetItemString(smoothingParamArg, "num_iterations");
   if (item != nullptr) {
-      params.numIters = PyLong_AsLong(item);
-      if (PyErr_Occurred()) {
-          PyErr_SetString(PyExc_ValueError, "The 'num_iterations' parameter is not an int.");
-          return false;
-      }
+    params.numIters = PyLong_AsLong(item);
+    if (PyErr_Occurred()) {
+      PyErr_SetString(PyExc_ValueError,
+                      "The 'num_iterations' parameter is not an int.");
+      return false;
+    }
   }
 
   // Get constrained smoothing parameters.
   //
   if (params.method == "constrained") {
-      if (params.numIters == 0) {
-          params.numIters = 5;
+    if (params.numIters == 0) {
+      params.numIters = 5;
+    }
+    params.constrainFactor = 0.2;
+    params.numCGSolves = 30;
+
+    PyObject *key, *value;
+    Py_ssize_t pos = 0;
+
+    while (PyDict_Next(smoothingParamArg, &pos, &key, &value)) {
+      auto keyName = std::string(PyUnicode_AsUTF8(key));
+      if ((keyName == "method") || (keyName == "num_iterations")) {
+        continue;
       }
-      params.constrainFactor = 0.2;
-      params.numCGSolves = 30;
-
-      PyObject *key, *value;
-      Py_ssize_t pos = 0;
-
-      while (PyDict_Next(smoothingParamArg, &pos, &key, &value)) {
-          auto keyName = std::string(PyUnicode_AsUTF8(key));
-          if ((keyName == "method") || (keyName == "num_iterations")) {
-              continue;
-          }
-          if (keyName == "num_cg_solves") {
-              params.numCGSolves = PyLong_AsLong(value);
-              if (PyErr_Occurred()) {
-                  PyErr_SetString(PyExc_ValueError, "The 'num_cg_solves' parameter is not an int.");
-                  return false;
-              }
-          } else if (keyName == "constrain_factor") {
-              params.constrainFactor = PyFloat_AsDouble(value);
-              if (PyErr_Occurred()) {
-                  PyErr_SetString(PyExc_ValueError, "The 'contrain_factor' parameter is not a float.");
-                  return false;
-              }
-          } else {
-              api.error("The 'smoothing_parameter' key '" + keyName + "' is not valid for the 'constrained' method.");
-              return false;
-          }
+      if (keyName == "num_cg_solves") {
+        params.numCGSolves = PyLong_AsLong(value);
+        if (PyErr_Occurred()) {
+          PyErr_SetString(PyExc_ValueError,
+                          "The 'num_cg_solves' parameter is not an int.");
+          return false;
+        }
+      } else if (keyName == "constrain_factor") {
+        params.constrainFactor = PyFloat_AsDouble(value);
+        if (PyErr_Occurred()) {
+          PyErr_SetString(PyExc_ValueError,
+                          "The 'contrain_factor' parameter is not a float.");
+          return false;
+        }
+      } else {
+        api.error("The 'smoothing_parameter' key '" + keyName +
+                  "' is not valid for the 'constrained' method.");
+        return false;
       }
+    }
 
-  // Get Laplacian smoothing parameters.
-  //
+    // Get Laplacian smoothing parameters.
+    //
   } else if (params.method == "laplacian") {
-      if (params.numIters == 0) {
-          params.numIters = 100;
-      }
-      params.relaxFactor = 0.01;
+    if (params.numIters == 0) {
+      params.numIters = 100;
+    }
+    params.relaxFactor = 0.01;
 
-      PyObject *key, *value;
-      Py_ssize_t pos = 0;
+    PyObject *key, *value;
+    Py_ssize_t pos = 0;
 
-      while (PyDict_Next(smoothingParamArg, &pos, &key, &value)) {
-          auto keyName = std::string(PyUnicode_AsUTF8(key));
-          if ((keyName == "method") || (keyName == "num_iterations")) {
-              continue;
-          }
-          if (keyName == "relaxation_factor") {
-              params.relaxFactor = PyFloat_AsDouble(value);
-              if (PyErr_Occurred()) {
-                  PyErr_SetString(PyExc_ValueError, "The 'relaxation_factor' parameter is not a float.");
-                  return false;
-              }
-          } else {
-              api.error("The 'smoothing_parameter' key '" + keyName + "' is not valid for the 'laplacian' method.");
-              return false;
-          }
+    while (PyDict_Next(smoothingParamArg, &pos, &key, &value)) {
+      auto keyName = std::string(PyUnicode_AsUTF8(key));
+      if ((keyName == "method") || (keyName == "num_iterations")) {
+        continue;
       }
+      if (keyName == "relaxation_factor") {
+        params.relaxFactor = PyFloat_AsDouble(value);
+        if (PyErr_Occurred()) {
+          PyErr_SetString(PyExc_ValueError,
+                          "The 'relaxation_factor' parameter is not a float.");
+          return false;
+        }
+      } else {
+        api.error("The 'smoothing_parameter' key '" + keyName +
+                  "' is not valid for the 'laplacian' method.");
+        return false;
+      }
+    }
 
   } else {
-      api.error("The 'smoothing_method' argument type value '" + params.method + "' is not valid. Valid types are 'constrained' and 'laplacian'.");
-      return false;
+    api.error("The 'smoothing_method' argument type value '" + params.method +
+              "' is not valid. Valid types are 'constrained' and 'laplacian'.");
+    return false;
   }
 
   return true;
@@ -1000,29 +1016,34 @@ GetSmoothingParameters(PyUtilApiFunction& api, PyObject* smoothingParamArg, Smoo
 //------------
 // LocalSmooth
 //------------
-// Smooths the cells of surface marked by its cellArrayName cell array, as params says. Returns
-// nullptr after setting the Python error, naming the operation opName, if the smoothing fails.
+// Smooths the cells of surface marked by its cellArrayName cell array, as
+// params says. Returns nullptr after setting the Python error, naming the
+// operation opName, if the smoothing fails.
 //
-static cvPolyData*
-LocalSmooth(PyUtilApiFunction& api, const std::string& opName, cvPolyData* surface, char* cellArrayName,
-    const SmoothingParameters& params)
-{
-  cvPolyData* smoothedCvPolyData = nullptr;
-  char* pointArrayName = nullptr;
+static cvPolyData *LocalSmooth(PyUtilApiFunction &api,
+                               const std::string &opName, cvPolyData *surface,
+                               char *cellArrayName,
+                               const SmoothingParameters &params) {
+  cvPolyData *smoothedCvPolyData = nullptr;
+  char *pointArrayName = nullptr;
 
   if (params.method == "constrained") {
-      if (sys_geom_local_constrain_smooth(surface, &smoothedCvPolyData, params.numIters, params.constrainFactor,
-          params.numCGSolves, pointArrayName, cellArrayName) != SV_OK) {
-          api.error("The " + opName + " constrained smoothing operation has failed.");
-          return nullptr;
-      }
+    if (sys_geom_local_constrain_smooth(surface, &smoothedCvPolyData,
+                                        params.numIters, params.constrainFactor,
+                                        params.numCGSolves, pointArrayName,
+                                        cellArrayName) != SV_OK) {
+      api.error("The " + opName +
+                " constrained smoothing operation has failed.");
+      return nullptr;
+    }
 
   } else {
-      if (sys_geom_local_laplacian_smooth(surface, &smoothedCvPolyData, params.numIters, params.relaxFactor,
-          pointArrayName, cellArrayName) != SV_OK) {
-          api.error("The " + opName + " laplacian smoothing operation has failed.");
-          return nullptr;
-      }
+    if (sys_geom_local_laplacian_smooth(
+            surface, &smoothedCvPolyData, params.numIters, params.relaxFactor,
+            pointArrayName, cellArrayName) != SV_OK) {
+      api.error("The " + opName + " laplacian smoothing operation has failed.");
+      return nullptr;
+    }
   }
 
   return smoothedCvPolyData;
@@ -1032,8 +1053,9 @@ LocalSmooth(PyUtilApiFunction& api, const std::string& opName, cvPolyData* surfa
 // Geom_local_sphere_smooth
 //--------------------------
 //
-PyDoc_STRVAR(Geom_local_sphere_smooth_doc,
-  "local_sphere_smooth(surface, radius, center, smoothing_parameters)  \n\
+PyDoc_STRVAR(
+    Geom_local_sphere_smooth_doc,
+    "local_sphere_smooth(surface, radius, center, smoothing_parameters)  \n\
    \n\
    Smooth a surface locally in a region defined by a sphere.     \n\
    \n\
@@ -1065,59 +1087,65 @@ PyDoc_STRVAR(Geom_local_sphere_smooth_doc,
    Returns (vtkPolyData): The vtkPolyData object of the smoothed surface.     \n\
 ");
 
-static PyObject *
-Geom_local_sphere_smooth(PyObject* self, PyObject* args, PyObject* kwargs)
-{
+static PyObject *Geom_local_sphere_smooth(PyObject *self, PyObject *args,
+                                          PyObject *kwargs) {
   auto api = PyUtilApiFunction("OdO!O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"surface", "radius", "center", "smoothing_parameters", nullptr};
-  PyObject* surfaceArg;
+  static char *keywords[] = {"surface", "radius", "center",
+                             "smoothing_parameters", nullptr};
+  PyObject *surfaceArg;
   double radius = 0.0;
-  PyObject* centerArg;
-  PyObject* smoothingParamArg;
+  PyObject *centerArg;
+  PyObject *smoothingParamArg;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg, &radius, &PyList_Type, &centerArg,
-        &PyDict_Type, &smoothingParamArg)) {
-      return api.argsError();
+  if (!PyArg_ParseTupleAndKeywords(
+          args, kwargs, api.format, keywords, &surfaceArg, &radius,
+          &PyList_Type, &centerArg, &PyDict_Type, &smoothingParamArg)) {
+    return api.argsError();
   }
 
   SmoothingParameters params;
   if (!GetSmoothingParameters(api, smoothingParamArg, params)) {
-      return nullptr;
+    return nullptr;
   }
 
   // Get the vtkPolyData object from the Python object.
   //
   auto surfPolydata = GetVtkPolyData(api, surfaceArg);
   if (surfPolydata == nullptr) {
-      return nullptr;
+    return nullptr;
   }
 
   cvPolyData surfCvPolyData(surfPolydata);
 
   // Get the sphere center.
   std::string emsg;
-  std::array<double,3> center;
+  std::array<double, 3> center;
   if (!PyUtilGetPointData(centerArg, emsg, center.data())) {
-      api.error("The 'center' argument " + emsg);
-      return nullptr;
+    api.error("The 'center' argument " + emsg);
+    return nullptr;
   }
 
   // Set the cell array used in smoothing.
-  cvPolyData* arrayCvPolyData = nullptr;
+  cvPolyData *arrayCvPolyData = nullptr;
   int dataType = 1;
 
-  if (sys_geom_set_array_for_local_op_sphere(&surfCvPolyData, &arrayCvPolyData, radius, center.data(), ActiveCellsArrayName, dataType) != SV_OK) {
-      api.error("Error setting local sphere operation array for input surface geometry.");
-      return nullptr;
+  if (sys_geom_set_array_for_local_op_sphere(
+          &surfCvPolyData, &arrayCvPolyData, radius, center.data(),
+          ActiveCellsArrayName, dataType) != SV_OK) {
+    api.error("Error setting local sphere operation array for input surface "
+              "geometry.");
+    return nullptr;
   }
 
-  auto smoothedCvPolyData = LocalSmooth(api, "local sphere", arrayCvPolyData, ActiveCellsArrayName, params);
+  auto smoothedCvPolyData = LocalSmooth(api, "local sphere", arrayCvPolyData,
+                                        ActiveCellsArrayName, params);
   arrayCvPolyData->Delete();
   if (smoothedCvPolyData == nullptr) {
-      return nullptr;
+    return nullptr;
   }
 
-  auto resultObj = vtkPythonUtil::GetObjectFromPointer(smoothedCvPolyData->GetVtkPolyData());
+  auto resultObj =
+      vtkPythonUtil::GetObjectFromPointer(smoothedCvPolyData->GetVtkPolyData());
   smoothedCvPolyData->Delete();
   return resultObj;
 }
@@ -1127,7 +1155,7 @@ Geom_local_sphere_smooth(PyObject* self, PyObject* args, PyObject* kwargs)
 //-------------------
 //
 PyDoc_STRVAR(Geom_local_smooth_doc,
-  "local_smooth(surface, cell_ids, smoothing_parameters)  \n\
+             "local_smooth(surface, cell_ids, smoothing_parameters)  \n\
    \n\
    Smooth a surface locally, in the region made of the given cells.     \n\
    \n\
@@ -1147,43 +1175,46 @@ PyDoc_STRVAR(Geom_local_smooth_doc,
    Returns (vtkPolyData): The vtkPolyData object of the smoothed surface.     \n\
 ");
 
-static PyObject *
-Geom_local_smooth(PyObject* self, PyObject* args, PyObject* kwargs)
-{
+static PyObject *Geom_local_smooth(PyObject *self, PyObject *args,
+                                   PyObject *kwargs) {
   auto api = PyUtilApiFunction("OO!O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"surface", "cell_ids", "smoothing_parameters", nullptr};
-  PyObject* surfaceArg;
-  PyObject* cellIdsArg;
-  PyObject* smoothingParamArg;
+  static char *keywords[] = {"surface", "cell_ids", "smoothing_parameters",
+                             nullptr};
+  PyObject *surfaceArg;
+  PyObject *cellIdsArg;
+  PyObject *smoothingParamArg;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg, &PyList_Type, &cellIdsArg,
-        &PyDict_Type, &smoothingParamArg)) {
-      return api.argsError();
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords,
+                                   &surfaceArg, &PyList_Type, &cellIdsArg,
+                                   &PyDict_Type, &smoothingParamArg)) {
+    return api.argsError();
   }
 
   SmoothingParameters params;
   if (!GetSmoothingParameters(api, smoothingParamArg, params)) {
-      return nullptr;
+    return nullptr;
   }
 
   auto surfPolydata = GetVtkPolyData(api, surfaceArg);
   if (surfPolydata == nullptr) {
-      return nullptr;
+    return nullptr;
   }
 
   auto activeSurface = CreateActiveCellsSurface(api, surfPolydata, cellIdsArg);
   if (activeSurface == nullptr) {
-      return nullptr;
+    return nullptr;
   }
 
   cvPolyData activeCvPolyData(activeSurface);
-  auto result = LocalSmooth(api, "local", &activeCvPolyData, ActiveCellsArrayName, params);
+  auto result = LocalSmooth(api, "local", &activeCvPolyData,
+                            ActiveCellsArrayName, params);
   if (result == nullptr) {
-      return nullptr;
+    return nullptr;
   }
 
   result->GetCellData()->RemoveArray(ActiveCellsArrayName);
-  auto resultObj = vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
+  auto resultObj =
+      vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
   result->Delete();
   return resultObj;
 }
@@ -1193,7 +1224,7 @@ Geom_local_smooth(PyObject* self, PyObject* args, PyObject* kwargs)
 //-----------------------
 //
 PyDoc_STRVAR(Geom_local_decimation_doc,
-  "local_decimation(surface, cell_ids, target_reduction)  \n\
+             "local_decimation(surface, cell_ids, target_reduction)  \n\
    \n\
    Decimate a surface locally, in the region made of the given cells.     \n\
    \n\
@@ -1210,104 +1241,113 @@ PyDoc_STRVAR(Geom_local_decimation_doc,
    Returns (vtkPolyData): The vtkPolyData object of the decimated surface.     \n\
 ");
 
-static PyObject *
-Geom_local_decimation(PyObject* self, PyObject* args, PyObject* kwargs)
-{
+static PyObject *Geom_local_decimation(PyObject *self, PyObject *args,
+                                       PyObject *kwargs) {
   auto api = PyUtilApiFunction("OO!d", PyRunTimeErr, __func__);
-  static char *keywords[] = {"surface", "cell_ids", "target_reduction", nullptr};
-  PyObject* surfaceArg;
-  PyObject* cellIdsArg;
+  static char *keywords[] = {"surface", "cell_ids", "target_reduction",
+                             nullptr};
+  PyObject *surfaceArg;
+  PyObject *cellIdsArg;
   double targetReduction = 0.0;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg, &PyList_Type, &cellIdsArg,
-        &targetReduction)) {
-      return api.argsError();
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords,
+                                   &surfaceArg, &PyList_Type, &cellIdsArg,
+                                   &targetReduction)) {
+    return api.argsError();
   }
 
   if ((targetReduction < 0.0) || (targetReduction > 1.0)) {
-      api.error("The 'target_reduction' argument must be between 0.0 and 1.0.");
-      return nullptr;
+    api.error("The 'target_reduction' argument must be between 0.0 and 1.0.");
+    return nullptr;
   }
 
   auto surfPolydata = GetVtkPolyData(api, surfaceArg);
   if (surfPolydata == nullptr) {
-      return nullptr;
+    return nullptr;
   }
 
   auto activeSurface = CreateActiveCellsSurface(api, surfPolydata, cellIdsArg);
   if (activeSurface == nullptr) {
-      return nullptr;
+    return nullptr;
   }
 
   cvPolyData activeCvPolyData(activeSurface);
-  cvPolyData* result = nullptr;
+  cvPolyData *result = nullptr;
 
   // The filter reports its errors without failing, leaving an empty surface.
-  if ((sys_geom_local_quadric_decimation(&activeCvPolyData, &result, targetReduction, nullptr,
-        ActiveCellsArrayName) != SV_OK) || (result->GetNumberOfCells() == 0)) {
-      api.error("The local decimation operation has failed.");
-      return nullptr;
+  if ((sys_geom_local_quadric_decimation(&activeCvPolyData, &result,
+                                         targetReduction, nullptr,
+                                         ActiveCellsArrayName) != SV_OK) ||
+      (result->GetNumberOfCells() == 0)) {
+    api.error("The local decimation operation has failed.");
+    return nullptr;
   }
 
   result->GetCellData()->RemoveArray(ActiveCellsArrayName);
-  auto resultObj = vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
+  auto resultObj =
+      vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
   result->Delete();
   return resultObj;
 }
 
 // A sys_geom local subdivision function.
-typedef int (*LocalSubdivisionFunction)(cvPolyData*, cvPolyData**, int, char*, char*);
+typedef int (*LocalSubdivisionFunction)(cvPolyData *, cvPolyData **, int,
+                                        char *, char *);
 
 //----------------
 // LocalSubdivide
 //----------------
-// Runs subdivide on the arguments of the local subdivision functions: surface, cell_ids and
-// num_subdivisions. funcName is the calling function's name and opName names the operation in
-// its errors.
+// Runs subdivide on the arguments of the local subdivision functions: surface,
+// cell_ids and num_subdivisions. funcName is the calling function's name and
+// opName names the operation in its errors.
 //
-static PyObject *
-LocalSubdivide(PyObject* args, PyObject* kwargs, const char* funcName, LocalSubdivisionFunction subdivide,
-    const std::string& opName)
-{
+static PyObject *LocalSubdivide(PyObject *args, PyObject *kwargs,
+                                const char *funcName,
+                                LocalSubdivisionFunction subdivide,
+                                const std::string &opName) {
   auto api = PyUtilApiFunction("OO!i", PyRunTimeErr, funcName);
-  static char *keywords[] = {"surface", "cell_ids", "num_subdivisions", nullptr};
-  PyObject* surfaceArg;
-  PyObject* cellIdsArg;
+  static char *keywords[] = {"surface", "cell_ids", "num_subdivisions",
+                             nullptr};
+  PyObject *surfaceArg;
+  PyObject *cellIdsArg;
   int numSubdivisions = 0;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg, &PyList_Type, &cellIdsArg,
-        &numSubdivisions)) {
-      return api.argsError();
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords,
+                                   &surfaceArg, &PyList_Type, &cellIdsArg,
+                                   &numSubdivisions)) {
+    return api.argsError();
   }
 
   if (numSubdivisions < 1) {
-      api.error("The 'num_subdivisions' argument must be > 0.");
-      return nullptr;
+    api.error("The 'num_subdivisions' argument must be > 0.");
+    return nullptr;
   }
 
   auto surfPolydata = GetVtkPolyData(api, surfaceArg);
   if (surfPolydata == nullptr) {
-      return nullptr;
+    return nullptr;
   }
 
   auto activeSurface = CreateActiveCellsSurface(api, surfPolydata, cellIdsArg);
   if (activeSurface == nullptr) {
-      return nullptr;
+    return nullptr;
   }
 
   cvPolyData activeCvPolyData(activeSurface);
-  cvPolyData* result = nullptr;
+  cvPolyData *result = nullptr;
 
-  // The filter reports its errors, such as a non-manifold surface, without failing, leaving an
-  // empty surface.
-  if ((subdivide(&activeCvPolyData, &result, numSubdivisions, nullptr, ActiveCellsArrayName) != SV_OK) ||
+  // The filter reports its errors, such as a non-manifold surface, without
+  // failing, leaving an empty surface.
+  if ((subdivide(&activeCvPolyData, &result, numSubdivisions, nullptr,
+                 ActiveCellsArrayName) != SV_OK) ||
       (result->GetNumberOfCells() == 0)) {
-      api.error("The " + opName + " operation has failed.");
-      return nullptr;
+    api.error("The " + opName + " operation has failed.");
+    return nullptr;
   }
 
   result->GetCellData()->RemoveArray(ActiveCellsArrayName);
-  auto resultObj = vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
+  auto resultObj =
+      vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
   result->Delete();
   return resultObj;
 }
@@ -1316,8 +1356,9 @@ LocalSubdivide(PyObject* args, PyObject* kwargs, const char* funcName, LocalSubd
 // Geom_local_linear_subdivision
 //-------------------------------
 //
-PyDoc_STRVAR(Geom_local_linear_subdivision_doc,
-  "local_linear_subdivision(surface, cell_ids, num_subdivisions)  \n\
+PyDoc_STRVAR(
+    Geom_local_linear_subdivision_doc,
+    "local_linear_subdivision(surface, cell_ids, num_subdivisions)  \n\
    \n\
    Subdivide a surface locally, in the region made of the given cells.     \n\
    \n\
@@ -1334,10 +1375,11 @@ PyDoc_STRVAR(Geom_local_linear_subdivision_doc,
    Returns (vtkPolyData): The vtkPolyData object of the subdivided surface.     \n\
 ");
 
-static PyObject *
-Geom_local_linear_subdivision(PyObject* self, PyObject* args, PyObject* kwargs)
-{
-  return LocalSubdivide(args, kwargs, __func__, sys_geom_local_linear_subdivision, "local linear subdivision");
+static PyObject *Geom_local_linear_subdivision(PyObject *self, PyObject *args,
+                                               PyObject *kwargs) {
+  return LocalSubdivide(args, kwargs, __func__,
+                        sys_geom_local_linear_subdivision,
+                        "local linear subdivision");
 }
 
 //-----------------------------
@@ -1345,7 +1387,7 @@ Geom_local_linear_subdivision(PyObject* self, PyObject* args, PyObject* kwargs)
 //-----------------------------
 //
 PyDoc_STRVAR(Geom_local_loop_subdivision_doc,
-  "local_loop_subdivision(surface, cell_ids, num_subdivisions)  \n\
+             "local_loop_subdivision(surface, cell_ids, num_subdivisions)  \n\
    \n\
    Subdivide a surface locally with Loop subdivision, in the region made of the given cells.     \n\
    \n\
@@ -1363,10 +1405,10 @@ PyDoc_STRVAR(Geom_local_loop_subdivision_doc,
    Returns (vtkPolyData): The vtkPolyData object of the subdivided surface.     \n\
 ");
 
-static PyObject *
-Geom_local_loop_subdivision(PyObject* self, PyObject* args, PyObject* kwargs)
-{
-  return LocalSubdivide(args, kwargs, __func__, sys_geom_local_loop_subdivision, "local loop subdivision");
+static PyObject *Geom_local_loop_subdivision(PyObject *self, PyObject *args,
+                                             PyObject *kwargs) {
+  return LocalSubdivide(args, kwargs, __func__, sys_geom_local_loop_subdivision,
+                        "local loop subdivision");
 }
 
 //-------------------
@@ -1374,7 +1416,7 @@ Geom_local_loop_subdivision(PyObject* self, PyObject* args, PyObject* kwargs)
 //-------------------
 //
 PyDoc_STRVAR(Geom_blend_region_doc,
-  "blend_region(surface, face1, face2, radius)  \n\
+             "blend_region(surface, face1, face2, radius)  \n\
    \n\
    Find the region around the junction of two faces that local_blend works on.     \n\
    \n\
@@ -1390,52 +1432,53 @@ PyDoc_STRVAR(Geom_blend_region_doc,
    Returns (list[int]): The IDs of the cells in the region, as the local operations take them. \n\
 ");
 
-static PyObject *
-Geom_blend_region(PyObject* self, PyObject* args, PyObject* kwargs)
-{
+static PyObject *Geom_blend_region(PyObject *self, PyObject *args,
+                                   PyObject *kwargs) {
   auto api = PyUtilApiFunction("Oiid", PyRunTimeErr, __func__);
   static char *keywords[] = {"surface", "face1", "face2", "radius", nullptr};
-  PyObject* surfaceArg;
+  PyObject *surfaceArg;
   int faceIds[2];
   double radius = 0.0;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg, &faceIds[0], &faceIds[1],
-        &radius)) {
-      return api.argsError();
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords,
+                                   &surfaceArg, &faceIds[0], &faceIds[1],
+                                   &radius)) {
+    return api.argsError();
   }
 
   if (radius <= 0.0) {
-      api.error("The 'radius' argument must be > 0.");
-      return nullptr;
+    api.error("The 'radius' argument must be > 0.");
+    return nullptr;
   }
 
   auto surfPolydata = GetVtkPolyData(api, surfaceArg);
   if (surfPolydata == nullptr) {
-      return nullptr;
+    return nullptr;
   }
 
   if (surfPolydata->GetCellData()->GetArray("ModelFaceID") == nullptr) {
-      api.error("The surface has no 'ModelFaceID' cell array.");
-      return nullptr;
+    api.error("The surface has no 'ModelFaceID' cell array.");
+    return nullptr;
   }
 
   cvPolyData surfCvPolyData(surfPolydata);
-  cvPolyData* result = nullptr;
+  cvPolyData *result = nullptr;
 
-  if (sys_geom_set_array_for_local_op_face_blend(&surfCvPolyData, &result, "ModelFaceID", faceIds, 2, radius,
-        ActiveCellsArrayName, 1) != SV_OK) {
-      api.error("The blend region operation has failed.");
-      return nullptr;
+  if (sys_geom_set_array_for_local_op_face_blend(
+          &surfCvPolyData, &result, "ModelFaceID", faceIds, 2, radius,
+          ActiveCellsArrayName, 1) != SV_OK) {
+    api.error("The blend region operation has failed.");
+    return nullptr;
   }
 
   auto activeCells = result->GetCellData()->GetArray(ActiveCellsArrayName);
   auto cellIdsObj = PyList_New(0);
   for (vtkIdType cellId = 0; cellId < result->GetNumberOfCells(); cellId++) {
-      if (activeCells->GetTuple1(cellId) == 1) {
-          auto cellIdObj = PyLong_FromLongLong(cellId);
-          PyList_Append(cellIdsObj, cellIdObj);
-          Py_DECREF(cellIdObj);
-      }
+    if (activeCells->GetTuple1(cellId) == 1) {
+      auto cellIdObj = PyLong_FromLongLong(cellId);
+      PyList_Append(cellIdsObj, cellIdObj);
+      Py_DECREF(cellIdObj);
+    }
   }
 
   result->Delete();
@@ -1468,180 +1511,231 @@ PyDoc_STRVAR(GeometryModule_doc,
 //---------------
 // Geometry module methods.
 //
-PyMethodDef PyGeomMethods[] =
-{
-  {"all_union", (PyCFunction)Geom_all_union, METH_VARARGS|METH_KEYWORDS, Geom_all_union_doc},
+PyMethodDef PyGeomMethods[] = {
+    {"all_union", (PyCFunction)Geom_all_union, METH_VARARGS | METH_KEYWORDS,
+     Geom_all_union_doc},
 
-  {"align_profile", (PyCFunction)Geom_align_profile,METH_VARARGS|METH_KEYWORDS, Geom_align_profile_doc},
+    {"align_profile", (PyCFunction)Geom_align_profile,
+     METH_VARARGS | METH_KEYWORDS, Geom_align_profile_doc},
 
-  {"average_point", (PyCFunction)Geom_average_point, METH_VARARGS, Geom_average_point_doc},
+    {"average_point", (PyCFunction)Geom_average_point, METH_VARARGS,
+     Geom_average_point_doc},
 
-  {"point_inside", (PyCFunction)Geom_point_inside, METH_VARARGS|METH_KEYWORDS, Geom_point_inside_doc},
+    {"point_inside", (PyCFunction)Geom_point_inside,
+     METH_VARARGS | METH_KEYWORDS, Geom_point_inside_doc},
 
-  {"interpolate_closed_curve", (PyCFunction)Geom_interpolate_closed_curve, METH_VARARGS|METH_KEYWORDS, Geom_interpolate_closed_curve_doc},
+    {"interpolate_closed_curve", (PyCFunction)Geom_interpolate_closed_curve,
+     METH_VARARGS | METH_KEYWORDS, Geom_interpolate_closed_curve_doc},
 
-  {"local_blend", (PyCFunction)Geom_local_blend, METH_VARARGS|METH_KEYWORDS, Geom_local_blend_doc},
+    {"local_blend", (PyCFunction)Geom_local_blend, METH_VARARGS | METH_KEYWORDS,
+     Geom_local_blend_doc},
 
-  {"loft", (PyCFunction)Geom_loft, METH_VARARGS|METH_KEYWORDS, Geom_loft_doc},
+    {"loft", (PyCFunction)Geom_loft, METH_VARARGS | METH_KEYWORDS,
+     Geom_loft_doc},
 
-  {"loft_nurbs", (PyCFunction)Geom_loft_nurbs, METH_VARARGS|METH_KEYWORDS, Geom_loft_nurbs_doc},
+    {"loft_nurbs", (PyCFunction)Geom_loft_nurbs, METH_VARARGS | METH_KEYWORDS,
+     Geom_loft_nurbs_doc},
 
-  {"local_sphere_smooth", (PyCFunction)Geom_local_sphere_smooth, METH_VARARGS|METH_KEYWORDS, Geom_local_sphere_smooth_doc},
+    {"local_sphere_smooth", (PyCFunction)Geom_local_sphere_smooth,
+     METH_VARARGS | METH_KEYWORDS, Geom_local_sphere_smooth_doc},
 
-  {"local_smooth", (PyCFunction)Geom_local_smooth, METH_VARARGS|METH_KEYWORDS, Geom_local_smooth_doc},
+    {"local_smooth", (PyCFunction)Geom_local_smooth,
+     METH_VARARGS | METH_KEYWORDS, Geom_local_smooth_doc},
 
-  {"local_decimation", (PyCFunction)Geom_local_decimation, METH_VARARGS|METH_KEYWORDS, Geom_local_decimation_doc},
+    {"local_decimation", (PyCFunction)Geom_local_decimation,
+     METH_VARARGS | METH_KEYWORDS, Geom_local_decimation_doc},
 
-  {"local_linear_subdivision", (PyCFunction)Geom_local_linear_subdivision, METH_VARARGS|METH_KEYWORDS, Geom_local_linear_subdivision_doc},
+    {"local_linear_subdivision", (PyCFunction)Geom_local_linear_subdivision,
+     METH_VARARGS | METH_KEYWORDS, Geom_local_linear_subdivision_doc},
 
-  {"local_loop_subdivision", (PyCFunction)Geom_local_loop_subdivision, METH_VARARGS|METH_KEYWORDS, Geom_local_loop_subdivision_doc},
+    {"local_loop_subdivision", (PyCFunction)Geom_local_loop_subdivision,
+     METH_VARARGS | METH_KEYWORDS, Geom_local_loop_subdivision_doc},
 
-  {"blend_region", (PyCFunction)Geom_blend_region, METH_VARARGS|METH_KEYWORDS, Geom_blend_region_doc},
+    {"blend_region", (PyCFunction)Geom_blend_region,
+     METH_VARARGS | METH_KEYWORDS, Geom_blend_region_doc},
 
 #ifdef python_geom_module_use_old_methods
 
-  {"add_point_data", Geom_add_point_data, METH_VARARGS, Geom_add_point_data_doc},
+    {"add_point_data", Geom_add_point_data, METH_VARARGS,
+     Geom_add_point_data_doc},
 
-  {"all_union", Geom_all_union, METH_VARARGS, Geom_all_union_doc},
+    {"all_union", Geom_all_union, METH_VARARGS, Geom_all_union_doc},
 
-  // RenameL: AvgPt
-  {"bbox", Geom_bbox, METH_VARARGS, Geom_bbox_doc},
+    // RenameL: AvgPt
+    {"bbox", Geom_bbox, METH_VARARGS, Geom_bbox_doc},
 
-  {"check_surface", Geom_check_surface, METH_VARARGS, Geom_check_surface_doc},
+    {"check_surface", Geom_check_surface, METH_VARARGS, Geom_check_surface_doc},
 
-  {"clean", Geom_clean, METH_VARARGS, Geom_clean_doc},
+    {"clean", Geom_clean, METH_VARARGS, Geom_clean_doc},
 
-  {"copy", Geom_copy, METH_VARARGS, Geom_copy_doc},
+    {"copy", Geom_copy, METH_VARARGS, Geom_copy_doc},
 
-  {"disorient_profile", Geom_disorient_profile, METH_VARARGS, Geom_disorient_profile_doc},
+    {"disorient_profile", Geom_disorient_profile, METH_VARARGS,
+     Geom_disorient_profile_doc},
 
-  {"divide_point_data", Geom_divide_point_data, METH_VARARGS, Geom_divide_point_data_doc},
+    {"divide_point_data", Geom_divide_point_data, METH_VARARGS,
+     Geom_divide_point_data_doc},
 
-  {"find_distance", Geom_find_distance, METH_VARARGS, Geom_find_distance_doc},
+    {"find_distance", Geom_find_distance, METH_VARARGS, Geom_find_distance_doc},
 
-  {"get_closed_line_region", Geom_get_closed_line_region, METH_VARARGS, Geom_get_closed_line_region_doc},
+    {"get_closed_line_region", Geom_get_closed_line_region, METH_VARARGS,
+     Geom_get_closed_line_region_doc},
 
-  // Rename: GetOrderedPts
-  {"get_ordered_points", Geom_get_ordered_points, METH_VARARGS, Geom_get_ordered_points_doc},
+    // Rename: GetOrderedPts
+    {"get_ordered_points", Geom_get_ordered_points, METH_VARARGS,
+     Geom_get_ordered_points_doc},
 
-  {"get_poly_centroid", Geom_get_poly_centroid, METH_VARARGS, Geom_get_poly_centroid_doc},
+    {"get_poly_centroid", Geom_get_poly_centroid, METH_VARARGS,
+     Geom_get_poly_centroid_doc},
 
-  {"integrate_surface", Geom_integrate_surface, METH_VARARGS, Geom_integrate_surface_doc},
+    {"integrate_surface", Geom_integrate_surface, METH_VARARGS,
+     Geom_integrate_surface_doc},
 
-  {"integrate_surface2", Geom_integrate_surface2, METH_VARARGS, Geom_integrate_surface2_doc},
+    {"integrate_surface2", Geom_integrate_surface2, METH_VARARGS,
+     Geom_integrate_surface2_doc},
 
-  {"integrate_energy", Geom_integrate_energy, METH_VARARGS, Geom_integrate_energy_doc},
+    {"integrate_energy", Geom_integrate_energy, METH_VARARGS,
+     Geom_integrate_energy_doc},
 
-  {"integrate_scalar_surface", Geom_integrate_scalar_surface, METH_VARARGS, Geom_integrate_scalar_surface_doc},
+    {"integrate_scalar_surface", Geom_integrate_scalar_surface, METH_VARARGS,
+     Geom_integrate_scalar_surface_doc},
 
-  // Renmae: IntegrateScalarThresh
-  {"integrate_scalar_threshold", Geom_integrate_scalar_threshold, METH_VARARGS, Geom_integrate_scalar_threshold_doc},
+    // Renmae: IntegrateScalarThresh
+    {"integrate_scalar_threshold", Geom_integrate_scalar_threshold,
+     METH_VARARGS, Geom_integrate_scalar_threshold_doc},
 
-  {"interpolate_scalar", Geom_interpolate_scalar, METH_VARARGS, Geom_interpolate_scalar_doc},
+    {"interpolate_scalar", Geom_interpolate_scalar, METH_VARARGS,
+     Geom_interpolate_scalar_doc},
 
-  {"interpolate_vector", Geom_interpolate_vector, METH_VARARGS, Geom_interpolate_vector_doc},
+    {"interpolate_vector", Geom_interpolate_vector, METH_VARARGS,
+     Geom_interpolate_vector_doc},
 
-  {"intersect", Geom_intersect, METH_VARARGS, Geom_intersect_doc},
+    {"intersect", Geom_intersect, METH_VARARGS, Geom_intersect_doc},
 
-  {"intersect_with_line", Geom_intersect_with_line, METH_VARARGS, Geom_intersect_with_line_doc},
+    {"intersect_with_line", Geom_intersect_with_line, METH_VARARGS,
+     Geom_intersect_with_line_doc},
 
-  {"local_butterfly_subdivision", Geom_local_butterfly_subdivision, METH_VARARGS, Geom_local_butterfly_subdivision_doc},
+    {"local_butterfly_subdivision", Geom_local_butterfly_subdivision,
+     METH_VARARGS, Geom_local_butterfly_subdivision_doc},
 
-  {"local_constrain_smooth", Geom_local_constrain_smooth, METH_VARARGS, Geom_local_constrain_smooth_doc},
+    {"local_constrain_smooth", Geom_local_constrain_smooth, METH_VARARGS,
+     Geom_local_constrain_smooth_doc},
 
-  {"local_decimation", Geom_local_decimation, METH_VARARGS, Geom_local_decimation_doc},
+    {"local_decimation", Geom_local_decimation, METH_VARARGS,
+     Geom_local_decimation_doc},
 
-  {"local_laplacian_smooth", Geom_local_laplacian_smooth, METH_VARARGS, Geom_local_laplacian_smooth_doc},
+    {"local_laplacian_smooth", Geom_local_laplacian_smooth, METH_VARARGS,
+     Geom_local_laplacian_smooth_doc},
 
-  {"local_linear_subdivision", Geom_local_linear_subdivision, METH_VARARGS, Geom_local_linear_subdivision_doc},
+    {"local_linear_subdivision", Geom_local_linear_subdivision, METH_VARARGS,
+     Geom_local_linear_subdivision_doc},
 
-  {"local_loop_subdivision", Geom_local_loop_subdivision, METH_VARARGS, Geom_local_loop_subdivision_doc},
+    {"local_loop_subdivision", Geom_local_loop_subdivision, METH_VARARGS,
+     Geom_local_loop_subdivision_doc},
 
+    {"make_polys_consistent", Geom_make_polys_consistent, METH_VARARGS,
+     Geom_make_polys_consistent_doc},
 
-  {"make_polys_consistent", Geom_make_polys_consistent, METH_VARARGS, Geom_make_polys_consistent_doc},
+    // Rename: MergePts
+    {"merge_points", Geom_merge_points, METH_VARARGS, Geom_merge_points_doc},
 
-  // Rename: MergePts
-  {"merge_points", Geom_merge_points, METH_VARARGS, Geom_merge_points_doc},
+    // Renamed: "model_name_model_from_polydata_names"
+    {"convert_nurbs_to_poly", Geom_convert_nurbs_to_poly, METH_VARARGS,
+     Geom_convert_nurbs_to_poly_doc},
 
-  // Renamed: "model_name_model_from_polydata_names"
-  {"convert_nurbs_to_poly", Geom_convert_nurbs_to_poly, METH_VARARGS, Geom_convert_nurbs_to_poly_doc},
+    {"multiply_point_data", Geom_multiply_point_data, METH_VARARGS,
+     Geom_multiply_point_data_doc},
 
-  {"multiply_point_data", Geom_multiply_point_data, METH_VARARGS, Geom_multiply_point_data_doc},
+    {"num_closed_line_regions", Geom_num_closed_line_regions, METH_VARARGS,
+     Geom_num_closed_line_regions_doc},
 
-  {"num_closed_line_regions", Geom_num_closed_line_regions, METH_VARARGS, Geom_num_closed_line_regions_doc},
+    // Rename: NumPts
+    {"num_points", Geom_num_points, METH_VARARGS, Geom_num_points_doc},
 
-  // Rename: NumPts
-  {"num_points", Geom_num_points, METH_VARARGS, Geom_num_points_doc},
+    {"orient_profile", Geom_orient_profile, METH_VARARGS,
+     Geom_orient_profile_doc},
 
-  {"orient_profile", Geom_orient_profile, METH_VARARGS, Geom_orient_profile_doc},
+    {"pick", Geom_pick, METH_VARARGS, Geom_pick_doc},
 
-  {"pick", Geom_pick, METH_VARARGS, Geom_pick_doc},
+    // Rename: PolygonNorm
+    {"polygon_normal", Geom_polygon_normal, METH_VARARGS,
+     Geom_polygon_normal_doc},
 
-  // Rename: PolygonNorm
-  {"polygon_normal", Geom_polygon_normal, METH_VARARGS, Geom_polygon_normal_doc},
+    {"polys_closed", Geom_polys_closed, METH_VARARGS, Geom_polys_closed_doc},
 
-  {"polys_closed", Geom_polys_closed, METH_VARARGS, Geom_polys_closed_doc},
+    {"print_small_polys", Geom_print_small_polys, METH_VARARGS,
+     Geom_print_small_polys_doc},
 
-  {"print_small_polys", Geom_print_small_polys, METH_VARARGS, Geom_print_small_polys_doc},
+    {"print_tri_stats", Geom_print_tri_stats, METH_VARARGS,
+     Geom_print_tri_stats_doc},
 
-  {"print_tri_stats", Geom_print_tri_stats, METH_VARARGS, Geom_print_tri_stats_doc},
+    {"project", Geom_project, METH_VARARGS, Geom_project_doc},
 
-  {"project", Geom_project, METH_VARARGS, Geom_project_doc},
+    // Rename: PtInPoly
+    {"point_in_poly", Geom_point_in_poly, METH_VARARGS, Geom_point_in_poly_doc},
 
-  // Rename: PtInPoly
-  {"point_in_poly", Geom_point_in_poly, METH_VARARGS, Geom_point_in_poly_doc},
+    {"reduce", Geom_reduce, METH_VARARGS, Geom_reduce_doc},
 
-  {"reduce", Geom_reduce, METH_VARARGS, Geom_reduce_doc},
+    // Rename: ReorderPgn
+    {"reorder_polygon", Geom_reorder_polygon, METH_VARARGS,
+     Geom_reorder_polygon_doc},
 
-  // Rename: ReorderPgn
-  {"reorder_polygon", Geom_reorder_polygon, METH_VARARGS, Geom_reorder_polygon_doc},
+    {"replace_point_data", Geom_replace_point_data, METH_VARARGS,
+     Geom_replace_point_data_doc},
 
-  {"replace_point_data", Geom_replace_point_data, METH_VARARGS, Geom_replace_point_data_doc},
+    {"reverse_all_cells", Geom_reverse_all_cells, METH_VARARGS,
+     Geom_reverse_all_cells_doc},
 
-  {"reverse_all_cells", Geom_reverse_all_cells, METH_VARARGS, Geom_reverse_all_cells_doc},
+    // Rename: RmSmallPolys
+    {"remove_small_polys", Geom_remove_small_polys, METH_VARARGS,
+     Geom_remove_small_polys_doc},
 
-  // Rename: RmSmallPolys
-  {"remove_small_polys", Geom_remove_small_polys, METH_VARARGS, Geom_remove_small_polys_doc},
+    {"scale_avg", Geom_scale_avg, METH_VARARGS, Geom_scale_avg_doc},
 
-  {"scale_avg", Geom_scale_avg, METH_VARARGS, Geom_scale_avg_doc},
+    {"set_array_for_local_op_cells", Geom_set_array_for_local_op_cells,
+     METH_VARARGS, Geom_set_array_for_local_op_cells_doc},
 
-  {"set_array_for_local_op_cells", Geom_set_array_for_local_op_cells, METH_VARARGS, Geom_set_array_for_local_op_cells_doc},
+    {"set_array_for_local_op_face", Geom_set_array_for_local_op_face,
+     METH_VARARGS, Geom_set_array_for_local_op_face_doc},
 
-  {"set_array_for_local_op_face", Geom_set_array_for_local_op_face, METH_VARARGS, Geom_set_array_for_local_op_face_doc},
+    {"set_array_for_local_op_blend", Geom_set_array_for_local_op_blend,
+     METH_VARARGS, Geom_set_array_for_local_op_blend_doc},
 
-  {"set_array_for_local_op_blend", Geom_set_array_for_local_op_blend, METH_VARARGS, Geom_set_array_for_local_op_blend_doc},
+    {"set_ids_for_caps", Geom_set_ids_for_caps, METH_VARARGS,
+     Geom_set_ids_for_caps_doc},
 
-  {"set_ids_for_caps", Geom_set_ids_for_caps, METH_VARARGS, Geom_set_ids_for_caps_doc},
+    // Rename: SplinePtsToPathPlan
+    {"spline_points_to_path_plan", Geom_spline_points_to_path_plan,
+     METH_VARARGS, Geom_spline_points_to_path_plan_doc},
 
-  // Rename: SplinePtsToPathPlan
-  {"spline_points_to_path_plan", Geom_spline_points_to_path_plan, METH_VARARGS, Geom_spline_points_to_path_plan_doc},
+    {"subtract", Geom_subtract, METH_VARARGS, Geom_subtract_doc},
 
-  {"subtract", Geom_subtract, METH_VARARGS, Geom_subtract_doc},
+    {"subtract_point_data", Geom_subtract_point_data, METH_VARARGS,
+     Geom_subtract_point_data_doc},
 
-  {"subtract_point_data", Geom_subtract_point_data, METH_VARARGS, Geom_subtract_point_data_doc},
+    // Rename: SurfArea
+    {"surface_area", Geom_surface_area, METH_VARARGS, Geom_surface_area_doc},
 
-  // Rename: SurfArea
-  {"surface_area", Geom_surface_area, METH_VARARGS, Geom_surface_area_doc},
+    {"translate", Geom_translate, METH_VARARGS, Geom_translate_doc},
 
-  {"translate", Geom_translate, METH_VARARGS, Geom_translate_doc},
+    {"union", Geom_union, METH_VARARGS, Geom_union_doc},
 
-  {"union", Geom_union, METH_VARARGS, Geom_union_doc},
+    // Rename:Warp3dPts
+    {"warp_3d_points", Geom_warp_3d_points, METH_VARARGS,
+     Geom_warp_3d_points_doc},
 
-  // Rename:Warp3dPts
-  {"warp_3d_points", Geom_warp_3d_points, METH_VARARGS, Geom_warp_3d_points_doc},
+    {"winding_number", Geom_winding_number, METH_VARARGS,
+     Geom_winding_number_doc},
 
-  {"winding_number", Geom_winding_number, METH_VARARGS, Geom_winding_number_doc},
+    {"write_lines", Geom_write_lines, METH_VARARGS, Geom_write_lines_doc},
 
-  {"write_lines", Geom_write_lines, METH_VARARGS, Geom_write_lines_doc},
-
-  // Rename: WriteOrderedPts
-  {"write_ordered_points", Geom_write_ordered_points, METH_VARARGS, Geom_write_ordered_points_doc},
+    // Rename: WriteOrderedPts
+    {"write_ordered_points", Geom_write_ordered_points, METH_VARARGS,
+     Geom_write_ordered_points_doc},
 
 #endif // #ifdef python_geom_module_use_old_methods
 
-  {nullptr,nullptr}
-};
-
+    {nullptr, nullptr}};
 
 //-----------------------
 // Initialize the module
