@@ -749,7 +749,7 @@ writer->Write();
     vtkIdType lineId = iterLower->second;
     vtkIdType nLinePts;
     const vtkIdType *linePtIds;
-    interLines->GetLines()->GetCell(3 * lineId, nLinePts, linePtIds);
+    interLines->GetLines()->GetCellAtId(lineId, nLinePts, linePtIds);
     // std::cout << "------- " << std::endl;
     // std::cout << "lineId: " << lineId << std::endl;
     // std::cout << "nLinePts: " << nLinePts << std::endl;
@@ -832,7 +832,7 @@ writer->Write();
         vtkIdType lineId = iterLower->second;
         vtkIdType nLinePts;
         const vtkIdType *linePtIds;
-        interLines->GetLines()->GetCell(3 * lineId, nLinePts, linePtIds);
+        interLines->GetLines()->GetCellAtId(lineId, nLinePts, linePtIds);
         for (vtkIdType k = 0; k < nLinePts; k++) {
           if (linePtIds[k] >= interLines->GetNumberOfPoints()) {
             vtkGenericWarningMacro(<< "invalid point read 5");
@@ -2278,7 +2278,7 @@ void vtkSVLoopIntersectionPolyDataFilter::CleanAndCheckInput(vtkPolyData *pd,
   vtkIdType npts;
   const vtkIdType *cellPts;
   double pt0[3], pt1[3], pt2[3];
-  normaler->GetOutput()->GetPolys()->GetCell(0, npts, cellPts);
+  normaler->GetOutput()->GetPolys()->GetCellAtId(0, npts, cellPts);
   normaler->GetOutput()->GetPoints()->GetPoint(cellPts[0], pt0);
   normaler->GetOutput()->GetPoints()->GetPoint(cellPts[1], pt1);
   normaler->GetOutput()->GetPoints()->GetPoint(cellPts[2], pt2);
