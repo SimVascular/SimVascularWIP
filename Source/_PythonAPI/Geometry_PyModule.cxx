@@ -1174,32 +1174,21 @@ Geom_local_decimation(PyObject* self, PyObject* args, PyObject* kwargs)
   return resultObj;
 }
 
-//-------------------------------
-// Geom_local_linear_subdivision
-//-------------------------------
-//
-PyDoc_STRVAR(Geom_local_linear_subdivision_doc,
-  "local_linear_subdivision(surface, cell_ids, num_subdivisions)  \n\
-   \n\
-   Subdivide a surface locally, in the region made of the given cells.     \n\
-   \n\
-   Each pass adds a point at the middle of every edge between two cells of the region and splits \n\
-   the region's cells at those points, into four inside the region and into two or three along \n\
-   its rim. The surface does not move, cells outside the region are unchanged, and each new cell \n\
-   keeps the cell data of the cell it came from. \n\
-   \n\
-   Args: \n\
-     surface (vtkPolyData): The surface to be subdivided. It must be all triangles and manifold. \n\
-     cell_ids (list[int]): The IDs of the cells in the region. \n\
-     num_subdivisions (int): The number of subdivision passes. \n\
-   \n\
-   Returns (vtkPolyData): The vtkPolyData object of the subdivided surface.     \n\
-");
+// A sys_geom local subdivision function.
+typedef int (*LocalSubdivisionFunction)(cvPolyData*, cvPolyData**, int, char*, char*);
 
+//----------------
+// LocalSubdivide
+//----------------
+// Runs subdivide on the arguments of the local subdivision functions: surface, cell_ids and
+// num_subdivisions. funcName is the calling function's name and opName names the operation in
+// its errors.
+//
 static PyObject *
-Geom_local_linear_subdivision(PyObject* self, PyObject* args, PyObject* kwargs)
+LocalSubdivide(PyObject* args, PyObject* kwargs, const char* funcName, LocalSubdivisionFunction subdivide,
+    const std::string& opName)
 {
-  auto api = PyUtilApiFunction("OO!i", PyRunTimeErr, __func__);
+  auto api = PyUtilApiFunction("OO!i", PyRunTimeErr, funcName);
   static char *keywords[] = {"surface", "cell_ids", "num_subdivisions", nullptr};
   PyObject* surfaceArg;
   PyObject* cellIdsArg;
@@ -1230,9 +1219,9 @@ Geom_local_linear_subdivision(PyObject* self, PyObject* args, PyObject* kwargs)
 
   // The filter reports its errors, such as a non-manifold surface, without failing, leaving an
   // empty surface.
-  if ((sys_geom_local_linear_subdivision(&activeCvPolyData, &result, numSubdivisions, nullptr,
-        ActiveCellsArrayName) != SV_OK) || (result->GetNumberOfCells() == 0)) {
-      api.error("The local linear subdivision operation has failed.");
+  if ((subdivide(&activeCvPolyData, &result, numSubdivisions, nullptr, ActiveCellsArrayName) != SV_OK) ||
+      (result->GetNumberOfCells() == 0)) {
+      api.error("The " + opName + " operation has failed.");
       return nullptr;
   }
 
@@ -1240,6 +1229,63 @@ Geom_local_linear_subdivision(PyObject* self, PyObject* args, PyObject* kwargs)
   auto resultObj = vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
   result->Delete();
   return resultObj;
+}
+
+//-------------------------------
+// Geom_local_linear_subdivision
+//-------------------------------
+//
+PyDoc_STRVAR(Geom_local_linear_subdivision_doc,
+  "local_linear_subdivision(surface, cell_ids, num_subdivisions)  \n\
+   \n\
+   Subdivide a surface locally, in the region made of the given cells.     \n\
+   \n\
+   Each pass adds a point at the middle of every edge between two cells of the region and splits \n\
+   the region's cells at those points, into four inside the region and into two or three along \n\
+   its rim. The surface does not move, cells outside the region are unchanged, and each new cell \n\
+   keeps the cell data of the cell it came from. \n\
+   \n\
+   Args: \n\
+     surface (vtkPolyData): The surface to be subdivided. It must be all triangles and manifold. \n\
+     cell_ids (list[int]): The IDs of the cells in the region. \n\
+     num_subdivisions (int): The number of subdivision passes. \n\
+   \n\
+   Returns (vtkPolyData): The vtkPolyData object of the subdivided surface.     \n\
+");
+
+static PyObject *
+Geom_local_linear_subdivision(PyObject* self, PyObject* args, PyObject* kwargs)
+{
+  return LocalSubdivide(args, kwargs, __func__, sys_geom_local_linear_subdivision, "local linear subdivision");
+}
+
+//-----------------------------
+// Geom_local_loop_subdivision
+//-----------------------------
+//
+PyDoc_STRVAR(Geom_local_loop_subdivision_doc,
+  "local_loop_subdivision(surface, cell_ids, num_subdivisions)  \n\
+   \n\
+   Subdivide a surface locally with Loop subdivision, in the region made of the given cells.     \n\
+   \n\
+   Each pass adds a point on every edge between two cells of the region and splits the region's \n\
+   cells at those points, into four inside the region and into two or three along its rim. The \n\
+   new points and the points inside the region are placed by Loop's weights, which smooths the \n\
+   region. The region's rim and the cells outside it do not move, and each new cell keeps the \n\
+   cell data of the cell it came from. \n\
+   \n\
+   Args: \n\
+     surface (vtkPolyData): The surface to be subdivided. It must be all triangles and manifold. \n\
+     cell_ids (list[int]): The IDs of the cells in the region. \n\
+     num_subdivisions (int): The number of subdivision passes. \n\
+   \n\
+   Returns (vtkPolyData): The vtkPolyData object of the subdivided surface.     \n\
+");
+
+static PyObject *
+Geom_local_loop_subdivision(PyObject* self, PyObject* args, PyObject* kwargs)
+{
+  return LocalSubdivide(args, kwargs, __func__, sys_geom_local_loop_subdivision, "local loop subdivision");
 }
 
 ////////////////////////////////////////////////////////
@@ -1291,6 +1337,8 @@ PyMethodDef PyGeomMethods[] =
   {"local_decimation", (PyCFunction)Geom_local_decimation, METH_VARARGS|METH_KEYWORDS, Geom_local_decimation_doc},
 
   {"local_linear_subdivision", (PyCFunction)Geom_local_linear_subdivision, METH_VARARGS|METH_KEYWORDS, Geom_local_linear_subdivision_doc},
+
+  {"local_loop_subdivision", (PyCFunction)Geom_local_loop_subdivision, METH_VARARGS|METH_KEYWORDS, Geom_local_loop_subdivision_doc},
 
 #ifdef python_geom_module_use_old_methods
 
