@@ -168,7 +168,8 @@ protected:
 
   /// \brief Get individual polygon loop of splitting cell
   int GetSingleLoop(vtkPolyData *fullpd, vtkPolyData *pd, simPolygon *loop,
-                    vtkIdType nextCell, bool *interPtBool, bool *lineBool);
+                    vtkIdType nextCell, bool *interPtBool,
+                    std::vector<bool> &lineBool);
 
   /// \brief Follow a loop orienation to iterate around a split polygon
   int FollowLoopOrientation(vtkPolyData *pd, simPolygon *loop,
@@ -1338,8 +1339,8 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl ::GetLoops(
   vtkIdType nextCell;
   bool *ptBool;
   ptBool = new bool[pd->GetNumberOfPoints()];
-  bool *lineBool;
-  lineBool = new bool[pd->GetNumberOfCells()];
+  // GetSingleLoop grows it when it closes an open loop with a new line.
+  std::vector<bool> lineBool(pd->GetNumberOfCells(), false);
 
   int numPoints = pd->GetNumberOfPoints();
   int numCells = pd->GetNumberOfCells();
@@ -1359,9 +1360,6 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl ::GetLoops(
   }
   vtkDebugWithObjectMacro(this->ParentFilter,
                           << "Number Of Cells: " << numCells);
-  for (vtkIdType lineId = 0; lineId < numCells; lineId++) {
-    lineBool[lineId] = false;
-  }
 
   // For each point in triangle and additional lines
   for (vtkIdType ptId = 0; ptId < numPoints; ptId++) {
@@ -1385,7 +1383,6 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl ::GetLoops(
       if (this->GetSingleLoop(fullpd, pd, &interloop, nextCell, ptBool,
                               lineBool) != SV_OK) {
         delete[] ptBool;
-        delete[] lineBool;
         std::string msg("[GetSingleLoop] No cell with correct orientation "
                         "found processing cell " +
                         std::to_string(nextCell));
@@ -1423,7 +1420,6 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl ::GetLoops(
       if (this->GetSingleLoop(fullpd, pd, &interloop, nextCell, ptBool,
                               lineBool) != SV_OK) {
         delete[] ptBool;
-        delete[] lineBool;
         print_warning(__func__, "GetSingleLoop failed");
         return SV_ERROR;
       }
@@ -1433,7 +1429,6 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl ::GetLoops(
   }
 
   delete[] ptBool;
-  delete[] lineBool;
 
   return SV_OK;
 }
@@ -1443,7 +1438,7 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl ::GetLoops(
 // ----------------------
 int vtkSVLoopIntersectionPolyDataFilter::Impl::GetSingleLoop(
     vtkPolyData *fullpd, vtkPolyData *pd, simPolygon *loop, vtkIdType nextCell,
-    bool *interPtBool, bool *lineBool) {
+    bool *interPtBool, std::vector<bool> &lineBool) {
 #define n_debug_GetSingleLoop
 #ifdef debug_GetSingleLoop
   std::string msg("[vtkSVLoopIntersectionPolyDataFilter::GetSingleLoop] ");
@@ -1534,6 +1529,7 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl::GetSingleLoop(
       currentcells->InsertCellPoint(nextPt);
       currentcells->InsertCellPoint(startPt);
       nextCell = currentcells->GetNumberOfCells() - 1;
+      lineBool.resize(nextCell + 1, false);
       currentpd->SetLines(currentcells);
       currentpd->SetPoints(pd->GetPoints());
       pd->DeepCopy(currentpd);
