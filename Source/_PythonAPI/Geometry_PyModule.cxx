@@ -153,7 +153,7 @@ CreateActiveCellsSurface(PyUtilApiFunction& api, vtkPolyData* surface, PyObject*
 // this module's dependency on sv4gui/MITK; the sv4gui version is a thin
 // wrapper around the same sys_geom_ calls used here.
 //
-static vtkPolyData*
+static vtkSmartPointer<vtkPolyData>
 CreatePolyDataByBlend(vtkPolyData* vpdsrc, int faceID1, int faceID2, double radius, int numBlendIters,
     int numSubblendIters, int numSubdivisionIters, int numCgSmoothIters, int numLapSmoothIters,
     double targetDecimation)
@@ -172,13 +172,16 @@ CreatePolyDataByBlend(vtkPolyData* vpdsrc, int faceID1, int faceID2, double radi
   }
 
   cvPolyData* dst2 = nullptr;
+  auto status = sys_geom_local_blend(dst, &dst2, numBlendIters, numSubblendIters, numSubdivisionIters,
+      numCgSmoothIters, numLapSmoothIters, targetDecimation, nullptr, "ActiveCells");
+  dst->Delete();
 
-  if (sys_geom_local_blend(dst, &dst2, numBlendIters, numSubblendIters, numSubdivisionIters, numCgSmoothIters,
-        numLapSmoothIters, targetDecimation, nullptr, "ActiveCells") != SV_OK) {
+  if (status != SV_OK) {
       return nullptr;
   }
 
-  vtkPolyData* vpd = dst2->GetVtkPolyData();
+  vtkSmartPointer<vtkPolyData> vpd;
+  vpd.TakeReference(dst2->GetVtkPolyData());
   vpd->GetCellData()->RemoveArray("ActiveCells");
 
   return vpd;
@@ -356,7 +359,9 @@ Geom_align_profile(PyObject* self, PyObject* args, PyObject* kwargs)
       return nullptr;
   }
 
-  return vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
+  auto resultObj = vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
+  result->Delete();
+  return resultObj;
 }
 
 //--------------------
@@ -505,7 +510,9 @@ Geom_interpolate_closed_curve(PyObject* self, PyObject* args, PyObject* kwargs)
       return nullptr;
   }
 
-  return vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
+  auto resultObj = vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
+  result->Delete();
+  return resultObj;
 }
 
 //------------------
@@ -734,13 +741,19 @@ Geom_loft(PyObject* self, PyObject* args, PyObject* kwargs)
                                     numOutPtsInSegs, numLinearPtsAlongLength, numModes, splineType, bias, tension, continuity,
                                     &result);
 
+  for (auto cvPolydata : cvPolyDataList) {
+      cvPolydata->Delete();
+  }
+
   if (status != SV_OK) {
       delete result;
       api.error("Error performing the loft operation.");
       return nullptr;
   }
 
-  return vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
+  auto resultObj = vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
+  result->Delete();
+  return resultObj;
 }
 
 //-----------------
@@ -851,12 +864,9 @@ Geom_loft_nurbs(PyObject* self, PyObject* args, PyObject* kwargs)
   auto status = sys_geom_loft_solid_with_nurbs(cvPolyDataList.data(), numProfiles, uDegree, vDegree, uSpacing, vSpacing,
           uKnotSpanType, vKnotSpanType, uParametricSpanType, vParametricSpanType, NURBSSurface, &result);
 
-  // [TODO:DaveP] Is this correct?
-  /*
-  for (auto cvPolyData : cvPolyDataList) {
-      delete cvPolyData;
+  for (auto cvPolydata : cvPolyDataList) {
+      cvPolydata->Delete();
   }
-  */
 
   if (status != SV_OK) {
       delete result;
@@ -864,7 +874,9 @@ Geom_loft_nurbs(PyObject* self, PyObject* args, PyObject* kwargs)
       return nullptr;
   }
 
-  return vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
+  auto resultObj = vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
+  result->Delete();
+  return resultObj;
 }
 
 // The smoothing_parameters dict of the local smoothing functions.
@@ -1096,11 +1108,14 @@ Geom_local_sphere_smooth(PyObject* self, PyObject* args, PyObject* kwargs)
   }
 
   auto smoothedCvPolyData = LocalSmooth(api, "local sphere", arrayCvPolyData, ActiveCellsArrayName, params);
+  arrayCvPolyData->Delete();
   if (smoothedCvPolyData == nullptr) {
       return nullptr;
   }
 
-  return vtkPythonUtil::GetObjectFromPointer(smoothedCvPolyData->GetVtkPolyData());
+  auto resultObj = vtkPythonUtil::GetObjectFromPointer(smoothedCvPolyData->GetVtkPolyData());
+  smoothedCvPolyData->Delete();
+  return resultObj;
 }
 
 //-------------------
