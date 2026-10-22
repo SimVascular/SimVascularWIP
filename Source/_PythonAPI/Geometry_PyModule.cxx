@@ -229,6 +229,68 @@ GetGeometryObjects(PyUtilApiFunction& api, PyObject* objList)
 //
 // Python 'geometry' module methods.
 
+//----------------
+// Geom_all_union
+//----------------
+//
+PyDoc_STRVAR(Geom_all_union_doc,
+  "all_union(surfaces, tolerance=0.0)  \n\
+   \n\
+   Union a list of closed surfaces, as SimVascular does to create a PolyData model from lofted \n\
+   vessels.     \n\
+   \n\
+   Surfaces that intersect are merged into one solid, and a surface that intersects no other is \n\
+   kept as a separate piece of the result. Each cell keeps the cell data of the surface it comes \n\
+   from, and its ModelFaceID cell array is set to the index, from 1, of that surface in the list. \n\
+   \n\
+   Args: \n\
+     surfaces (list[vtkPolyData]): The surfaces to union. They must be closed, all triangles and \n\
+       have the same cell arrays. \n\
+     tolerance (Optional[float]): The tolerance used to find the intersections. \n\
+   \n\
+   Returns (vtkPolyData): The vtkPolyData object of the unioned surfaces.     \n\
+");
+
+static PyObject *
+Geom_all_union(PyObject* self, PyObject* args, PyObject* kwargs)
+{
+  auto api = PyUtilApiFunction("O!|d", PyRunTimeErr, __func__);
+  static char *keywords[] = {"surfaces", "tolerance", nullptr};
+  PyObject* surfacesArg;
+  double tolerance = 0.0;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &surfacesArg, &tolerance)) {
+      return api.argsError();
+  }
+
+  auto cvPolyDataList = GetGeometryObjects(api, surfacesArg);
+  if (cvPolyDataList.size() == 0) {
+      return nullptr;
+  }
+
+  // Surfaces that intersect no other are kept as separate pieces.
+  int noIntersectionOutput = 1;
+  cvPolyData* result = nullptr;
+  auto status = sys_geom_all_union(cvPolyDataList.data(), cvPolyDataList.size(), noIntersectionOutput, tolerance,
+      &result);
+
+  for (auto cvPolydata : cvPolyDataList) {
+      delete cvPolydata;
+  }
+
+  if (status != SV_OK) {
+      if (result != nullptr) {
+          result->Delete();
+      }
+      api.error("The union operation has failed.");
+      return nullptr;
+  }
+
+  auto resultObj = vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
+  result->Delete();
+  return resultObj;
+}
+
 //--------------------
 // Geom_align_profile
 //--------------------
@@ -1316,7 +1378,9 @@ PyDoc_STRVAR(GeometryModule_doc,
 //
 PyMethodDef PyGeomMethods[] =
 {
-  {"align_profile", (PyCFunction)Geom_align_profile, METH_VARARGS|METH_KEYWORDS, Geom_align_profile_doc},
+  {"all_union", (PyCFunction)Geom_all_union, METH_VARARGS|METH_KEYWORDS, Geom_all_union_doc},
+
+  {"align_profile", (PyCFunction)Geom_align_profile,METH_VARARGS|METH_KEYWORDS, Geom_align_profile_doc},
 
   {"average_point", (PyCFunction)Geom_average_point, METH_VARARGS, Geom_average_point_doc},
 
