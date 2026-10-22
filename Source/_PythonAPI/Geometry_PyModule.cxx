@@ -55,6 +55,8 @@
 
 #include "sv_vtk_utils.h"
 #include "vtkCellData.h"
+#include "vtkIntArray.h"
+#include "vtkNew.h"
 #include "vtkSmartPointer.h"
 #include "PyUtils.h"
 #include "vtkPythonUtil.h"
@@ -95,6 +97,49 @@ GetVtkPolyData(PyUtilApiFunction& api, PyObject* obj)
       api.error("The polydata argument is not a vtkPolyData object.");
   }
   return polydata;
+}
+
+// The cell array marking the region of a local operation: 1 for cells in the region, 0 otherwise.
+static char ActiveCellsArrayName[] = "ActiveCells";
+
+//--------------------------
+// CreateActiveCellsSurface
+//--------------------------
+// Returns a copy of surface with an ActiveCellsArrayName cell array set to 1 at the cells
+// listed in cellIdsArg, a Python list of 0-based cell IDs.
+//
+static vtkSmartPointer<vtkPolyData>
+CreateActiveCellsSurface(PyUtilApiFunction& api, vtkPolyData* surface, PyObject* cellIdsArg)
+{
+  Py_ssize_t numCellIds = PyList_Size(cellIdsArg);
+  if (numCellIds == 0) {
+      api.error("The 'cell_ids' argument is empty.");
+      return nullptr;
+  }
+
+  vtkIdType numCells = surface->GetNumberOfCells();
+  vtkNew<vtkIntArray> activeCells;
+  activeCells->SetName(ActiveCellsArrayName);
+  activeCells->SetNumberOfTuples(numCells);
+  activeCells->Fill(0);
+
+  for (Py_ssize_t i = 0; i < numCellIds; i++) {
+      long cellId = PyLong_AsLong(PyList_GetItem(cellIdsArg, i));
+      if (PyErr_Occurred()) {
+          PyErr_SetString(PyExc_ValueError, "The 'cell_ids' argument is not a list of ints.");
+          return nullptr;
+      }
+      if ((cellId < 0) || (cellId >= numCells)) {
+          api.error("The 'cell_ids' argument has the ID " + std::to_string(cellId) + ", which is not a cell of the surface.");
+          return nullptr;
+      }
+      activeCells->SetValue(cellId, 1);
+  }
+
+  auto activeSurface = vtkSmartPointer<vtkPolyData>::New();
+  activeSurface->DeepCopy(surface);
+  activeSurface->GetCellData()->AddArray(activeCells);
+  return activeSurface;
 }
 
 //----------------------
@@ -962,6 +1007,141 @@ Geom_local_sphere_smooth(PyObject* self, PyObject* args, PyObject* kwargs)
   return vtkPythonUtil::GetObjectFromPointer(smoothedCvPolyData->GetVtkPolyData());
 }
 
+//-----------------------
+// Geom_local_decimation
+//-----------------------
+//
+PyDoc_STRVAR(Geom_local_decimation_doc,
+  "local_decimation(surface, cell_ids, target_reduction)  \n\
+   \n\
+   Decimate a surface locally, in the region made of the given cells.     \n\
+   \n\
+   Edges are collapsed in order of their quadric error. The points of cells outside the region \n\
+   do not move, and edges using them are not collapsed, so the region's rim and the rest of the \n\
+   surface are unchanged. The cells that remain keep their cell data. \n\
+   \n\
+   Args: \n\
+     surface (vtkPolyData): The surface to be decimated. It must be all triangles. \n\
+     cell_ids (list[int]): The IDs of the cells in the region. \n\
+     target_reduction (float): The fraction of the triangles to remove, between 0.0 and 1.0. \n\
+       It is a fraction of all of the surface's triangles, not only the region's. \n\
+   \n\
+   Returns (vtkPolyData): The vtkPolyData object of the decimated surface.     \n\
+");
+
+static PyObject *
+Geom_local_decimation(PyObject* self, PyObject* args, PyObject* kwargs)
+{
+  auto api = PyUtilApiFunction("OO!d", PyRunTimeErr, __func__);
+  static char *keywords[] = {"surface", "cell_ids", "target_reduction", nullptr};
+  PyObject* surfaceArg;
+  PyObject* cellIdsArg;
+  double targetReduction = 0.0;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg, &PyList_Type, &cellIdsArg,
+        &targetReduction)) {
+      return api.argsError();
+  }
+
+  if ((targetReduction < 0.0) || (targetReduction > 1.0)) {
+      api.error("The 'target_reduction' argument must be between 0.0 and 1.0.");
+      return nullptr;
+  }
+
+  auto surfPolydata = GetVtkPolyData(api, surfaceArg);
+  if (surfPolydata == nullptr) {
+      return nullptr;
+  }
+
+  auto activeSurface = CreateActiveCellsSurface(api, surfPolydata, cellIdsArg);
+  if (activeSurface == nullptr) {
+      return nullptr;
+  }
+
+  cvPolyData activeCvPolyData(activeSurface);
+  cvPolyData* result = nullptr;
+
+  // The filter reports its errors without failing, leaving an empty surface.
+  if ((sys_geom_local_quadric_decimation(&activeCvPolyData, &result, targetReduction, nullptr,
+        ActiveCellsArrayName) != SV_OK) || (result->GetNumberOfCells() == 0)) {
+      api.error("The local decimation operation has failed.");
+      return nullptr;
+  }
+
+  result->GetCellData()->RemoveArray(ActiveCellsArrayName);
+  auto resultObj = vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
+  result->Delete();
+  return resultObj;
+}
+
+//-------------------------------
+// Geom_local_linear_subdivision
+//-------------------------------
+//
+PyDoc_STRVAR(Geom_local_linear_subdivision_doc,
+  "local_linear_subdivision(surface, cell_ids, num_subdivisions)  \n\
+   \n\
+   Subdivide a surface locally, in the region made of the given cells.     \n\
+   \n\
+   Each pass adds a point at the middle of every edge between two cells of the region and splits \n\
+   the region's cells at those points, into four inside the region and into two or three along \n\
+   its rim. The surface does not move, cells outside the region are unchanged, and each new cell \n\
+   keeps the cell data of the cell it came from. \n\
+   \n\
+   Args: \n\
+     surface (vtkPolyData): The surface to be subdivided. It must be all triangles and manifold. \n\
+     cell_ids (list[int]): The IDs of the cells in the region. \n\
+     num_subdivisions (int): The number of subdivision passes. \n\
+   \n\
+   Returns (vtkPolyData): The vtkPolyData object of the subdivided surface.     \n\
+");
+
+static PyObject *
+Geom_local_linear_subdivision(PyObject* self, PyObject* args, PyObject* kwargs)
+{
+  auto api = PyUtilApiFunction("OO!i", PyRunTimeErr, __func__);
+  static char *keywords[] = {"surface", "cell_ids", "num_subdivisions", nullptr};
+  PyObject* surfaceArg;
+  PyObject* cellIdsArg;
+  int numSubdivisions = 0;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg, &PyList_Type, &cellIdsArg,
+        &numSubdivisions)) {
+      return api.argsError();
+  }
+
+  if (numSubdivisions < 1) {
+      api.error("The 'num_subdivisions' argument must be > 0.");
+      return nullptr;
+  }
+
+  auto surfPolydata = GetVtkPolyData(api, surfaceArg);
+  if (surfPolydata == nullptr) {
+      return nullptr;
+  }
+
+  auto activeSurface = CreateActiveCellsSurface(api, surfPolydata, cellIdsArg);
+  if (activeSurface == nullptr) {
+      return nullptr;
+  }
+
+  cvPolyData activeCvPolyData(activeSurface);
+  cvPolyData* result = nullptr;
+
+  // The filter reports its errors, such as a non-manifold surface, without failing, leaving an
+  // empty surface.
+  if ((sys_geom_local_linear_subdivision(&activeCvPolyData, &result, numSubdivisions, nullptr,
+        ActiveCellsArrayName) != SV_OK) || (result->GetNumberOfCells() == 0)) {
+      api.error("The local linear subdivision operation has failed.");
+      return nullptr;
+  }
+
+  result->GetCellData()->RemoveArray(ActiveCellsArrayName);
+  auto resultObj = vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
+  result->Delete();
+  return resultObj;
+}
+
 ////////////////////////////////////////////////////////
 //          M o d u l e  D e f i n i t i o n          //
 ////////////////////////////////////////////////////////
@@ -1005,6 +1185,10 @@ PyMethodDef PyGeomMethods[] =
   {"loft_nurbs", (PyCFunction)Geom_loft_nurbs, METH_VARARGS|METH_KEYWORDS, Geom_loft_nurbs_doc},
 
   {"local_sphere_smooth", (PyCFunction)Geom_local_sphere_smooth, METH_VARARGS|METH_KEYWORDS, Geom_local_sphere_smooth_doc},
+
+  {"local_decimation", (PyCFunction)Geom_local_decimation, METH_VARARGS|METH_KEYWORDS, Geom_local_decimation_doc},
+
+  {"local_linear_subdivision", (PyCFunction)Geom_local_linear_subdivision, METH_VARARGS|METH_KEYWORDS, Geom_local_linear_subdivision_doc},
 
 #ifdef python_geom_module_use_old_methods
 
