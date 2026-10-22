@@ -1350,6 +1350,79 @@ Geom_local_loop_subdivision(PyObject* self, PyObject* args, PyObject* kwargs)
   return LocalSubdivide(args, kwargs, __func__, sys_geom_local_loop_subdivision, "local loop subdivision");
 }
 
+//-------------------
+// Geom_blend_region
+//-------------------
+//
+PyDoc_STRVAR(Geom_blend_region_doc,
+  "blend_region(surface, face1, face2, radius)  \n\
+   \n\
+   Find the region around the junction of two faces that local_blend works on.     \n\
+   \n\
+   The region is the cells inside a sphere of the given radius centered on the junction between \n\
+   the two faces. \n\
+   \n\
+   Args: \n\
+     surface (vtkPolyData): The surface, with its faces in a ModelFaceID cell array. \n\
+     face1 (int): The ID of the first face. \n\
+     face2 (int): The ID of the second face. \n\
+     radius (float): The radius of the sphere. \n\
+   \n\
+   Returns (list[int]): The IDs of the cells in the region, as the local operations take them. \n\
+");
+
+static PyObject *
+Geom_blend_region(PyObject* self, PyObject* args, PyObject* kwargs)
+{
+  auto api = PyUtilApiFunction("Oiid", PyRunTimeErr, __func__);
+  static char *keywords[] = {"surface", "face1", "face2", "radius", nullptr};
+  PyObject* surfaceArg;
+  int faceIds[2];
+  double radius = 0.0;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg, &faceIds[0], &faceIds[1],
+        &radius)) {
+      return api.argsError();
+  }
+
+  if (radius <= 0.0) {
+      api.error("The 'radius' argument must be > 0.");
+      return nullptr;
+  }
+
+  auto surfPolydata = GetVtkPolyData(api, surfaceArg);
+  if (surfPolydata == nullptr) {
+      return nullptr;
+  }
+
+  if (surfPolydata->GetCellData()->GetArray("ModelFaceID") == nullptr) {
+      api.error("The surface has no 'ModelFaceID' cell array.");
+      return nullptr;
+  }
+
+  cvPolyData surfCvPolyData(surfPolydata);
+  cvPolyData* result = nullptr;
+
+  if (sys_geom_set_array_for_local_op_face_blend(&surfCvPolyData, &result, "ModelFaceID", faceIds, 2, radius,
+        ActiveCellsArrayName, 1) != SV_OK) {
+      api.error("The blend region operation has failed.");
+      return nullptr;
+  }
+
+  auto activeCells = result->GetCellData()->GetArray(ActiveCellsArrayName);
+  auto cellIdsObj = PyList_New(0);
+  for (vtkIdType cellId = 0; cellId < result->GetNumberOfCells(); cellId++) {
+      if (activeCells->GetTuple1(cellId) == 1) {
+          auto cellIdObj = PyLong_FromLongLong(cellId);
+          PyList_Append(cellIdsObj, cellIdObj);
+          Py_DECREF(cellIdObj);
+      }
+  }
+
+  result->Delete();
+  return cellIdsObj;
+}
+
 ////////////////////////////////////////////////////////
 //          M o d u l e  D e f i n i t i o n          //
 ////////////////////////////////////////////////////////
@@ -1403,6 +1476,8 @@ PyMethodDef PyGeomMethods[] =
   {"local_linear_subdivision", (PyCFunction)Geom_local_linear_subdivision, METH_VARARGS|METH_KEYWORDS, Geom_local_linear_subdivision_doc},
 
   {"local_loop_subdivision", (PyCFunction)Geom_local_loop_subdivision, METH_VARARGS|METH_KEYWORDS, Geom_local_loop_subdivision_doc},
+
+  {"blend_region", (PyCFunction)Geom_blend_region, METH_VARARGS|METH_KEYWORDS, Geom_blend_region_doc},
 
 #ifdef python_geom_module_use_old_methods
 
