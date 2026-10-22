@@ -277,6 +277,8 @@ int vtkSVLocalQuadricDecimation::RequestData(
   this->Mesh->GetFieldData()->PassData(input->GetFieldData());
 
   this->Mesh->BuildCells();
+  // CollapseEdge edits the links, which needs the editable vtkCellLinks.
+  this->Mesh->EditableOn();
   this->Mesh->BuildLinks();
 
   this->ErrorQuadrics = new vtkSVLocalQuadricDecimation::ErrorQuadric[numPts];
