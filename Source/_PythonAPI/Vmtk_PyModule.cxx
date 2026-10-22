@@ -138,14 +138,16 @@ Vmtk_cap(PyObject* self, PyObject* args,  PyObject* kwargs)
   if (surfPolydata == nullptr) {
       return nullptr;
   }
-  cvPolyData cvSurfPolydata(surfPolydata);
+  auto cvSurfPolydata =
+      vtkSmartPointer<cvPolyData>::Take(new cvPolyData(surfPolydata));
 
   // Perform cap operation.
   //
   std::vector<int> centerIDs;
   cvPolyData *cappedSurface = nullptr;
   int numIds, *ids;
-  if (sys_geom_cap(&cvSurfPolydata, radialFill, centerIDs, &cappedSurface) != SV_OK) {
+  if (sys_geom_cap(cvSurfPolydata, radialFill, centerIDs, &cappedSurface) !=
+      SV_OK) {
     api.error("Error capping model.");
     return nullptr;
   }
@@ -247,7 +249,8 @@ Vmtk_cap_with_ids(PyObject* self, PyObject* args, PyObject* kwargs)
   if (surfPolydata == nullptr) {
       return nullptr;
   }
-  cvPolyData cvSurfPolydata(surfPolydata);
+  auto cvSurfPolydata =
+      vtkSmartPointer<cvPolyData>::Take(new cvPolyData(surfPolydata));
 
   // Perform cap operation.
   //
@@ -256,7 +259,8 @@ Vmtk_cap_with_ids(PyObject* self, PyObject* args, PyObject* kwargs)
   //
   int num_filled = 0;
   cvPolyData* result = nullptr;
-  if (sys_geom_cap_with_ids(&cvSurfPolydata, &result, fillId, num_filled, fillType) != SV_OK) {
+  if (sys_geom_cap_with_ids(cvSurfPolydata, &result, fillId, num_filled,
+                            fillType) != SV_OK) {
     api.error("Error creating cap with ids.");
     return nullptr;
   }
@@ -373,7 +377,8 @@ Vmtk_centerlines(PyObject* self, PyObject* args, PyObject* kwargs)
   if (surfPolydata == nullptr) {
       return nullptr;
   }
-  cvPolyData cvSurfPolydata(surfPolydata);
+  auto cvSurfPolydata =
+      vtkSmartPointer<cvPolyData>::Take(new cvPolyData(surfPolydata));
 
   // If use face IDs then map the face IDs for
   // the source and targets to node IDs.
@@ -395,9 +400,11 @@ Vmtk_centerlines(PyObject* self, PyObject* args, PyObject* kwargs)
   cvPolyData* voronoiDst = nullptr;
   //std::cout << "[Vmtk_centerlines] Calculate centerlines ... " << std::endl;
 
-  if (sys_geom_centerlines(&cvSurfPolydata, sources.data(), numInletIds, targets.data(), numOutletIds, &linesDst, &voronoiDst) != SV_OK) {
-      api.error("Error calculating centerlines.");
-      return nullptr;
+  if (sys_geom_centerlines(cvSurfPolydata, sources.data(), numInletIds,
+                           targets.data(), numOutletIds, &linesDst,
+                           &voronoiDst) != SV_OK) {
+    api.error("Error calculating centerlines.");
+    return nullptr;
   }
 
   // If split centerlines into branches. 
@@ -410,16 +417,30 @@ Vmtk_centerlines(PyObject* self, PyObject* args, PyObject* kwargs)
       cvPolyData* splitCenterlines = nullptr;
       cvPolyData* surfGrouped = nullptr;
       cvPolyData* sections = nullptr;
-      if (sys_geom_centerline_sections(linesDst, &cvSurfPolydata, &splitCenterlines, &surfGrouped, &sections) != SV_OK) {
-          api.error("Error splitting centerlines.");
-          delete linesDst;
-          delete surfGrouped;
-          delete sections;
-          return nullptr;
+      if (sys_geom_centerline_sections(linesDst, cvSurfPolydata,
+                                       &splitCenterlines, &surfGrouped,
+                                       &sections) != SV_OK) {
+        api.error("Error splitting centerlines.");
+        if (linesDst != nullptr) {
+          linesDst->Delete();
+        }
+        if (surfGrouped != nullptr) {
+          surfGrouped->Delete();
+        }
+        if (sections != nullptr) {
+          sections->Delete();
+        }
+        return nullptr;
       }
-      delete surfGrouped;
-      delete sections;
-      delete linesDst;
+      if (surfGrouped != nullptr) {
+        surfGrouped->Delete();
+      }
+      if (sections != nullptr) {
+        sections->Delete();
+      }
+      if (linesDst != nullptr) {
+        linesDst->Delete();
+      }
       linesDst = splitCenterlines;
   }
   //std::cout << "[Vmtk_centerlines] Done. " << std::endl;
@@ -464,20 +485,22 @@ Vmtk_distance_to_centerlines(PyObject* self, PyObject* args, PyObject* kwargs)
   if (surfPolydata == nullptr) {
       return nullptr;
   }
-  cvPolyData cvSurfPolydata(surfPolydata);
+  auto cvSurfPolydata =
+      vtkSmartPointer<cvPolyData>::Take(new cvPolyData(surfPolydata));
 
   auto linesPolydata = GetVtkPolyData(api, linesArg);
   if (linesPolydata == nullptr) {
       return nullptr;
   }
-  cvPolyData cvLinesPolydata(linesPolydata);
-
+  auto cvLinesPolydata =
+      vtkSmartPointer<cvPolyData>::Take(new cvPolyData(linesPolydata));
 
   // Perform distance to lines operation.
   cvPolyData* result = nullptr;
-  if (sys_geom_distancetocenterlines(&cvSurfPolydata, &cvLinesPolydata, &result) != SV_OK) {
-      api.error("Error getting distance to centerlines.");
-      return nullptr;
+  if (sys_geom_distancetocenterlines(cvSurfPolydata, cvLinesPolydata,
+                                     &result) != SV_OK) {
+    api.error("Error getting distance to centerlines.");
+    return nullptr;
   }
 
   return vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());

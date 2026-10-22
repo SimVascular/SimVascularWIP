@@ -179,13 +179,13 @@ int sys_geom_NumClosedLineRegions(cvPolyData *src, int *num) {
 
   if (VtkUtils_GetPoints(pd, &pts, &numPts) != SV_OK) {
     printf("ERR: VtkUtils_GetPoints failed\n");
-    delete merged_pd;
+    merged_pd->Delete();
     return SV_ERROR;
   }
 
   if (VtkUtils_GetLines(pd, &lines, &numLines) != SV_OK) {
     printf("ERR: VtkUtils_GetLines failed\n");
-    delete merged_pd;
+    merged_pd->Delete();
     delete[] pts;
     return SV_ERROR;
   }
@@ -193,14 +193,14 @@ int sys_geom_NumClosedLineRegions(cvPolyData *src, int *num) {
   if (VtkUtils_FindClosedLineRegions(lines, numLines, numPts, &startIxs,
                                      &numRegions) != SV_OK) {
     printf("ERR: VtkUtils_FindClosedLineRegions failed\n");
-    delete merged_pd;
+    merged_pd->Delete();
     delete[] pts;
     delete[] lines;
     return SV_ERROR;
   }
 
   *num = numRegions;
-  delete merged_pd;
+  merged_pd->Delete();
   delete[] pts;
   delete[] lines;
   return SV_OK;
@@ -303,12 +303,12 @@ int sys_geom_Reduce(cvPolyData *src, double tol, cvPolyData **dst) {
 
   status = VtkUtils_FixTopology(pd, tol);
   if (status != SV_OK) {
-    delete merged_pd;
+    merged_pd->Delete();
     return SV_ERROR;
   }
 
   *dst = new cvPolyData(pd);
-  delete merged_pd; // virtual destructor calls Delete on vtk data obj
+  merged_pd->Delete();
 
   return SV_OK;
 }
@@ -334,7 +334,7 @@ int sys_geom_MakePolysConsistent(cvPolyData *src, cvPolyData **dst) {
 
   status = VtkUtils_MakePolysConsistent(result->GetVtkPolyData());
   if (status != SV_OK) {
-    delete result;
+    result->Delete();
     return SV_ERROR;
   }
 
@@ -693,7 +693,7 @@ int sys_geom_ReverseAllCells(cvPolyData *src, cvPolyData **dst) {
 
   status = VtkUtils_ReverseAllCells(result->GetVtkPolyData());
   if (status != SV_OK) {
-    delete result;
+    result->Delete();
     return SV_ERROR;
   }
 
@@ -2060,7 +2060,7 @@ int sys_geom_PtInPoly(cvPolyData *obj, double pt[], int usePrevPoly,
     edgeFilter->Update();
     tmppd = new cvPolyData(edgeFilter->GetOutput());
     int status = sys_geom_Get2DPgon(tmppd, &pgon, &num);
-    delete tmppd;
+    tmppd->Delete();
     edgeFilter->Delete();
     if (status != SV_OK) {
       return SV_ERROR;
@@ -2124,16 +2124,16 @@ cvPolyData *sys_geom_sampleLoop(cvPolyData *src, int targetNumPts) {
 
   // First, we just want to count the number of closed loops:
   if (VtkUtils_GetPoints(pd, &pts, &numPts) != SV_OK) {
-    delete merged_pd;
+    merged_pd->Delete();
     return nullptr;
   }
 
   if (VtkUtils_GetLines(pd, &lines, &numLines) != SV_OK) {
-    delete merged_pd;
+    merged_pd->Delete();
     delete[] pts;
     return nullptr;
   }
-  delete merged_pd;
+  merged_pd->Delete();
 
   if (VtkUtils_FindClosedLineRegions(lines, numLines, numPts, &startIxs,
                                      &numRegions) != SV_OK) {
@@ -2379,7 +2379,7 @@ int sys_geom_2DWindingNum(cvPolyData *pgn) {
 
   if (VtkUtils_GetClosedLineRegion(lines, numLines, 0, &lineIds, &numLineIds) !=
       SV_OK) {
-    delete tmp;
+    tmp->Delete();
     delete[] lines;
     delete[] pts;
     printf("ERR: get closed line region failed\n");
@@ -2421,7 +2421,7 @@ int sys_geom_2DWindingNum(cvPolyData *pgn) {
   }
 
   wnum = static_cast<int>(std::round(tot_theta / (2 * M_PI)));
-  delete tmp;
+  tmp->Delete();
   delete[] lines;
   delete[] pts;
   delete[] lineIds;
@@ -2510,7 +2510,7 @@ int sys_geom_AvgPt(cvPolyData *src, double pt[]) {
   pd = tmp->GetVtkPolyData();
   if (VtkUtils_GetPoints(pd, &pts, &numPts) != SV_OK) {
     printf("ERR: get points failed\n");
-    delete tmp;
+    tmp->Delete();
     return SV_ERROR;
   }
 
@@ -2525,7 +2525,7 @@ int sys_geom_AvgPt(cvPolyData *src, double pt[]) {
   pt[1] /= numPts;
   pt[2] /= numPts;
 
-  delete tmp;
+  tmp->Delete();
   delete[] pts;
   return SV_OK;
 }

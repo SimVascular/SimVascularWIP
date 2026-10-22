@@ -165,13 +165,15 @@ CreatePolyDataByBlend(vtkPolyData *vpdsrc, int faceID1, int faceID2,
       return nullptr;
   }
 
-  cvPolyData srcCvPolyData(vpdsrc);
+  auto srcCvPolyData =
+      vtkSmartPointer<cvPolyData>::Take(new cvPolyData(vpdsrc));
   cvPolyData* dst = nullptr;
   int faceIDs[2] = {faceID1, faceID2};
 
-  if (sys_geom_set_array_for_local_op_face_blend(&srcCvPolyData, &dst, "ModelFaceID", faceIDs, 2, radius,
-        "ActiveCells", 1) != SV_OK) {
-      return nullptr;
+  if (sys_geom_set_array_for_local_op_face_blend(
+          srcCvPolyData, &dst, "ModelFaceID", faceIDs, 2, radius, "ActiveCells",
+          1) != SV_OK) {
+    return nullptr;
   }
 
   cvPolyData* dst2 = nullptr;
@@ -219,7 +221,7 @@ GetGeometryObjects(PyUtilApiFunction& api, PyObject* objList)
       if (polydata == nullptr) {
           api.error("Index " + std::to_string(i) + " of the polydata list argument is not a vtkPolyData object.");
           for (auto cvPolydata : cvPolyDataList) {
-              delete cvPolydata;
+            cvPolydata->Delete();
           }
           cvPolyDataList.clear();
           return cvPolyDataList;
@@ -282,7 +284,7 @@ static PyObject *Geom_all_union(PyObject *self, PyObject *args,
                                    noIntersectionOutput, tolerance, &result);
 
   for (auto cvPolydata : cvPolyDataList) {
-    delete cvPolydata;
+    cvPolydata->Delete();
   }
 
   if (status != SV_OK) {
@@ -342,21 +344,23 @@ Geom_align_profile(PyObject* self, PyObject* args, PyObject* kwargs)
   if (refPolydata== nullptr) {
       return nullptr;
   }
-  cvPolyData refCvPolyData(refPolydata);
+  auto refCvPolyData =
+      vtkSmartPointer<cvPolyData>::Take(new cvPolyData(refPolydata));
 
   auto alignPolydata = GetVtkPolyData(api, alignObj);
   if (alignPolydata== nullptr) {
       return nullptr;
   }
-  cvPolyData alignCvPolyData(alignPolydata);
+  auto alignCvPolyData =
+      vtkSmartPointer<cvPolyData>::Take(new cvPolyData(alignPolydata));
 
   // Align the profiles.
   //
   cvPolyData *result;
   if (use_distance) {
-    result = sys_geom_AlignByDist(&refCvPolyData, &alignCvPolyData);
+    result = sys_geom_AlignByDist(refCvPolyData, alignCvPolyData);
   } else {
-    result = sys_geom_Align(&refCvPolyData, &alignCvPolyData);
+    result = sys_geom_Align(refCvPolyData, alignCvPolyData);
   }
 
   if (result == nullptr) {
@@ -403,10 +407,10 @@ Geom_average_point(PyObject* self, PyObject* args)
   }
 
   double pt[3];
-  cvPolyData cvPolydata(polydata);
-  if (sys_geom_AvgPt(&cvPolydata, pt) != SV_OK) {
-      api.error("Error calculating the average point for the polydata.");
-      return nullptr;
+  auto cvPolydata = vtkSmartPointer<cvPolyData>::Take(new cvPolyData(polydata));
+  if (sys_geom_AvgPt(cvPolydata, pt) != SV_OK) {
+    api.error("Error calculating the average point for the polydata.");
+    return nullptr;
   }
 
   return Py_BuildValue("[d,d,d]", pt[0], pt[1], pt[2]);
@@ -457,11 +461,11 @@ Geom_point_inside(PyObject* self, PyObject* args, PyObject* kwargs)
   }
 
   // Result is -1 if the point is outside, 1 if it is inside.
-  cvPolyData cvPolydata(polydata);
+  auto cvPolydata = vtkSmartPointer<cvPolyData>::Take(new cvPolyData(polydata));
   int result;
-  if (sys_geom_Classify(&cvPolydata, point, &result) != SV_OK) {
-      api.error("Error classifying a point for the geometry.");
-      return nullptr;
+  if (sys_geom_Classify(cvPolydata, point, &result) != SV_OK) {
+    api.error("Error classifying a point for the geometry.");
+    return nullptr;
   }
 
   return Py_BuildValue("N", PyBool_FromLong(result+1));
@@ -508,8 +512,8 @@ Geom_interpolate_closed_curve(PyObject* self, PyObject* args, PyObject* kwargs)
       return nullptr;
   }
 
-  cvPolyData cvPolydata(polydata);
-  auto result = sys_geom_sampleLoop(&cvPolydata, numSamples);
+  auto cvPolydata = vtkSmartPointer<cvPolyData>::Take(new cvPolyData(polydata));
+  auto result = sys_geom_sampleLoop(cvPolydata, numSamples);
 
   if (result == nullptr) {
       api.error("Error performing the sample loop operation.");
@@ -756,7 +760,9 @@ Geom_loft(PyObject* self, PyObject* args, PyObject* kwargs)
   }
 
   if (status != SV_OK) {
-      delete result;
+    if (result != nullptr) {
+      result->Delete();
+    }
       api.error("Error performing the loft operation.");
       return nullptr;
   }
@@ -880,7 +886,9 @@ Geom_loft_nurbs(PyObject* self, PyObject* args, PyObject* kwargs)
   }
 
   if (status != SV_OK) {
-      delete result;
+    if (result != nullptr) {
+      result->Delete();
+    }
       api.error("Error creating a lofted solid using nurbs.");
       return nullptr;
   }
@@ -1115,7 +1123,8 @@ static PyObject *Geom_local_sphere_smooth(PyObject *self, PyObject *args,
     return nullptr;
   }
 
-  cvPolyData surfCvPolyData(surfPolydata);
+  auto surfCvPolyData =
+      vtkSmartPointer<cvPolyData>::Take(new cvPolyData(surfPolydata));
 
   // Get the sphere center.
   std::string emsg;
@@ -1130,7 +1139,7 @@ static PyObject *Geom_local_sphere_smooth(PyObject *self, PyObject *args,
   int dataType = 1;
 
   if (sys_geom_set_array_for_local_op_sphere(
-          &surfCvPolyData, &arrayCvPolyData, radius, center.data(),
+          surfCvPolyData, &arrayCvPolyData, radius, center.data(),
           ActiveCellsArrayName, dataType) != SV_OK) {
     api.error("Error setting local sphere operation array for input surface "
               "geometry.");
@@ -1205,9 +1214,10 @@ static PyObject *Geom_local_smooth(PyObject *self, PyObject *args,
     return nullptr;
   }
 
-  cvPolyData activeCvPolyData(activeSurface);
-  auto result = LocalSmooth(api, "local", &activeCvPolyData,
-                            ActiveCellsArrayName, params);
+  auto activeCvPolyData =
+      vtkSmartPointer<cvPolyData>::Take(new cvPolyData(activeSurface));
+  auto result =
+      LocalSmooth(api, "local", activeCvPolyData, ActiveCellsArrayName, params);
   if (result == nullptr) {
     return nullptr;
   }
@@ -1271,11 +1281,12 @@ static PyObject *Geom_local_decimation(PyObject *self, PyObject *args,
     return nullptr;
   }
 
-  cvPolyData activeCvPolyData(activeSurface);
+  auto activeCvPolyData =
+      vtkSmartPointer<cvPolyData>::Take(new cvPolyData(activeSurface));
   cvPolyData *result = nullptr;
 
   // The filter reports its errors without failing, leaving an empty surface.
-  if ((sys_geom_local_quadric_decimation(&activeCvPolyData, &result,
+  if ((sys_geom_local_quadric_decimation(activeCvPolyData, &result,
                                          targetReduction, nullptr,
                                          ActiveCellsArrayName) != SV_OK) ||
       (result->GetNumberOfCells() == 0)) {
@@ -1333,12 +1344,13 @@ static PyObject *LocalSubdivide(PyObject *args, PyObject *kwargs,
     return nullptr;
   }
 
-  cvPolyData activeCvPolyData(activeSurface);
+  auto activeCvPolyData =
+      vtkSmartPointer<cvPolyData>::Take(new cvPolyData(activeSurface));
   cvPolyData *result = nullptr;
 
   // The filter reports its errors, such as a non-manifold surface, without
   // failing, leaving an empty surface.
-  if ((subdivide(&activeCvPolyData, &result, numSubdivisions, nullptr,
+  if ((subdivide(activeCvPolyData, &result, numSubdivisions, nullptr,
                  ActiveCellsArrayName) != SV_OK) ||
       (result->GetNumberOfCells() == 0)) {
     api.error("The " + opName + " operation has failed.");
@@ -1461,11 +1473,12 @@ static PyObject *Geom_blend_region(PyObject *self, PyObject *args,
     return nullptr;
   }
 
-  cvPolyData surfCvPolyData(surfPolydata);
+  auto surfCvPolyData =
+      vtkSmartPointer<cvPolyData>::Take(new cvPolyData(surfPolydata));
   cvPolyData *result = nullptr;
 
   if (sys_geom_set_array_for_local_op_face_blend(
-          &surfCvPolyData, &result, "ModelFaceID", faceIds, 2, radius,
+          surfCvPolyData, &result, "ModelFaceID", faceIds, 2, radius,
           ActiveCellsArrayName, 1) != SV_OK) {
     api.error("The blend region operation has failed.");
     return nullptr;

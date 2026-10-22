@@ -132,7 +132,7 @@ FillHolesWithIDs(vtkPolyData* inpd, int fillID, int fillType)
   }
 
   vtkPolyData* outpd = Orient(tmpcvpd->GetVtkPolyData());
-  delete tmpcvpd;
+  tmpcvpd->Delete();
   return outpd;
 }
 
@@ -285,14 +285,16 @@ CreateCenterlines(vtkPolyData* inpd, vtkIdList* sourcePtIds, vtkIdList* targetPt
   }
 
   if (sys_geom_centerlines(src, sources, numSourcePts, targets, numTargetPts, &tempCenterlines, &voronoi) != SV_OK) {
-    delete src;
+    src->Delete();
     delete [] sources;
     delete [] targets;
     return nullptr;
   }
 
-  delete src;
-  delete voronoi;
+  src->Delete();
+  if (voronoi != nullptr) {
+    voronoi->Delete();
+  }
   delete [] sources;
   delete [] targets;
 
@@ -505,7 +507,8 @@ CreateLoftSurface(std::vector<vtkPolyData*> contourSet, int numSamplingPts, svLo
 
   delete [] sampledContours;
 
-  if (dst != NULL) delete dst;
+  if (dst != NULL)
+    dst->Delete();
 
   return outpd;
 }
@@ -956,7 +959,7 @@ ModelingPolyData_compute_centerlines(PyModelingModel* self, PyObject* args, PyOb
 
     cvPolyData *src = new cvPolyData(inpd);
     auto cleaned = sys_geom_Clean(src);
-    delete src;
+    src->Delete();
 
     // Recap the model surface.
     //
@@ -967,9 +970,13 @@ ModelingPolyData_compute_centerlines(PyModelingModel* self, PyObject* args, PyOb
 
     if (sys_geom_cap_for_centerlines(cleaned, &capped, &numCapCenterIds, &capCenterIds, 
         capUsingCenter) != SV_OK) {
-      delete cleaned;
+      if (cleaned != nullptr) {
+        cleaned->Delete();
+      }
       if (capped != NULL) {
-        delete capped;
+        if (capped != nullptr) {
+          capped->Delete();
+        }
       }
       api.error("Capping for centerlines has failed.");
       return nullptr;
@@ -1014,7 +1021,9 @@ ModelingPolyData_compute_centerlines(PyModelingModel* self, PyObject* args, PyOb
     centerlines = CreateCenterlines(capped->GetVtkPolyData(), sourcePtIds, targetPtIds);
 
     delete [] capCenterIds;
-    delete capped;
+    if (capped != nullptr) {
+      capped->Delete();
+    }
 
   // Cap IDs are given as node IDs.
   //
