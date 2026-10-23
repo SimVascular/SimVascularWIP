@@ -1368,9 +1368,8 @@ static PyObject *LocalSubdivide(PyObject *args, PyObject *kwargs,
 // Geom_local_linear_subdivision
 //-------------------------------
 //
-PyDoc_STRVAR(
-    Geom_local_linear_subdivision_doc,
-    "local_linear_subdivision(surface, cell_ids, num_subdivisions)  \n\
+PyDoc_STRVAR(Geom_local_linear_subdivision_doc,
+             "local_linear_subdivision(surface, cell_ids, num_subdivisions)  \n\
    \n\
    Subdivide a surface locally, in the region made of the given cells.     \n\
    \n\
