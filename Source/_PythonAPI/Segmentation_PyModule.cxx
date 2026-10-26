@@ -175,6 +175,91 @@ Segmentation_create(PySegmentation* self, PyObject* args)
   return cont;
 }
 
+//------------------------
+// Segmentation_level_set
+//------------------------
+//
+PyDoc_STRVAR(
+    Segmentation_level_set_doc,
+    "level_set(image, radius=0.3, sigma_feature1=2.5, sigma_advection1=0.0, \n\
+     kc=0.6, exp_rising=0.25, exp_falling=0.5, max_iterations1=2000,  \n\
+     max_error1=0.001, sigma_feature2=1.5, sigma_advection2=0.0, kupp=0.8, \n\
+     klow=0.09, max_iterations2=1000, max_error2=0.0005)  \n\
+   \n\
+   Compute a contour on an image slice with SimVascular's two-stage level set. \n\
+   \n\
+   Stage 1 grows the front from a seed circle centered on (0, 0), stage 2 \n\
+   moves it onto the wall. Each slice is rescaled to [0, 255] with a spacing \n\
+   of 1, so sigmas and curvatures are in pixels. \n\
+   \n\
+   Args: \n\
+     image (vtkImageData): The slice, with (0, 0) at the seed center. \n\
+     radius (float): The radius of the seed circle. \n\
+     sigma_feature1, sigma_advection1 (float): Stage 1 blur of the feature \n\
+       and advection images. \n\
+     kc (float): Stage 1 equilibrium curvature. \n\
+     exp_rising, exp_falling (float): Stage 1 speed decay with edge strength, \n\
+       before and after the front crosses an edge. \n\
+     max_iterations1 (int), max_error1 (float): Stage 1 stopping criteria. \n\
+     sigma_feature2, sigma_advection2 (float): Stage 2 blur of the feature \n\
+       and advection images. \n\
+     kupp, klow (float): Stage 2 curvature band left unsmoothed. \n\
+     max_iterations2 (int), max_error2 (float): Stage 2 stopping criteria. \n\
+   \n\
+   Returns (list[list[float]]): The ordered (x, y) points of the contour, \n\
+     empty if none is found. \n\
+");
+
+static PyObject *Segmentation_level_set(PyObject *self, PyObject *args,
+                                        PyObject *kwargs) {
+  auto api = PyUtilApiFunction("O|ddddddidddddid", PyRunTimeErr, __func__);
+  static char *keywords[] = {
+      "image",      "radius",          "sigma_feature1",   "sigma_advection1",
+      "kc",         "exp_rising",      "exp_falling",      "max_iterations1",
+      "max_error1", "sigma_feature2",  "sigma_advection2", "kupp",
+      "klow",       "max_iterations2", "max_error2",       nullptr};
+  PyObject *imageArg;
+  sv3::Contour::svLSParam params;
+
+  if (!PyArg_ParseTupleAndKeywords(
+          args, kwargs, api.format, keywords, &imageArg, &params.radius,
+          &params.sigmaFeat1, &params.sigmaAdv1, &params.kc,
+          &params.expFactorRising, &params.expFactorFalling, &params.maxIter1,
+          &params.maxErr1, &params.sigmaFeat2, &params.sigmaAdv2, &params.kupp,
+          &params.klow, &params.maxIter2, &params.maxErr2)) {
+    return api.argsError();
+  }
+
+  auto image = (vtkImageData *)vtkPythonUtil::GetPointerFromObject(
+      imageArg, "vtkImageData");
+  if (image == nullptr) {
+    api.error("The 'image' argument is not a vtkImageData object.");
+    return nullptr;
+  }
+
+  // With the path point at the origin and facing z, the contour stays in the
+  // image's (x, y) coordinates.
+  sv3::PathElement::PathPoint pathPoint;
+  pathPoint.id = 0;
+  pathPoint.pos = {0.0, 0.0, 0.0};
+  pathPoint.tangent = {0.0, 0.0, 1.0};
+  pathPoint.rotation = {1.0, 0.0, 0.0};
+
+  sv3::levelSetContour contour;
+  contour.SetPathPoint(pathPoint);
+  contour.SetVtkImageSlice(image);
+  contour.SetLevelSetParas(&params);
+  contour.CreateContourPoints();
+
+  auto pointsObj = PyList_New(0);
+  for (auto const &point : contour.GetContourPoints()) {
+    auto pointObj = Py_BuildValue("[d,d]", point[0], point[1]);
+    PyList_Append(pointsObj, pointObj);
+    Py_DECREF(pointObj);
+  }
+  return pointsObj;
+}
+
 ////////////////////////////////////////////////////////
 //          M o d u l e  D e f i n i t i o n          //
 ////////////////////////////////////////////////////////
@@ -214,12 +299,14 @@ PyDoc_STRVAR(SegmentationModule_doc,
 //-----------------------------
 // Define the methods for the Python 'segmentation' module.
 //
-static PyMethodDef PySegmentationModuleMethods[] =
-{
-    {"create", (PyCFunction)Segmentation_create, METH_VARARGS, "Create a segmentation object."},
+static PyMethodDef PySegmentationModuleMethods[] = {
+    {"create", (PyCFunction)Segmentation_create, METH_VARARGS,
+     "Create a segmentation object."},
 
-    {nullptr,nullptr}
-};
+    {"level_set", (PyCFunction)Segmentation_level_set,
+     METH_VARARGS | METH_KEYWORDS, Segmentation_level_set_doc},
+
+    {nullptr, nullptr}};
 
 // Include derived Segmentation classes.
 #include "SegmentationCircle_PyClass.cxx"
