@@ -193,7 +193,10 @@ public:
   }
 
   cvITKLevelSet();
-  virtual ~cvITKLevelSet() = default;
+  virtual ~cvITKLevelSet() {
+    if (m_cvSeed != NULL)
+      m_cvSeed->Delete();
+  }
 
 protected:
   // base class

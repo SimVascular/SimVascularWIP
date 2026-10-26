@@ -88,14 +88,11 @@ void levelSetContour::CreateContourPoints() {
     return;
   }
 
-  std::cout << "Path point: " << m_PathPoint.pos[0] << " " << m_PathPoint.pos[1]
-            << " " << m_PathPoint.pos[2] << std::endl;
   // stage 1
   //**************************
-  cvITKLevelSet *ls;
-  ls = new cvITKLevelSet;
-  ls->SetDebug(false);
-  ls->SetUseInputImageAsFeature(false);
+  cvITKLevelSet ls;
+  ls.SetDebug(false);
+  ls.SetUseInputImageAsFeature(false);
 
   cvPolyData *seedPd = nullptr;
   //    int loc[3];
@@ -111,65 +108,67 @@ void levelSetContour::CreateContourPoints() {
   cvITKLSUtil::vtkGenerateCircle(m_paras->radius, center, 50, &seedPd);
   //    vtkGenerateCircle(param->radius,center,50,&seedPd);
 
-  ls->SetMaxIterations(m_paras->maxIter1); // int
-  ls->SetMaxRMSError(m_paras->maxErr1);    // double
-  ls->SetAdvectionScaling(1.0);
-  ls->SetCurvatureScaling(1.0);
+  ls.SetMaxIterations(m_paras->maxIter1); // int
+  ls.SetMaxRMSError(m_paras->maxErr1);    // double
+  ls.SetAdvectionScaling(1.0);
+  ls.SetCurvatureScaling(1.0);
 
-  vtkStructuredPoints *strPts =
-      SegmentationUtils::vtkImageData2vtkStructuredPoints(m_VtkImageSlice);
-  ls->SetInputImage(strPts);
-  ls->SetSeed(seedPd);
+  // Both stages read the same slice.
+  auto strPts = vtkSmartPointer<vtkStructuredPoints>::Take(
+      SegmentationUtils::vtkImageData2vtkStructuredPoints(m_VtkImageSlice));
+  ls.SetInputImage(strPts);
+  // SetSeed copies the seed.
+  ls.SetSeed(seedPd);
+  seedPd->Delete();
 
   //$itklset PhaseOneLevelSet -Kc $kThr -expRising $expRise -expFalling $expFall
   //-sigmaFeat $gSigma1 -sigmaAdv $advSigma1
 
   if (m_paras->sigmaFeat1 >= 0) {
-    ls->SetSigmaFeature(m_paras->sigmaFeat1);
+    ls.SetSigmaFeature(m_paras->sigmaFeat1);
   }
   if (m_paras->sigmaAdv1 >= 0) {
-    ls->SetSigmaAdvection(m_paras->sigmaAdv1);
+    ls.SetSigmaAdvection(m_paras->sigmaAdv1);
   }
 
-  ls->ComputePhaseOneLevelSet(m_paras->kc, m_paras->expFactorRising,
-                              m_paras->expFactorFalling);
+  ls.ComputePhaseOneLevelSet(m_paras->kc, m_paras->expFactorRising,
+                             m_paras->expFactorFalling);
 
   cvPolyData *front1;
-  front1 = ls->GetFront();
+  front1 = ls.GetFront();
 
   // stage 2
   //**********************************************
-  cvITKLevelSet *ls2;
-  ls2 = new cvITKLevelSet;
+  cvITKLevelSet ls2;
 
-  ls2->SetDebug(false);
-  ls2->SetUseInputImageAsFeature(false);
+  ls2.SetDebug(false);
+  ls2.SetUseInputImageAsFeature(false);
 
-  ls2->SetMaxIterations(m_paras->maxIter2);
-  ls2->SetMaxRMSError(m_paras->maxErr2);
-  ls2->SetAdvectionScaling(1.0);
-  ls2->SetCurvatureScaling(1.0);
+  ls2.SetMaxIterations(m_paras->maxIter2);
+  ls2.SetMaxRMSError(m_paras->maxErr2);
+  ls2.SetAdvectionScaling(1.0);
+  ls2.SetCurvatureScaling(1.0);
 
-  vtkStructuredPoints *strPts2 =
-      SegmentationUtils::vtkImageData2vtkStructuredPoints(m_VtkImageSlice);
-  ls2->SetInputImage(strPts2);
-  ls2->SetSeed(front1);
+  ls2.SetInputImage(strPts);
+  ls2.SetSeed(front1);
+  front1->Delete();
 
   if (m_paras->sigmaFeat2 >= 0) {
-    ls2->SetSigmaFeature(m_paras->sigmaFeat2);
+    ls2.SetSigmaFeature(m_paras->sigmaFeat2);
   }
   if (m_paras->sigmaAdv2 >= 0) {
-    ls2->SetSigmaAdvection(m_paras->sigmaAdv2);
+    ls2.SetSigmaAdvection(m_paras->sigmaAdv2);
   }
 
-  ls2->ComputePhaseTwoLevelSet(m_paras->kupp, m_paras->klow);
+  ls2.ComputePhaseTwoLevelSet(m_paras->kupp, m_paras->klow);
 
   cvPolyData *front2;
-  front2 = ls2->GetFront();
+  front2 = ls2.GetFront();
 
   cvPolyData *dst;
   double tol = 0.001;
   dst = sys_geom_MergePts_tol(front2, tol);
+  front2->Delete();
 
   double pos[3], nrm[3], xhat[3];
 
@@ -188,6 +187,7 @@ void levelSetContour::CreateContourPoints() {
   cvPolyData *dst2;
 
   sys_geom_OrientProfile(dst, pos, nrm, xhat, &dst2);
+  dst->Delete();
 
   this->SetPathPoint(m_PathPoint);
   // this->SetPlaced(true);
@@ -208,6 +208,7 @@ void levelSetContour::CreateContourPoints() {
     pt[2] = point[2];
     contourPoints.push_back(pt);
   }
+  dst2->Delete();
 
   this->SetClosed(ifClosed || m_forceClosed);
   this->SetContourPoints(contourPoints);
