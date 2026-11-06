@@ -91,6 +91,22 @@ MeshExists(PyUtilApiFunction& api, cvMeshObject* mesher)
   return true;
 }
 
+//-------------------
+// SurfaceMeshExists
+//-------------------
+// Check for a surface mesh, which is also generated without volume meshing.
+//
+static bool
+SurfaceMeshExists(PyUtilApiFunction& api, cvMeshObject* mesher)
+{
+  if (!mesher->HasSurfaceMesh()) {
+      api.error("No surface mesh has been generated.");
+      return false;
+  }
+
+  return true;
+}
+
 }; // namespace MeshingMesher
 
 /////////////////////////////////////////////////////////////////
@@ -227,7 +243,7 @@ Mesher_get_face_polydata(PyMeshingMesher* self, PyObject* args, PyObject* kwargs
   }
 
   auto mesher = self->mesher;
-  if (!MeshExists(api, mesher)) {
+  if (!SurfaceMeshExists(api, mesher)) {
       return nullptr;
   }
 
@@ -238,8 +254,9 @@ Mesher_get_face_polydata(PyMeshingMesher* self, PyObject* args, PyObject* kwargs
     return nullptr;
   }
 
-  vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
-  polydata = cvPolydata->GetVtkPolyData();
+  // GetFacePolyData returns a new object that the caller owns.
+  vtkSmartPointer<vtkPolyData> polydata = cvPolydata->GetVtkPolyData();
+  cvPolydata->Delete();
 
   return PyUtilGetVtkObject(api, polydata);
 }
@@ -527,7 +544,7 @@ Mesher_get_surface(PyMeshingMesher* self, PyObject* args)
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
 
   auto mesher = self->mesher;
-  if (!MeshExists(api, mesher)) {
+  if (!SurfaceMeshExists(api, mesher)) {
       return nullptr;
   }
 
@@ -538,8 +555,9 @@ Mesher_get_surface(PyMeshingMesher* self, PyObject* args)
       return nullptr;
   }
 
-  auto polydata = vtkSmartPointer<vtkPolyData>::New();
-  polydata = cvPolydata->GetVtkPolyData();
+  // GetPolyData returns a new object that the caller owns.
+  vtkSmartPointer<vtkPolyData> polydata = cvPolydata->GetVtkPolyData();
+  cvPolydata->Delete();
 
   return PyUtilGetVtkObject(api, polydata);
 }
