@@ -37,7 +37,16 @@
 
 #include "sv_sys_geom.h"
 #include "sv_vmtk_utils.h"
+#include "vtkCellData.h"
+#include "vtkCleanPolyData.h"
+#include "vtkDoubleArray.h"
 #include "vtkIdList.h"
+#include "vtkPointData.h"
+#include "vtkPointLocator.h"
+#include "vtkSmartPointer.h"
+
+#include <algorithm>
+#include <vector>
 
 #include <iostream>
 
@@ -224,22 +233,61 @@ CreateCenterlines(vtkPolyData* inpd, vtkIdList* sourcePtIds, vtkIdList* targetPt
   return tempCenterlines->GetVtkPolyData();
 }
 
+//----------------
+// GetWallSurface
+//----------------
+// Return a copy of a surface model keeping only the cells whose
+// 'ModelFaceID' is one of wallFaceIDs: the model with its caps removed.
+//
+static vtkSmartPointer<vtkPolyData>
+GetWallSurface(vtkPolyData* surface, const std::vector<int>& wallFaceIDs)
+{
+  auto walls = vtkSmartPointer<vtkPolyData>::New();
+  walls->DeepCopy(surface);
+  auto faceIDs = walls->GetCellData()->GetArray("ModelFaceID");
+  if (faceIDs == nullptr || wallFaceIDs.empty()) {
+    return walls;
+  }
+  walls->BuildLinks();
+  for (vtkIdType cellId = 0; cellId < walls->GetNumberOfCells(); cellId++) {
+    int faceID = static_cast<int>(faceIDs->GetTuple1(cellId));
+    if (std::find(wallFaceIDs.begin(), wallFaceIDs.end(), faceID) == wallFaceIDs.end()) {
+      walls->DeleteCell(cellId);
+    }
+  }
+  walls->RemoveDeletedCells();
+
+  // Drop the caps' points, which no cell uses now.
+  auto cleaner = vtkSmartPointer<vtkCleanPolyData>::New();
+  cleaner->SetInputData(walls);
+  cleaner->PointMergingOff();
+  cleaner->Update();
+  walls->DeepCopy(cleaner->GetOutput());
+  return walls;
+}
+
 //-------------------
 // CreateCenterlines
 //-------------------
 // Compute the centerlines for a surface model, automatically deriving the
 // source/target points from the model's caps.
 //
+// sys_geom_cap_for_centerlines finds the caps by capping the holes in the
+// surface, so the centerlines are computed from the model's walls, with its
+// caps removed, as sv4guiModelUtils::CreateCenterlines does.
+//
 static vtkPolyData*
-CreateCenterlines(vtkPolyData* inpd)
+CreateCenterlines(vtkPolyData* inpd, const std::vector<int>& wallFaceIDs)
 {
-  cvPolyData* src = new cvPolyData(inpd);
+  auto walls = GetWallSurface(inpd, wallFaceIDs);
+  cvPolyData* src = new cvPolyData(walls);
   cvPolyData* cleaned = nullptr;
   cvPolyData* capped = nullptr;
   int numCapCenterIds;
   int* capCenterIds = nullptr;
 
   cleaned = sys_geom_Clean(src);
+  src->Delete();
 
   if (sys_geom_cap_for_centerlines(cleaned, &capped, &numCapCenterIds, &capCenterIds, 1) != SV_OK) {
     if (cleaned != nullptr) {
@@ -299,7 +347,10 @@ CalculateDistanceToCenterlines(vtkPolyData* centerlines, vtkPolyData* original)
   cvPolyData* lines = new cvPolyData(centerlines);
   cvPolyData* distance = nullptr;
 
-  if (sys_geom_distancetocenterlines(src, lines, &distance) != SV_OK) {
+  int status = sys_geom_distancetocenterlines(src, lines, &distance);
+  src->Delete();
+  lines->Delete();
+  if (status != SV_OK) {
     return nullptr;
   }
 
@@ -320,14 +371,16 @@ CalculateDistanceToCenterlines(vtkPolyData* centerlines, vtkPolyData* original)
 // If centerlines have not been already computed then they are computed here.
 //
 void
-GenerateRadiusMeshingArray(PyUtilApiFunction& api, cvTetGenMeshObject* mesher, PyObject* options)
+GenerateRadiusMeshingArray(PyUtilApiFunction& api, cvTetGenMeshObject* mesher, PyObject* options,
+    const std::vector<int>& wallFaceIDs)
 {
   using namespace TetGenOption;
   //std::cout << "[GenerateRadiusMeshingArray] " << std::endl;
   //std::cout << "[GenerateRadiusMeshingArray] ========== GenerateRadiusMeshingArray =========" << std::endl;
 
-  // Calculate the distance to centerlines.
-  auto solid = mesher->GetSolid();
+  // Calculate the distance to centerlines. GetSolid returns a new object that
+  // the caller owns.
+  auto solid = vtkSmartPointer<vtkPolyData>::Take(mesher->GetSolid());
   if (solid == nullptr) {
       api.error("A solid model must be defined for radius meshing.");
       return;
@@ -339,7 +392,7 @@ GenerateRadiusMeshingArray(PyUtilApiFunction& api, cvTetGenMeshObject* mesher, P
   GetRadiusMeshingValues(options, &scale, &centerlines);
   if (centerlines == nullptr) {
       if (RadiusMeshingComputeCenterlinesIsOn(options)) {
-          centerlines = CreateCenterlines(solid->GetVtkPolyData());
+          centerlines = CreateCenterlines(solid, wallFaceIDs);
           if (centerlines == nullptr) {
               api.error("Unable to compute centerlines for radius-based meshing.");
               return;
@@ -350,20 +403,46 @@ GenerateRadiusMeshingArray(PyUtilApiFunction& api, cvTetGenMeshObject* mesher, P
       }
   }
 
-  // Compute the distance of nodes on the solid model surface to the centerlines.
+  // Compute the distance of the wall nodes to the centerlines.
   //
-  // This returns a new vtkPolyData with the solid model surface geometry and
-  // a point data array named 'DistanceToCenterlines'.
+  // This returns a new vtkPolyData with the wall surface geometry and a point
+  // data array named 'DistanceToCenterlines'. Cap nodes are left out: the
+  // centerlines end at the cap centers, so cap nodes there are at about zero
+  // distance, and the sizing function divides by the smallest distance.
   //
-  auto distance = CalculateDistanceToCenterlines(centerlines, solid->GetVtkPolyData());
-  if (distance == nullptr) {
+  auto walls = GetWallSurface(solid, wallFaceIDs);
+  auto wallDistance = CalculateDistanceToCenterlines(centerlines, walls);
+  if (wallDistance == nullptr) {
+      api.error("Unable to compute the distance to centerlines for radius-based meshing.");
+      return;
+  }
+  auto wallDistances = wallDistance->GetPointData()->GetArray("DistanceToCenterlines");
+  if (wallDistances == nullptr) {
+      wallDistance->Delete();
       api.error("Unable to compute the distance to centerlines for radius-based meshing.");
       return;
   }
 
+  // Give each solid model node the distance of the nearest wall node, so cap
+  // nodes take the distance at the cap's rim, about the vessel radius.
+  auto locator = vtkSmartPointer<vtkPointLocator>::New();
+  locator->SetDataSet(wallDistance);
+  locator->BuildLocator();
+  auto distances = vtkSmartPointer<vtkDoubleArray>::New();
+  distances->SetName("DistanceToCenterlines");
+  distances->SetNumberOfTuples(solid->GetNumberOfPoints());
+  for (vtkIdType pointId = 0; pointId < solid->GetNumberOfPoints(); pointId++) {
+      auto wallPointId = locator->FindClosestPoint(solid->GetPoint(pointId));
+      distances->SetValue(pointId, wallDistances->GetTuple1(wallPointId));
+  }
+  wallDistance->Delete();
+
+  auto distance = vtkSmartPointer<vtkPolyData>::New();
+  distance->DeepCopy(solid);
+  distance->GetPointData()->AddArray(distances);
+
   // Set the solid model vtkPolyData object.
   mesher->SetVtkPolyDataObject(distance);
-  distance->Delete();
 
   // Scale the 'DistanceToCenterlines' mesh sizing function by 'scale'.
   char* sizeFunctionName = "DistanceToCenterlines";
@@ -443,13 +522,14 @@ GenerateSphereRefinementArray(PyUtilApiFunction& api, cvTetGenMeshObject* mesher
 // are set for all surface elements.
 //
 void
-GenerateMeshSizingArrays(PyUtilApiFunction& api, cvTetGenMeshObject* mesher, PyObject* options)
+GenerateMeshSizingArrays(PyUtilApiFunction& api, cvTetGenMeshObject* mesher, PyObject* options,
+    const std::vector<int>& wallFaceIDs)
 {
   using namespace TetGenOption;
   InitMeshSizingArrays(api, mesher, options);
 
   if (RadiusMeshingIsOn(options)) {
-      GenerateRadiusMeshingArray(api, mesher, options);
+      GenerateRadiusMeshingArray(api, mesher, options, wallFaceIDs);
   }
 
   if (LocalEdgeSizeIsOn(options)) {
@@ -608,9 +688,14 @@ MesherTetGen_generate_mesh(PyMeshingMesher* self, PyObject* args, PyObject* kwar
   //
   auto tetGenMesher = dynamic_cast<cvTetGenMeshObject*>(mesher);
   try {
-      GenerateMeshSizingArrays(api, tetGenMesher, options);
+      GenerateMeshSizingArrays(api, tetGenMesher, options, self->wallFaceIDs);
   } catch (const std::exception& exception) {
       api.error(exception.what());
+      return nullptr;
+  }
+  // The sizing array functions report some errors with api.error() rather
+  // than an exception.
+  if (PyErr_Occurred()) {
       return nullptr;
   }
 
