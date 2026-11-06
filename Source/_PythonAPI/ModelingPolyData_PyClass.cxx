@@ -709,6 +709,8 @@ ModelingPolyData_combine_faces(PyModelingModel* self, PyObject* args, PyObject* 
 
   auto polydata = vtkSmartPointer<vtkPolyData>::New();
   polydata->DeepCopy(cvPolydata->GetVtkPolyData());
+  // GetPolyData returns a new object that the caller owns.
+  cvPolydata->Delete();
   if (polydata == nullptr) {
       api.error("Could not get polydata for the solid model.");
       return nullptr;
@@ -906,6 +908,8 @@ ModelingPolyData_compute_centerlines(PyModelingModel* self, PyObject* args, PyOb
   auto cvPolydata = model->GetPolyData(useMaxDist, max_dist);
   auto fullpd = vtkSmartPointer<vtkPolyData>::New();
   fullpd->DeepCopy(cvPolydata->GetVtkPolyData());
+  // GetPolyData returns a new object that the caller owns.
+  cvPolydata->Delete();
 
   if (fullpd == NULL) {
     api.error("Could not get polydata for the solid model.");

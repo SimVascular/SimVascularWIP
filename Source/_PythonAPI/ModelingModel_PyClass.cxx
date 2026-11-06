@@ -219,6 +219,8 @@ ModelingModel_get_polydata(PyModelingModel *self, PyObject* args)
   auto cvPolydata = model->GetPolyData(useMaxDist, max_dist);
   vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
   polydata->DeepCopy(cvPolydata->GetVtkPolyData());
+  // GetPolyData returns a new object that the caller owns.
+  cvPolydata->Delete();
   if (polydata == nullptr) {
       api.error("Could not get polydata for the solid model.");
       return nullptr;

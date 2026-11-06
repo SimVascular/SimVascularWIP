@@ -669,10 +669,11 @@ MesherTetGen_set_model(PyMeshingMesher* self, PyObject* args, PyObject* kwargs)
   double max_dist = -1.0;
   int useMaxDist = 0;
   auto cvPolydata = model->GetPolyData(useMaxDist, max_dist);
-  auto polydata = cvPolydata->GetVtkPolyData();
 
-  // Set the model using vtkPolyData.
-  mesher->LoadModel(polydata);
+  // Set the model using vtkPolyData. LoadModel copies it, and GetPolyData
+  // returns a new object that the caller owns.
+  mesher->LoadModel(cvPolydata->GetVtkPolyData());
+  cvPolydata->Delete();
 
   Py_RETURN_NONE;
 }
