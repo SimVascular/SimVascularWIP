@@ -1,6 +1,9 @@
 configure_file(simvascular_version.h.in "${CMAKE_CURRENT_BINARY_DIR}/simvascular_version.h")
 # VMTK is a required dependency, so its code is always enabled, as in SimVascular.
 set(SV_USE_VMTK ON)
+# So is MMG (VTK::SV1MeshMMGMeshUtils). TetGen meshing remeshes surfaces with it
+# unless its use_mmg option is off, as in SimVascular.
+set(SV_USE_MMG ON)
 configure_file(simvascular_options.h.in "${CMAKE_CURRENT_BINARY_DIR}/simvascular_options.h")
 
 set(vtkSVInclude_HEADERS
