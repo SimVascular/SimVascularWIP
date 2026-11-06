@@ -1114,9 +1114,9 @@ int VMTKUtils_Capper(vtkPolyData *inpd,int captype,int trioutput,
 // layer, so a layer cell's point IDs modulo the number of surface points
 // are the point IDs of the surface cell it was made from.
 //
-static void VMTKUtils_AddLayerSurfaceCellIds(vtkUnstructuredGrid* surface, vtkUnstructuredGrid* layerMesh,
-    const char* arrayName)
-{
+static void VMTKUtils_AddLayerSurfaceCellIds(vtkUnstructuredGrid *surface,
+                                             vtkUnstructuredGrid *layerMesh,
+                                             const char *arrayName) {
   auto surfaceIds = surface->GetCellData()->GetArray(arrayName);
   vtkIdType numSurfacePoints = surface->GetNumberOfPoints();
   if (surfaceIds == nullptr || numSurfacePoints == 0) {
@@ -1124,7 +1124,7 @@ static void VMTKUtils_AddLayerSurfaceCellIds(vtkUnstructuredGrid* surface, vtkUn
   }
 
   auto cellPoints = vtkSmartPointer<vtkIdList>::New();
-  auto surfaceCellKey = [&](vtkDataSet* mesh, vtkIdType cellId) {
+  auto surfaceCellKey = [&](vtkDataSet *mesh, vtkIdType cellId) {
     mesh->GetCellPoints(cellId, cellPoints);
     std::vector<vtkIdType> key(cellPoints->GetNumberOfIds());
     for (vtkIdType j = 0; j < cellPoints->GetNumberOfIds(); j++) {
@@ -1136,7 +1136,8 @@ static void VMTKUtils_AddLayerSurfaceCellIds(vtkUnstructuredGrid* surface, vtkUn
 
   std::map<std::vector<vtkIdType>, int> surfaceCellIds;
   for (vtkIdType i = 0; i < surface->GetNumberOfCells(); i++) {
-    surfaceCellIds[surfaceCellKey(surface, i)] = static_cast<int>(surfaceIds->GetTuple1(i));
+    surfaceCellIds[surfaceCellKey(surface, i)] =
+        static_cast<int>(surfaceIds->GetTuple1(i));
   }
 
   auto layerIds = vtkSmartPointer<vtkIntArray>::New();
