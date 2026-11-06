@@ -380,11 +380,8 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
   int globalId = 1;
   int count=0;
   int totRegions=0;
-  double tmp;
   vtkIdType i, j;
   vtkIdType vtkId;
-  vtkIdType npts = 0;
-  const vtkIdType *pts;
 
   vtkIdType numPts,numPolys,numFaces;
 
@@ -492,42 +489,49 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
   //fprintf(stdout,"Converting Faces to VTK Structures...\n");
   facePointIds->SetNumberOfIds(3);
 
-  // TODO: Fix (adjtetlist deprecated in TetGen 1.5)
-  // for (i=0;i< numFaces;i++)
-  // {
-  //   for (j=0; j<3;j++)
-  //   {
-  //     facePointIds->SetId(j,pointMapping[outmesh->trifacelist[i*3+j]]);
-  //   }
+  // TetGen 1.5 fills face2tetlist (the tetrahedra on either side of each
+  // boundary face, -1 for none) for the -nn switch, which the meshers set
+  // (neighout = 2). Earlier TetGen versions called it adjtetlist.
+  if (numFaces > 0 && outmesh->face2tetlist == nullptr)
+  {
+    fprintf(stderr,"TetGen output has no face-to-tetrahedron adjacency (-nn switch)\n");
+    delete [] pointMapping;
+    delete [] pointOnSurface;
+    return SV_ERROR;
+  }
+  for (i=0;i< numFaces;i++)
+  {
+    // The presolver expects the faces reversed from TetGen's order.
+    facePointIds->SetId(0,pointMapping[outmesh->trifacelist[i*3+1]]);
+    facePointIds->SetId(1,pointMapping[outmesh->trifacelist[i*3]]);
+    facePointIds->SetId(2,pointMapping[outmesh->trifacelist[i*3+2]]);
 
-  //   faces->InsertNextCell(facePointIds);
+    faces->InsertNextCell(facePointIds);
 
-  //   if (!(outmesh->adjtetlist[2*i] >= numPolys || outmesh->adjtetlist[2*i] < 0))
-  //   {
-  //     vtpFaceIds->InsertValue(i,globalElementIds->GetValue(outmesh->adjtetlist[2*i]));
-  //   }
-  //   else if (!(outmesh->adjtetlist[2*i+1] >= numPolys || outmesh->adjtetlist[2*i+1] < 0))
-  //   {
-  //     vtpFaceIds->InsertValue(i,globalElementIds->GetValue(outmesh->adjtetlist[2*i+1]));
-  //   }
-  //   else
-  //   {
-  //     fprintf(stderr,"WARNING: TetGen says face has no adjacent tetrahedron\n");
-  //     vtpFaceIds->InsertValue(i,globalElementIds->GetValue(outmesh->adjtetlist[2*i+1]));
-  //   }
+    int adjacentTet = outmesh->face2tetlist[2*i];
+    if (adjacentTet < 0 || adjacentTet >= numPolys)
+    {
+      adjacentTet = outmesh->face2tetlist[2*i+1];
+    }
+    if (adjacentTet < 0 || adjacentTet >= numPolys)
+    {
+      fprintf(stderr,"WARNING: TetGen says face %lld has no adjacent tetrahedron\n",(long long)i);
+      vtpFaceIds->InsertValue(i,-1);
+    }
+    else
+    {
+      vtpFaceIds->InsertValue(i,globalElementIds->GetValue(adjacentTet));
+    }
 
-  //   if (getBoundary)
-  //   {
-  //     if (outmesh->trifacemarkerlist != nullptr)
-  //     {
-  //       boundaryScalars->InsertValue(i,outmesh->trifacemarkerlist[i]);
-  //     }
-  //     if (boundaryScalars->GetValue(i)>totRegions)
-  //     {
-  //       totRegions = outmesh->trifacemarkerlist[i];
-  //     }
-  //   }
-  // }
+    if (getBoundary && outmesh->trifacemarkerlist != nullptr)
+    {
+      boundaryScalars->InsertValue(i,outmesh->trifacemarkerlist[i]);
+      if (outmesh->trifacemarkerlist[i] > totRegions)
+      {
+        totRegions = outmesh->trifacemarkerlist[i];
+      }
+    }
+  }
 
   //Create a polydata grid and link scalar information to nodes and elements
   fullPolyData->SetPoints(vtpPoints);
@@ -549,19 +553,6 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
     fullPolyData->GetCellData()->SetActiveScalars("ModelFaceID");
 
     *modelRegions = totRegions;
-  }
-
-//  //Flip the cells on the polydata for presolver
-  for (i=0;i<fullPolyData->GetNumberOfCells();i++)
-  {
-    fullPolyData->GetCellPoints(i,npts,pts);
-
-    // // this could fail if pts has more than 2 components?
-    const vtkIdType pts_[3] = {pts[1], pts[0], pts[2]};
-    // tmp = pts[0];
-    // pts[0] = pts[1];
-    // pts[1] = tmp;
-    fullPolyData->ReplaceCell(i,npts,pts);
   }
 
   delete [] pointMapping;
