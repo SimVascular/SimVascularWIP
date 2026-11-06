@@ -379,7 +379,7 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
   int modelId = 1;
   int globalId = 1;
   int count=0;
-  int totRegions=0;
+  int totRegions = 0;
   vtkIdType i, j;
   vtkIdType vtkId;
 
@@ -492,42 +492,38 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
   // TetGen 1.5 fills face2tetlist (the tetrahedra on either side of each
   // boundary face, -1 for none) for the -nn switch, which the meshers set
   // (neighout = 2). Earlier TetGen versions called it adjtetlist.
-  if (numFaces > 0 && outmesh->face2tetlist == nullptr)
-  {
-    fprintf(stderr,"TetGen output has no face-to-tetrahedron adjacency (-nn switch)\n");
-    delete [] pointMapping;
-    delete [] pointOnSurface;
+  if (numFaces > 0 && outmesh->face2tetlist == nullptr) {
+    fprintf(
+        stderr,
+        "TetGen output has no face-to-tetrahedron adjacency (-nn switch)\n");
+    delete[] pointMapping;
+    delete[] pointOnSurface;
     return SV_ERROR;
   }
-  for (i=0;i< numFaces;i++)
-  {
+  for (i = 0; i < numFaces; i++) {
     // The presolver expects the faces reversed from TetGen's order.
-    facePointIds->SetId(0,pointMapping[outmesh->trifacelist[i*3+1]]);
-    facePointIds->SetId(1,pointMapping[outmesh->trifacelist[i*3]]);
-    facePointIds->SetId(2,pointMapping[outmesh->trifacelist[i*3+2]]);
+    facePointIds->SetId(0, pointMapping[outmesh->trifacelist[i * 3 + 1]]);
+    facePointIds->SetId(1, pointMapping[outmesh->trifacelist[i * 3]]);
+    facePointIds->SetId(2, pointMapping[outmesh->trifacelist[i * 3 + 2]]);
 
     faces->InsertNextCell(facePointIds);
 
-    int adjacentTet = outmesh->face2tetlist[2*i];
-    if (adjacentTet < 0 || adjacentTet >= numPolys)
-    {
-      adjacentTet = outmesh->face2tetlist[2*i+1];
+    int adjacentTet = outmesh->face2tetlist[2 * i];
+    if (adjacentTet < 0 || adjacentTet >= numPolys) {
+      adjacentTet = outmesh->face2tetlist[2 * i + 1];
     }
-    if (adjacentTet < 0 || adjacentTet >= numPolys)
-    {
-      fprintf(stderr,"WARNING: TetGen says face %lld has no adjacent tetrahedron\n",(long long)i);
-      vtpFaceIds->InsertValue(i,-1);
-    }
-    else
-    {
-      vtpFaceIds->InsertValue(i,globalElementIds->GetValue(adjacentTet));
+    if (adjacentTet < 0 || adjacentTet >= numPolys) {
+      fprintf(stderr,
+              "WARNING: TetGen says face %lld has no adjacent tetrahedron\n",
+              (long long)i);
+      vtpFaceIds->InsertValue(i, -1);
+    } else {
+      vtpFaceIds->InsertValue(i, globalElementIds->GetValue(adjacentTet));
     }
 
-    if (getBoundary && outmesh->trifacemarkerlist != nullptr)
-    {
-      boundaryScalars->InsertValue(i,outmesh->trifacemarkerlist[i]);
-      if (outmesh->trifacemarkerlist[i] > totRegions)
-      {
+    if (getBoundary && outmesh->trifacemarkerlist != nullptr) {
+      boundaryScalars->InsertValue(i, outmesh->trifacemarkerlist[i]);
+      if (outmesh->trifacemarkerlist[i] > totRegions) {
         totRegions = outmesh->trifacemarkerlist[i];
       }
     }

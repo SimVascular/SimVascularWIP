@@ -96,12 +96,10 @@ MeshExists(PyUtilApiFunction& api, cvMeshObject* mesher)
 //-------------------
 // Check for a surface mesh, which is also generated without volume meshing.
 //
-static bool
-SurfaceMeshExists(PyUtilApiFunction& api, cvMeshObject* mesher)
-{
+static bool SurfaceMeshExists(PyUtilApiFunction &api, cvMeshObject *mesher) {
   if (!mesher->HasSurfaceMesh()) {
-      api.error("No surface mesh has been generated.");
-      return false;
+    api.error("No surface mesh has been generated.");
+    return false;
   }
 
   return true;
@@ -244,7 +242,7 @@ Mesher_get_face_polydata(PyMeshingMesher* self, PyObject* args, PyObject* kwargs
 
   auto mesher = self->mesher;
   if (!SurfaceMeshExists(api, mesher)) {
-      return nullptr;
+    return nullptr;
   }
 
   // Get the cvPolyData:
@@ -545,7 +543,7 @@ Mesher_get_surface(PyMeshingMesher* self, PyObject* args)
 
   auto mesher = self->mesher;
   if (!SurfaceMeshExists(api, mesher)) {
-      return nullptr;
+    return nullptr;
   }
 
   // Get the cvPolyData:
