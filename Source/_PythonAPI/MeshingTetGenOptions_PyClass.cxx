@@ -335,6 +335,8 @@ RadiusMeshingSetCenterlines(PyObject* optionsObj, vtkPolyData* centerlines)
   auto centerlinesCopy = vtkPolyData::New();
   centerlinesCopy->DeepCopy(centerlines);
   options->radius_meshing_centerlines = vtkPythonUtil::GetObjectFromPointer(centerlinesCopy);
+  // The Python object holds its own reference.
+  centerlinesCopy->Delete();
 }
 
 bool

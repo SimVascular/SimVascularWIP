@@ -389,10 +389,13 @@ GenerateRadiusMeshingArray(PyUtilApiFunction& api, cvTetGenMeshObject* mesher, P
   // Get the radius meshing option values.
   double scale;
   vtkPolyData* centerlines;
+  // Centerlines computed here, which options keeps a copy of, are freed on return.
+  vtkSmartPointer<vtkPolyData> computedCenterlines;
   GetRadiusMeshingValues(options, &scale, &centerlines);
   if (centerlines == nullptr) {
       if (RadiusMeshingComputeCenterlinesIsOn(options)) {
-          centerlines = CreateCenterlines(solid, wallFaceIDs);
+          computedCenterlines.TakeReference(CreateCenterlines(solid, wallFaceIDs));
+          centerlines = computedCenterlines;
           if (centerlines == nullptr) {
               api.error("Unable to compute centerlines for radius-based meshing.");
               return;
