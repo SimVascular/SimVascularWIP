@@ -162,10 +162,11 @@ MeshUtils_remesh(PyObject* self, PyObject* args, PyObject* kwargs)
   int numAddedRefines = 0;
   vtkDoubleArray *meshSizingFunction = nullptr;
 
-  if (MMGUtils_SurfaceRemeshing(remeshed, hmin, hmax, hausd, angle, hgrad, useSizingFunction, meshSizingFunction,
-          numAddedRefines) != SV_OK) {
-      api.error("Remeshing failed.");
-      return nullptr;
+  if (MMGUtils_SurfaceRemeshing(remeshed, hmin, hmax, hausd, angle, hgrad,
+                                useSizingFunction, meshSizingFunction,
+                                numAddedRefines) != SV_OK) {
+    api.error("Remeshing failed.");
+    return nullptr;
   }
 
   // Reset stdout.
@@ -270,10 +271,12 @@ MeshUtils_remesh_faces(PyObject* self, PyObject* args, PyObject* kwargs)
   remeshed->DeepCopy(surfPolydata);
   remeshed->BuildLinks();
 
-  if (VMTKUtils_SurfaceRemeshing(remeshed, edgeSize, meshCaps, preserveEdges, triangleSplitFactor, collapseAngleThreshold,
-          excludeFaceIDs,  markerListName, useSizeFunction, nullptr) != SV_OK) {
-      api.error("Remeshing failed.");
-      return nullptr;
+  if (VMTKUtils_SurfaceRemeshing(remeshed, edgeSize, meshCaps, preserveEdges,
+                                 triangleSplitFactor, collapseAngleThreshold,
+                                 excludeFaceIDs, markerListName,
+                                 useSizeFunction, nullptr) != SV_OK) {
+    api.error("Remeshing failed.");
+    return nullptr;
   }
 
   return PyUtilGetVtkObject(api, remeshed);
