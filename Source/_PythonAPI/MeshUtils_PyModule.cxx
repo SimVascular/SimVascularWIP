@@ -150,8 +150,11 @@ MeshUtils_remesh(PyObject* self, PyObject* args, PyObject* kwargs)
   if (surfPolydata == nullptr) {
       return nullptr;
   }
-  //cvPolyData cvSurfPolydata(surfPolydata);
-  surfPolydata->BuildLinks();
+
+  // Remesh a copy: MMGUtils_SurfaceRemeshing replaces the surface it is given.
+  auto remeshed = vtkSmartPointer<vtkPolyData>::New();
+  remeshed->DeepCopy(surfPolydata);
+  remeshed->BuildLinks();
 
   // Remesh the entire surface polydata.
   //
@@ -159,15 +162,9 @@ MeshUtils_remesh(PyObject* self, PyObject* args, PyObject* kwargs)
   int numAddedRefines = 0;
   vtkDoubleArray *meshSizingFunction = nullptr;
 
-  if (MMGUtils_SurfaceRemeshing(surfPolydata, hmin, hmax, hausd, angle, hgrad, useSizingFunction, meshSizingFunction,
+  if (MMGUtils_SurfaceRemeshing(remeshed, hmin, hmax, hausd, angle, hgrad, useSizingFunction, meshSizingFunction,
           numAddedRefines) != SV_OK) {
       api.error("Remeshing failed.");
-      return nullptr;
-  }
-
-  auto result = new cvPolyData(surfPolydata);
-  if (result == nullptr) {
-      api.error("Error creating polydata from the remeshed object.");
       return nullptr;
   }
 
@@ -177,7 +174,7 @@ MeshUtils_remesh(PyObject* self, PyObject* args, PyObject* kwargs)
   close(stdout_dupe);
 */
 
-  return vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
+  return PyUtilGetVtkObject(api, remeshed);
 }
 
 //------------------------
@@ -221,9 +218,6 @@ MeshUtils_remesh_faces(PyObject* self, PyObject* args, PyObject* kwargs)
   if (surfPolydata == nullptr) {
       return nullptr;
   }
-  //cvPolyData cvSurfPolydata(surfPolydata);
-  surfPolydata->BuildLinks();
-
   // Get face IDs.
   //
   std::vector<int> faceIDs;
@@ -271,19 +265,18 @@ MeshUtils_remesh_faces(PyObject* self, PyObject* args, PyObject* kwargs)
   double triangleSplitFactor = 0;
   int useSizeFunction = 0;
 
-  if (VMTKUtils_SurfaceRemeshing(surfPolydata, edgeSize, meshCaps, preserveEdges, triangleSplitFactor, collapseAngleThreshold,
+  // Remesh a copy: VMTKUtils_SurfaceRemeshing replaces the surface it is given.
+  auto remeshed = vtkSmartPointer<vtkPolyData>::New();
+  remeshed->DeepCopy(surfPolydata);
+  remeshed->BuildLinks();
+
+  if (VMTKUtils_SurfaceRemeshing(remeshed, edgeSize, meshCaps, preserveEdges, triangleSplitFactor, collapseAngleThreshold,
           excludeFaceIDs,  markerListName, useSizeFunction, nullptr) != SV_OK) {
       api.error("Remeshing failed.");
       return nullptr;
   }
 
-  auto result = new cvPolyData(surfPolydata);
-  if (result == nullptr) {
-      api.error("Error creating polydata from the remeshed object.");
-      return nullptr;
-  }
-
-  return vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
+  return PyUtilGetVtkObject(api, remeshed);
 }
 
 ////////////////////////////////////////////////////////
