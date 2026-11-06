@@ -63,8 +63,13 @@
 #include <vtkXMLUnstructuredGridWriter.h>
 #include <vtkCoincidentPoints.h>
 
+#include <algorithm>
 #include <iostream>
+#include <map>
+#include <vector>
 #include <vtkCellLocator.h>
+#include <vtkCellType.h>
+#include <vtkIdList.h>
 #include <vtkLongArray.h>
 #include <vtkPointLocator.h>
 #include <vtkPolygon.h>
@@ -1097,6 +1102,61 @@ int VMTKUtils_Capper(vtkPolyData *inpd,int captype,int trioutput,
   return SV_OK;
 }
 
+//----------------------------------
+// VMTKUtils_AddLayerSurfaceCellIds
+//----------------------------------
+// Gives the surface cells of a boundary layer mesh made by
+// vtkvmtkBoundaryLayerGenerator the 'arrayName' cell values of the surface
+// cells they were made from, as SimVascular's VMTK fork did with its
+// SurfaceCellIdsArrayName, which stock VMTK does not have. Other cells get 0.
+//
+// The layer mesh's points are the surface's points repeated once per
+// layer, so a layer cell's point IDs modulo the number of surface points
+// are the point IDs of the surface cell it was made from.
+//
+static void VMTKUtils_AddLayerSurfaceCellIds(vtkUnstructuredGrid* surface, vtkUnstructuredGrid* layerMesh,
+    const char* arrayName)
+{
+  auto surfaceIds = surface->GetCellData()->GetArray(arrayName);
+  vtkIdType numSurfacePoints = surface->GetNumberOfPoints();
+  if (surfaceIds == nullptr || numSurfacePoints == 0) {
+    return;
+  }
+
+  auto cellPoints = vtkSmartPointer<vtkIdList>::New();
+  auto surfaceCellKey = [&](vtkDataSet* mesh, vtkIdType cellId) {
+    mesh->GetCellPoints(cellId, cellPoints);
+    std::vector<vtkIdType> key(cellPoints->GetNumberOfIds());
+    for (vtkIdType j = 0; j < cellPoints->GetNumberOfIds(); j++) {
+      key[j] = cellPoints->GetId(j) % numSurfacePoints;
+    }
+    std::sort(key.begin(), key.end());
+    return key;
+  };
+
+  std::map<std::vector<vtkIdType>, int> surfaceCellIds;
+  for (vtkIdType i = 0; i < surface->GetNumberOfCells(); i++) {
+    surfaceCellIds[surfaceCellKey(surface, i)] = static_cast<int>(surfaceIds->GetTuple1(i));
+  }
+
+  auto layerIds = vtkSmartPointer<vtkIntArray>::New();
+  layerIds->SetName(arrayName);
+  layerIds->SetNumberOfTuples(layerMesh->GetNumberOfCells());
+  for (vtkIdType i = 0; i < layerMesh->GetNumberOfCells(); i++) {
+    int value = 0;
+    int cellType = layerMesh->GetCellType(i);
+    if (cellType == VTK_TRIANGLE || cellType == VTK_QUAD) {
+      auto found = surfaceCellIds.find(surfaceCellKey(layerMesh, i));
+      if (found != surfaceCellIds.end()) {
+        value = found->second;
+      }
+    }
+    layerIds->SetValue(i, value);
+  }
+  layerMesh->GetCellData()->RemoveArray(arrayName);
+  layerMesh->GetCellData()->AddArray(layerIds);
+}
+
 //-----------------------------
 // VMTKUtils_BoundaryLayerMesh
 //-----------------------------
@@ -1183,14 +1243,13 @@ int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh, vtkUnstructuredGrid
   layerer->SetSidewallCellEntityId(sidewallCellEntityId);
   //1
   layerer->SetInnerSurfaceCellEntityId(innerSurfaceCellEntityId);
-  // TODO: Fix
-  // layerer->SetSurfaceCellIdsArrayName("ModelFaceID");
   layerer->SetIncludeSurfaceCells(1);
   layerer->SetIncludeSidewallCells(1);
   layerer->SetNumberOfSubsteps(100);
   layerer->Update();
 
   blMesh->DeepCopy(layerer->GetOutput());
+  VMTKUtils_AddLayerSurfaceCellIds(copyug, blMesh, "ModelFaceID");
   innerSurface->DeepCopy(layerer->GetInnerSurface());
 
   return SV_OK;
