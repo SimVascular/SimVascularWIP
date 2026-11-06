@@ -1846,7 +1846,7 @@ void cvTetGenMeshObject::SetCapBoundaryNormals(vtkPolyData* surface)
 {
   // Extract surface cap boundaries. 
   //
-  auto feature_edges = vtkFeatureEdges::New();
+  auto feature_edges = vtkSmartPointer<vtkFeatureEdges>::New();
   feature_edges->SetInputData(surface);
   feature_edges->BoundaryEdgesOn();
   feature_edges->ManifoldEdgesOff();
@@ -1855,30 +1855,31 @@ void cvTetGenMeshObject::SetCapBoundaryNormals(vtkPolyData* surface)
   feature_edges->Update();
 
   auto boundary_edges = feature_edges->GetOutput();
-  auto clean_filter = vtkCleanPolyData::New();
+  auto clean_filter = vtkSmartPointer<vtkCleanPolyData>::New();
   clean_filter->SetInputData(boundary_edges);
   clean_filter->Update();
   auto cleaned_edges = clean_filter->GetOutput();
 
-  auto conn_filter = vtkPolyDataConnectivityFilter::New();
+  auto conn_filter = vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
   conn_filter->SetInputData(cleaned_edges);
   conn_filter->SetExtractionModeToSpecifiedRegions();
-  std::vector<vtkPolyData*> cap_boundaries;
+  std::vector<vtkSmartPointer<vtkPolyData>> cap_boundaries;
   int edge_id = 0;
 
   while (true) {
     conn_filter->AddSpecifiedRegion(edge_id);
     conn_filter->Update();
-    auto component = vtkPolyData::New();
+    auto component = vtkSmartPointer<vtkPolyData>::New();
     component->DeepCopy(conn_filter->GetOutput());
     if (component->GetNumberOfCells() <= 0) {
       break;
     }
-    auto clean_filter = vtkCleanPolyData::New();
-    clean_filter->SetInputData(component);
-    clean_filter->Update();
-    auto cleaned_edges = clean_filter->GetOutput();
-    cap_boundaries.push_back(cleaned_edges);
+    auto component_cleaner = vtkSmartPointer<vtkCleanPolyData>::New();
+    component_cleaner->SetInputData(component);
+    component_cleaner->Update();
+    auto cap_boundary = vtkSmartPointer<vtkPolyData>::New();
+    cap_boundary->DeepCopy(component_cleaner->GetOutput());
+    cap_boundaries.push_back(cap_boundary);
     conn_filter->DeleteSpecifiedRegion(edge_id);
     edge_id += 1;
   }

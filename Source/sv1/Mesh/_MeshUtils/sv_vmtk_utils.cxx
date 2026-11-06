@@ -1715,7 +1715,7 @@ void VMTKUtils_ReorderTetElements(vtkUnstructuredGrid* boundaryLayerMesh)
 
   // Check element volumes.
   //
-  vtkGenericCell* cell = vtkGenericCell::New();
+  auto cell = vtkSmartPointer<vtkGenericCell>::New();
   vtkSmartPointer<vtkMeshQuality> qualityFilter = vtkSmartPointer<vtkMeshQuality>::New();
   qualityFilter->SetInputData(boundaryLayerMesh);
   qualityFilter->SetTetQualityMeasureToVolume();
