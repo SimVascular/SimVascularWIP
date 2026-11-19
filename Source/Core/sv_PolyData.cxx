@@ -31,6 +31,11 @@
 
 #include "sv_PolyData.h"
 
-cvPolyData::cvPolyData() {}
+// cvPolyData is created with new rather than New(), so it registers itself with
+// vtkDebugLeaks, which counts it on delete.
+cvPolyData::cvPolyData() { this->InitializeObjectBase(); }
 
-cvPolyData::cvPolyData(vtkPolyData *pd) { ShallowCopy(pd); }
+cvPolyData::cvPolyData(vtkPolyData *pd) {
+  this->InitializeObjectBase();
+  ShallowCopy(pd);
+}

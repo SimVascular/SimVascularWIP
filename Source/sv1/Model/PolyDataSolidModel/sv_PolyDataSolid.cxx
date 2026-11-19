@@ -273,13 +273,13 @@ cvPolyData *cvPolyDataSolid::GetPolyData(int useMaxDist,
 
 cvPolyData *cvPolyDataSolid::GetFacePolyData(int faceid, int useMaxDist,
                                              double max_dist) const {
-  vtkPolyData *facepd = vtkPolyData::New();
   cvPolyData *result;
 
   if (geom_ == nullptr) {
     return nullptr;
   }
 
+  auto facepd = vtkSmartPointer<vtkPolyData>::New();
   if (PlyDtaUtils_GetFacePolyData(geom_, &faceid, facepd) != SV_OK) {
     fprintf(stderr, "ERROR: Failed to get Face of PolyData");
     return SV_ERROR;
@@ -289,11 +289,10 @@ cvPolyData *cvPolyDataSolid::GetFacePolyData(int faceid, int useMaxDist,
   // fprintf(stderr,"Check Polys: %d\n",facepd->GetNumberOfPolys());
 
   cvPolyData *tmpresult = new cvPolyData(facepd);
-  facepd->Delete();
 
   result = sys_geom_MergePts(tmpresult);
 
-  delete tmpresult;
+  tmpresult->Delete();
 
   return result;
 }

@@ -420,8 +420,8 @@ Mesher_get_model_polydata(PyMeshingMesher* self, PyObject* args)
       return nullptr;
   }
 
-  vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
-  polydata = cvPolydata->GetVtkPolyData();
+  auto polydata =
+      vtkSmartPointer<vtkPolyData>::Take(cvPolydata->GetVtkPolyData());
   return PyUtilGetVtkObject(api, polydata);
 }
 
