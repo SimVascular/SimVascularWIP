@@ -214,8 +214,8 @@ void vtkSVLocalLoopSubdivisionFilter::GenerateEvenStencil(vtkIdType p1,
                                                           vtkPolyData *polys,
                                                           vtkIdList *stencilIds,
                                                           double *weights) {
-  vtkIdList *cellIds = vtkIdList::New();
-  vtkIdList *ptIds = vtkIdList::New();
+  vtkNew(vtkIdList, cellIds);
+  vtkNew(vtkIdList, ptIds);
   vtkCell *cell;
 
   int i;
@@ -325,8 +325,6 @@ void vtkSVLocalLoopSubdivisionFilter::GenerateEvenStencil(vtkIdType p1,
     weights[K] = 1.0 - K * beta;
     stencilIds->SetId(K, p1);
   }
-  cellIds->Delete();
-  ptIds->Delete();
 }
 
 // ----------------------

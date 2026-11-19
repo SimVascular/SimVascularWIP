@@ -701,6 +701,9 @@ Geom_loft(PyObject* self, PyObject* args, PyObject* kwargs)
 
   if (cvPolyDataList.size() < 2) {
       api.error("At least two profiles are needed for lofing.");
+      for (auto cvPolydata : cvPolyDataList) {
+        cvPolydata->Delete();
+      }
       return nullptr;
   }
 
@@ -712,6 +715,9 @@ Geom_loft(PyObject* self, PyObject* args, PyObject* kwargs)
           numProfilePoints = numPoints;
       } else if (numPoints != numProfilePoints) {
           api.error("Profiles do not have the same number of points.");
+          for (auto cvPolydata : cvPolyDataList) {
+            cvPolydata->Delete();
+          }
           return nullptr;
       }
   }
@@ -825,6 +831,9 @@ Geom_loft_nurbs(PyObject* self, PyObject* args, PyObject* kwargs)
 
   if (numProfiles < 2) {
       api.error("At least two profiles are needed for lofing.");
+      for (auto cvPolydata : cvPolyDataList) {
+        cvPolydata->Delete();
+      }
       return nullptr;
   }
 
@@ -836,6 +845,9 @@ Geom_loft_nurbs(PyObject* self, PyObject* args, PyObject* kwargs)
           numProfilePoints = numPoints;
       } else if (numPoints != numProfilePoints) {
           api.error("Profiles do not have the same number of points.");
+          for (auto cvPolydata : cvPolyDataList) {
+            cvPolydata->Delete();
+          }
           return nullptr;
       }
   }
@@ -1291,6 +1303,9 @@ static PyObject *Geom_local_decimation(PyObject *self, PyObject *args,
                                          ActiveCellsArrayName) != SV_OK) ||
       (result->GetNumberOfCells() == 0)) {
     api.error("The local decimation operation has failed.");
+    if (result != nullptr) {
+      result->Delete();
+    }
     return nullptr;
   }
 
@@ -1354,6 +1369,9 @@ static PyObject *LocalSubdivide(PyObject *args, PyObject *kwargs,
                  ActiveCellsArrayName) != SV_OK) ||
       (result->GetNumberOfCells() == 0)) {
     api.error("The " + opName + " operation has failed.");
+    if (result != nullptr) {
+      result->Delete();
+    }
     return nullptr;
   }
 

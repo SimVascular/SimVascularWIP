@@ -71,16 +71,15 @@ int vtkSVLocalLinearSubdivisionFilter::GenerateSubdivisionPoints(
   vtkIdType npts, cellId, newId;
   vtkIdType p1, p2;
   vtkCellArray *inputPolys = inputDS->GetPolys();
-  vtkEdgeTable *edgeTable;
-  vtkIdList *cellIds = vtkIdList::New();
-  vtkIdList *pointIds = vtkIdList::New();
+  vtkNew(vtkIdList, cellIds);
+  vtkNew(vtkIdList, pointIds);
   vtkPoints *inputPts = inputDS->GetPoints();
   vtkPointData *inputPD = inputDS->GetPointData();
   static double weights[2] = {.5, .5};
   vtkNew(vtkIdList, edgeNeighbor);
 
   // Create an edge table to keep track of which edges we've processed
-  edgeTable = vtkEdgeTable::New();
+  vtkNew(vtkEdgeTable, edgeTable);
   edgeTable->InitEdgeInsertion(inputDS->GetNumberOfPoints());
 
   pointIds->SetNumberOfIds(2);
@@ -170,9 +169,6 @@ int vtkSVLocalLinearSubdivisionFilter::GenerateSubdivisionPoints(
   } // each cell
 
   delete[] noSubdivideCell;
-  edgeTable->Delete();
-  cellIds->Delete();
-  pointIds->Delete();
 
   return 1;
 }
