@@ -216,6 +216,7 @@ VTKSV3ITKSEGMENTATION_EXPORT void inline vtkGenerateCircle(double radius, double
   vtkPolyData *out = vtkPolyData::New();
   vtkGenerateCircle(radius, center, numPoints, out);
   (*circle) = new cvPolyData(out);
+  out->Delete();
 }
 
 } // namespace cvITKLSUtil

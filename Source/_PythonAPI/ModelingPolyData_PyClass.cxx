@@ -572,8 +572,8 @@ classify_face(PyModelingModel* self, int faceID, PyUtilApiFunction& api, double 
   if (cvPolydata == nullptr) {
       throw std::runtime_error("Error getting polydata for the solid model face ID '" + std::to_string(faceID) + "'.");
   }
-  vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
-  polydata = cvPolydata->GetVtkPolyData();
+  auto polydata =
+      vtkSmartPointer<vtkPolyData>::Take(cvPolydata->GetVtkPolyData());
   if (polydata == nullptr) {
       throw std::runtime_error("Error getting polydata for the solid model face ID '" + std::to_string(faceID) + "'.");
   }
@@ -985,6 +985,7 @@ ModelingPolyData_compute_centerlines(PyModelingModel* self, PyObject* args, PyOb
       api.error("Capping for centerlines has failed.");
       return nullptr;
     }
+    cleaned->Delete();
 
     auto locator = vtkSmartPointer<vtkCellLocator>::New();
     locator->SetDataSet(fullpd);
@@ -1052,8 +1053,14 @@ ModelingPolyData_compute_centerlines(PyModelingModel* self, PyObject* args, PyOb
     centerlines = CreateCenterlines(fullpd, sourcePtIds, targetPtIds);
   }
 
-
-  return vtkPythonUtil::GetObjectFromPointer(centerlines);
+  if (centerlines == nullptr) {
+    api.error("Unable to compute centerlines.");
+    return nullptr;
+  }
+  auto pyCenterlines = vtkPythonUtil::GetObjectFromPointer(centerlines);
+  // The Python object holds its own reference.
+  centerlines->Delete();
+  return pyCenterlines;
 }
 
 //-------------------------------
