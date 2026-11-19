@@ -95,6 +95,9 @@ vtkSVLoftNURBSSurface::vtkSVLoftNURBSSurface() {
 // Destructor
 // ----------------------
 vtkSVLoftNURBSSurface::~vtkSVLoftNURBSSurface() {
+  if (this->InputGrid != nullptr) {
+    this->InputGrid->Delete();
+  }
   if (this->Surface != nullptr) {
     this->Surface->Delete();
   }

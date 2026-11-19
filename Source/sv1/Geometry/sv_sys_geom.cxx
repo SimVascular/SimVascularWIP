@@ -211,7 +211,7 @@ int sys_geom_NumClosedLineRegions(cvPolyData *src, int *num) {
 /* ---------------------------- */
 
 int sys_geom_GetClosedLineRegion(cvPolyData *src, int id, cvPolyData **dst) {
-  cvPolyData *merged_pd;
+  vtkSmartPointer<cvPolyData> merged_pd;
   vtkPolyData *pd;
   vtkPolyData *tmp = nullptr;
   int numPts;
@@ -224,7 +224,7 @@ int sys_geom_GetClosedLineRegion(cvPolyData *src, int id, cvPolyData **dst) {
   int numRegionLines;
   int status = SV_ERROR;
 
-  merged_pd = sys_geom_MergePts(src);
+  merged_pd.TakeReference(sys_geom_MergePts(src));
   if (merged_pd == nullptr) {
     return SV_ERROR;
   }
@@ -707,7 +707,7 @@ int sys_geom_ReverseAllCells(cvPolyData *src, cvPolyData **dst) {
 /* ---------------------- */
 
 int sys_geom_GetOrderedPts(cvPolyData *src, double **ord_pts, int *num) {
-  cvPolyData *merged_pd;
+  vtkSmartPointer<cvPolyData> merged_pd;
   vtkPolyData *pd;
   double *pts;
   int numPts;
@@ -722,7 +722,7 @@ int sys_geom_GetOrderedPts(cvPolyData *src, double **ord_pts, int *num) {
   double x, y, z;
   int startIx;
 
-  merged_pd = sys_geom_MergePts(src);
+  merged_pd.TakeReference(sys_geom_MergePts(src));
   if (merged_pd == nullptr) {
     return SV_ERROR;
   }
@@ -745,13 +745,15 @@ int sys_geom_GetOrderedPts(cvPolyData *src, double **ord_pts, int *num) {
 
   if (numPts == 0 || numLines == 0) {
     fprintf(stderr, "ERROR:  no points or lines in polydata object!\n");
-    // don't know if I should free pts & lines here or not, but to be
-    // safe I wont
+    delete[] pts;
+    delete[] lines;
     return SV_ERROR;
   } else if (numPts < 3 || numLines < 3) {
     // assume we need at least 3 pts and 3 lines to define a contour.
     fprintf(stderr, "ERROR:  not enough pts (%i) or lines (%i)\n", numPts,
             numLines);
+    delete[] pts;
+    delete[] lines;
     return SV_ERROR;
   }
 
