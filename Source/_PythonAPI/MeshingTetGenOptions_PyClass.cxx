@@ -334,7 +334,8 @@ RadiusMeshingSetCenterlines(PyObject* optionsObj, vtkPolyData* centerlines)
   auto options = (PyMeshingTetGenOptions*)optionsObj;
   auto centerlinesCopy = vtkPolyData::New();
   centerlinesCopy->DeepCopy(centerlines);
-  options->radius_meshing_centerlines = vtkPythonUtil::GetObjectFromPointer(centerlinesCopy);
+  Py_XSETREF(options->radius_meshing_centerlines,
+             vtkPythonUtil::GetObjectFromPointer(centerlinesCopy));
   // The Python object holds its own reference.
   centerlinesCopy->Delete();
 }
@@ -1642,6 +1643,7 @@ PyTetGenOptions_set_local_edge_size(PyMeshingTetGenOptions* self, PyObject* valu
 static PyObject*
 PyTetGenOptions_get_radius_meshing_centerlines(PyMeshingTetGenOptions* self, void* closure)
 {
+  Py_INCREF(self->radius_meshing_centerlines);
   return self->radius_meshing_centerlines;
 }
 
@@ -1669,8 +1671,8 @@ PyTetGenOptions_set_radius_meshing_centerlines(PyMeshingTetGenOptions* self, PyO
       return -1;
   }
 
-  self->radius_meshing_centerlines = object;
   Py_INCREF(object);
+  Py_XSETREF(self->radius_meshing_centerlines, object);
   return 0;
 }
 
@@ -1914,6 +1916,7 @@ static void
 PyTetGenOptionsDealloc(PyMeshingTetGenOptions* self)
 {
   //std::cout << "[PyTetGenOptionsDealloc] Free PyTetGenOptions" << std::endl;
+  Py_XDECREF(self->radius_meshing_centerlines);
   Py_TYPE(self)->tp_free(self);
 }
 
