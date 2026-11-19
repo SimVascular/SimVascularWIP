@@ -175,8 +175,8 @@ ModelingModel_get_face_polydata(PyModelingModel* self, PyObject* args, PyObject*
       api.error("Error getting polydata for the solid model face ID '" + std::to_string(faceID) + "'.");
       return nullptr;
   }
-  vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
-  polydata = cvPolydata->GetVtkPolyData();
+  auto polydata =
+      vtkSmartPointer<vtkPolyData>::Take(cvPolydata->GetVtkPolyData());
   if (polydata == nullptr) {
       api.error("Error getting polydata for the solid model face ID '" + std::to_string(faceID) + "'.");
       return nullptr;
