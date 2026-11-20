@@ -8,7 +8,7 @@ endif()
 
 ExternalProject_Add(VMTK
   GIT_REPOSITORY "https://github.com/vmtk/vmtk.git"
-  GIT_TAG        "4c02e5d70e015ac2c7f16b8172147972550dadc3"
+  GIT_TAG        "9d1ee03052f3aaa3586c4b979bbdad035b26c2e0"
   GIT_SHALLOW    FALSE
   GIT_PROGRESS   TRUE
   SOURCE_DIR     ${CMAKE_CURRENT_BINARY_DIR}/VMTK
