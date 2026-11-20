@@ -406,8 +406,9 @@ Vmtk_centerlines(PyObject* self, PyObject* args, PyObject* kwargs)
     api.error("Error calculating centerlines.");
     return nullptr;
   }
+  voronoiDst->Delete();
 
-  // If split centerlines into branches. 
+  // If split centerlines into branches.
   //
   if (splitArg != nullptr) {
       splitCenterlines = PyObject_IsTrue(splitArg);
@@ -445,7 +446,10 @@ Vmtk_centerlines(PyObject* self, PyObject* args, PyObject* kwargs)
   }
   //std::cout << "[Vmtk_centerlines] Done. " << std::endl;
 
-  return vtkPythonUtil::GetObjectFromPointer(linesDst->GetVtkPolyData());
+  auto pyCenterlines = vtkPythonUtil::GetObjectFromPointer(linesDst);
+  // The Python object holds its own reference.
+  linesDst->Delete();
+  return pyCenterlines;
 }
 
 //------------------------------
