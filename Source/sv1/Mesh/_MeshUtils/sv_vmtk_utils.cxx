@@ -79,8 +79,8 @@
 #include "vtkvmtkCapPolyData.h"
 #include "vtkvmtkCenterlineBranchExtractor.h"
 #include "vtkvmtkMergeCenterlines.h"
+#include "vtkvmtkPolyDataCenterlineBranchSplitting.h"
 #include "vtkvmtkPolyDataCenterlineGroupsClipper.h"
-#include "vtkvmtkPolyDataCenterlineSections.h"
 #include "vtkvmtkPolyDataCenterlines.h"
 #include "vtkvmtkPolyDataDistanceToCenterlines.h"
 #include "vtkvmtkPolyDataSizingFunction.h"
@@ -265,49 +265,58 @@ int sys_geom_separatecenterlines( cvPolyData *lines,
 }
 
 //------------------------------
-// sys_geom_centerline_sections 
+// sys_geom_centerline_sections
 //------------------------------
 // Compute centerlines for a closed surface.
 //
 // Note: this is used by the SV ROM Simulation Tool.
 //
 // The centerlines branches and bifurcations are identified using cross sections
-// of planar slices of the surface.
-// 
-// Input:
-//   lines_in - from centerline extraction, the centerlines to be used
-//   surface_in s- urface geometry
+// of planar slices of the surface, with
+// vtkvmtkPolyDataCenterlineBranchSplitting. The section array names are the
+// ones svromutils reads.
 //
-// Output:
-//   lines_out - cleaned and connected centerline with point arrays describing branching attached
+// Input:
+//   lines_in - from centerline extraction, the centerlines to be used. The
+//     filter rewrites them in place.
+//   surface_in - surface geometry
+//
+// Output, each a new object the caller frees:
+//   lines_out - cleaned and connected centerline with point arrays
+//     describing branching attached
 //   surface_out - as surface_in with point arrays "BranchId", "BifurcationId"
 //   sections - cross-sections of the surface geometry along the centerline
 //
-int sys_geom_centerline_sections(cvPolyData *lines_in, cvPolyData *surface_in, cvPolyData **lines_out, 
-    cvPolyData **surface_out, cvPolyData **sections)
-{
+int sys_geom_centerline_sections(cvPolyData *lines_in, cvPolyData *surface_in,
+                                 cvPolyData **lines_out,
+                                 cvPolyData **surface_out,
+                                 cvPolyData **sections) {
   vtkPolyData *cent = lines_in->GetVtkPolyData();
   vtkPolyData *surf = surface_in->GetVtkPolyData();
-  cvPolyData *result1 = nullptr;
-  cvPolyData *result2 = nullptr;
-  cvPolyData *result3 = nullptr;
   *lines_out = nullptr;
+  *surface_out = nullptr;
   *sections = nullptr;
 
-  vtkNew(vtkvmtkPolyDataCenterlineSections, cross_sections);
+  vtkNew(vtkvmtkPolyDataCenterlineBranchSplitting, branch_splitting);
   try {
     std::cout << "Calculating CenterlineSections..." << std::endl;
-    cross_sections->SetInputData(surf);
-    cross_sections->SetCenterlines(cent);
-    cross_sections->Update();
+    branch_splitting->SetInputData(surf);
+    branch_splitting->SetCenterlines(cent);
+    branch_splitting->SetCenterlineSectionAreaArrayName(
+        "CenterlineSectionArea");
+    branch_splitting->SetCenterlineSectionMinSizeArrayName(
+        "CenterlineSectionMinSize");
+    branch_splitting->SetCenterlineSectionMaxSizeArrayName(
+        "CenterlineSectionMaxSize");
+    branch_splitting->SetCenterlineSectionShapeArrayName(
+        "CenterlineSectionShape");
+    branch_splitting->SetCenterlineSectionClosedArrayName(
+        "CenterlineSectionClosed");
+    branch_splitting->Update();
 
-    result1 = new cvPolyData( cross_sections->GetCenterlines() );
-    *lines_out = result1;
-    result2 = new cvPolyData( cross_sections->GetOutput() );
-    *sections = result2;
-    // TODO: Fix this
-    // result3 = new cvPolyData( cross_sections->GetSurface() );
-    *surface_out = surface_in;
+    *lines_out = new cvPolyData(branch_splitting->GetCenterlines());
+    *sections = new cvPolyData(branch_splitting->GetOutput());
+    *surface_out = new cvPolyData(branch_splitting->GetSurface());
   }
   catch (...) {
     fprintf(stderr,"ERROR in centerline cross-section calculation.\n");
